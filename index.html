@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>STEMSphere Academy | Smarter Learning Starts Here</title>
+  <title>STEMSphere Academy | Transform Learning</title>
   <style>
     body {
       margin: 0;
@@ -24,28 +24,8 @@
     }
 
     h2 {
-      font-size: 1.5em;
-      color: #ccc;
-      max-width: 800px;
-      margin: auto;
-    }
-
-    .video-wrapper {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-      overflow: hidden;
-      margin: 2em auto;
-      max-width: 800px;
-    }
-
-    .video-wrapper iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 8px;
+      font-size: 1.4em;
+      color: #aad1ff;
     }
 
     main {
@@ -55,40 +35,37 @@
       padding: 0 1.5em 2em;
     }
 
+    /* Strobelight Glow Effect */
+    .video-frame-glow {
+      position: relative;
+      max-width: 800px;
+      margin: 2em auto;
+      padding: 10px;
+      border-radius: 10px;
+      background: linear-gradient(270deg, #00B0FF, #00FFD9, #00B0FF);
+      background-size: 600% 600%;
+      animation: glowAnimation 4s ease infinite;
+    }
+
+    @keyframes glowAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .video-frame-glow iframe {
+      display: block;
+      width: 100%;
+      height: 450px;
+      border: none;
+      border-radius: 6px;
+    }
+
     p {
       font-size: 1.15em;
       color: #ccc;
       line-height: 1.8em;
-    }
-
-    strong {
-      color: #00B0FF;
-    }
-
-    .quote {
-      font-style: italic;
-      margin: 1.5em 0;
-      color: #aad1ff;
-    }
-
-    .cta-buttons {
-      margin: 3em 0;
-    }
-
-    a.button {
-      text-decoration: none;
-      background-color: #00B0FF;
-      color: #fff;
-      padding: 1em 2em;
-      margin: 0.5em;
-      border-radius: 6px;
-      display: inline-block;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-    }
-
-    a.button:hover {
-      background-color: #0091cc;
+      margin: 2em 0;
     }
 
     footer {
@@ -103,40 +80,22 @@
 
 <body>
   <header>
-    <h1>Most Courses Teach. STEMSphere Transforms.</h1>
-    <h2>Teaching isn’t about information — it’s about transformation. That’s the STEMSphere difference.</h2>
+    <h1>Other Courses Teach. We Transform.</h1>
+    <h2>🎯 4 out of 5 Students see improvements within 2 weeks</h2>
   </header>
 
   <main>
-    <div class="video-wrapper">
+    <div class="video-frame-glow">
       <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-        title="STEMSphere Transformation Video" frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen></iframe>
+        title="STEMSphere Transformation Video" allowfullscreen></iframe>
     </div>
 
-    <p class="quote">“They’re being taught — but not transformed.”</p>
-
-    <p><strong>90%</strong> of students never complete online courses. Even in-person, most sit disengaged. STEMSphere flips that model by creating transformation — not just retention.</p>
-
-    <p>We personalize your experience. Clarity, structure, and confidence — taught by real educators with a voice and a method you can follow.</p>
-
-    <p><strong>4 out of 5 STEMSphere students improve within 2–3 weeks.</strong> That's not marketing fluff. That's measurable change backed by scores and self-belief.</p>
-
-    <p>Whether it’s Python, Chemistry, or Public Speaking — we use relatable breakdowns, real-time demos (like our apple example 🍎), and guided practice across every subject.</p>
-
-    <p><strong>Learn from global tutors</strong> across Nigeria, India, USA, UK & Japan — chosen for their excellence and empathy.</p>
-
-    <p>If you’re serious about real academic growth, we’re ready. Choose your path below 👇</p>
-
-    <div class="cta-buttons">
-      <a href="https://stemsphereacademy.thinkific.com/" class="button">Start My Course</a>
-      <a href="https://calendly.com/stemsphere-diagnostics" class="button">Free 30-min Diagnostic</a>
-    </div>
+    <p><strong>90% of students don't complete the courses they start.</strong><br>
+    At STEMSphere, we fix that by combining real examples, self-paced structure, and expert-guided support.</p>
   </main>
 
   <footer>
-    © 2025 STEMSphere Academy. Built for Transformation. All rights reserved.
+    © 2025 STEMSphere Academy. All rights reserved. Built for transformation.
   </footer>
 </body>
 </html>
