@@ -8,7 +8,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #000000; /* Full black */
+      background-color: #000000;
       color: #fff;
       text-align: center;
     }
@@ -54,24 +54,33 @@
       padding: 2em 1em 3em;
     }
 
-    /* ⚡ Neon Electric Border */
+    /* ⚡ Updated Yellow Glow — copied from Facebook Ads page */
     .electric-frame {
       position: relative;
       padding: 10px;
       border-radius: 12px;
       margin: 2em auto;
       background-color: #000;
-      box-shadow: 0 0 20px #fdf200, 0 0 40px #ffe600, 0 0 60px #fff000;
+      box-shadow:
+        0 0 20px #fdf200,
+        0 0 40px #ffe600,
+        0 0 60px #fff000;
       animation: flicker 1.5s infinite alternate;
       max-width: 800px;
     }
 
     @keyframes flicker {
       0% {
-        box-shadow: 0 0 15px #ffeb3b, 0 0 30px #fdf200, 0 0 45px #ffe600;
+        box-shadow:
+          0 0 15px #ffeb3b,
+          0 0 30px #fdf200,
+          0 0 45px #ffe600;
       }
       100% {
-        box-shadow: 0 0 25px #fdf200, 0 0 50px #fff000, 0 0 75px #ffeb3b;
+        box-shadow:
+          0 0 25px #fdf200,
+          0 0 50px #fff000,
+          0 0 75px #ffeb3b;
       }
     }
 
