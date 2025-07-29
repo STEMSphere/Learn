@@ -39,22 +39,12 @@
       margin-top: 0.8em;
     }
 
-    @media (max-width: 600px) {
-      .title-group span {
-        font-size: 2em;
-      }
-      h2 {
-        font-size: 1.2em;
-      }
-    }
-
     main {
       max-width: 850px;
       margin: auto;
       padding: 2em 1em 3em;
     }
 
-    /* ⚡ Gentle Yellow Glow — Facebook Ads Style */
     .electric-frame {
       position: relative;
       padding: 10px;
@@ -71,16 +61,10 @@
 
     @keyframes flicker {
       0% {
-        box-shadow:
-          0 0 8px #ffeb3b,
-          0 0 12px #fdf200,
-          0 0 18px #ffe600;
+        box-shadow: 0 0 8px #ffeb3b, 0 0 12px #fdf200, 0 0 18px #ffe600;
       }
       100% {
-        box-shadow:
-          0 0 12px #fdf200,
-          0 0 18px #fff000,
-          0 0 24px #ffeb3b;
+        box-shadow: 0 0 12px #fdf200, 0 0 18px #fff000, 0 0 24px #ffeb3b;
       }
     }
 
@@ -102,6 +86,22 @@
       border: none;
     }
 
+    .arrow-up {
+      font-size: 2.2em;
+      color: #FFA500; /* Fluorescent macaroni orange */
+      text-shadow: 0 0 6px #ffcc66;
+      letter-spacing: 0.5em;
+      margin: 0.3em 0 0;
+    }
+
+    .access-message {
+      font-size: 1.35em;
+      font-weight: 700;
+      color: #ffffff;
+      font-family: 'Segoe UI Semibold', sans-serif;
+      margin-top: 0.3em;
+    }
+
     p {
       font-size: 1.15em;
       color: #ccc;
@@ -114,6 +114,21 @@
       color: #bbb;
       padding: 2em 1em;
       border-top: 1px solid #333;
+    }
+
+    @media (max-width: 600px) {
+      .title-group span {
+        font-size: 2em;
+      }
+      h2 {
+        font-size: 1.2em;
+      }
+      .arrow-up {
+        font-size: 1.8em;
+      }
+      .access-message {
+        font-size: 1.2em;
+      }
     }
   </style>
 </head>
@@ -134,8 +149,11 @@
       </div>
     </div>
 
+    <div class="arrow-up">↑↑↑↑</div>
+    <div class="access-message">Watch Video for Access</div>
+
     <p><strong>9 out of 10 students don't complete the courses they start.</strong><br>
-    This video reveals how STEMSphere Academy break these statistics, increase follow through and achieve real results.</p>
+    STEMSphere Academy break these statistics, increase follow-through, and achieve real results.</p>
   </main>
 
   <footer>
