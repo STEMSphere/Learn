@@ -1,40 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>STEMSphere Academy – Course Preview</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STEMSphere Academy | Transform Learning</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 2em; background: #f8f9fa; }
-    h1 { color: #2c3e50; }
-    p { font-size: 1.2em; margin-top: 1em; }
-    iframe { margin: 2em 0; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0B1E39;
+      color: #fff;
+    }
+
+    header {
+      text-align: center;
+      padding: 3em 1em 1em;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      color: #00B0FF;
+      margin-bottom: 0.5em;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      color: #ccc;
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      margin: 2em auto;
+      max-width: 800px;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+    }
+
+    main {
+      max-width: 850px;
+      margin: auto;
+      text-align: center;
+      padding: 0 1.5em 2em;
+    }
+
+    p {
+      font-size: 1.1em;
+      color: #ccc;
+      line-height: 1.7em;
+    }
+
+    .cta-buttons {
+      margin: 2em 0;
+    }
+
     a.button {
       text-decoration: none;
-      padding: 0.75em 1.5em;
-      background-color: #3498db;
-      color: white;
-      border-radius: 4px;
+      background-color: #00B0FF;
+      color: #fff;
+      padding: 1em 2em;
+      margin: 0.5em;
+      border-radius: 6px;
       display: inline-block;
-      margin-top: 1.5em;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
     }
-    footer { font-size: 0.8em; color: #666; margin-top: 3em; }
+
+    a.button:hover {
+      background-color: #0091cc;
+    }
+
+    footer {
+      font-size: 0.85em;
+      color: #bbb;
+      text-align: center;
+      padding: 2em 1em;
+      border-top: 1px solid #333;
+    }
   </style>
 </head>
+
 <body>
-  <h1>Welcome to STEMSphere Academy</h1>
-  <p>Explore transformative courses that ignite confidence and inspire mastery</p>
+  <header>
+    <h1>Don’t Just Learn. Transform.</h1>
+    <h2>Where confidence meets clarity — for STEM, public speaking & beyond.</h2>
+  </header>
 
-  <!-- Embed your YouTube video preview below -->
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+  <main>
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" 
+        title="STEMSphere Transformation Video" frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen></iframe>
+    </div>
 
-  <!-- Redirect button to full course or signup -->
-  <p>
-    <a href="https://your-thinkific-site.com" class="button">Access Full Courses</a>
-  </p>
+    <p><strong>90% of students don't complete the courses they start.</strong><br>
+    At STEMSphere, we fix that by combining real examples, self-paced structure, and expert-guided support. Whether it's English, Physics, or Public Speaking — we help students learn smarter and grow faster.</p>
+
+    <p>Backed by global tutors from Nigeria, India, UK, USA & Japan. <br><strong>4 out of 5 students see results within 2–3 weeks.</strong></p>
+
+    <div class="cta-buttons">
+      <a href="https://stemsphereacademy.thinkific.com/" class="button">Start My Course</a>
+      <a href="https://calendly.com/stemsphere-diagnostics" class="button">Get Free Diagnostic</a>
+    </div>
+  </main>
 
   <footer>
-    © 2025 STEMSphere Academy. All rights reserved. No reproduction allowed without permission.
+    © 2025 STEMSphere Academy. All rights reserved. Built for transformation.
   </footer>
 </body>
 </html>
- 
