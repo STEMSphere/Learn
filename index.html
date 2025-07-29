@@ -17,24 +17,36 @@
       padding: 3em 1em 1em;
     }
 
-    h1 {
+    .title-group {
+      display: inline-block;
+      line-height: 1.2em;
+    }
+
+    .title-group .line1 {
       font-size: 2.8em;
+      font-weight: 600;
       color: #FFDD00;
-      margin-bottom: 0.3em;
-      word-break: break-word;
+      display: block;
+    }
+
+    .title-group .line2 {
+      font-size: 2.8em;
+      font-weight: 600;
+      color: #FFDD00;
+      display: block;
     }
 
     h2 {
       font-size: 1.4em;
       color: #ffffff;
       font-weight: normal;
-      margin-top: 0.5em;
+      margin-top: 0.8em;
     }
 
     @media (max-width: 600px) {
-      h1 {
+      .title-group .line1,
+      .title-group .line2 {
         font-size: 2em;
-        line-height: 1.2em;
       }
       h2 {
         font-size: 1.2em;
@@ -47,19 +59,19 @@
       padding: 2em 1em 3em;
     }
 
-    /* 🟡 Smooth Yellow Light Border */
-    .flame-border {
+    /* ⚡️ Electric Yellow Glow Border */
+    .electric-frame {
       position: relative;
-      padding: 8px;
+      padding: 10px;
       border-radius: 12px;
       margin: 2em auto;
-      background: linear-gradient(270deg, #ffee33, #ffdd00, #ffee33);
-      background-size: 600% 600%;
-      animation: lightFlow 4s linear infinite;
+      background: linear-gradient(270deg, #fdf200, #ffe600, #fdf200);
+      background-size: 400% 400%;
+      animation: electricGlow 3s ease-in-out infinite;
       max-width: 800px;
     }
 
-    @keyframes lightFlow {
+    @keyframes electricGlow {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
@@ -67,7 +79,7 @@
 
     .video-container {
       position: relative;
-      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
       border-radius: 8px;
@@ -80,6 +92,7 @@
       height: 100%;
       border: none;
       border-radius: 8px;
+      background-color: #000;
     }
 
     p {
@@ -100,12 +113,15 @@
 
 <body>
   <header>
-    <h1>Other Courses Teach. We Transform.</h1>
+    <div class="title-group">
+      <span class="line1">Other Courses Teach.</span>
+      <span class="line2">We Transform.</span>
+    </div>
     <h2>Better→ Smarter→ Faster Learning!</h2>
   </header>
 
   <main>
-    <div class="flame-border">
+    <div class="electric-frame">
       <div class="video-container">
         <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
           title="STEMSphere Transformation Video" allowfullscreen></iframe>
