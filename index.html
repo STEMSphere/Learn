@@ -20,14 +20,25 @@
     h1 {
       font-size: 2.8em;
       color: #00B0FF;
-      margin-bottom: 0.3em;
+      margin-bottom: 0.2em;
+      word-break: break-word;
     }
 
     h2 {
       font-size: 1.4em;
       color: #ffffff;
       font-weight: normal;
-      margin-top: 0.5em;
+      margin-top: 0.3em;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.9em;
+        line-height: 1.2em;
+      }
+      h2 {
+        font-size: 1.2em;
+      }
     }
 
     main {
@@ -36,29 +47,42 @@
       padding: 2em 1em 3em;
     }
 
-    /* 🔥 Animated Flame Border */
+    /* 🔥 Real Flame Border */
     .flame-border {
-      padding: 14px;
-      border-radius: 12px;
       position: relative;
-      max-width: 800px;
       margin: 2em auto;
-      background: linear-gradient(270deg, #ff00cc, #00b0ff, #ff00cc);
-      background-size: 600% 600%;
-      animation: flameGlow 5s ease infinite;
+      width: 100%;
+      max-width: 800px;
+      padding: 6px;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(255, 0, 0, 0.7);
+      background: #000;
     }
 
-    @keyframes flameGlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .flame-border::before {
+      content: "";
+      position: absolute;
+      top: -3px; left: -3px;
+      right: -3px; bottom: -3px;
+      background: url('https://media.giphy.com/media/3oKIPwoeGErMmaI43C/giphy.gif');
+      background-size: cover;
+      border-radius: 15px;
+      z-index: -1;
+      opacity: 0.6;
+      animation: flicker 2s infinite;
     }
 
-    .flame-border iframe {
+    @keyframes flicker {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    iframe {
       width: 100%;
       height: 450px;
-      border: none;
       border-radius: 8px;
+      border: none;
     }
 
     p {
@@ -89,8 +113,8 @@
         title="STEMSphere Transformation Video" allowfullscreen></iframe>
     </div>
 
-    <p><strong>9 out of 10 students don't complete the courses they start.</strong><br>
-    This video explains how at STEMSphere Academy, we fix that and get optimal results for our students.</p>
+    <p><strong>Most students never finish the courses they start.</strong><br>
+    This video shows how STEMSphere Academy flips that narrative—using confidence-first learning and real-world examples to deliver measurable transformation.</p>
   </main>
 
   <footer>
