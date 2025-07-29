@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Other courses teach. We transform.</title>
+  <title>Other Courses Teach. We Transform.</title>
   <style>
     body {
       margin: 0;
@@ -19,7 +19,7 @@
 
     h1 {
       font-size: 2.8em;
-      color: #00B0FF;
+      color: #FFDD00;
       margin-bottom: 0.3em;
       word-break: break-word;
     }
@@ -47,30 +47,39 @@
       padding: 2em 1em 3em;
     }
 
-    /* ⚡️ Electric Yellow Strobe Border */
+    /* 🟡 Smooth Yellow Light Border */
     .flame-border {
       position: relative;
       padding: 8px;
       border-radius: 12px;
       margin: 2em auto;
-      background: linear-gradient(270deg, #fff600, #ffcc00, #fff600);
-      background-size: 400% 400%;
-      animation: strobe 2.5s linear infinite;
+      background: linear-gradient(270deg, #ffee33, #ffdd00, #ffee33);
+      background-size: 600% 600%;
+      animation: lightFlow 4s linear infinite;
       max-width: 800px;
     }
 
-    @keyframes strobe {
+    @keyframes lightFlow {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
-    iframe {
-      width: 100%;
-      height: 450px;
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      height: 0;
+      overflow: hidden;
       border-radius: 8px;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
       border: none;
-      background-color: #000;
+      border-radius: 8px;
     }
 
     p {
@@ -91,14 +100,16 @@
 
 <body>
   <header>
-    <h1>Other courses teach. We transform.</h1>
-    <h2>Better→ Smarter→ Faster Learning! ⚡️</h2>
+    <h1>Other Courses Teach. We Transform.</h1>
+    <h2>Better→ Smarter→ Faster Learning!</h2>
   </header>
 
   <main>
     <div class="flame-border">
-      <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-        title="STEMSphere Transformation Video" allowfullscreen></iframe>
+      <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+          title="STEMSphere Transformation Video" allowfullscreen></iframe>
+      </div>
     </div>
 
     <p><strong>9 out of 10 students don't complete the courses they start.</strong><br>
