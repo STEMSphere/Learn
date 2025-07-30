@@ -88,7 +88,7 @@
       cursor: pointer;
     }
 
-    /* Form overlay – hidden until 2:20 */
+    /* Form overlay – now truly hidden until JS sets display:flex */
     #popup-form {
       display: none;
       position: absolute;
@@ -97,14 +97,13 @@
       background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
-      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 1em;
     }
     #popup-form h3 { margin-bottom: .2em; font-size: 1.4em; font-weight: 700; }
-    #popup-form p  { margin-bottom: 1em;   font-size: 1em;   color: #ccc; }
+    #popup-form p  { margin-bottom: 1em; font-size: 1em; color: #ccc; }
     #popup-form input {
       width: 80%; max-width: 300px;
       padding: .8em; margin: .5em 0;
@@ -118,7 +117,6 @@
       font-weight: 700; cursor: pointer;
     }
 
-    /* End-of-video buttons – lime green */
     .sign-up-btn,
     .schedule-btn {
       display: none;
@@ -148,14 +146,15 @@
       line-height: 1.4em;
     }
 
-    /* Calendly popup overlay – hidden */
+    /* Calendly overlay – now truly hidden until JS sets display:flex */
     #calendly-popup {
       display: none;
       position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       z-index: 1500;
-      display: flex; align-items: center; justify-content: center;
+      align-items: center;
+      justify-content: center;
     }
     #calendly-popup .calendly-inline-widget {
       width: 320px; height: 580px; border: none;
@@ -201,9 +200,7 @@
 
   <main>
     <div class="electric-frame">
-
       <div class="video-container">
-        <!-- HTML5 video with native controls -->
         <video id="video" preload="metadata" playsinline controls>
           <source
             src="https://drive.google.com/uc?export=download&id=1ZWknIFbHfZAy9u38xSuPw5HdnM6Ds9fY"
@@ -216,21 +213,14 @@
       <div id="popup-form">
         <h3>Want to continue watching the video?</h3>
         <p>Enter your details below:</p>
-        <form
-          id="leadForm"
-          method="POST"
-          action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
-        >
+        <form id="leadForm" method="POST" action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
           <input type="text"   name="name"  placeholder="Your Name"   required/>
           <input type="email"  name="email" placeholder="Your Email"  required/>
           <button type="submit">Submit & Continue</button>
         </form>
       </div>
 
-      <button
-        class="sign-up-btn"
-        onclick="location.href='https://www.stemsphere.academy'"
-      >
+      <button class="sign-up-btn" onclick="location.href='https://www.stemsphere.academy'">
         Sign Up Now
       </button>
       <button class="schedule-btn">Schedule Now</button>
@@ -245,10 +235,7 @@
   </main>
 
   <div id="calendly-popup">
-    <div
-      class="calendly-inline-widget"
-      data-url="https://calendly.com/stemxsphere/trialclass"
-    ></div>
+    <div class="calendly-inline-widget" data-url="https://calendly.com/stemxsphere/trialclass"></div>
     <button class="close-cal">Close</button>
   </div>
 
@@ -263,12 +250,10 @@
     const closeCal    = document.querySelector('.close-cal');
     let flags = { form: false, sign: false, sched: false };
 
-    // toggle play/pause on overlay tap
     overlay.addEventListener('click', () => {
       video.paused ? video.play() : video.pause();
     });
 
-    // time-based triggers
     video.addEventListener('timeupdate', () => {
       const t = video.currentTime;
       if (!flags.form && t >= 140) {
@@ -286,21 +271,18 @@
       }
     });
 
-    // resume after form
-    document.getElementById('leadForm')
-      .addEventListener('submit', e => {
-        e.preventDefault();
-        fetch(e.target.action, {
-          method: 'POST',
-          body: new FormData(e.target),
-          mode: 'no-cors'
-        }).finally(() => {
-          formWrap.style.display = 'none';
-          video.play();
-        });
+    document.getElementById('leadForm').addEventListener('submit', e => {
+      e.preventDefault();
+      fetch(e.target.action, {
+        method: 'POST',
+        body: new FormData(e.target),
+        mode: 'no-cors'
+      }).finally(() => {
+        formWrap.style.display = 'none';
+        video.play();
       });
+    });
 
-    // show/hide Calendly popup
     schedBtn.addEventListener('click', () => {
       calendlyPop.style.display = 'flex';
     });
