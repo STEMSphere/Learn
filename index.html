@@ -18,18 +18,19 @@
       padding: 3em 1em 1em;
     }
 
+    /* Title spacing adjusted */
     .title-group {
       display: inline-block;
-      line-height: 1.4em;
-      margin-bottom: 0.5em;
+      margin-bottom: 0.8em;
     }
 
     .title-group span {
+      display: block;
       font-size: 2.8em;
       font-weight: 700;
       color: #FFDD00;
-      display: block;
       letter-spacing: 1px;
+      margin: 0.4em 0;
     }
 
     h2 {
@@ -105,7 +106,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.85);  /* restored semi-transparent black */
+      background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
       flex-direction: column;
@@ -158,7 +159,7 @@
       padding: 0.8em 1.2em;
       border: none;
       border-radius: 4px;
-      background: #00FF00;               /* lime green */
+      background: #00FF00;
       color: #000;
       font-weight: 700;
       box-shadow: 0 0 8px rgba(0,255,0,0.7);
@@ -233,34 +234,27 @@
 
   <main>
     <div class="electric-frame">
-
       <div class="video-container">
         <div id="player"></div>
         <div class="click-overlay"></div>
       </div>
 
-      <!-- Hidden form until 2:20 -->
       <div id="popup-form">
         <h3>Want to continue watching the video?</h3>
         <p>Enter your details below:</p>
-        <form id="leadForm"
-              method="post"
-              action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
-          <input type="text"   name="name"  placeholder="Your Name"   required />
-          <input type="email"  name="email" placeholder="Your Email"  required />
+        <form id="leadForm" method="post" action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
           <button type="submit">Submit & Continue</button>
         </form>
       </div>
 
-      <!-- End-of-video buttons -->
-      <button class="sign-up-btn"
-              onclick="window.location='https://www.stemsphere.academy'">
+      <button class="sign-up-btn" onclick="window.location='https://www.stemsphere.academy'">
         Sign Up Now
       </button>
       <button class="schedule-btn">
         Schedule Now
       </button>
-
     </div>
 
     <div class="arrow-up">↑↑↑↑</div>
@@ -277,19 +271,17 @@
 
   <!-- YouTube IFrame API + control logic -->
   <script>
-    // 1) Load YouTube API
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
 
     let player,
-        pauseTime    = 140,  // 2:20
-        signUpTime   = 384,  // 6:24
-        scheduleTime = 394,  // 6:34
+        pauseTime    = 140,
+        signUpTime   = 384,
+        scheduleTime = 394,
         intervalId,
         flags = { form: false, signUp: false, schedule: false };
 
-    // 2) Create the player
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
         videoId: 'EyFMh--R3yM',
@@ -299,6 +291,8 @@
           modestbranding: 1,
           rel: 0,
           fs: 0,
+          showinfo: 0,
+          iv_load_policy: 3,
           enablejsapi: 1
         },
         events: {
@@ -308,7 +302,6 @@
       });
     }
 
-    // 3) Wire up overlay play/pause toggle
     function onPlayerReady() {
       document.querySelector('.click-overlay')
         .addEventListener('click', () => {
@@ -321,7 +314,6 @@
         });
     }
 
-    // 4) Monitor play state for milestones
     function onPlayerStateChange(event) {
       if (event.data === YT.PlayerState.PLAYING) {
         intervalId = setInterval(checkMilestones, 500);
@@ -330,7 +322,6 @@
       }
     }
 
-    // 5) Pause at 2:20, reveal CTAs at 6:24 & 6:34
     function checkMilestones() {
       const t = player.getCurrentTime();
 
@@ -346,12 +337,10 @@
       }
       if (!flags.schedule && t >= scheduleTime) {
         flags.schedule = true;
-        const btn = document.querySelector('.schedule-btn');
-        btn.style.display = 'block';
+        document.querySelector('.schedule-btn').style.display = 'block';
       }
     }
 
-    // 6) Intercept form submit, post via Fetch, then resume
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('leadForm');
       form.addEventListener('submit', e => {
@@ -364,7 +353,6 @@
           });
       });
 
-      // 7) Calendly popup for Schedule Now
       document.querySelector('.schedule-btn')
         .addEventListener('click', () => {
           Calendly.initPopupWidget({
