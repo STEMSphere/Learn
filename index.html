@@ -1,37 +1,35 @@
-Github Learn. Stemsphere
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>STEMSphere Academy</title>
 
+  <!-- Vimeo Player API -->
+  <script src="https://player.vimeo.com/api/player.js"></script>
   <!-- Calendly inline widget CSS -->
-  <link
-    href="https://assets.calendly.com/assets/external/widget.css"
-    rel="stylesheet"
-  />
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet"/>
 
   <style>
+    /* Basic Reset & Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #000;
+      background: #000;
       color: #fff;
       text-align: center;
+      line-height: 1.4;
     }
+    a { color: inherit; text-decoration: none; }
 
+    /* Header */
     header {
       padding: 3em 1em 1em;
     }
-
-    /* Title spacing adjusted */
     .title-group {
       display: inline-block;
       margin-bottom: 0.8em;
     }
-
     .title-group span {
       display: block;
       font-size: 2.8em;
@@ -40,41 +38,41 @@ Github Learn. Stemsphere
       letter-spacing: 1px;
       margin: 0.4em 0;
     }
-
     h2 {
       font-size: 1.4em;
       color: #ccc;
       margin-top: 0.8em;
     }
 
+    /* Main Container */
     main {
-      max-width: 850px;
+      max-width: 900px;
       margin: auto;
       padding: 2em 1em 3em;
     }
 
+    /* Electric Frame around video */
     .electric-frame {
       position: relative;
+      background: #000;
       padding: 10px;
       border-radius: 12px;
       margin: 2em auto;
-      background-color: #000;
       box-shadow:
         0 0 10px #fdf200,
         0 0 16px #ffe600,
         0 0 22px #fff000;
       animation: flicker 1.5s infinite alternate;
-      max-width: 800px;
+      max-width: 850px;
     }
-
     @keyframes flicker {
-      0% {
+      from {
         box-shadow:
           0 0 8px #ffeb3b,
           0 0 12px #fdf200,
           0 0 18px #ffe600;
       }
-      100% {
+      to {
         box-shadow:
           0 0 12px #fdf200,
           0 0 18px #fff000,
@@ -82,61 +80,55 @@ Github Learn. Stemsphere
       }
     }
 
+    /* Video Container & Overlay */
     .video-container {
       position: relative;
-      padding-bottom: 56.25%;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
       height: 0;
       overflow: hidden;
       border-radius: 8px;
     }
-
-    #player {
+    .video-container iframe {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+      border: none;
+      border-radius: 8px;
     }
-
     .click-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 500;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 10;
       cursor: pointer;
     }
 
-    /* Form overlay – hidden until 2:20 */
+    /* Popup Form (2:20 pause) */
     #popup-form {
       display: none;
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       color: #fff;
-      z-index: 1000;
+      z-index: 20;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 1em;
     }
-
     #popup-form h3 {
-      margin-bottom: 0.2em;
       font-size: 1.4em;
       font-weight: 700;
+      margin-bottom: 0.2em;
     }
-
     #popup-form p {
-      margin-bottom: 1em;
-      font-size: 1em;
       color: #ccc;
+      margin-bottom: 1em;
     }
-
     #popup-form input {
       width: 80%;
       max-width: 300px;
@@ -148,7 +140,6 @@ Github Learn. Stemsphere
       color: #fff;
       font-size: 1em;
     }
-
     #popup-form button {
       padding: 0.8em 1.2em;
       margin-top: 0.5em;
@@ -160,7 +151,7 @@ Github Learn. Stemsphere
       cursor: pointer;
     }
 
-    /* End-of-video buttons – lime green */
+    /* Sign Up & Schedule Buttons */
     .sign-up-btn,
     .schedule-btn {
       display: none;
@@ -174,53 +165,49 @@ Github Learn. Stemsphere
       font-weight: 700;
       box-shadow: 0 0 8px rgba(0,255,0,0.7);
       cursor: pointer;
-      z-index: 900;
+      z-index: 15;
     }
-
     .sign-up-btn { left: 10%; }
     .schedule-btn { right: 10%; }
 
+    /* Arrow + Access Message */
     .arrow-up {
       font-size: 2.2em;
       color: #FFA500;
-      text-shadow: 0 0 6px #ffcc66;
       letter-spacing: 0.5em;
+      text-shadow: 0 0 6px #ffcc66;
       margin: 0.3em 0 0;
     }
-
     .access-message {
       font-size: 1.35em;
       font-weight: 700;
       font-family: 'Segoe UI Semibold', sans-serif;
       margin-top: 0.3em;
     }
-
     .stat-message {
       font-size: 0.95em;
       color: #ccc;
       margin-top: 1.2em;
       padding: 0 1em;
-      line-height: 1.4em;
     }
 
-    /* Calendly popup overlay */
+    /* Calendly Popup */
     #calendly-popup {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
-      z-index: 1500;
+      z-index: 30;
+      display: flex;
       align-items: center;
       justify-content: center;
     }
-
     #calendly-popup .calendly-inline-widget {
       width: 320px;
       height: 580px;
       border: none;
     }
-
     #calendly-popup .close-cal {
       margin-top: 1em;
       padding: 0.5em 1em;
@@ -231,6 +218,7 @@ Github Learn. Stemsphere
       cursor: pointer;
     }
 
+    /* Footer */
     footer {
       font-size: 0.85em;
       color: #bbb;
@@ -238,75 +226,71 @@ Github Learn. Stemsphere
       border-top: 1px solid #333;
     }
 
+    /* Responsive */
     @media (max-width: 600px) {
-      .title-group span { font-size: 2em; }
-      h2 { font-size: 1.2em; }
-      .arrow-up { font-size: 1.8em; }
-      .access-message { font-size: 1.2em; }
-      .stat-message { font-size: 0.9em; }
+      .title-group span  { font-size: 2em; }
+      h2               { font-size: 1.2em; }
+      .arrow-up        { font-size: 1.8em; }
+      .access-message  { font-size: 1.2em; }
+      .stat-message    { font-size: 0.9em; }
       #popup-form input,
-      #popup-form button {
-        width: 90%;
-        font-size: 0.9em;
-      }
+      #popup-form button { width: 90%; }
       .sign-up-btn,
-      .schedule-btn {
-        bottom: 10%;
-        font-size: 0.9em;
-      }
+      .schedule-btn     { bottom: 10%; }
       #calendly-popup .calendly-inline-widget {
-        width: 90%;
-        height: 400px;
+        width: 90%; height: 400px;
       }
     }
   </style>
 </head>
-
 <body>
+
   <header>
     <div class="title-group">
       <span>Other Courses Teach.</span>
       <span>We Transform.</span>
     </div>
-    <h2>Better→ Smarter→ Faster Learning!</h2>
+    <h2>Better → Smarter → Faster Learning!</h2>
   </header>
 
   <main>
     <div class="electric-frame">
 
+      <!-- Video + Overlay -->
       <div class="video-container">
-        <div id="player"></div>
+        <iframe
+          id="vimeo-player"
+          src="https://player.vimeo.com/video/1105713391
+            ?badge=0
+            &autopause=0
+            &player_id=vimeo-player
+            &title=0
+            &byline=0
+            &portrait=0
+            &controls=0"
+          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          title="Learn.stemsphere.academy">
+        </iframe>
         <div class="click-overlay"></div>
       </div>
 
+      <!-- 2:20 Popup Form -->
       <div id="popup-form">
-        <h3>Want to continue watching the video?</h3>
+        <h3>Want to continue watching?</h3>
         <p>Enter your details below:</p>
-        <form
-          id="leadForm"
-          method="POST"
-          action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
-        >
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Your Email"
-            required
-          />
+        <form id="leadForm"
+              method="POST"
+              action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+          <input type="text"   name="name"  placeholder="Your Name"   required/>
+          <input type="email"  name="email" placeholder="Your Email"  required/>
           <button type="submit">Submit & Continue</button>
         </form>
       </div>
 
-      <button
-        class="sign-up-btn"
-        onclick="window.location='https://www.stemsphere.academy'"
-      >
+      <!-- Sign Up & Schedule Buttons -->
+      <button class="sign-up-btn"
+              onclick="location.href='https://www.stemsphere.academy'">
         Sign Up Now
       </button>
       <button class="schedule-btn">Schedule Now</button>
@@ -316,16 +300,15 @@ Github Learn. Stemsphere
     <div class="access-message">Watch Video for Access Details</div>
     <p class="stat-message">
       9 out of 10 students don't complete the courses they start.
-      STEMSphere Academy breaks these statistics
+      STEMSphere Academy breaks these statistics.
     </p>
   </main>
 
-  <!-- Calendly inline popup container -->
+  <!-- Calendly Popup -->
   <div id="calendly-popup">
-    <div
-      class="calendly-inline-widget"
-      data-url="https://calendly.com/stemxsphere/trialclass"
-    ></div>
+    <div class="calendly-inline-widget"
+         data-url="https://calendly.com/stemxsphere/trialclass">
+    </div>
     <button class="close-cal">Close</button>
   </div>
 
@@ -333,101 +316,60 @@ Github Learn. Stemsphere
     © 2025 STEMSphere Academy. All rights reserved.
   </footer>
 
-  <!-- YouTube IFrame API + control logic -->
+  <!-- Calendly JS -->
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
+  <!-- Player + Form + Calendly Logic -->
   <script>
-    // 1) Load YouTube API
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(tag);
+    const iframe   = document.getElementById('vimeo-player');
+    const player   = new Vimeo.Player(iframe);
+    const overlay  = document.querySelector('.click-overlay');
+    const popup    = document.getElementById('popup-form');
+    const signBtn  = document.querySelector('.sign-up-btn');
+    const schedBtn = document.querySelector('.schedule-btn');
+    const calPop   = document.getElementById('calendly-popup');
+    const closeCal = document.querySelector('.close-cal');
 
-    let player,
-        pauseTime    = 140, // 2:20
-        signUpTime   = 384, // 6:24
-        scheduleTime = 394, // 6:34
-        intervalId,
-        flags = { form: false, signUp: false, schedule: false };
+    let flags = { form: false, signUp: false, schedule: false };
 
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        host: 'https://www.youtube-nocookie.com',
-        videoId: 'EyFMh--R3yM',
-        playerVars: {
-          controls: 0,
-          disablekb: 1,
-          modestbranding: 1,
-          rel: 0,
-          iv_load_policy: 3,
-          enablejsapi: 1,
-          autoplay: 0
-        },
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
-        }
-      });
-    }
+    // Play/pause on overlay click
+    overlay.addEventListener('click', () =>
+      player.getPaused().then(paused => paused ? player.play() : player.pause())
+    );
 
-    function onPlayerReady() {
-      document.querySelector('.click-overlay').addEventListener('click', () => {
-        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-          player.pauseVideo();
-        } else {
-          player.playVideo();
-        }
-      });
-    }
-
-    function onPlayerStateChange(event) {
-      if (event.data === YT.PlayerState.PLAYING) {
-        intervalId = setInterval(checkMilestones, 500);
-      } else {
-        clearInterval(intervalId);
-      }
-    }
-
-    function checkMilestones() {
-      const t = player.getCurrentTime();
-
-      if (!flags.form && t >= pauseTime) {
+    // Time-based triggers
+    player.on('timeupdate', ({ seconds: t }) => {
+      if (!flags.form && t >= 140) {
         flags.form = true;
-        clearInterval(intervalId);
-        player.pauseVideo();
-        document.getElementById('popup-form').style.display = 'flex';
+        player.pause();
+        popup.style.display = 'flex';
       }
-      if (!flags.signUp && t >= signUpTime) {
+      if (!flags.signUp && t >= 384) {
         flags.signUp = true;
-        document.querySelector('.sign-up-btn').style.display = 'block';
+        signBtn.style.display = 'block';
       }
-      if (!flags.schedule && t >= scheduleTime) {
+      if (!flags.schedule && t >= 394) {
         flags.schedule = true;
-        document.querySelector('.schedule-btn').style.display = 'block';
+        schedBtn.style.display = 'block';
       }
-    }
+    });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      // form submit handler
-      const form = document.getElementById('leadForm');
-      form.addEventListener('submit', e => {
-        e.preventDefault();
-        const data = new FormData(form);
-        fetch(form.action, { method: 'POST', body: data, mode: 'no-cors' })
-          .finally(() => {
-            document.getElementById('popup-form').style.display = 'none';
-            player.playVideo();
-          });
-      });
-
-      // show Calendly inline popup
-      document.querySelector('.schedule-btn').addEventListener('click', () => {
-        document.getElementById('calendly-popup').style.display = 'flex';
-      });
-
-      // close Calendly popup
-      document.querySelector('.close-cal').addEventListener('click', () => {
-        document.getElementById('calendly-popup').style.display = 'none';
+    // Form submit → resume video
+    document.getElementById('leadForm').addEventListener('submit', e => {
+      e.preventDefault();
+      fetch(e.target.action, {
+        method: 'POST',
+        body: new FormData(e.target),
+        mode: 'no-cors'
+      }).finally(() => {
+        popup.style.display = 'none';
+        player.play();
       });
     });
+
+    // Schedule button opens Calendly
+    schedBtn.addEventListener('click', () => calPop.style.display = 'flex');
+    closeCal.addEventListener('click', () => calPop.style.display = 'none');
   </script>
 </body>
 </html>
