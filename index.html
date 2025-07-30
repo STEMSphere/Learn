@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>STEMSphere Academy</title>
 
+  <!-- Calendly inline widget CSS -->
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet"/>
 
   <style>
@@ -87,7 +88,7 @@
       cursor: pointer;
     }
 
-    /* hidden by default */
+    /* Form overlay – hidden until 2:20 */
     #popup-form {
       display: none;
       position: absolute;
@@ -96,6 +97,7 @@
       background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -116,18 +118,16 @@
       font-weight: 700; cursor: pointer;
     }
 
+    /* End-of-video buttons – lime green */
     .sign-up-btn,
     .schedule-btn {
       display: none;
-      position: absolute;
-      bottom: 15%;
+      position: absolute; bottom: 15%;
       padding: .8em 1.2em;
       border: none; border-radius: 4px;
       background: #00FF00; color: #000;
-      font-weight: 700;
-      box-shadow: 0 0 8px rgba(0,255,0,0.7);
-      cursor: pointer;
-      z-index: 900;
+      font-weight: 700; box-shadow: 0 0 8px rgba(0,255,0,0.7);
+      cursor: pointer; z-index: 900;
     }
     .sign-up-btn { left: 10%; }
     .schedule-btn { right: 10%; }
@@ -148,15 +148,17 @@
       line-height: 1.4em;
     }
 
-    /* Calendly overlay hidden by default */
+    /* Calendly popup overlay – hidden */
     #calendly-popup {
       display: none;
       position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       z-index: 1500;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #calendly-popup .calendly-inline-widget {
+      width: 320px; height: 580px; border: none;
     }
     #calendly-popup .close-cal {
       margin-top: 1em; padding: .5em 1em;
@@ -199,17 +201,13 @@
 
   <main>
     <div class="electric-frame">
+
       <div class="video-container">
-        <video
-          id="video"
-          preload="metadata"
-          playsinline
-          controls
-        >
+        <!-- HTML5 video with native controls -->
+        <video id="video" preload="metadata" playsinline controls>
           <source
             src="https://drive.google.com/uc?export=download&id=1ZWknIFbHfZAy9u38xSuPw5HdnM6Ds9fY"
-            type="video/mp4"
-          />
+            type="video/mp4"/>
           Your browser doesn’t support HTML5 video.
         </video>
         <div class="click-overlay"></div>
@@ -265,12 +263,12 @@
     const closeCal    = document.querySelector('.close-cal');
     let flags = { form: false, sign: false, sched: false };
 
-    // play/pause toggle on overlay click
+    // toggle play/pause on overlay tap
     overlay.addEventListener('click', () => {
       video.paused ? video.play() : video.pause();
     });
 
-    // video time milestones
+    // time-based triggers
     video.addEventListener('timeupdate', () => {
       const t = video.currentTime;
       if (!flags.form && t >= 140) {
@@ -288,7 +286,7 @@
       }
     });
 
-    // resume after form submission
+    // resume after form
     document.getElementById('leadForm')
       .addEventListener('submit', e => {
         e.preventDefault();
@@ -316,3 +314,4 @@
   </footer>
 </body>
 </html>
+```
