@@ -227,10 +227,7 @@
       font-family: 'Segoe UI Semibold', sans-serif;
       margin-top: 0.3em;
     }
-    .stat-message {
-      font-size: 0.95em; color: #ccc;
-      margin-top: 1.2em; padding: 0 1em; line-height: 1.4em;
-    }
+    /* stat-message block removed */
     #calendly-popup {
       display: none; position: fixed; top: 0; left: 0;
       width: 100%; height: 100%; background: rgba(0,0,0,0.85);
@@ -254,7 +251,6 @@
       h2 { font-size: 1.2em; }
       .arrow-up { font-size: 1.8em; }
       .access-message { font-size: 1.2em; }
-      .stat-message { font-size: 0.9em; }
       #popup-form input, #popup-form button {
         width: 90%; font-size: 0.9em;
       }
@@ -319,10 +315,7 @@
 
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Watch Video for Access Details</div>
-    <p class="stat-message">
-      9 out of 10 students don't complete the courses they start.
-      STEMSphere Academy breaks these statistics
-    </p>
+    <!-- stat-message paragraph removed -->
   </main>
 
   <!-- Calendly inline popup container -->
@@ -427,13 +420,15 @@
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('leadForm').addEventListener('submit', e => {
         e.preventDefault();
+        // hide form + resume playback immediately (user gesture)
+        document.getElementById('popup-form').style.display = 'none';
+        player.playVideo();
+
+        // send data asynchronously
         const data = new FormData(e.target);
-        fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' })
-          .finally(() => {
-            document.getElementById('popup-form').style.display = 'none';
-            player.playVideo();
-          });
+        fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' });
       });
+
       document.querySelector('.schedule-btn').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'flex';
       });
@@ -444,3 +439,4 @@
   </script>
 </body>
 </html>
+```
