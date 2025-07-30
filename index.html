@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>STEMSphere Academy</title>
 
+  <!-- Calendly inline widget CSS -->
+  <link
+    href="https://assets.calendly.com/assets/external/widget.css"
+    rel="stylesheet"
+  />
+
   <style>
     body {
       margin: 0;
@@ -61,14 +67,16 @@
 
     @keyframes flicker {
       0% {
-        box-shadow: 0 0 8px #ffeb3b,
-                    0 0 12px #fdf200,
-                    0 0 18px #ffe600;
+        box-shadow:
+          0 0 8px #ffeb3b,
+          0 0 12px #fdf200,
+          0 0 18px #ffe600;
       }
       100% {
-        box-shadow: 0 0 12px #fdf200,
-                    0 0 18px #fff000,
-                    0 0 24px #ffeb3b;
+        box-shadow:
+          0 0 12px #fdf200,
+          0 0 18px #fff000,
+          0 0 24px #ffeb3b;
       }
     }
 
@@ -193,6 +201,34 @@
       line-height: 1.4em;
     }
 
+    /* Calendly popup overlay */
+    #calendly-popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 1500;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #calendly-popup .calendly-inline-widget {
+      width: 320px;
+      height: 580px;
+      border: none;
+    }
+
+    #calendly-popup .close-cal {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      background: #FFDD00;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
     footer {
       font-size: 0.85em;
       color: #bbb;
@@ -216,11 +252,12 @@
         bottom: 10%;
         font-size: 0.9em;
       }
+      #calendly-popup .calendly-inline-widget {
+        width: 90%;
+        height: 400px;
+      }
     }
   </style>
-
-  <!-- Calendly widget library for popup -->
-  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 </head>
 
 <body>
@@ -234,6 +271,7 @@
 
   <main>
     <div class="electric-frame">
+
       <div class="video-container">
         <div id="player"></div>
         <div class="click-overlay"></div>
@@ -242,19 +280,34 @@
       <div id="popup-form">
         <h3>Want to continue watching the video?</h3>
         <p>Enter your details below:</p>
-        <form id="leadForm" method="post" action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Your Email" required />
+        <form
+          id="leadForm"
+          method="POST"
+          action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
+        >
+          <input
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            required
+          />
           <button type="submit">Submit & Continue</button>
         </form>
       </div>
 
-      <button class="sign-up-btn" onclick="window.location='https://www.stemsphere.academy'">
+      <button
+        class="sign-up-btn"
+        onclick="window.location='https://www.stemsphere.academy'"
+      >
         Sign Up Now
       </button>
-      <button class="schedule-btn">
-        Schedule Now
-      </button>
+      <button class="schedule-btn">Schedule Now</button>
     </div>
 
     <div class="arrow-up">↑↑↑↑</div>
@@ -265,53 +318,62 @@
     </p>
   </main>
 
+  <!-- Calendly inline popup container -->
+  <div id="calendly-popup">
+    <div
+      class="calendly-inline-widget"
+      data-url="https://calendly.com/stemxsphere/trialclass"
+    ></div>
+    <button class="close-cal">Close</button>
+  </div>
+
   <footer>
     © 2025 STEMSphere Academy. All rights reserved.
   </footer>
 
   <!-- YouTube IFrame API + control logic -->
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script>
+    // 1) Load YouTube API
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
 
     let player,
-        pauseTime    = 140,
-        signUpTime   = 384,
-        scheduleTime = 394,
+        pauseTime    = 140, // 2:20
+        signUpTime   = 384, // 6:24
+        scheduleTime = 394, // 6:34
         intervalId,
         flags = { form: false, signUp: false, schedule: false };
 
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
+        host: 'https://www.youtube-nocookie.com',
         videoId: 'EyFMh--R3yM',
         playerVars: {
           controls: 0,
           disablekb: 1,
           modestbranding: 1,
           rel: 0,
-          fs: 0,
-          showinfo: 0,
           iv_load_policy: 3,
-          enablejsapi: 1
+          enablejsapi: 1,
+          autoplay: 0
         },
         events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange
         }
       });
     }
 
     function onPlayerReady() {
-      document.querySelector('.click-overlay')
-        .addEventListener('click', () => {
-          const state = player.getPlayerState();
-          if (state === YT.PlayerState.PLAYING) {
-            player.pauseVideo();
-          } else {
-            player.playVideo();
-          }
-        });
+      document.querySelector('.click-overlay').addEventListener('click', () => {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      });
     }
 
     function onPlayerStateChange(event) {
@@ -342,6 +404,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      // form submit handler
       const form = document.getElementById('leadForm');
       form.addEventListener('submit', e => {
         e.preventDefault();
@@ -353,12 +416,15 @@
           });
       });
 
-      document.querySelector('.schedule-btn')
-        .addEventListener('click', () => {
-          Calendly.initPopupWidget({
-            url: 'https://calendly.com/stemxsphere/trialclass'
-          });
-        });
+      // show Calendly inline popup
+      document.querySelector('.schedule-btn').addEventListener('click', () => {
+        document.getElementById('calendly-popup').style.display = 'flex';
+      });
+
+      // close Calendly popup
+      document.querySelector('.close-cal').addEventListener('click', () => {
+        document.getElementById('calendly-popup').style.display = 'none';
+      });
     });
   </script>
 </body>
