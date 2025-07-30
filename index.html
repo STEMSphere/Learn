@@ -24,10 +24,10 @@
       padding: 3em 1em 1em;
     }
 
-    /* Title spacing adjusted */
+    /* Title spacing tightened */
     .title-group {
       display: inline-block;
-      margin-bottom: 0.8em;
+      margin-bottom: 0.4em;
     }
 
     .title-group span {
@@ -42,7 +42,23 @@
     h2 {
       font-size: 1.4em;
       color: #ccc;
-      margin-top: 0.8em;
+      margin-top: 0.2em;
+    }
+
+    /* Neon course bar */
+    .course-bar {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.4em 1em;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #00f8ff, #ff00d0);
+      font-weight: 700;
+      font-size: 0.95em;
+      color: #fff;
+      margin-top: 0.6em;
+    }
+    .course-bar span + span {
+      margin-left: 0.5em;
     }
 
     main {
@@ -86,6 +102,18 @@
       height: 0;
       overflow: hidden;
       border-radius: 8px;
+    }
+
+    /* full-cover overlay to hide YouTube branding */
+    .cover-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 501;
+      pointer-events: none;
     }
 
     #player {
@@ -267,12 +295,21 @@
       <span>We Transform.</span>
     </div>
     <h2>Better→ Smarter→ Faster Learning!</h2>
+    <div class="course-bar">
+      <span>MATH</span>
+      <span>|</span>
+      <span>Chemistry</span>
+      <span>|</span>
+      <span>Biology</span>
+      <span>|</span>
+      <span>Coding & more</span>
+    </div>
   </header>
 
   <main>
     <div class="electric-frame">
-
       <div class="video-container">
+        <div class="cover-overlay"></div>
         <div id="player"></div>
         <div class="click-overlay"></div>
       </div>
@@ -349,7 +386,7 @@
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
         host: 'https://www.youtube-nocookie.com',
-        videoId: 'EyFMh--R3yM',
+        videoId: '9bvO-33YZxE',
         playerVars: {
           controls: 0,
           disablekb: 1,
@@ -377,9 +414,12 @@
     }
 
     function onPlayerStateChange(event) {
+      const cover = document.querySelector('.cover-overlay');
       if (event.data === YT.PlayerState.PLAYING) {
+        cover.style.display = 'none';
         intervalId = setInterval(checkMilestones, 500);
       } else {
+        cover.style.display = 'block';
         clearInterval(intervalId);
       }
     }
@@ -429,5 +469,3 @@
   </script>
 </body>
 </html>
-
-
