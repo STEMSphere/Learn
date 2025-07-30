@@ -1,3 +1,5 @@
+Github Learn. Stemsphere
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,10 +12,6 @@
     href="https://assets.calendly.com/assets/external/widget.css"
     rel="stylesheet"
   />
-
-  <!-- Wistia Embed Scripts -->
-  <script src="https://fast.wistia.com/embed/medias/77t87ojwbe.jsonp" async></script>
-  <script src="https://fast.wistia.com/assets/external/E-v1.js" async></script>
 
   <style>
     body {
@@ -90,6 +88,24 @@
       height: 0;
       overflow: hidden;
       border-radius: 8px;
+    }
+
+    #player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .click-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 500;
+      cursor: pointer;
     }
 
     /* Form overlay – hidden until 2:20 */
@@ -259,10 +275,8 @@
     <div class="electric-frame">
 
       <div class="video-container">
-        <div
-          class="wistia_embed wistia_async_77t87ojwbe videoFoam:true"
-          style="height:100%; width:100%;"
-        >&nbsp;</div>
+        <div id="player"></div>
+        <div class="click-overlay"></div>
       </div>
 
       <div id="popup-form">
@@ -319,53 +333,97 @@
     © 2025 STEMSphere Academy. All rights reserved.
   </footer>
 
-  <!-- Calendly widget JS -->
+  <!-- YouTube IFrame API + control logic -->
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-
-  <!-- Wistia time-based triggers + form logic -->
   <script>
-    let wistiaVideo;
-    window._wq = window._wq || [];
-    _wq.push({
-      id: "77t87ojwbe",
-      onReady: function(video) {
-        wistiaVideo = video;
-        video.bind("timechange", function(t) {
-          // 2:20 → pause & show form
-          if (t >= 140 && t < 141) {
-            document.getElementById('popup-form').style.display = 'flex';
-            video.pause();
-          }
-          // 6:24 → show Sign Up
-          if (t >= 384 && t < 385) {
-            document.querySelector('.sign-up-btn').style.display = 'block';
-          }
-          // 6:34 → show Schedule
-          if (t >= 394 && t < 395) {
-            document.querySelector('.schedule-btn').style.display = 'block';
-          }
-        });
+    // 1) Load YouTube API
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+
+    let player,
+        pauseTime    = 140, // 2:20
+        signUpTime   = 384, // 6:24
+        scheduleTime = 394, // 6:34
+        intervalId,
+        flags = { form: false, signUp: false, schedule: false };
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        host: 'https://www.youtube-nocookie.com',
+        videoId: 'EyFMh--R3yM',
+        playerVars: {
+          controls: 0,
+          disablekb: 1,
+          modestbranding: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          enablejsapi: 1,
+          autoplay: 0
+        },
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange
+        }
+      });
+    }
+
+    function onPlayerReady() {
+      document.querySelector('.click-overlay').addEventListener('click', () => {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      });
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        intervalId = setInterval(checkMilestones, 500);
+      } else {
+        clearInterval(intervalId);
       }
-    });
+    }
+
+    function checkMilestones() {
+      const t = player.getCurrentTime();
+
+      if (!flags.form && t >= pauseTime) {
+        flags.form = true;
+        clearInterval(intervalId);
+        player.pauseVideo();
+        document.getElementById('popup-form').style.display = 'flex';
+      }
+      if (!flags.signUp && t >= signUpTime) {
+        flags.signUp = true;
+        document.querySelector('.sign-up-btn').style.display = 'block';
+      }
+      if (!flags.schedule && t >= scheduleTime) {
+        flags.schedule = true;
+        document.querySelector('.schedule-btn').style.display = 'block';
+      }
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // form submit → hide overlay & resume video
-      document.getElementById('leadForm').addEventListener('submit', e => {
+      // form submit handler
+      const form = document.getElementById('leadForm');
+      form.addEventListener('submit', e => {
         e.preventDefault();
-        const data = new FormData(e.target);
-        fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' })
+        const data = new FormData(form);
+        fetch(form.action, { method: 'POST', body: data, mode: 'no-cors' })
           .finally(() => {
             document.getElementById('popup-form').style.display = 'none';
-            if (wistiaVideo) wistiaVideo.play();
+            player.playVideo();
           });
       });
 
-      // open Calendly
+      // show Calendly inline popup
       document.querySelector('.schedule-btn').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'flex';
       });
 
-      // close Calendly
+      // close Calendly popup
       document.querySelector('.close-cal').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'none';
       });
