@@ -8,43 +8,35 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #000000;
+      background-color: #000;
       color: #fff;
       text-align: center;
     }
-
     header {
       padding: 3em 1em 1em;
     }
-
     .title-group {
       display: inline-block;
       line-height: 1.4em;
       margin-bottom: 0.5em;
     }
-
     .title-group span {
       font-size: 2.8em;
       font-weight: 700;
       color: #FFDD00;
       display: block;
       letter-spacing: 1px;
-      line-height: 1.4em;
     }
-
     h2 {
       font-size: 1.4em;
       color: #ccc;
-      font-weight: normal;
       margin-top: 0.8em;
     }
-
     main {
       max-width: 850px;
       margin: auto;
       padding: 2em 1em 3em;
     }
-
     .electric-frame {
       position: relative;
       padding: 10px;
@@ -58,12 +50,10 @@
       animation: flicker 1.5s infinite alternate;
       max-width: 800px;
     }
-
     @keyframes flicker {
       0% { box-shadow: 0 0 8px #ffeb3b, 0 0 12px #fdf200, 0 0 18px #ffe600; }
       100% { box-shadow: 0 0 12px #fdf200, 0 0 18px #fff000, 0 0 24px #ffeb3b; }
     }
-
     .video-container {
       position: relative;
       padding-bottom: 56.25%;
@@ -71,17 +61,66 @@
       overflow: hidden;
       border-radius: 8px;
     }
-
-    .video-container iframe {
+    /* Player placeholder */
+    #player {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 8px;
-      border: none;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
     }
-
+    /* Form overlay */
+    #popup-form {
+      display: none;
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1em;
+    }
+    #popup-form input {
+      width: 80%;
+      max-width: 300px;
+      padding: 0.8em;
+      margin: 0.5em 0;
+      border: none;
+      border-radius: 4px;
+      background: #222;
+      color: #fff;
+      font-size: 1em;
+    }
+    #popup-form button {
+      padding: 0.8em 1.2em;
+      margin-top: 0.5em;
+      border: none;
+      border-radius: 4px;
+      background: #FFDD00;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    /* Buttons near end */
+    .sign-up-btn,
+    .schedule-btn {
+      display: none;
+      position: absolute;
+      bottom: 15%;
+      padding: 0.8em 1.2em;
+      border: none;
+      border-radius: 4px;
+      background: #FFDD00;
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 0 8px #ffe600;
+      cursor: pointer;
+      z-index: 900;
+    }
+    .sign-up-btn { left: 10%; }
+    .schedule-btn { right: 10%; }
     .arrow-up {
       font-size: 2.2em;
       color: #FFA500;
@@ -89,15 +128,12 @@
       letter-spacing: 0.5em;
       margin: 0.3em 0 0;
     }
-
     .access-message {
       font-size: 1.35em;
       font-weight: 700;
-      color: #ffffff;
       font-family: 'Segoe UI Semibold', sans-serif;
       margin-top: 0.3em;
     }
-
     .stat-message {
       font-size: 0.95em;
       color: #ccc;
@@ -105,20 +141,26 @@
       padding: 0 1em;
       line-height: 1.4em;
     }
-
     footer {
       font-size: 0.85em;
       color: #bbb;
       padding: 2em 1em;
       border-top: 1px solid #333;
     }
-
     @media (max-width: 600px) {
       .title-group span { font-size: 2em; }
       h2 { font-size: 1.2em; }
       .arrow-up { font-size: 1.8em; }
       .access-message { font-size: 1.2em; }
       .stat-message { font-size: 0.9em; }
+      #popup-form input, #popup-form button {
+        width: 90%;
+        font-size: 0.9em;
+      }
+      .sign-up-btn, .schedule-btn {
+        bottom: 10%;
+        font-size: 0.9em;
+      }
     }
   </style>
 </head>
@@ -134,18 +176,112 @@
   <main>
     <div class="electric-frame">
       <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-          title="STEMSphere Transformation Video" allowfullscreen></iframe>
+        <div id="player"></div>
       </div>
+
+      <!-- Form popup (paused at 2:20) -->
+      <div id="popup-form">
+        <h3>Just one more step</h3>
+        <form id="leadForm" method="POST" action="https://script.google.com/macros/s/AKfycbxE9j8YIo-M_VtpwzoylRaVIbO5gUI6KSv0IFOtkzRFRq6LGVNUheh4HG5AqY3-Obuc/exec">
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
+          <button type="submit">Submit & Continue</button>
+        </form>
+      </div>
+
+      <!-- Buttons at the end -->
+      <button class="sign-up-btn" onclick="window.location='https://www.stemsphere.academy'">
+        Sign Up Now
+      </button>
+      <button class="schedule-btn" onclick="window.location='https://calendly.com/stemxsphere/trialclass'">
+        Schedule Now
+      </button>
     </div>
 
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Watch Video for Access Details</div>
-    <p class="stat-message">9 out of 10 students don't complete the courses they start. STEMSphere Academy breaks these statistics</p>
+    <p class="stat-message">
+      9 out of 10 students don't complete the courses they start. STEMSphere Academy breaks these statistics
+    </p>
   </main>
 
   <footer>
     © 2025 STEMSphere Academy. All rights reserved.
   </footer>
+
+  <!-- YouTube IFrame API + control logic -->
+  <script>
+    // 1) Load YouTube IFrame API
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+
+    // 2) Player & milestone setup
+    var player;
+    var pauseTime = 140;      // 2m20s
+    var signUpTime = 384;     // 6m24s
+    var scheduleTime = 394;   // 6m34s
+    var formShown = false;
+    var signUpShown = false;
+    var scheduleShown = false;
+    var timeCheck;
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        videoId: '4vhDARSA8f4',
+        playerVars: {
+          controls: 0,
+          disablekb: 1,
+          modestbranding: 1,
+          rel: 0,
+          fs: 0
+        },
+        events: {
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        timeCheck = setInterval(checkMilestones, 500);
+      } else {
+        clearInterval(timeCheck);
+      }
+    }
+
+    function checkMilestones() {
+      var t = player.getCurrentTime();
+
+      // 1) Pause & show form
+      if (!formShown && t >= pauseTime) {
+        formShown = true;
+        clearInterval(timeCheck);
+        player.pauseVideo();
+        document.getElementById('popup-form').style.display = 'flex';
+      }
+
+      // 2) Show "Sign Up Now" button
+      if (!signUpShown && t >= signUpTime) {
+        signUpShown = true;
+        document.querySelector('.sign-up-btn').style.display = 'block';
+      }
+
+      // 3) Show "Schedule Now" button
+      if (!scheduleShown && t >= scheduleTime) {
+        scheduleShown = true;
+        document.querySelector('.schedule-btn').style.display = 'block';
+      }
+    }
+
+    // 4) Resume after form submit
+    document.getElementById('leadForm').addEventListener('submit', function(e) {
+      // brief pause so the request fires
+      setTimeout(function() {
+        document.getElementById('popup-form').style.display = 'none';
+        player.playVideo();
+      }, 300);
+    });
+  </script>
 </body>
 </html>
