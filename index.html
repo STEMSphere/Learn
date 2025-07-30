@@ -59,8 +59,16 @@
     }
 
     @keyframes flicker {
-      0% { box-shadow: 0 0 8px #ffeb3b, 0 0 12px #fdf200, 0 0 18px #ffe600; }
-      100% { box-shadow: 0 0 12px #fdf200, 0 0 18px #fff000, 0 0 24px #ffeb3b; }
+      0% {
+        box-shadow: 0 0 8px #ffeb3b,
+                    0 0 12px #fdf200,
+                    0 0 18px #ffe600;
+      }
+      100% {
+        box-shadow: 0 0 12px #fdf200,
+                    0 0 18px #fff000,
+                    0 0 24px #ffeb3b;
+      }
     }
 
     .video-container {
@@ -92,7 +100,7 @@
 
     /* Form overlay – hidden until 2:20 */
     #popup-form {
-      display: none;
+      display: none;           /* only hidden on load */
       position: absolute;
       top: 0;
       left: 0;
@@ -101,7 +109,6 @@
       background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
-      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -297,8 +304,8 @@
       });
     }
 
-    // 3) After ready, wire up overlay toggle
-    function onPlayerReady(event) {
+    // 3) Wire up overlay play/pause toggle
+    function onPlayerReady() {
       document.querySelector('.click-overlay')
         .addEventListener('click', () => {
           const state = player.getPlayerState();
@@ -310,7 +317,7 @@
         });
     }
 
-    // 4) Monitor play state to start/stop milestone checks
+    // 4) Monitor play state for milestones
     function onPlayerStateChange(event) {
       if (event.data === YT.PlayerState.PLAYING) {
         intervalId = setInterval(checkMilestones, 500);
@@ -319,7 +326,7 @@
       }
     }
 
-    // 5) Pause at 2:20, then drop in CTAs at 6:24 & 6:34
+    // 5) Pause at 2:20, then reveal CTAs at 6:24 & 6:34
     function checkMilestones() {
       const t = player.getCurrentTime();
 
@@ -339,7 +346,7 @@
       }
     }
 
-    // 6) Intercept form, send via Fetch, then resume
+    // 6) Intercept form submit, post via Fetch, then resume
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('leadForm');
       form.addEventListener('submit', e => {
