@@ -4,10 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>STEMSphere Academy</title>
+
   <!-- Calendly inline widget CSS -->
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+  <link
+    href="https://assets.calendly.com/assets/external/widget.css"
+    rel="stylesheet"
+  />
 
   <style>
+    /* ----------------------------------------------------------------
+       Global Reset & Base Styles
+    ---------------------------------------------------------------- */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -46,26 +53,41 @@
       padding: 2em 1em 3em;
     }
 
+    /* ----------------------------------------------------------------
+       Electric Frame (original video container styles)
+    ---------------------------------------------------------------- */
     .electric-frame {
       position: relative;
       padding: 10px;
       border-radius: 12px;
       margin: 2em auto;
       background-color: #000;
-      box-shadow: 0 0 10px #fdf200, 0 0 16px #ffe600, 0 0 22px #fff000;
+      box-shadow:
+        0 0 10px #fdf200,
+        0 0 16px #ffe600,
+        0 0 22px #fff000;
       animation: flicker 1.5s infinite alternate;
       max-width: 800px;
     }
 
     @keyframes flicker {
       0% {
-        box-shadow: 0 0 8px #ffeb3b, 0 0 12px #fdf200, 0 0 18px #ffe600;
+        box-shadow:
+          0 0 8px #ffeb3b,
+          0 0 12px #fdf200,
+          0 0 18px #ffe600;
       }
       100% {
-        box-shadow: 0 0 12px #fdf200, 0 0 18px #fff000, 0 0 24px #ffeb3b;
+        box-shadow:
+          0 0 12px #fdf200,
+          0 0 18px #fff000,
+          0 0 24px #ffeb3b;
       }
     }
 
+    /* ----------------------------------------------------------------
+       Original Video Container (now wraps our masked player)
+    ---------------------------------------------------------------- */
     .video-container {
       position: relative;
       padding-bottom: 56.25%;
@@ -74,21 +96,68 @@
       border-radius: 8px;
     }
 
-    #player {
+    /* ----------------------------------------------------------------
+       ▶️ Masked Video Styles (ADDED)
+    ---------------------------------------------------------------- */
+    .video-wrapper {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
     }
 
-    /* ── Cover to mask YouTube’s paused-screen title bar ── */
+    .placeholder-frame {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: url('https://img.youtube.com/vi/FTsyaltbAvM/maxresdefault.jpg');
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .play-button {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 15px #ffeb3b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 101;
+    }
+
+    .play-button::after {
+      content: '';
+      display: block;
+      width: 0; height: 0;
+      border-left: 25px solid #000;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+    }
+
+    /* The actual YouTube player DIV – hidden until “Play” click */
+    #player {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: none;
+    }
+
+    /* ----------------------------------------------------------------
+       (Original “cover-overlay” & “click-overlay” styles remain,
+       but those elements are no longer in the HTML – unused)
+    ---------------------------------------------------------------- */
     .cover-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px; /* adjust if YouTube changes it */
+      top: 0; left: 0;
+      width: 100%; height: 60px;
       background: #000;
       z-index: 50;
       pointer-events: none;
@@ -97,22 +166,21 @@
 
     .click-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 500;
       cursor: pointer;
     }
 
-    /* Form overlay – hidden until 2:20 */
+    /* ----------------------------------------------------------------
+       Form Overlay, Buttons, Calendly Popup…
+       (All your original CSS for #popup-form, .sign-up-btn, etc.)
+    ---------------------------------------------------------------- */
     #popup-form {
       display: none;
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
@@ -121,19 +189,16 @@
       justify-content: center;
       padding: 1em;
     }
-
     #popup-form h3 {
       margin-bottom: 0.2em;
       font-size: 1.4em;
       font-weight: 700;
     }
-
     #popup-form p {
       margin-bottom: 1em;
       font-size: 1em;
       color: #ccc;
     }
-
     #popup-form input {
       width: 80%;
       max-width: 300px;
@@ -145,7 +210,6 @@
       color: #fff;
       font-size: 1em;
     }
-
     #popup-form button {
       padding: 0.8em 1.2em;
       margin-top: 0.5em;
@@ -156,7 +220,6 @@
       font-weight: 700;
       cursor: pointer;
     }
-
     .sign-up-btn, .schedule-btn {
       display: none;
       position: absolute;
@@ -171,14 +234,8 @@
       cursor: pointer;
       z-index: 900;
     }
-
-    .sign-up-btn {
-      left: 10%;
-    }
-
-    .schedule-btn {
-      right: 10%;
-    }
+    .sign-up-btn { left: 10%; }
+    .schedule-btn { right: 10%; }
 
     .arrow-up {
       font-size: 2.2em;
@@ -187,14 +244,12 @@
       letter-spacing: 0.5em;
       margin: 0.3em 0 0;
     }
-
     .access-message {
       font-size: 1.35em;
       font-weight: 700;
       font-family: 'Segoe UI Semibold', sans-serif;
       margin-top: 0.3em;
     }
-
     .stat-message {
       font-size: 0.95em;
       color: #ccc;
@@ -206,22 +261,17 @@
     #calendly-popup {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       z-index: 1500;
       align-items: center;
       justify-content: center;
     }
-
     #calendly-popup .calendly-inline-widget {
-      width: 320px;
-      height: 580px;
+      width: 320px; height: 580px;
       border: none;
     }
-
     #calendly-popup .close-cal {
       margin-top: 1em;
       padding: 0.5em 1em;
@@ -247,7 +297,9 @@
       .stat-message { font-size: 0.9em; }
       #popup-form input, #popup-form button { width: 90%; font-size: 0.9em; }
       .sign-up-btn, .schedule-btn { bottom: 10%; font-size: 0.9em; }
-      #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
+      #calendly-popup .calendly-inline-widget {
+        width: 90%; height: 400px;
+      }
     }
   </style>
 </head>
@@ -258,29 +310,37 @@
       <span>Other Courses Teach.</span>
       <span>We Transform.</span>
     </div>
-    <h2>Better→ Smarter→ Faster Learning!</h2>
+    <h2>Better → Smarter → Faster Learning!</h2>
   </header>
 
   <main>
     <div class="electric-frame">
+      <!-- ▶️ Masked Video Section (only this block changed) -->
       <div class="video-container" id="video-container">
-        <div id="player"></div>
-        <!-- COVER OVERLAY -->
-        <div class="cover-overlay"></div>
-        <div class="click-overlay"></div>
+        <div class="video-wrapper">
+          <div class="placeholder-frame" id="placeholder"></div>
+          <div class="play-button" id="playBtn"></div>
+          <div id="player"></div>
+        </div>
       </div>
-
+      <!-- ▶️ Rest of your original overlays & forms unchanged -->
       <div id="popup-form">
         <h3>Want to continue watching the video?</h3>
         <p>Enter your details below:</p>
-        <form id="leadForm" method="POST" action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+        <form
+          id="leadForm"
+          method="POST"
+          action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
+        >
           <input type="text" name="name" placeholder="Your Name" required />
           <input type="email" name="email" placeholder="Your Email" required />
-          <button type="submit">Submit &amp; Continue</button>
+          <button type="submit">Submit & Continue</button>
         </form>
       </div>
-
-      <button class="sign-up-btn" onclick="window.location='https://www.stemsphere.academy'">
+      <button
+        class="sign-up-btn"
+        onclick="window.location='https://www.stemsphere.academy'"
+      >
         Sign Up Now
       </button>
       <button class="schedule-btn">Schedule Now</button>
@@ -289,18 +349,20 @@
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Watch Video for Access Details</div>
     <p class="stat-message">
-      9 out of 10 students don't complete the courses they start. STEMSphere Academy breaks these statistics
+      9 out of 10 students don't complete the courses they start. STEMSphere
+      Academy breaks these statistics
     </p>
   </main>
 
   <div id="calendly-popup">
-    <div class="calendly-inline-widget" data-url="https://calendly.com/stemxsphere/trialclass"></div>
+    <div
+      class="calendly-inline-widget"
+      data-url="https://calendly.com/stemxsphere/trialclass"
+    ></div>
     <button class="close-cal">Close</button>
   </div>
 
-  <footer>
-    © 2025 STEMSphere Academy. All rights reserved.
-  </footer>
+  <footer>© 2025 STEMSphere Academy. All rights reserved.</footer>
 
   <!-- Calendly & YouTube IFrame API + control logic -->
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
@@ -311,16 +373,16 @@
     document.head.appendChild(tag);
 
     let player,
-        pauseTime = 140,      // 2:20
-        signUpTime = 384,     // 6:24
-        scheduleTime = 394,   // 6:34
+        pauseTime   = 140, // 2:20
+        signUpTime  = 384, // 6:24
+        scheduleTime= 394, // 6:34
         intervalId,
         flags = { form: false, signUp: false, schedule: false };
 
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
         host: 'https://www.youtube-nocookie.com',
-        videoId: '9bvO-33YZxE',   // ← your new ID
+        videoId: 'FTsyaltbAvM',
         playerVars: {
           controls: 0,
           disablekb: 1,
@@ -338,43 +400,45 @@
     }
 
     function onPlayerReady() {
-      document.querySelector('.click-overlay').addEventListener('click', () => {
-        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-          player.pauseVideo();
-        } else {
-          player.playVideo();
-        }
-      });
+      const placeholder = document.getElementById('placeholder');
+      const playBtn     = document.getElementById('playBtn');
+      const playerDiv   = document.getElementById('player');
+
+      function initPlay() {
+        placeholder.style.display = 'none';
+        playBtn.style.display     = 'none';
+        playerDiv.style.display   = 'block';
+        player.playVideo();
+      }
+
+      placeholder.addEventListener('click', initPlay);
+      playBtn.addEventListener('click', initPlay);
     }
 
     function onPlayerStateChange(event) {
+      // Keep your original cover-overlay logic for pause if desired
       const cover = document.querySelector('.cover-overlay');
-
-      if (event.data === YT.PlayerState.PAUSED) {
-        cover.style.display = 'block';    // always mask when paused
-        clearInterval(intervalId);
-      }
-      else if (event.data === YT.PlayerState.PLAYING) {
-        cover.style.display = 'none';
+      if (event.data === YT.PlayerState.PLAYING) {
+        cover && (cover.style.display = 'none');
         intervalId = setInterval(checkMilestones, 500);
+      } else if (event.data === YT.PlayerState.PAUSED) {
+        cover && (cover.style.display = 'block');
+        clearInterval(intervalId);
       }
     }
 
     function checkMilestones() {
       const t = player.getCurrentTime();
-
       if (!flags.form && t >= pauseTime) {
         flags.form = true;
         clearInterval(intervalId);
         player.pauseVideo();
         document.getElementById('popup-form').style.display = 'flex';
       }
-
       if (!flags.signUp && t >= signUpTime) {
         flags.signUp = true;
         document.querySelector('.sign-up-btn').style.display = 'block';
       }
-
       if (!flags.schedule && t >= scheduleTime) {
         flags.schedule = true;
         document.querySelector('.schedule-btn').style.display = 'block';
@@ -382,11 +446,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // lead form submission
+      // Lead form submission
       document.getElementById('leadForm').addEventListener('submit', e => {
         e.preventDefault();
         const data = new FormData(e.target);
-
         fetch(e.target.action, {
           method: 'POST',
           body: data,
@@ -397,18 +460,13 @@
         });
       });
 
-      // Calendly popup
+      // Calendly popup toggles
       document.querySelector('.schedule-btn').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'flex';
       });
-
       document.querySelector('.close-cal').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'none';
       });
-
-      // ** Removed hover listeners **
-      // the cover-overlay remains whenever paused,
-      // even on hover, so no mouseenter/mouseleave here.
     });
   </script>
 </body>
