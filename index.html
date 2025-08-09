@@ -292,7 +292,6 @@
     <!-- Begin Video Section -->
     <div class="electric-frame">
       <div class="video-container">
-        <!-- semi-transparent overlay + play icon -->
         <div class="cover-overlay">
           <div class="play-btn">▶</div>
         </div>
@@ -309,12 +308,7 @@
           action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
         >
           <input type="text" name="name" placeholder="Your Name" required />
-          <input
-            type="email"
-            name="email"
-            placeholder="Your Email"
-            required
-          />
+          <input type="email" name="email" placeholder="Your Email" required />
           <button type="submit">Submit & Continue</button>
         </form>
       </div>
@@ -373,7 +367,7 @@
           iv_load_policy: 3,
           enablejsapi: 1,
           autoplay: 0,
-          playsinline: 1        // enable inline playback on Instagram
+          playsinline: 1
         },
         events: {
           onReady: onPlayerReady,
@@ -383,9 +377,10 @@
     }
 
     function onPlayerReady() {
-      // ensure iframe attributes allow inline play & autoplay
+      // allow inline playback on iOS / Instagram webview
       const iframe = player.getIframe();
-      iframe.setAttribute('allow', 'autoplay; encrypted-media');
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+      iframe.setAttribute('allowfullscreen', '');
       iframe.setAttribute('playsinline', '1');
 
       document.querySelector('.click-overlay').addEventListener('click', () => {
