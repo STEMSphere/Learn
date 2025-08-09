@@ -128,7 +128,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 700;
+      z-index: 700; /* sits above cover-overlay */
       cursor: pointer;
     }
 
@@ -308,7 +308,13 @@
     </div>
     <h2>Better → Smarter → Faster Learning!</h2>
     <div class="course-bar">
-      <span>MATH</span><span>|</span><span>Chemistry</span><span>|</span><span>Biology</span><span>|</span><span>Coding & more</span>
+      <span>MATH</span>
+      <span>|</span>
+      <span>Chemistry</span>
+      <span>|</span>
+      <span>Biology</span>
+      <span>|</span>
+      <span>Coding & more</span>
     </div>
   </header>
 
@@ -330,8 +336,18 @@
           method="POST"
           action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
         >
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Your Email" required />
+          <input
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            required
+          />
           <button type="submit">Submit & Continue</button>
         </form>
       </div>
@@ -368,7 +384,7 @@
     async
   ></script>
 
-  <!-- click-to-play + milestone tracking (IG/FB-friendly) -->
+  <!-- click-to-play + milestone tracking -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var clickOverlay = document.querySelector('.click-overlay');
@@ -378,37 +394,46 @@
       var signUpBtn    = document.querySelector('.sign-up-btn');
       var scheduleBtn  = document.querySelector('.schedule-btn');
 
-      var pauseTime    = 173; // 2:53
-      var signUpTime   = 266; // 4:26
-      var scheduleTime = 394; // original schedule trigger
+      var pauseTime    = 173;  // 2:53
+      var signUpTime   = 266;  // 4:26
+      var scheduleTime = 394;  // original schedule trigger
 
-      var videoID = '9bvO-33YZxE';
-      var baseURL =
-        'https://www.youtube.com/embed/' +
-        videoID +
-        '?rel=0&fs=0&showinfo=0&iv_load_policy=3&modestbranding=1&controls=1&playsinline=1';
+      var videoID      = '9bvO-33YZxE';
+      var videoURL     = 'https://www.youtube.com/embed/' +
+                         videoID +
+                         '?autoplay=1' +
+                         '&rel=0' +
+                         '&fs=0' +
+                         '&showinfo=0' +
+                         '&iv_load_policy=3' +
+                         '&modestbranding=1' +
+                         '&controls=0' +
+                         '&playsinline=1' +
+                         '&enablejsapi=1';
 
       var videoStarted = false;
-      var ping, iframe;
+      var iframe, ping;
 
       function startVideo() {
         if (videoStarted) return;
         videoStarted = true;
 
         iframe = document.createElement('iframe');
-        iframe.src              = baseURL;
-        iframe.frameBorder      = '0';
-        iframe.allow            = 'autoplay; encrypted-media; picture-in-picture';
-        iframe.allowFullscreen  = true;
+        iframe.src             = videoURL;
+        iframe.frameBorder     = '0';
+        iframe.allow           = 'autoplay; encrypted-media';
+        iframe.allowFullscreen = true;
+        // inline play flags
         iframe.setAttribute('playsinline', '');
         iframe.setAttribute('webkit-playsinline', '');
-        iframe.style.width      = '100%';
-        iframe.style.height     = '100%';
+        iframe.style.width     = '100%';
+        iframe.style.height    = '100%';
         playerDiv.appendChild(iframe);
 
         coverOverlay.style.display = 'none';
         clickOverlay.style.display = 'none';
 
+        // start pinging YT for currentTime
         ping = setInterval(function () {
           iframe.contentWindow.postMessage(
             JSON.stringify({ event: 'listening', id: 1 }),
@@ -426,6 +451,7 @@
 
         var t = Math.floor(info.currentTime);
 
+        // at 2:53, show form & pause
         if (t >= pauseTime && formPopup.style.display === 'none') {
           formPopup.style.display = 'flex';
           iframe.contentWindow.postMessage(
@@ -434,10 +460,12 @@
           );
         }
 
+        // at 4:26, show Sign Up
         if (t >= signUpTime && signUpBtn.style.display === 'none') {
           signUpBtn.style.display = 'block';
         }
 
+        // at original schedule time, show Schedule & stop
         if (t >= scheduleTime && scheduleBtn.style.display === 'none') {
           scheduleBtn.style.display = 'block';
           clearInterval(ping);
@@ -445,26 +473,29 @@
         }
       }
 
+      // inject video on tap
       clickOverlay.addEventListener('click', startVideo);
 
+      // form submission resumes playback
       document.getElementById('leadForm').addEventListener('submit', function (e) {
         e.preventDefault();
         var data = new FormData(e.target);
-        fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' }).finally(
-          function () {
+        fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' })
+          .finally(function () {
             formPopup.style.display = 'none';
             iframe.contentWindow.postMessage(
               JSON.stringify({ event: 'command', func: 'playVideo', args: [] }),
               '*'
             );
-          }
-        );
+          });
       });
 
+      // open Calendly
       scheduleBtn.addEventListener('click', function () {
         document.getElementById('calendly-popup').style.display = 'flex';
       });
 
+      // close Calendly
       document.querySelector('.close-cal').addEventListener('click', function () {
         document.getElementById('calendly-popup').style.display = 'none';
       });
