@@ -55,7 +55,6 @@
       color: #fff;
       margin-top: 0.6em;
     }
-
     .course-bar span + span {
       margin-left: 0.5em;
     }
@@ -72,17 +71,26 @@
       border-radius: 12px;
       margin: 2em auto;
       background-color: #000;
-      box-shadow: 0 0 10px #fdf200, 0 0 16px #ffe600, 0 0 22px #fff000;
+      box-shadow:
+        0 0 10px #fdf200,
+        0 0 16px #ffe600,
+        0 0 22px #fff000;
       animation: flicker 1.5s infinite alternate;
       max-width: 800px;
     }
 
     @keyframes flicker {
       0% {
-        box-shadow: 0 0 8px #ffeb3b, 0 0 12px #fdf200, 0 0 18px #ffe600;
+        box-shadow:
+          0 0 8px #ffeb3b,
+          0 0 12px #fdf200,
+          0 0 18px #ffe600;
       }
       100% {
-        box-shadow: 0 0 12px #fdf200, 0 0 18px #fff000, 0 0 24px #ffeb3b;
+        box-shadow:
+          0 0 12px #fdf200,
+          0 0 18px #fff000,
+          0 0 24px #ffeb3b;
       }
     }
 
@@ -94,6 +102,7 @@
       border-radius: 8px;
     }
 
+    /* semi-transparent overlay with custom play icon */
     .cover-overlay {
       position: absolute;
       top: 0;
@@ -107,7 +116,6 @@
       justify-content: center;
       pointer-events: none;
     }
-
     .cover-overlay .play-btn {
       font-size: 4em;
       color: #fff;
@@ -128,7 +136,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 700; /* sits above cover-overlay */
+      z-index: 700;  /* above cover */
       cursor: pointer;
     }
 
@@ -139,7 +147,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
       flex-direction: column;
@@ -147,19 +155,16 @@
       justify-content: center;
       padding: 1em;
     }
-
     #popup-form h3 {
       margin-bottom: 0.2em;
       font-size: 1.4em;
       font-weight: 700;
     }
-
     #popup-form p {
       margin-bottom: 1em;
       font-size: 1em;
       color: #ccc;
     }
-
     #popup-form input {
       width: 80%;
       max-width: 300px;
@@ -171,7 +176,6 @@
       color: #fff;
       font-size: 1em;
     }
-
     #popup-form button {
       padding: 0.8em 1.2em;
       margin-top: 0.5em;
@@ -194,18 +198,12 @@
       background: #00FF00;
       color: #000;
       font-weight: 700;
-      box-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
+      box-shadow: 0 0 8px rgba(0,255,0,0.7);
       cursor: pointer;
       z-index: 900;
     }
-
-    .sign-up-btn {
-      left: 10%;
-    }
-
-    .schedule-btn {
-      right: 10%;
-    }
+    .sign-up-btn { left: 10%; }
+    .schedule-btn { right: 10%; }
 
     .arrow-up {
       font-size: 2.2em;
@@ -233,22 +231,16 @@
     #calendly-popup {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
       z-index: 1500;
       align-items: center;
       justify-content: center;
     }
-
     #calendly-popup .calendly-inline-widget {
-      width: 320px;
-      height: 580px;
-      border: none;
+      width: 320px; height: 580px; border: none;
     }
-
     #calendly-popup .close-cal {
       margin-top: 1em;
       padding: 0.5em 1em;
@@ -267,35 +259,14 @@
     }
 
     @media (max-width: 600px) {
-      .title-group span {
-        font-size: 2em;
-      }
-      h2 {
-        font-size: 1.2em;
-      }
-      .arrow-up {
-        font-size: 1.8em;
-      }
-      .access-message {
-        font-size: 1.2em;
-      }
-      .stat-message {
-        font-size: 0.9em;
-      }
-      #popup-form input,
-      #popup-form button {
-        width: 90%;
-        font-size: 0.9em;
-      }
-      .sign-up-btn,
-      .schedule-btn {
-        bottom: 10%;
-        font-size: 0.9em;
-      }
-      #calendly-popup .calendly-inline-widget {
-        width: 90%;
-        height: 400px;
-      }
+      .title-group span { font-size: 2em; }
+      h2 { font-size: 1.2em; }
+      .arrow-up { font-size: 1.8em; }
+      .access-message { font-size: 1.2em; }
+      .stat-message { font-size: 0.9em; }
+      #popup-form input, #popup-form button { width: 90%; font-size: 0.9em; }
+      .sign-up-btn, .schedule-btn { bottom: 10%; font-size: 0.9em; }
+      #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
     }
   </style>
 </head>
@@ -321,6 +292,7 @@
   <main>
     <div class="electric-frame">
       <div class="video-container">
+        <!-- now shows semi-transparent overlay + play icon -->
         <div class="cover-overlay">
           <div class="play-btn">▶</div>
         </div>
@@ -336,18 +308,8 @@
           method="POST"
           action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
         >
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Your Email"
-            required
-          />
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
           <button type="submit">Submit & Continue</button>
         </form>
       </div>
@@ -364,7 +326,8 @@
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Watch Video for Access Details</div>
     <p class="stat-message">
-      9 out of 10 students don't complete the courses they start. STEMSphere Academy breaks these statistics
+      9 out of 10 students don't complete the courses they start.
+      STEMSphere Academy breaks these statistics
     </p>
   </main>
 
@@ -378,128 +341,98 @@
 
   <footer>© 2025 STEMSphere Academy. All rights reserved.</footer>
 
-  <!-- Calendly widget -->
-  <script
-    src="https://assets.calendly.com/assets/external/widget.js"
-    async
-  ></script>
-
-  <!-- click-to-play + milestone tracking -->
+  <!-- Calendly & YouTube IFrame API + control logic -->
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var clickOverlay = document.querySelector('.click-overlay');
-      var coverOverlay = document.querySelector('.cover-overlay');
-      var playerDiv    = document.getElementById('player');
-      var formPopup    = document.getElementById('popup-form');
-      var signUpBtn    = document.querySelector('.sign-up-btn');
-      var scheduleBtn  = document.querySelector('.schedule-btn');
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
 
-      var pauseTime    = 173;  // 2:53
-      var signUpTime   = 266;  // 4:26
-      var scheduleTime = 394;  // original schedule trigger
+    let player,
+        pauseTime    = 140,
+        signUpTime   = 384,
+        scheduleTime = 394,
+        intervalId,
+        flags = { form: false, signUp: false, schedule: false };
 
-      var videoID      = '9bvO-33YZxE';
-      var videoURL     = 'https://www.youtube.com/embed/' +
-                         videoID +
-                         '?autoplay=1' +
-                         '&rel=0' +
-                         '&fs=0' +
-                         '&showinfo=0' +
-                         '&iv_load_policy=3' +
-                         '&modestbranding=1' +
-                         '&controls=0' +
-                         '&playsinline=1' +
-                         '&enablejsapi=1';
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        host: 'https://www.youtube-nocookie.com',
+        videoId: '9bvO-33YZxE',
+        playerVars: {
+          controls: 0,
+          disablekb: 1,
+          modestbranding: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          enablejsapi: 1,
+          autoplay: 0
+        },
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange
+        }
+      });
+    }
 
-      var videoStarted = false;
-      var iframe, ping;
+    function onPlayerReady() {
+      document.querySelector('.click-overlay').addEventListener('click', () => {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      });
+    }
 
-      function startVideo() {
-        if (videoStarted) return;
-        videoStarted = true;
-
-        iframe = document.createElement('iframe');
-        iframe.src             = videoURL;
-        iframe.frameBorder     = '0';
-        iframe.allow           = 'autoplay; encrypted-media';
-        iframe.allowFullscreen = true;
-        // inline play flags
-        iframe.setAttribute('playsinline', '');
-        iframe.setAttribute('webkit-playsinline', '');
-        iframe.style.width     = '100%';
-        iframe.style.height    = '100%';
-        playerDiv.appendChild(iframe);
-
-        coverOverlay.style.display = 'none';
-        clickOverlay.style.display = 'none';
-
-        // start pinging YT for currentTime
-        ping = setInterval(function () {
-          iframe.contentWindow.postMessage(
-            JSON.stringify({ event: 'listening', id: 1 }),
-            '*'
-          );
-        }, 1000);
-
-        window.addEventListener('message', onMessage);
+    function onPlayerStateChange(event) {
+      const cover = document.querySelector('.cover-overlay');
+      if (event.data === YT.PlayerState.PLAYING) {
+        cover.style.display = 'none';
+        intervalId = setInterval(checkMilestones, 500);
+      } else {
+        cover.style.display = 'flex';
+        clearInterval(intervalId);
       }
+    }
 
-      function onMessage(event) {
-        if (typeof event.data !== 'string' || !event.data.includes('info')) return;
-        var info = JSON.parse(event.data).info;
-        if (!info) return;
-
-        var t = Math.floor(info.currentTime);
-
-        // at 2:53, show form & pause
-        if (t >= pauseTime && formPopup.style.display === 'none') {
-          formPopup.style.display = 'flex';
-          iframe.contentWindow.postMessage(
-            JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }),
-            '*'
-          );
-        }
-
-        // at 4:26, show Sign Up
-        if (t >= signUpTime && signUpBtn.style.display === 'none') {
-          signUpBtn.style.display = 'block';
-        }
-
-        // at original schedule time, show Schedule & stop
-        if (t >= scheduleTime && scheduleBtn.style.display === 'none') {
-          scheduleBtn.style.display = 'block';
-          clearInterval(ping);
-          window.removeEventListener('message', onMessage);
-        }
+    function checkMilestones() {
+      const t = player.getCurrentTime();
+      if (!flags.form && t >= pauseTime) {
+        flags.form = true;
+        clearInterval(intervalId);
+        player.pauseVideo();
+        document.getElementById('popup-form').style.display = 'flex';
       }
+      if (!flags.signUp && t >= signUpTime) {
+        flags.signUp = true;
+        document.querySelector('.sign-up-btn').style.display = 'block';
+      }
+      if (!flags.schedule && t >= scheduleTime) {
+        flags.schedule = true;
+        document.querySelector('.schedule-btn').style.display = 'block';
+      }
+    }
 
-      // inject video on tap
-      clickOverlay.addEventListener('click', startVideo);
-
-      // form submission resumes playback
-      document.getElementById('leadForm').addEventListener('submit', function (e) {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('leadForm').addEventListener('submit', e => {
         e.preventDefault();
-        var data = new FormData(e.target);
+        const data = new FormData(e.target);
         fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' })
-          .finally(function () {
-            formPopup.style.display = 'none';
-            iframe.contentWindow.postMessage(
-              JSON.stringify({ event: 'command', func: 'playVideo', args: [] }),
-              '*'
-            );
+          .finally(() => {
+            document.getElementById('popup-form').style.display = 'none';
+            player.playVideo();
           });
       });
 
-      // open Calendly
-      scheduleBtn.addEventListener('click', function () {
+      document.querySelector('.schedule-btn').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'flex';
       });
-
-      // close Calendly
-      document.querySelector('.close-cal').addEventListener('click', function () {
+      document.querySelector('.close-cal').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'none';
       });
     });
   </script>
 </body>
 </html>
+
