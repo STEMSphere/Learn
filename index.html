@@ -12,7 +12,6 @@
   />
 
   <style>
-    /* ── Global Styles ───────────────────────────────────────────── */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -20,51 +19,215 @@
       color: #fff;
       text-align: center;
     }
+
     header {
       padding: 3em 1em 1em;
     }
+
     .title-group {
       display: inline-block;
-      margin-bottom: .4em;
+      margin-bottom: 0.4em;
     }
+
     .title-group span {
       display: block;
       font-size: 2.8em;
       font-weight: 700;
       color: #FFDD00;
       letter-spacing: 1px;
-      margin: .4em 0;
+      margin: 0.4em 0;
     }
+
     h2 {
       font-size: 1.4em;
       color: #ccc;
-      margin-top: .2em;
+      margin-top: 0.2em;
     }
+
     .course-bar {
       display: inline-flex;
       align-items: center;
-      padding: .4em 1em;
+      padding: 0.4em 1em;
       border-radius: 999px;
       background: linear-gradient(90deg, #00f8ff, #ff00d0);
       font-weight: 700;
-      font-size: .95em;
+      font-size: 0.95em;
       color: #fff;
-      margin-top: .6em;
+      margin-top: 0.6em;
     }
     .course-bar span + span {
-      margin-left: .5em;
+      margin-left: 0.5em;
     }
+
     main {
       max-width: 850px;
       margin: auto;
       padding: 2em 1em 3em;
     }
-    footer {
-      font-size: .85em;
-      color: #bbb;
-      padding: 2em 1em;
-      border-top: 1px solid #333;
+
+    .electric-frame {
+      position: relative;
+      padding: 10px;
+      border-radius: 12px;
+      margin: 2em auto;
+      background-color: #000;
+      box-shadow:
+        0 0 10px #fdf200,
+        0 0 16px #ffe600,
+        0 0 22px #fff000;
+      animation: flicker 1.5s infinite alternate;
+      max-width: 800px;
     }
+
+    @keyframes flicker {
+      0% {
+        box-shadow:
+          0 0 8px #ffeb3b,
+          0 0 12px #fdf200,
+          0 0 18px #ffe600;
+      }
+      100% {
+        box-shadow:
+          0 0 12px #fdf200,
+          0 0 18px #fff000,
+          0 0 24px #ffeb3b;
+      }
+    }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    /* semi-transparent overlay with custom play icon */
+    .cover-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .cover-overlay .play-btn {
+      font-size: 4em;
+      color: #fff;
+      opacity: 0.8;
+    }
+
+    #player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .click-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 700;  /* above cover */
+      cursor: pointer;
+    }
+
+    #popup-form {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1em;
+    }
+    #popup-form h3 {
+      margin-bottom: 0.2em;
+      font-size: 1.4em;
+      font-weight: 700;
+    }
+    #popup-form p {
+      margin-bottom: 1em;
+      font-size: 1em;
+      color: #ccc;
+    }
+    #popup-form input {
+      width: 80%;
+      max-width: 300px;
+      padding: 0.8em;
+      margin: 0.5em 0;
+      border: none;
+      border-radius: 4px;
+      background: #222;
+      color: #fff;
+      font-size: 1em;
+    }
+    #popup-form button {
+      padding: 0.8em 1.2em;
+      margin-top: 0.5em;
+      border: none;
+      border-radius: 4px;
+      background: #FFDD00;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sign-up-btn,
+    .schedule-btn {
+      display: none;
+      position: absolute;
+      bottom: 15%;
+      padding: 0.8em 1.2em;
+      border: none;
+      border-radius: 4px;
+      background: #00FF00;
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 0 8px rgba(0,255,0,0.7);
+      cursor: pointer;
+      z-index: 900;
+    }
+    .sign-up-btn { left: 10%; }
+    .schedule-btn { right: 10%; }
+
+    .arrow-up {
+      font-size: 2.2em;
+      color: #FFA500;
+      text-shadow: 0 0 6px #ffcc66;
+      letter-spacing: 0.5em;
+      margin: 0.3em 0 0;
+    }
+
+    .access-message {
+      font-size: 1.35em;
+      font-weight: 700;
+      font-family: 'Segoe UI Semibold', sans-serif;
+      margin-top: 0.3em;
+    }
+
+    .stat-message {
+      font-size: 0.95em;
+      color: #ccc;
+      margin-top: 1.2em;
+      padding: 0 1em;
+      line-height: 1.4em;
+    }
+
     #calendly-popup {
       display: none;
       position: fixed;
@@ -80,7 +243,7 @@
     }
     #calendly-popup .close-cal {
       margin-top: 1em;
-      padding: .5em 1em;
+      padding: 0.5em 1em;
       background: #FFDD00;
       color: #000;
       border: none;
@@ -88,139 +251,22 @@
       cursor: pointer;
     }
 
-    /* ── Video Section Styles (IG- & FB-friendly) ───────────────── */
-    .electric-frame {
-      position: relative;
-      padding: 10px;
-      border-radius: 12px;
-      margin: 2em auto;
-      background-color: #000;
-      box-shadow:
-        0 0 10px #fdf200,
-        0 0 16px #ffe600,
-        0 0 22px #fff000;
-      animation: flicker 1.5s infinite alternate;
-      max-width: 800px;
-    }
-    @keyframes flicker {
-      0% {
-        box-shadow:
-          0 0 8px #ffeb3b,
-          0 0 12px #fdf200,
-          0 0 18px #ffe600;
-      }
-      100% {
-        box-shadow:
-          0 0 12px #fdf200,
-          0 0 18px #fff000,
-          0 0 24px #ffeb3b;
-      }
-    }
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-      overflow: hidden;
-      border-radius: 8px;
-    }
-    .video-wrapper {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      overflow: hidden;
-      border-radius: 8px;
-      background: #000;
-    }
-    .placeholder-frame {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      cursor: pointer;
-      z-index: 100;
-    }
-    .placeholder-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .play-button {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.85);
-      box-shadow: 0 0 15px #ffeb3b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 101;
-    }
-    .play-button::after {
-      content: '';
-      display: block;
-      width: 0; height: 0;
-      border-left: 25px solid #000;
-      border-top: 15px solid transparent;
-      border-bottom: 15px solid transparent;
-    }
-    #player {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      display: none;
-      z-index: 0;
-    }
-    .click-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 200;
-      cursor: pointer;
-    }
-    .sign-up-btn {
-      display: none;
-      position: absolute;
-      bottom: 15%;
-      left: 10%;
-      padding: .8em 1.2em;
-      border: none;
-      border-radius: 4px;
-      background: #FFDD00;
-      color: #000;
-      font-weight: 700;
-      box-shadow: 0 0 8px rgba(255,221,0,.7);
-      cursor: pointer;
-      z-index: 900;
+    footer {
+      font-size: 0.85em;
+      color: #bbb;
+      padding: 2em 1em;
+      border-top: 1px solid #333;
     }
 
     @media (max-width: 600px) {
       .title-group span { font-size: 2em; }
       h2 { font-size: 1.2em; }
-      .play-button { width: 60px; height: 60px; }
-      .sign-up-btn { font-size: .9em; bottom: 10%; }
-    }
-
-    /* ── Arrow + Messages ───────────────────────────────────────── */
-    .arrow-up {
-      font-size: 2.2em;
-      color: #FFA500;
-      text-shadow: 0 0 6px #ffcc66;
-      letter-spacing: .5em;
-      margin: .3em 0 0;
-    }
-    .access-message {
-      font-size: 1.35em;
-      font-weight: 700;
-      margin-top: .3em;
-    }
-    .stat-message {
-      font-size: .95em;
-      color: #ccc;
-      margin-top: 1.2em;
-      padding: 0 1em;
-      line-height: 1.4em;
+      .arrow-up { font-size: 1.8em; }
+      .access-message { font-size: 1.2em; }
+      .stat-message { font-size: 0.9em; }
+      #popup-form input, #popup-form button { width: 90%; font-size: 0.9em; }
+      .sign-up-btn, .schedule-btn { bottom: 10%; font-size: 0.9em; }
+      #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
     }
   </style>
 </head>
@@ -233,28 +279,39 @@
     </div>
     <h2>Better → Smarter → Faster Learning!</h2>
     <div class="course-bar">
-      <span>MATH</span><span>|</span>
-      <span>Chemistry</span><span>|</span>
-      <span>Biology</span><span>|</span>
+      <span>MATH</span>
+      <span>|</span>
+      <span>Chemistry</span>
+      <span>|</span>
+      <span>Biology</span>
+      <span>|</span>
       <span>Coding & more</span>
     </div>
   </header>
 
   <main>
-    <!-- Video Section (click-to-play, inline on IG/FB) -->
-    <div class="electric-frame" oncontextmenu="return false;">
+    <div class="electric-frame">
       <div class="video-container">
-        <div class="video-wrapper">
-          <div class="placeholder-frame" id="placeholder">
-            <img
-              src="https://img.youtube.com/vi/9bvO-33YZxE/maxresdefault.jpg"
-              alt="STEMSphere Demo Thumbnail"
-            />
-          </div>
-          <div class="play-button" id="playBtn"></div>
-          <div id="player"></div>
-          <div class="click-overlay"></div>
+        <!-- now shows semi-transparent overlay + play icon -->
+        <div class="cover-overlay">
+          <div class="play-btn">▶</div>
         </div>
+        <div id="player"></div>
+        <div class="click-overlay"></div>
+      </div>
+
+      <div id="popup-form">
+        <h3>Want to continue watching the video?</h3>
+        <p>Enter your details below:</p>
+        <form
+          id="leadForm"
+          method="POST"
+          action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
+        >
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
+          <button type="submit">Submit & Continue</button>
+        </form>
       </div>
 
       <button
@@ -263,10 +320,11 @@
       >
         Sign Up Now
       </button>
+      <button class="schedule-btn">Schedule Now</button>
     </div>
 
     <div class="arrow-up">↑↑↑↑</div>
-    <div class="access-message">Watch Demo for Access Details</div>
+    <div class="access-message">Watch Video for Access Details</div>
     <p class="stat-message">
       9 out of 10 students don't complete the courses they start.
       STEMSphere Academy breaks these statistics
@@ -283,62 +341,98 @@
 
   <footer>© 2025 STEMSphere Academy. All rights reserved.</footer>
 
-  <!-- Calendly widget JS -->
+  <!-- Calendly & YouTube IFrame API + control logic -->
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-
-  <!-- click-to-play YouTube injection + CTA script -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var placeholder = document.getElementById('placeholder');
-      var playBtn     = document.getElementById('playBtn');
-      var overlay     = document.querySelector('.click-overlay');
-      var playerDiv   = document.getElementById('player');
-      var signUpBtn   = document.querySelector('.sign-up-btn');
-      var videoStarted = false;
-      var videoID      = '9bvO-33YZxE';
-      var videoURL     =
-        'https://www.youtube.com/embed/' +
-        videoID +
-        '?autoplay=1&rel=0&modestbranding=1&controls=0&playsinline=1';
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
 
-      function startVideo() {
-        if (videoStarted) return;
-        var iframe = document.createElement('iframe');
-        iframe.src             = videoURL;
-        iframe.frameBorder     = '0';
-        iframe.allow           =
-          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-        iframe.allowFullscreen = true;
-        iframe.style.width     = '100%';
-        iframe.style.height    = '100%';
+    let player,
+        pauseTime    = 140,
+        signUpTime   = 384,
+        scheduleTime = 394,
+        intervalId,
+        flags = { form: false, signUp: false, schedule: false };
 
-        playerDiv.appendChild(iframe);
-        playerDiv.style.display   = 'block';
-        placeholder.style.display = 'none';
-        playBtn.style.display     = 'none';
-        overlay.style.display     = 'none';
-        signUpBtn.style.display   = 'block';
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        host: 'https://www.youtube-nocookie.com',
+        videoId: '9bvO-33YZxE',
+        playerVars: {
+          controls: 0,
+          disablekb: 1,
+          modestbranding: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          enablejsapi: 1,
+          autoplay: 0
+        },
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange
+        }
+      });
+    }
 
-        videoStarted = true;
+    function onPlayerReady() {
+      document.querySelector('.click-overlay').addEventListener('click', () => {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      });
+    }
+
+    function onPlayerStateChange(event) {
+      const cover = document.querySelector('.cover-overlay');
+      if (event.data === YT.PlayerState.PLAYING) {
+        cover.style.display = 'none';
+        intervalId = setInterval(checkMilestones, 500);
+      } else {
+        cover.style.display = 'flex';
+        clearInterval(intervalId);
       }
+    }
 
-      [placeholder, playBtn, overlay].forEach(function(el) {
-        if (el) el.addEventListener('click', startVideo);
+    function checkMilestones() {
+      const t = player.getCurrentTime();
+      if (!flags.form && t >= pauseTime) {
+        flags.form = true;
+        clearInterval(intervalId);
+        player.pauseVideo();
+        document.getElementById('popup-form').style.display = 'flex';
+      }
+      if (!flags.signUp && t >= signUpTime) {
+        flags.signUp = true;
+        document.querySelector('.sign-up-btn').style.display = 'block';
+      }
+      if (!flags.schedule && t >= scheduleTime) {
+        flags.schedule = true;
+        document.querySelector('.schedule-btn').style.display = 'block';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('leadForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const data = new FormData(e.target);
+        fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' })
+          .finally(() => {
+            document.getElementById('popup-form').style.display = 'none';
+            player.playVideo();
+          });
       });
 
-      // Calendly popup trigger
-      document
-        .querySelector('.sign-up-btn')
-        .addEventListener('click', function(e) {
-          e.preventDefault();
-          document.getElementById('calendly-popup').style.display = 'flex';
-        });
-      document
-        .querySelector('.close-cal')
-        .addEventListener('click', function() {
-          document.getElementById('calendly-popup').style.display = 'none';
-        });
+      document.querySelector('.schedule-btn').addEventListener('click', () => {
+        document.getElementById('calendly-popup').style.display = 'flex';
+      });
+      document.querySelector('.close-cal').addEventListener('click', () => {
+        document.getElementById('calendly-popup').style.display = 'none';
+      });
     });
   </script>
 </body>
 </html>
+
