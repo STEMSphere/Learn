@@ -122,6 +122,7 @@
       opacity: 0.8;
     }
 
+    /* this is now a placeholder‐div for either the YouTube iframe or our <video> */
     #player {
       position: absolute;
       top: 0;
@@ -136,7 +137,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 700;  /* above cover */
+      z-index: 700;
       cursor: pointer;
     }
 
@@ -341,19 +342,70 @@
 
   <footer>© 2025 STEMSphere Academy. All rights reserved.</footer>
 
-  <!-- Calendly & YouTube IFrame API + control logic -->
+  <!-- Calendly & YouTube IFrame API + unified playback logic -->
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script>
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(tag);
+    // 1) detect Instagram/FB in-app browser
+    const isInstaWebview = /Instagram|FBAN|FBAV/.test(navigator.userAgent);
 
-    let player,
-        pauseTime    = 140,
+    // 2) shared milestone settings
+    let pauseTime    = 140,
         signUpTime   = 384,
         scheduleTime = 394,
         intervalId,
-        flags = { form: false, signUp: false, schedule: false };
+        flags        = { form: false, signUp: false, schedule: false };
+
+    // 3) HTML5 fallback for Instagram
+    function initHTML5Player() {
+      const container = document.querySelector('.video-container');
+      container.innerHTML = `
+        <video
+          id="html5player"
+          playsinline webkit-playsinline
+          controls preload="metadata"
+          style="width:100%; height:100%;"
+          src="https://cdn.stemsphere.academy/YOUR_SELF_HOSTED_PREVIEW.mp4"
+        ></video>
+      `;
+      const vid = document.getElementById('html5player');
+
+      // hide overlay when they tap play
+      vid.addEventListener('play', () => {
+        document.querySelector('.cover-overlay').style.display = 'none';
+      });
+
+      // track timeupdate for milestones
+      vid.addEventListener('timeupdate', () => {
+        const t = vid.currentTime;
+        if (!flags.form && t >= pauseTime) {
+          flags.form = true;
+          vid.pause();
+          document.getElementById('popup-form').style.display = 'flex';
+        }
+        if (!flags.signUp && t >= signUpTime) {
+          flags.signUp = true;
+          document.querySelector('.sign-up-btn').style.display = 'block';
+        }
+        if (!flags.schedule && t >= scheduleTime) {
+          flags.schedule = true;
+          document.querySelector('.schedule-btn').style.display = 'block';
+        }
+      });
+
+      // clicking overlay toggles play/pause
+      document.querySelector('.click-overlay').addEventListener('click', () => {
+        if (vid.paused) vid.play();
+        else vid.pause();
+      });
+    }
+
+    // 4) YouTube API setup for all other browsers
+    function initYouTube() {
+      // inject API script
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(tag);
+    }
 
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
@@ -377,7 +429,6 @@
     }
 
     function onPlayerReady() {
-      // allow inline playback on iOS / Instagram webview
       const iframe = player.getIframe();
       iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
       iframe.setAttribute('allowfullscreen', '');
@@ -396,14 +447,14 @@
       const cover = document.querySelector('.cover-overlay');
       if (event.data === YT.PlayerState.PLAYING) {
         cover.style.display = 'none';
-        intervalId = setInterval(checkMilestones, 500);
+        intervalId = setInterval(checkMilestonesYT, 500);
       } else {
         cover.style.display = 'flex';
         clearInterval(intervalId);
       }
     }
 
-    function checkMilestones() {
+    function checkMilestonesYT() {
       const t = player.getCurrentTime();
       if (!flags.form && t >= pauseTime) {
         flags.form = true;
@@ -421,14 +472,22 @@
       }
     }
 
+    // 5) lead‐form & Calendly
     document.addEventListener('DOMContentLoaded', () => {
+      if (isInstaWebview) {
+        initHTML5Player();
+      } else {
+        initYouTube();
+      }
+
       document.getElementById('leadForm').addEventListener('submit', e => {
         e.preventDefault();
         const data = new FormData(e.target);
         fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' })
           .finally(() => {
             document.getElementById('popup-form').style.display = 'none';
-            player.playVideo();
+            if (isInstaWebview) document.getElementById('html5player').play();
+            else player.playVideo();
           });
       });
 
