@@ -6,7 +6,10 @@
   <title>STEMSphere Academy</title>
 
   <!-- Calendly inline widget CSS -->
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+  <link
+    href="https://assets.calendly.com/assets/external/widget.css"
+    rel="stylesheet"
+  />
 
   <style>
     body {
@@ -25,6 +28,7 @@
       display: inline-block;
       margin-bottom: 0.4em;
     }
+
     .title-group span {
       display: block;
       font-size: 2.8em;
@@ -67,19 +71,32 @@
       border-radius: 12px;
       margin: 2em auto;
       background-color: #000;
-      box-shadow: 0 0 10px #fdf200, 0 0 16px #ffe600, 0 0 22px #fff000;
+      box-shadow:
+        0 0 10px #fdf200,
+        0 0 16px #ffe600,
+        0 0 22px #fff000;
       animation: flicker 1.5s infinite alternate;
       max-width: 800px;
     }
 
     @keyframes flicker {
-      0%   { box-shadow: 0 0 8px #ffeb3b, 0 0 12px #fdf200, 0 0 18px #ffe600; }
-      100% { box-shadow: 0 0 12px #fdf200, 0 0 18px #fff000, 0 0 24px #ffeb3b; }
+      0% {
+        box-shadow:
+          0 0 8px #ffeb3b,
+          0 0 12px #fdf200,
+          0 0 18px #ffe600;
+      }
+      100% {
+        box-shadow:
+          0 0 12px #fdf200,
+          0 0 18px #fff000,
+          0 0 24px #ffeb3b;
+      }
     }
 
     .video-container {
       position: relative;
-      padding-bottom: 56.25%; /* 16:9 */
+      padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
       border-radius: 8px;
@@ -105,7 +122,6 @@
       opacity: 0.8;
     }
 
-    /* YouTube iframe container */
     #player {
       position: absolute;
       top: 0;
@@ -114,18 +130,16 @@
       height: 100%;
     }
 
-    /* intercept all taps until first play */
     .click-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 700;
+      z-index: 700;  /* above cover */
       cursor: pointer;
     }
 
-    /* popup form styling */
     #popup-form {
       display: none;
       position: absolute;
@@ -217,19 +231,15 @@
     #calendly-popup {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       z-index: 1500;
       align-items: center;
       justify-content: center;
     }
     #calendly-popup .calendly-inline-widget {
-      width: 320px;
-      height: 580px;
-      border: none;
+      width: 320px; height: 580px; border: none;
     }
     #calendly-popup .close-cal {
       margin-top: 1em;
@@ -258,29 +268,6 @@
       .sign-up-btn, .schedule-btn { bottom: 10%; font-size: 0.9em; }
       #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
     }
-
-    /* ── NEW: Disable all clicks on the YouTube iframe ── */
-    .electric-frame #player iframe {
-      pointer-events: none;
-    }
-
-    /* ── NEW: Custom Pause/Play Controls styling ── */
-    .electric-frame .custom-controls {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      z-index: 850;
-    }
-    .electric-frame .custom-controls .ctl-btn {
-      background: rgba(0,0,0,0.6);
-      border: none;
-      color: #fff;
-      font-size: 1.2em;
-      padding: 0.4em 0.6em;
-      margin-left: 0.3em;
-      border-radius: 4px;
-      cursor: pointer;
-    }
   </style>
 </head>
 
@@ -292,9 +279,12 @@
     </div>
     <h2>Better → Smarter → Faster Learning!</h2>
     <div class="course-bar">
-      <span>MATH</span><span>|</span>
-      <span>Chemistry</span><span>|</span>
-      <span>Biology</span><span>|</span>
+      <span>MATH</span>
+      <span>|</span>
+      <span>Chemistry</span>
+      <span>|</span>
+      <span>Biology</span>
+      <span>|</span>
       <span>Coding & more</span>
     </div>
   </header>
@@ -302,51 +292,50 @@
   <main>
     <div class="electric-frame">
       <div class="video-container">
+        <!-- now shows semi-transparent overlay + play icon -->
         <div class="cover-overlay">
           <div class="play-btn">▶</div>
         </div>
         <div id="player"></div>
         <div class="click-overlay"></div>
-
-        <!-- Custom controls -->
-        <div class="custom-controls">
-          <button id="custom-play" class="ctl-btn" style="display:none;">►</button>
-          <button id="custom-pause" class="ctl-btn" style="display:none;">❚❚</button>
-        </div>
       </div>
 
       <div id="popup-form">
         <h3>Want to continue watching the video?</h3>
         <p>Enter your details below:</p>
-        <form id="leadForm" method="POST"
-              action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+        <form
+          id="leadForm"
+          method="POST"
+          action="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
+        >
           <input type="text" name="name" placeholder="Your Name" required />
           <input type="email" name="email" placeholder="Your Email" required />
           <button type="submit">Submit & Continue</button>
         </form>
       </div>
 
-      <button class="sign-up-btn"
-              onclick="window.location='https://www.stemsphere.academy'">
+      <button
+        class="sign-up-btn"
+        onclick="window.location='https://www.stemsphere.academy'"
+      >
         Sign Up Now
       </button>
-      <button class="schedule-btn">
-        Schedule Now
-      </button>
+      <button class="schedule-btn">Schedule Now</button>
     </div>
 
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Watch Video for Access Details</div>
     <p class="stat-message">
-      9 out of 10 students don’t complete the courses they start.
+      9 out of 10 students don't complete the courses they start.
       STEMSphere Academy breaks these statistics
     </p>
   </main>
 
   <div id="calendly-popup">
-    <div class="calendly-inline-widget"
-         data-url="https://calendly.com/stemxsphere/trialclass">
-    </div>
+    <div
+      class="calendly-inline-widget"
+      data-url="https://calendly.com/stemxsphere/trialclass"
+    ></div>
     <button class="close-cal">Close</button>
   </div>
 
@@ -387,62 +376,38 @@
     }
 
     function onPlayerReady() {
-      const clickOverlay = document.querySelector('.click-overlay');
-      const playBtn      = document.getElementById('custom-play');
-      const pauseBtn     = document.getElementById('custom-pause');
-
-      // first tap only starts playback
-      clickOverlay.addEventListener('click', () => {
-        player.playVideo();
-        clickOverlay.style.display = 'none';
-      });
-
-      // custom pause/play buttons
-      pauseBtn.addEventListener('click', () => {
-        player.pauseVideo();
-      });
-      playBtn.addEventListener('click', () => {
-        player.playVideo();
+      document.querySelector('.click-overlay').addEventListener('click', () => {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
       });
     }
 
     function onPlayerStateChange(event) {
-      const cover    = document.querySelector('.cover-overlay');
-      const playBtn  = document.getElementById('custom-play');
-      const pauseBtn = document.getElementById('custom-pause');
-
+      const cover = document.querySelector('.cover-overlay');
       if (event.data === YT.PlayerState.PLAYING) {
-        cover.style.display    = 'none';
-        clearInterval(intervalId);
+        cover.style.display = 'none';
         intervalId = setInterval(checkMilestones, 500);
-
-        pauseBtn.style.display = 'inline-block';
-        playBtn.style.display  = 'none';
-      }
-      else if (event.data === YT.PlayerState.PAUSED) {
-        cover.style.display    = 'flex';
+      } else {
+        cover.style.display = 'flex';
         clearInterval(intervalId);
-
-        playBtn.style.display  = 'inline-block';
-        pauseBtn.style.display = 'none';
       }
     }
 
     function checkMilestones() {
       const t = player.getCurrentTime();
-
       if (!flags.form && t >= pauseTime) {
         flags.form = true;
         clearInterval(intervalId);
         player.pauseVideo();
         document.getElementById('popup-form').style.display = 'flex';
       }
-
       if (!flags.signUp && t >= signUpTime) {
         flags.signUp = true;
         document.querySelector('.sign-up-btn').style.display = 'block';
       }
-
       if (!flags.schedule && t >= scheduleTime) {
         flags.schedule = true;
         document.querySelector('.schedule-btn').style.display = 'block';
@@ -453,20 +418,16 @@
       document.getElementById('leadForm').addEventListener('submit', e => {
         e.preventDefault();
         const data = new FormData(e.target);
-        fetch(e.target.action, {
-          method: 'POST',
-          body: data,
-          mode: 'no-cors'
-        }).finally(() => {
-          document.getElementById('popup-form').style.display = 'none';
-          player.playVideo();
-        });
+        fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' })
+          .finally(() => {
+            document.getElementById('popup-form').style.display = 'none';
+            player.playVideo();
+          });
       });
 
       document.querySelector('.schedule-btn').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'flex';
       });
-
       document.querySelector('.close-cal').addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'none';
       });
@@ -474,3 +435,4 @@
   </script>
 </body>
 </html>
+
