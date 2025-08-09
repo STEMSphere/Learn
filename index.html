@@ -65,6 +65,37 @@
       padding: 2em 1em 3em;
     }
 
+    footer {
+      font-size: 0.85em;
+      color: #bbb;
+      padding: 2em 1em;
+      border-top: 1px solid #333;
+    }
+
+    #calendly-popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 1500;
+      align-items: center;
+      justify-content: center;
+    }
+    #calendly-popup .calendly-inline-widget {
+      width: 320px; height: 580px; border: none;
+    }
+    #calendly-popup .close-cal {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      background: #FFDD00;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* ── Masked Video & Sign-Up Button Styles ───────────────────── */
     .electric-frame {
       position: relative;
       padding: 10px;
@@ -99,10 +130,10 @@
       position: relative;
       padding-bottom: 56.25%;
       height: 0;
+      overflow: hidden;
       border-radius: 8px;
     }
 
-    /* dark overlay + play icon */
     .cover-overlay {
       position: absolute;
       top: 0; left: 0;
@@ -120,59 +151,49 @@
       opacity: 0.8;
     }
 
-    /* placeholder for the YT iframe */
-    #player {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none; /* block all native iframe UI */
-    }
-
-    .click-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 700;
-      cursor: pointer;
-    }
-
-    /* lead-capture form */
     #popup-form {
       display: none;
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
-      z-index: 1000;
       color: #fff;
+      z-index: 1000;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 1em;
     }
     #popup-form h3 {
+      margin-bottom: 0.2em;
       font-size: 1.4em;
       font-weight: 700;
-      margin-bottom: 0.2em;
     }
     #popup-form p {
+      margin-bottom: 1em;
       font-size: 1em;
       color: #ccc;
-      margin-bottom: 1em;
     }
     #popup-form input {
-      width: 80%; max-width: 300px;
-      padding: 0.8em; margin: 0.5em 0;
-      border: none; border-radius: 4px;
-      background: #222; color: #fff;
+      width: 80%;
+      max-width: 300px;
+      padding: 0.8em;
+      margin: 0.5em 0;
+      border: none;
+      border-radius: 4px;
+      background: #222;
+      color: #fff;
       font-size: 1em;
     }
     #popup-form button {
       padding: 0.8em 1.2em;
       margin-top: 0.5em;
-      border: none; border-radius: 4px;
-      background: #FFDD00; color: #000;
-      font-weight: 700; cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background: #FFDD00;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     .sign-up-btn,
@@ -181,8 +202,10 @@
       position: absolute;
       bottom: 15%;
       padding: 0.8em 1.2em;
-      border: none; border-radius: 4px;
-      background: #00FF00; color: #000;
+      border: none;
+      border-radius: 4px;
+      background: #00FF00;
+      color: #000;
       font-weight: 700;
       box-shadow: 0 0 8px rgba(0,255,0,0.7);
       cursor: pointer;
@@ -202,8 +225,8 @@
     .access-message {
       font-size: 1.35em;
       font-weight: 700;
-      margin-top: 0.3em;
       font-family: 'Segoe UI Semibold', sans-serif;
+      margin-top: 0.3em;
     }
 
     .stat-message {
@@ -214,13 +237,20 @@
       line-height: 1.4em;
     }
 
-    /* Calendly overlay, footer, responsive… (unchanged) */
-    /* … */
+    @media (max-width: 600px) {
+      .title-group span { font-size: 2em; }
+      h2 { font-size: 1.2em; }
+      .arrow-up { font-size: 1.8em; }
+      .access-message { font-size: 1.2em; }
+      #popup-form input, #popup-form button { width: 90%; font-size: 0.9em; }
+      .sign-up-btn, .schedule-btn { bottom: 10%; font-size: 0.9em; }
+      #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
+    }
   </style>
 </head>
 
 <body>
-  <header>  
+  <header>
     <div class="title-group">
       <span>Other Courses Teach.</span>
       <span>We Transform.</span>
@@ -235,14 +265,14 @@
   </header>
 
   <main>
-    <!-- Begin Video Section -->
+    <!-- ──────────────────────────────────────────────────────────────────
+         Video Section (YouTube embed + custom overlay + lead-form)
+    ────────────────────────────────────────────────────────────────── -->
     <div class="electric-frame" oncontextmenu="return false;">
-      <div class="video-container">
+      <div id="yt-placeholder" class="video-container">
         <div class="cover-overlay">
           <div class="play-btn">▶</div>
         </div>
-        <div id="player"></div>
-        <div class="click-overlay"></div>
       </div>
 
       <div id="popup-form">
@@ -267,7 +297,7 @@
       </button>
       <button class="schedule-btn">Schedule Now</button>
     </div>
-    <!-- End Video Section -->
+    <!-- ────────────────────────────────────────────────────────────────── -->
 
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Watch Video for Access Details</div>
@@ -277,103 +307,95 @@
     </p>
   </main>
 
-  <!-- Calendly popup & footer… (unchanged) -->
+  <div id="calendly-popup">
+    <div
+      class="calendly-inline-widget"
+      data-url="https://calendly.com/stemxsphere/trialclass"
+    ></div>
+    <button class="close-cal">Close</button>
+  </div>
 
-  <!-- YouTube IFrame API + control logic -->
+  <footer>© 2025 STEMSphere Academy. All rights reserved.</footer>
+
+  <!-- Calendly widget (unchanged) -->
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
+  <!-- YouTube IFrame + Lead-Capture Script -->
   <script>
-    // Inject YT API
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(tag);
-
-    let player,
-        pauseTime    = 140,
-        signUpTime   = 384,
-        scheduleTime = 394,
-        intervalId,
-        flags = { form: false, signUp: false, schedule: false };
-
-    // Called by YT API
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        host: 'https://www.youtube-nocookie.com',
-        videoId: '9bvO-33YZxE',
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          modestbranding: 1,
-          rel: 0,
-          iv_load_policy: 3,
-          enablejsapi: 1,
-          playsinline: 1,
-          origin: window.location.origin
-        },
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
-        }
-      });
-    }
-
-    function onPlayerReady() {
-      const iframe = player.getIframe();
-      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-      iframe.setAttribute('playsinline', '1');
-
-      document.querySelector('.click-overlay').addEventListener('click', () => {
-        // This click handler is a genuine user action, so playVideo() works even in IG
-        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-          player.pauseVideo();
-        } else {
-          player.playVideo();
-        }
-      });
-    }
-
-    function onPlayerStateChange(event) {
-      const cover = document.querySelector('.cover-overlay');
-      if (event.data === YT.PlayerState.PLAYING) {
-        cover.style.display = 'none';
-        intervalId = setInterval(checkMilestones, 500);
-      } else {
-        cover.style.display = 'flex';
-        clearInterval(intervalId);
-      }
-    }
-
-    function checkMilestones() {
-      const t = player.getCurrentTime();
-      if (!flags.form && t >= pauseTime) {
-        flags.form = true;
-        clearInterval(intervalId);
-        player.pauseVideo();
-        document.getElementById('popup-form').style.display = 'flex';
-      }
-      if (!flags.signUp && t >= signUpTime) {
-        flags.signUp = true;
-        document.querySelector('.sign-up-btn').style.display = 'block';
-      }
-      if (!flags.schedule && t >= scheduleTime) {
-        flags.schedule = true;
-        document.querySelector('.schedule-btn').style.display = 'block';
-      }
-    }
-
-    // Lead form & Calendly
     document.addEventListener('DOMContentLoaded', () => {
+      const placeholder = document.getElementById('yt-placeholder');
+      const cover       = placeholder.querySelector('.cover-overlay');
+      const popupForm   = document.getElementById('popup-form');
+      const signUpBtn   = document.querySelector('.sign-up-btn');
+      const scheduleBtn = document.querySelector('.schedule-btn');
+      let flags = { form: false, signUp: false, schedule: false };
+      const pauseTime    = 140;
+      const signUpTime   = 384;
+      const scheduleTime = 394;
+      let player;
+
+      placeholder.addEventListener('click', () => {
+        placeholder.innerHTML = `
+          <iframe
+            id="ytplayer"
+            type="text/html"
+            width="100%" height="100%"
+            src="https://www.youtube.com/embed/9bvO-33YZxE?enablejsapi=1&playsinline=1&controls=0&modestbranding=1"
+            frameborder="0"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+          ></iframe>
+        `;
+        cover.remove();
+
+        if (!window.YT) {
+          const tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+          document.body.appendChild(tag);
+        }
+        window.onYouTubeIframeAPIReady = () => {
+          player = new YT.Player('ytplayer', {
+            events: { onStateChange: onPlayerStateChange }
+          });
+          player.playVideo();
+        };
+      });
+
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+          const interval = setInterval(() => {
+            const t = player.getCurrentTime();
+            if (!flags.form && t >= pauseTime) {
+              flags.form = true;
+              player.pauseVideo();
+              popupForm.style.display = 'flex';
+            }
+            if (!flags.signUp && t >= signUpTime) {
+              flags.signUp = true;
+              signUpBtn.style.display = 'block';
+            }
+            if (!flags.schedule && t >= scheduleTime) {
+              flags.schedule = true;
+              scheduleBtn.style.display = 'block';
+              clearInterval(interval);
+            }
+          }, 500);
+        }
+      }
+
       document.getElementById('leadForm').addEventListener('submit', e => {
         e.preventDefault();
-        const data = new FormData(e.target);
-        fetch(e.target.action, { method: 'POST', body: data, mode: 'no-cors' })
-          .finally(() => {
-            document.getElementById('popup-form').style.display = 'none';
-            player.playVideo();
-          });
+        fetch(e.target.action, {
+          method: 'POST',
+          body: new FormData(e.target),
+          mode: 'no-cors'
+        }).finally(() => {
+          popupForm.style.display = 'none';
+          player.playVideo();
+        });
       });
 
-      document.querySelector('.schedule-btn').addEventListener('click', () => {
+      scheduleBtn.addEventListener('click', () => {
         document.getElementById('calendly-popup').style.display = 'flex';
       });
       document.querySelector('.close-cal').addEventListener('click', () => {
