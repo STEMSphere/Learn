@@ -259,12 +259,12 @@
       #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
     }
 
-    /* ── NEW: Disable native taps on YouTube iframe ── */
+    /* ── NEW: Disable all clicks on the YouTube iframe ── */
     .electric-frame #player iframe {
       pointer-events: none;
     }
 
-    /* ── NEW: Custom Pause/Play Controls ── */
+    /* ── NEW: Custom Pause/Play Controls styling ── */
     .electric-frame .custom-controls {
       position: absolute;
       bottom: 10px;
@@ -308,7 +308,7 @@
         <div id="player"></div>
         <div class="click-overlay"></div>
 
-        <!-- NEW custom controls -->
+        <!-- Custom controls -->
         <div class="custom-controls">
           <button id="custom-play" class="ctl-btn" style="display:none;">►</button>
           <button id="custom-pause" class="ctl-btn" style="display:none;">❚❚</button>
@@ -388,8 +388,8 @@
 
     function onPlayerReady() {
       const clickOverlay = document.querySelector('.click-overlay');
-      const playBtn  = document.getElementById('custom-play');
-      const pauseBtn = document.getElementById('custom-pause');
+      const playBtn      = document.getElementById('custom-play');
+      const pauseBtn     = document.getElementById('custom-pause');
 
       // first tap only starts playback
       clickOverlay.addEventListener('click', () => {
@@ -407,12 +407,12 @@
     }
 
     function onPlayerStateChange(event) {
-      const cover   = document.querySelector('.cover-overlay');
-      const playBtn = document.getElementById('custom-play');
-      const pauseBtn= document.getElementById('custom-pause');
+      const cover    = document.querySelector('.cover-overlay');
+      const playBtn  = document.getElementById('custom-play');
+      const pauseBtn = document.getElementById('custom-pause');
 
       if (event.data === YT.PlayerState.PLAYING) {
-        cover.style.display = 'none';
+        cover.style.display    = 'none';
         clearInterval(intervalId);
         intervalId = setInterval(checkMilestones, 500);
 
@@ -420,7 +420,7 @@
         playBtn.style.display  = 'none';
       }
       else if (event.data === YT.PlayerState.PAUSED) {
-        cover.style.display = 'flex';
+        cover.style.display    = 'flex';
         clearInterval(intervalId);
 
         playBtn.style.display  = 'inline-block';
