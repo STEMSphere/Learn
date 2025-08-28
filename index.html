@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Section: Document Meta & Title -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>STEMSphere Academy</title>
-
-  <!-- Section: External Stylesheet -->
   <link
     href="https://assets.calendly.com/assets/external/widget.css"
     rel="stylesheet"
   />
-
   <style>
-    /* ─── Base Styles ───────────────────────────────────────────── */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -22,13 +17,11 @@
       text-align: center;
     }
 
-    /* ─── Header Container ──────────────────────────────────────── */
     header {
       position: relative;
       padding: 3em 1em 1em;
     }
 
-    /* ─── Brand Logo (SP in red square + STEMSphere) ────────────── */
     .brand {
       position: absolute;
       top: 1rem;
@@ -54,7 +47,6 @@
       font-weight: 700;
     }
 
-    /* ─── Title Group (Two-line Title) ─────────────────────────── */
     .title-group {
       display: inline-block;
       margin-bottom: 0.2em;
@@ -64,23 +56,23 @@
       font-size: 2.8em;
       font-weight: 700;
       letter-spacing: 1px;
-      margin: 0.2em 0;             /* reduced vertical gap */
+      margin: 0.2em 0;
     }
     .title-group span:first-child {
-      color: #ffffff;             /* Other Courses Teach. in white */
+      color: #ffffff;
     }
     .title-group span:last-child {
-      color: #ff0000;             /* We Transform. in red */
+      color: #ff0000;
     }
 
-    /* ─── Subtitle under Title ─────────────────────────────────── */
+    /* Thinner, smaller subtitle */
     h2 {
-      font-size: 1.4em;
+      font-size: 1.1em;
+      font-weight: 300;
       color: #ccc;
       margin-top: 0.2em;
     }
 
-    /* ─── Course Bar ───────────────────────────────────────────── */
     .course-bar {
       display: inline-flex;
       align-items: center;
@@ -94,14 +86,12 @@
     }
     .course-bar span + span { margin-left: 0.5em; }
 
-    /* ─── Main Container ───────────────────────────────────────── */
     main {
       max-width: 850px;
       margin: auto;
       padding: 2em 1em 3em;
     }
 
-    /* ─── Electric Frame (Blue Glow) ───────────────────────────── */
     .electric-frame {
       display: block !important;
       position: relative;
@@ -110,12 +100,10 @@
       margin: 0 auto;
       background-color: #000;
       box-shadow: 0 0 12px #00aaff;
-      animation: none;
       max-width: 800px;
       z-index: 500;
     }
 
-    /* ─── Video Container ──────────────────────────────────────── */
     .video-container {
       position: relative;
       padding-bottom: 56.25%;
@@ -124,7 +112,6 @@
       border-radius: 8px;
     }
 
-    /* ─── Play Overlay ─────────────────────────────────────────── */
     .cover-overlay {
       position: absolute;
       top: 0; left: 0;
@@ -142,7 +129,6 @@
       opacity: 0.8;
     }
 
-    /* ─── Video IFrame Target ─────────────────────────────────── */
     #player {
       position: absolute;
       top: 0; left: 0;
@@ -156,7 +142,6 @@
       cursor: pointer;
     }
 
-    /* ─── Progress Bar Styles ─────────────────────────────────── */
     .progress-container {
       width: 80%;
       max-width: 300px;
@@ -172,7 +157,6 @@
       background: #ff0000;
     }
 
-    /* ─── Lead-Capture Popup Form ─────────────────────────────── */
     #popup-form {
       display: none;
       position: absolute;
@@ -218,7 +202,6 @@
       cursor: pointer;
     }
 
-    /* ─── Sign-Up & Schedule Buttons ───────────────────────────── */
     .sign-up-btn,
     .schedule-btn {
       display: none;
@@ -237,7 +220,6 @@
     .sign-up-btn { left: 10%; }
     .schedule-btn { right: 10%; }
 
-    /* ─── Arrow Indicator ─────────────────────────────────────── */
     .arrow-up {
       font-size: 2.2em;
       color: #FFA500;
@@ -246,25 +228,24 @@
       margin: 0.3em 0 0;
     }
 
-    /* ─── Access Message ───────────────────────────────────────── */
     .access-message {
       font-size: 1.1em;
       font-weight: 700;
       font-family: 'Segoe UI Semibold', sans-serif;
       margin-top: 0.3em;
+      margin-bottom: 0; /* remove bottom gap */
     }
 
-    /* ─── Statistic Message (Replaced) ────────────────────────── */
+    /* Bigger “Watch for access details,” closer to Play line */
     .stat-message {
-      font-size: 0.95em;
+      font-size: 1.3em;
       color: #ff0000;
       text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
-      margin-top: 1.2em;
+      margin-top: 0.2em;
       padding: 0 1em;
       line-height: 1.4em;
     }
 
-    /* ─── Calendly Popup Overlay ───────────────────────────────── */
     #calendly-popup {
       display: none;
       position: fixed;
@@ -288,7 +269,6 @@
       cursor: pointer;
     }
 
-    /* ─── Footer Styles ───────────────────────────────────────── */
     footer {
       font-size: 0.85em;
       color: #bbb;
@@ -296,13 +276,12 @@
       border-top: 1px solid #333;
     }
 
-    /* ─── Responsive Media Queries ────────────────────────────── */
     @media (max-width: 600px) {
       .title-group span { font-size: 2em; }
-      h2 { font-size: 1.2em; }
+      h2 { font-size: 1em; }
       .arrow-up { font-size: 1.8em; }
       .access-message { font-size: 1em; }
-      .stat-message { font-size: 0.9em; }
+      .stat-message { font-size: 1.1em; }
       #popup-form input,
       #popup-form button { width: 90%; font-size: 0.9em; }
       .sign-up-btn,
@@ -313,26 +292,17 @@
     }
   </style>
 </head>
-
 <body>
-  <!-- Page Header -->
   <header>
-    <!-- Brand logo + text -->
     <div class="brand">
       <span class="brand-logo">SP</span>
       <span class="brand-text">STEMSphere</span>
     </div>
-
-    <!-- Two-line main title -->
     <div class="title-group">
       <span>Other Courses Teach.</span>
       <span>We Transform.</span>
     </div>
-
-    <!-- Subtitle below title -->
     <h2>Better → Smarter → Faster Learning!</h2>
-
-    <!-- Course topics bar -->
     <div class="course-bar">
       <span>MATH</span><span>|</span><span>Chemistry</span>
       <span>|</span><span>Biology</span><span>|</span>
@@ -340,12 +310,8 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <main>
-    <!-- Electric glow frame wrapper -->
     <div class="electric-frame">
-
-      <!-- Video container + overlay -->
       <div class="video-container">
         <div class="cover-overlay">
           <div class="play-btn">▶</div>
@@ -354,7 +320,6 @@
         <div class="click-overlay"></div>
       </div>
 
-      <!-- Lead-capture popup form with progress bar -->
       <div id="popup-form">
         <div class="progress-container">
           <div class="progress-bar"></div>
@@ -372,7 +337,6 @@
         </form>
       </div>
 
-      <!-- Sign-up and schedule buttons -->
       <button
         class="sign-up-btn"
         onclick="window.location='https://www.stemsphere.academy'"
@@ -382,13 +346,11 @@
       <button class="schedule-btn">Schedule Now</button>
     </div>
 
-    <!-- Arrow indicator + messages -->
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Play ↻ in your regular browser</div>
     <p class="stat-message">Watch for access details</p>
   </main>
 
-  <!-- Calendly Inline Popup -->
   <div id="calendly-popup">
     <div
       class="calendly-inline-widget"
@@ -397,18 +359,14 @@
     <button class="close-cal">Close</button>
   </div>
 
-  <!-- Footer -->
   <footer>© 2025 STEMSphere Academy. All rights reserved.</footer>
 
-  <!-- External Scripts -->
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script>
-    // Load YouTube IFrame API
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
 
-    // Variables & Control Flags
     let player,
         pauseTime    = 140,
         signUpTime   = 384,
@@ -416,10 +374,9 @@
         intervalId,
         flags = { form: false, signUp: false, schedule: false };
 
-    // Initialize Player
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
-        host: 'https://www.youtube-nocookie.com',
+        host: 'https://www.youtube.com-nocookie.com',
         videoId: '9bvO-33YZxE',
         playerVars: {
           controls: 0,
@@ -437,7 +394,6 @@
       });
     }
 
-    // Player Ready Handler
     function onPlayerReady() {
       document.querySelector('.click-overlay').addEventListener('click', () => {
         if (player.getPlayerState() === YT.PlayerState.PLAYING) {
@@ -448,7 +404,6 @@
       });
     }
 
-    // Player State Change Handler
     function onPlayerStateChange(event) {
       const cover = document.querySelector('.cover-overlay');
       if (event.data === YT.PlayerState.PLAYING) {
@@ -460,7 +415,6 @@
       }
     }
 
-    // Milestone Checker
     function checkMilestones() {
       const t = player.getCurrentTime();
       if (!flags.form && t >= pauseTime) {
@@ -479,7 +433,6 @@
       }
     }
 
-    // DOM Ready & UI Event Handlers
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('leadForm').addEventListener('submit', e => {
         e.preventDefault();
