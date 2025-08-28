@@ -410,16 +410,10 @@
   </form>
 </div>
 <!-- Sign-up and schedule buttons -->
-<button
-  class="sign-up-btn"
-  onclick="window.location='https://www.stemsphere.academy'"
->
+<button class="sign-up-btn" onclick="window.location='https://www.stemsphere.academy'">
   Sign Up Now
 </button>
-<button
-  class="schedule-btn"
-  onclick="document.getElementById('chatLauncher').click()"
->
+<button class="schedule-btn" onclick="document.getElementById('chatLauncher').click()">
   Schedule Now
 </button>
 </div>
@@ -432,10 +426,7 @@
 
 <!-- Calendly Inline Popup -->
 <div id="calendly-popup">
-  <div
-    class="calendly-inline-widget"
-    data-url="https://calendly.com/stemxsphere/trialclass"
-  ></div>
+  <div class="calendly-inline-widget" data-url="https://calendly.com/stemxsphere/trialclass"></div>
   <button class="close-cal">Close</button>
 </div>
 
@@ -449,8 +440,8 @@
 
   // Variables & Control Flags
   let player,
-      pauseTime    = 140,
-      signUpTime   = 384,
+      pauseTime = 140,
+      signUpTime = 384,
       scheduleTime = 394,
       intervalId,
       flags = { form: false, signUp: false, schedule: false };
@@ -458,7 +449,7 @@
   // Initialize Player
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-      host: 'https://www.youtube.com-nocookie.com',
+      host: 'https://www.youtube-nocookie.com',
       videoId: '9bvO-33YZxE',
       playerVars: {
         controls: 0,
