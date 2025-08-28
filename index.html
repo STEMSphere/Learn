@@ -548,6 +548,9 @@
 <!-- END: Section Heading Overrides -->
 
 
+
+
+
 <!-- BEGIN: Courses & Tutoring Styles -->
 <style>
   /* Section Styles */
@@ -599,8 +602,24 @@
     color: #ddd;
     font-size: 0.9em;
   }
+  .buy-button {
+    display: inline-block;
+    background: #ffffff;
+    color: #ff0000;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 1rem;
+  }
   .tutor-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  .tutoring-banner {
+    width: 100%;
+    max-width: 1200px;
+    display: block;
+    margin: 1rem auto;
   }
   .tutor-subject img {
     width: 48px;
@@ -610,7 +629,12 @@
   .tutor-subject h4 {
     color: #ff0000;
     font-size: 1.1em;
-    margin: 0;
+    margin: 0.5rem 0 0.25rem;
+  }
+  .tutor-desc {
+    color: #ddd;
+    font-size: 0.9em;
+    margin: 0.25rem 0 0.75rem;
   }
   .cta-button {
     display: inline-block;
@@ -637,36 +661,43 @@
       <img src="IMAGE_URL_ICON_SAT_MATH" alt="SAT Math Icon">
       <h3>SAT Math</h3>
       <p>Comprehensive SAT Math prep.</p>
+      <a href="#" class="buy-button">Buy Now</a>
     </div>
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_CHEMISTRY" alt="Chemistry Icon">
       <h3>Chemistry</h3>
       <p>Fundamentals of chemical principles.</p>
+      <a href="#" class="buy-button">Buy Now</a>
     </div>
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_AI" alt="AI Made Easy Icon">
       <h3>AI Made Easy</h3>
       <p>Hands-on introduction to AI concepts.</p>
+      <a href="#" class="buy-button">Buy Now</a>
     </div>
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_PYTHON" alt="Python Programming Icon">
       <h3>Python Programming</h3>
       <p>Learn Python basics and beyond.</p>
+      <a href="#" class="buy-button">Buy Now</a>
     </div>
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_PUBLIC_SPEAKING" alt="Public Speaking Icon">
       <h3>Public Speaking Foundations</h3>
       <p>Master voice, tone, and presence.</p>
+      <a href="#" class="buy-button">Buy Now</a>
     </div>
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_GENERAL_BIOLOGY" alt="General Biology Icon">
       <h3>General Biology</h3>
       <p>Explore cell biology and ecology.</p>
+      <a href="#" class="buy-button">Buy Now</a>
     </div>
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_KIDS_BIOLOGY" alt="Kids Biology Icon">
       <h3>Kids Biology</h3>
       <p>Fun biology for young learners.</p>
+      <a href="#" class="buy-button">Buy Now</a>
     </div>
   </div>
 </section>
@@ -678,54 +709,67 @@
   <p class="intro">
     One-on-one or small-group sessions with our expert tutors. From weekly check-ins to intensive exam prep, we cover every level.
   </p>
+  <img src="PLACEHOLDER_TUTORING_IMAGE_URL" alt="Tutoring Banner" class="tutoring-banner">
   <div class="tutor-grid">
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_ALGEBRA" alt="Algebra Essentials Icon">
       <h4>Algebra Essentials</h4>
+      <p class="tutor-desc">From linear equations to polynomials.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_GEOMETRY" alt="Geometry Foundations Icon">
       <h4>Geometry Foundations</h4>
+      <p class="tutor-desc">Master shapes, angles, and proofs.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_PRECALC" alt="Pre-Calculus &amp; Trig Icon">
       <h4>Pre-Calculus &amp; Trigonometry</h4>
+      <p class="tutor-desc">Functions, limits, and trig insights.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_CALC" alt="AP Calculus AB &amp; BC Icon">
       <h4>AP® Calculus AB &amp; BC</h4>
+      <p class="tutor-desc">Intensive prep for derivatives and integrals.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_STATS" alt="AP Statistics Icon">
       <h4>AP® Statistics</h4>
+      <p class="tutor-desc">Data analysis and probability fundamentals.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_GEN_CHEM" alt="General Chemistry Icon">
       <h4>General Chemistry Crash Course</h4>
+      <p class="tutor-desc">Core concepts in atoms and reactions.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_ORG_CHEM" alt="Organic Chemistry Icon">
       <h4>Organic Chemistry Deep Dive</h4>
+      <p class="tutor-desc">Mechanisms and organic compound synthesis.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_IB_CHEM" alt="IB Chemistry SL &amp; HL Icon">
       <h4>IB Chemistry SL &amp; HL Prep</h4>
+      <p class="tutor-desc">Curriculum-focused chemistry strategies.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_AP_BIO" alt="AP Biology Masterclass Icon">
       <h4>AP® Biology Masterclass</h4>
+      <p class="tutor-desc">Dive into cell biology and genetics.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_MCAT_BIO" alt="MCAT Biology Review Icon">
       <h4>MCAT Biology Review</h4>
+      <p class="tutor-desc">High-yield biology for MCAT success.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_PUBLIC_SPEAKING" alt="Public Speaking Icon">
       <h4>Public Speaking Foundations</h4>
+      <p class="tutor-desc">Enhance your confidence and clarity.</p>
     </div>
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_ENG" alt="English Icon">
       <h4>IELTS &amp; TOEFL English Skills</h4>
+      <p class="tutor-desc">Improve reading, writing, and speaking skills.</p>
     </div>
   </div>
   <a href="#" class="cta-button">Book a Free Consultation</a>
