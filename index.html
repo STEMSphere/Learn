@@ -583,14 +583,14 @@
     if (step === 0) {
       updateProgress(10);
       container.innerHTML = `
-        <h2 style="padding:0 20px;">🎯 Tell us your needs</h2>
-        <p style="padding:0 20px;">We’ll match you with an ideal tutor within 60 seconds.</p>
+        <h2 style="padding:0 20px; color:#000000;">🎯 Tell us your needs</h2>
+        <p style="padding:0 20px; color:#000000;">We’ll match you with an ideal tutor within 60 seconds.</p>
         <button onclick="step=1; renderStep()" style="margin:20px; background:#009688; color:#fff; padding:10px 20px; border:none;">Start</button>
       `;
     } else if (step === 1) {
       updateProgress(25);
       container.innerHTML = `
-        <h3 style="padding:0 20px;">🧒 Your age group:</h3>
+        <h3 style="padding:0 20px; color:#000000;">🧒 Your age group:</h3>
         <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
           ${["Elementary","Middle School","High School","College","Adult Learner"].map(age =>
             `<button onclick="userData.age='${age}'; step=2; renderStep()" 
@@ -600,9 +600,9 @@
     } else if (step === 2) {
       updateProgress(45);
       container.innerHTML = `
-        <h3 style="padding:0 20px;">📘 Choose your subject:</h3>
+        <h3 style="padding:0 20px; color:#000000;">📘 Choose your subject:</h3>
         <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
-          ${["Public Speaking (English)","Math","Chemistry","Python Programming","Biology","AI Made Easy"].map(sub =>
+          ${["Public Speaking (English)","Math","Chemistry","Python Programming","Biology","AI Made Easy","English Speaking and Writing"].map(sub =>
             `<button onclick="userData.subject='${sub}'; step=3; renderStep()" 
               style="background:#009688; color:#fff; padding:8px 16px; border:none;">${sub}</button>`).join("")}
         </div>
@@ -610,7 +610,7 @@
     } else if (step === 3) {
       updateProgress(65);
       container.innerHTML = `
-        <h3 style="padding:0 20px;">🎓 Preferred learning style:</h3>
+        <h3 style="padding:0 20px; color:#000000;">🎓 Preferred learning style:</h3>
         <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
           ${["1-on-1 Tutoring","Group Classes","On-Demand Course"].map(style =>
             `<button onclick="userData.style='${style}'; step=4; renderStep()" 
@@ -620,8 +620,8 @@
     } else if (step === 4) {
       updateProgress(85);
       container.innerHTML = `
-        <h3 style="padding:0 20px;">🗣️ What do you need help with?</h3>
-        <p style="padding:0 20px;"><strong>Let us know your learning goals, challenges, or anything specific you’d like support with:</strong></p>
+        <h3 style="padding:0 20px; color:#000000;">🗣️ What do you need help with?</h3>
+        <p style="padding:0 20px; color:#000000;"><strong>Let us know your learning goals, challenges, or anything specific you’d like support with:</strong></p>
         <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin: 10px 20px;">
           <textarea id="customHelp" placeholder="Type your message here..."
             style="width:100%; padding:10px; height:100px; border:none; resize:vertical; font-size:14px;"></textarea>
@@ -632,8 +632,8 @@
     } else if (step === 5) {
       updateProgress(100);
       container.innerHTML = `
-        <h2 style="padding:0 20px;">✅ Tutor Found!</h2>
-        <p style="padding:0 20px;">We are loading the calendar… book your free trial session below with our enrollment tutor.</p>
+        <h2 style="padding:0 20px; color:#000000;">✅ Tutor Found!</h2>
+        <p style="padding:0 20px; color:#000000;">We are loading the calendar… book your free trial session below with our enrollment tutor.</p>
         <div id="calendlyFrameContainer" style="width:100vw; height:100vh; overflow:hidden;">
           <div id="calendlyFrame" style="position:absolute; top:0; left:0; width:100%; height:100%;"></div>
         </div>
