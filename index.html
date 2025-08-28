@@ -25,27 +25,37 @@
       padding: 3em 1em 1em;
     }
 
-    /* Top-left STEMSphere / SP */
+    /* BRAND: SP logo in red square + STEMSphere */
     .brand {
       position: absolute;
       top: 1rem;
       left: 1rem;
-      text-align: left;
+      display: flex;
+      align-items: center;
     }
-    .brand span {
-      display: block;
-      font-size: 1.1em;
+    .brand-logo {
+      display: inline-block;
+      width: 1.8em;
+      height: 1.8em;
+      line-height: 1.8em;
+      text-align: center;
+      background-color: #ff0000;
+      color: #ffffff;
       font-weight: 700;
-      line-height: 1;
+      font-size: 1.1em;
+      border-radius: 4px;
+      margin-right: 0.5em;
     }
-    .brand span:first-child { color: #ffffff; }
-    .brand span:last-child  { color: #ff0000; }
+    .brand-text {
+      color: #ffffff;
+      font-size: 1.2em;
+      font-weight: 700;
+    }
 
     .title-group {
       display: inline-block;
       margin-bottom: 0.4em;
     }
-    /* Two-line title: first red, second white */
     .title-group span {
       display: block;
       font-size: 2.8em;
@@ -54,8 +64,12 @@
       margin: 0.4em 0;
       color: #ffffff;
     }
-    .title-group span:first-child { color: #ff0000; }
-    .title-group span:last-child  { color: #ffffff; }
+    .title-group span:first-child {
+      color: #ff0000;
+    }
+    .title-group span:last-child {
+      color: #ffffff;
+    }
 
     h2 {
       font-size: 1.4em;
@@ -74,7 +88,9 @@
       color: #fff;
       margin-top: 0.6em;
     }
-    .course-bar span + span { margin-left: 0.5em; }
+    .course-bar span + span {
+      margin-left: 0.5em;
+    }
 
     main {
       max-width: 850px;
@@ -82,18 +98,18 @@
       padding: 2em 1em 3em;
     }
 
+    /* stable electric-frame glow */
     .electric-frame {
+      display: block !important;
       position: relative;
       padding: 10px;
       border-radius: 12px;
-      margin: 2em auto;
+      margin: 0 auto;
       background-color: #000;
-      box-shadow:
-        0 0 10px #fdf200,
-        0 0 16px #ffe600,
-        0 0 22px #fff000;
-      animation: flicker 1.5s infinite alternate;
+      box-shadow: 0 0 12px #00aaff;
+      animation: none;
       max-width: 800px;
+      z-index: 500;
     }
 
     @keyframes flicker {
@@ -121,8 +137,10 @@
 
     .cover-overlay {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(0, 0, 0, 0.5);
       z-index: 600;
       display: flex;
@@ -138,14 +156,18 @@
 
     #player {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
 
     .click-overlay {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 700;
       cursor: pointer;
     }
@@ -153,8 +175,10 @@
     #popup-form {
       display: none;
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
@@ -222,7 +246,7 @@
     }
 
     .access-message {
-      font-size: 1.35em;
+      font-size: 1.1em;
       font-weight: 700;
       font-family: 'Segoe UI Semibold', sans-serif;
       margin-top: 0.3em;
@@ -266,15 +290,15 @@
       border-top: 1px solid #333;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 600px) { 
       .title-group span { font-size: 2em; }
       h2 { font-size: 1.2em; }
       .arrow-up { font-size: 1.8em; }
-      .access-message { font-size: 1.2em; }
+      .access-message { font-size: 1em; }
       .stat-message { font-size: 0.9em; }
-      #popup-form input,
+      #popup-form input, 
       #popup-form button { width: 90%; font-size: 0.9em; }
-      .sign-up-btn,
+      .sign-up-btn, 
       .schedule-btn { bottom: 10%; font-size: 0.9em; }
       #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
     }
@@ -284,8 +308,8 @@
 <body>
   <header>
     <div class="brand">
-      <span>STEMSphere</span>
-      <span>SP</span>
+      <span class="brand-logo">SP</span>
+      <span class="brand-text">STEMSphere</span>
     </div>
 
     <div class="title-group">
@@ -294,8 +318,12 @@
     </div>
     <h2>Better → Smarter → Faster Learning!</h2>
     <div class="course-bar">
-      <span>MATH</span><span>|</span><span>Chemistry</span>
-      <span>|</span><span>Biology</span><span>|</span>
+      <span>MATH</span>
+      <span>|</span>
+      <span>Chemistry</span>
+      <span>|</span>
+      <span>Biology</span>
+      <span>|</span>
       <span>Coding & more</span>
     </div>
   </header>
@@ -334,7 +362,7 @@
     </div>
 
     <div class="arrow-up">↑↑↑↑</div>
-    <div class="access-message">Watch In Desktop View</div>
+    <div class="access-message">Play ↻ in your regular browser</div>
     <p class="stat-message">
       9 out of 10 students don't complete the courses they start.
       STEMSphere Academy breaks these statistics
@@ -420,7 +448,7 @@
       }
       if (!flags.schedule && t >= scheduleTime) {
         flags.schedule = true;
-        document.querySelector('.schedule-btn').stijl.display = 'block';
+        document.querySelector('.schedule-btn').style.display = 'block';
       }
     }
 
@@ -445,4 +473,3 @@
   </script>
 </body>
 </html>
-```
