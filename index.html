@@ -348,7 +348,7 @@
     </div>
 
     <!-- Subtitle below title -->
-    <h2>Kids → High School → College& Beyond!</h2>
+    <h2>Kids → High School → College& Adult Learners!</h2>
 
     <!-- Course topics bar -->
     <div class="course-bar">
@@ -409,136 +409,142 @@
     <button type="submit">Submit & Continue</button>
   </form>
 </div>
+<!-- Sign-up and schedule buttons -->
+<button
+  class="sign-up-btn"
+  onclick="window.location='https://www.stemsphere.academy'"
+>
+  Sign Up Now
+</button>
+<button
+  class="schedule-btn"
+  onclick="document.getElementById('chatLauncher').click()"
+>
+  Schedule Now
+</button>
+</div>
 
-      <!-- Sign-up and schedule buttons -->
-      <button
-        class="sign-up-btn"
-        onclick="window.location='https://www.stemsphere.academy'"
-      >
-        Sign Up Now
-      </button>
-      <button class="schedule-btn">Schedule Now</button>
-    </div>
+<!-- Arrow indicator + messages -->
+<div class="arrow-up">↑↑↑↑</div>
+<div class="access-message">Play ↻ in your regular browser</div>
+<p class="stat-message">Watch for access details</p>
+</main>
 
-    <!-- Arrow indicator + messages -->
-    <div class="arrow-up">↑↑↑↑</div>
-    <div class="access-message">Play ↻ in your regular browser</div>
-    <p class="stat-message">Watch for access details</p>
-  </main>
+<!-- Calendly Inline Popup -->
+<div id="calendly-popup">
+  <div
+    class="calendly-inline-widget"
+    data-url="https://calendly.com/stemxsphere/trialclass"
+  ></div>
+  <button class="close-cal">Close</button>
+</div>
 
-  <!-- Calendly Inline Popup -->
-  <div id="calendly-popup">
-    <div
-      class="calendly-inline-widget"
-      data-url="https://calendly.com/stemxsphere/trialclass"
-    ></div>
-    <button class="close-cal">Close</button>
-  </div>
+<!-- External Scripts -->
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<script>
+  // Load YouTube IFrame API
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
 
-  <!-- External Scripts -->
-  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-  <script>
-    // Load YouTube IFrame API
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(tag);
+  // Variables & Control Flags
+  let player,
+      pauseTime    = 140,
+      signUpTime   = 384,
+      scheduleTime = 394,
+      intervalId,
+      flags = { form: false, signUp: false, schedule: false };
 
-    // Variables & Control Flags
-    let player,
-        pauseTime    = 140,
-        signUpTime   = 384,
-        scheduleTime = 394,
-        intervalId,
-        flags = { form: false, signUp: false, schedule: false };
-
-    // Initialize Player
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        host: 'https://www.youtube-nocookie.com',
-        videoId: '9bvO-33YZxE',
-        playerVars: {
-          controls: 0,
-          disablekb: 1,
-          modestbranding: 1,
-          rel: 0,
-          iv_load_policy: 3,
-          enablejsapi: 1,
-          autoplay: 0
-        },
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
-        }
-      });
-    }
-
-    // Player Ready Handler
-    function onPlayerReady() {
-      document.querySelector('.click-overlay').addEventListener('click', () => {
-        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-          player.pauseVideo();
-        } else {
-          player.playVideo();
-        }
-      });
-    }
-
-    // Player State Change Handler
-    function onPlayerStateChange(event) {
-      const cover = document.querySelector('.cover-overlay');
-      if (event.data === YT.PlayerState.PLAYING) {
-        cover.style.display = 'none';
-        intervalId = setInterval(checkMilestones, 500);
-      } else {
-        cover.style.display = 'flex';
-        clearInterval(intervalId);
+  // Initialize Player
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      host: 'https://www.youtube.com-nocookie.com',
+      videoId: '9bvO-33YZxE',
+      playerVars: {
+        controls: 0,
+        disablekb: 1,
+        modestbranding: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        enablejsapi: 1,
+        autoplay: 0
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange
       }
-    }
+    });
+  }
 
-    // Milestone Checker
-    function checkMilestones() {
-      const t = player.getCurrentTime();
-      if (!flags.form && t >= pauseTime) {
-        flags.form = true;
-        clearInterval(intervalId);
+  // Player Ready Handler
+  function onPlayerReady() {
+    document.querySelector('.click-overlay').addEventListener('click', () => {
+      if (player.getPlayerState() === YT.PlayerState.PLAYING) {
         player.pauseVideo();
-        document.getElementById('popup-form').style.display = 'flex';
+      } else {
+        player.playVideo();
       }
-      if (!flags.signUp && t >= signUpTime) {
-        flags.signUp = true;
-        document.querySelector('.sign-up-btn').style.display = 'block';
-      }
-      if (!flags.schedule && t >= scheduleTime) {
-        flags.schedule = true;
-        document.querySelector('.schedule-btn').style.display = 'block';
-      }
+    });
+  }
+
+  // Player State Change Handler
+  function onPlayerStateChange(event) {
+    const cover = document.querySelector('.cover-overlay');
+    if (event.data === YT.PlayerState.PLAYING) {
+      cover.style.display = 'none';
+      intervalId = setInterval(checkMilestones, 500);
+    } else {
+      cover.style.display = 'flex';
+      clearInterval(intervalId);
     }
+  }
 
-    // DOM Ready & UI Event Handlers
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('leadForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const data = new FormData(e.target);
-        fetch(e.target.action, {
-          method: 'POST',
-          body: data,
-          mode: 'no-cors'
-        }).finally(() => {
-          document.getElementById('popup-form').style.display = 'none';
-          player.playVideo();
-        });
-      });
+  // Milestone Checker
+  function checkMilestones() {
+    const t = player.getCurrentTime();
+    if (!flags.form && t >= pauseTime) {
+      flags.form = true;
+      clearInterval(intervalId);
+      player.pauseVideo();
+      document.getElementById('popup-form').style.display = 'flex';
+    }
+    if (!flags.signUp && t >= signUpTime) {
+      flags.signUp = true;
+      document.querySelector('.sign-up-btn').style.display = 'block';
+    }
+    if (!flags.schedule && t >= scheduleTime) {
+      flags.schedule = true;
+      document.querySelector('.schedule-btn').style.display = 'block';
+    }
+  }
 
-      document.querySelector('.schedule-btn').addEventListener('click', () => {
-        document.getElementById('calendly-popup').style.display = 'flex';
-      });
-      document.querySelector('.close-cal').addEventListener('click', () => {
-        document.getElementById('calendly-popup').style.display = 'none';
+  // DOM Ready & UI Event Handlers
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('leadForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const data = new FormData(e.target);
+      fetch(e.target.action, {
+        method: 'POST',
+        body: data,
+        mode: 'no-cors'
+      }).finally(() => {
+        document.getElementById('popup-form').style.display = 'none';
+        player.playVideo();
       });
     });
-  </script>
+
+    // Schedule Now → open STEMSphere chat launcher
+    document.querySelector('.schedule-btn').addEventListener('click', () => {
+      document.getElementById('chatLauncher').click();
+    });
+
+    document.querySelector('.close-cal').addEventListener('click', () => {
+      document.getElementById('calendly-popup').style.display = 'none';
+    });
+  });
+</script>
 </body>
-  </html>
+</html>
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (Mobile Fix) -->
 
