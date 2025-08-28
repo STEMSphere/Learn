@@ -7,7 +7,10 @@
   <title>STEMSphere Academy</title>
 
   <!-- Section: External Stylesheet -->
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+  <link
+    href="https://assets.calendly.com/assets/external/widget.css"
+    rel="stylesheet"
+  />
 
   <style>
     /* ─── Base Styles ───────────────────────────────────────────── */
@@ -25,7 +28,7 @@
       padding: 3em 1em 1em;
     }
 
-    /* ─── Brand Logo (your uploaded image + STEMSphere) ────────── */
+    /* ─── Brand Logo (SP in red square + STEMSphere) ────────────── */
     .brand {
       position: absolute;
       top: 1rem;
@@ -34,11 +37,16 @@
       align-items: center;
     }
     .brand-logo {
-      width: 2.4em;
-      height: 2.4em;
-      margin-right: 0.5em;
+      width: 1.8em;
+      height: 1.8em;
+      line-height: 1.8em;
+      background-color: #ff0000;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.1em;
+      text-align: center;
       border-radius: 4px;
-      object-fit: contain;
+      margin-right: 0.5em;
     }
     .brand-text {
       color: #ffffff;
@@ -46,7 +54,7 @@
       font-weight: 700;
     }
 
-    /* ─── Two-line Main Title ──────────────────────────────────── */
+    /* ─── Title Group (Two-line Title) ─────────────────────────── */
     .title-group {
       display: inline-block;
       margin-bottom: 0.2em;
@@ -56,15 +64,18 @@
       font-size: 2.8em;
       font-weight: 700;
       letter-spacing: 1px;
-      margin: 0.2em 0;
+      margin: 0.2em 0;             /* reduced vertical gap */
     }
-    .title-group span:first-child { color: #ffffff; }
-    .title-group span:last-child  { color: #ff0000; }
+    .title-group span:first-child {
+      color: #ffffff;             /* Other Courses Teach. in white */
+    }
+    .title-group span:last-child {
+      color: #ff0000;             /* We Transform. in red */
+    }
 
     /* ─── Subtitle under Title ─────────────────────────────────── */
     h2 {
-      font-size: 1em;
-      font-weight: 200;
+      font-size: 1.6em;           /* bumped up from 1.4em */
       color: #ccc;
       margin-top: 0.2em;
     }
@@ -104,20 +115,21 @@
       z-index: 500;
     }
 
+    /* ── REINTRODUCE FLICKER ANIMATION ─────────────────────────── */
     @-webkit-keyframes flicker {
-      0%,100% { box-shadow:0 0 12px #00aaff; }
-      40%     { box-shadow:0 0 20px #00ffff; }
-      60%     { box-shadow:0 0 8px  #0088ff; }
+      0%, 100% { box-shadow: 0 0 12px #00aaff; }
+      40%      { box-shadow: 0 0 20px #00ffff; }
+      60%      { box-shadow: 0 0 8px  #0088ff; }
     }
     @-moz-keyframes flicker {
-      0%,100% { box-shadow:0 0 12px #00aaff; }
-      40%     { box-shadow:0 0 20px #00ffff; }
-      60%     { box-shadow:0 0 8px  #0088ff; }
+      0%, 100% { box-shadow: 0 0 12px #00aaff; }
+      40%      { box-shadow: 0 0 20px #00ffff; }
+      60%      { box-shadow: 0 0 8px  #0088ff; }
     }
     @keyframes flicker {
-      0%,100% { box-shadow:0 0 12px #00aaff; }
-      40%     { box-shadow:0 0 20px #00ffff; }
-      60%     { box-shadow:0 0 8px  #0088ff; }
+      0%, 100% { box-shadow: 0 0 12px #00aaff; }
+      40%      { box-shadow: 0 0 20px #00ffff; }
+      60%      { box-shadow: 0 0 8px  #0088ff; }
     }
 
     /* ─── Video Container ──────────────────────────────────────── */
@@ -128,6 +140,8 @@
       overflow: hidden;
       border-radius: 8px;
     }
+
+    /* ─── Play Overlay ─────────────────────────────────────────── */
     .cover-overlay {
       position: absolute;
       top: 0; left: 0;
@@ -221,8 +235,9 @@
       cursor: pointer;
     }
 
-    /* ─── Sign-Up & Schedule Buttons ──────────────────────────── */
-    .sign-up-btn, .schedule-btn {
+    /* ─── Sign-Up & Schedule Buttons ───────────────────────────── */
+    .sign-up-btn,
+    .schedule-btn {
       display: none;
       position: absolute;
       bottom: 15%;
@@ -237,9 +252,9 @@
       z-index: 900;
     }
     .sign-up-btn { left: 10%; }
-    .schedule-btn  { right: 10%; }
+    .schedule-btn { right: 10%; }
 
-    /* ─── Arrow & Access Message ───────────────────────────────── */
+    /* ─── Arrow Indicator ─────────────────────────────────────── */
     .arrow-up {
       font-size: 2.2em;
       color: #FFA500;
@@ -247,23 +262,23 @@
       letter-spacing: 0.5em;
       margin: 0.3em 0 0;
     }
-    .access-message {
-      font-size: 1.1em;
-      font-weight: 700;
-      font-family: 'Segoe UI Semibold', sans-serif;
-      margin-top: 0.3em;
-      margin-bottom: 0;
-    }
 
-    /* “Watch for access details” smaller, bolder, pulled up tight */
+    /* ─── Access Message ───────────────────────────────────────── */
+    .access-message {
+  font-size: 1.6em;           
+  font-weight: 900;
+  margin-top: 0.1em;        
+  margin-bottom: 1.2;
+}
+
+    /* ─── Statistic Message (Enlarged) ────────────────────────── */
     .stat-message {
-      font-size: 0.8em;
-      font-weight: 700;
+      font-size: 2.6em;           /* doubled from 0.95em */
       color: #ff0000;
       text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
-      margin-top: -0.2em;
+      margin-top: 1.2em;
       padding: 0 1em;
-      line-height: 1.2em;
+      line-height: 1.4em;
     }
 
     /* ─── Calendly Popup Overlay ───────────────────────────────── */
@@ -290,54 +305,64 @@
       cursor: pointer;
     }
 
-    /* ─── Footer & Responsive ─────────────────────────────────── */
+    /* ─── Footer Styles ───────────────────────────────────────── */
     footer {
       font-size: 0.85em;
       color: #bbb;
       padding: 2em 1em;
       border-top: 1px solid #333;
     }
+
+    /* ─── Responsive Media Queries ────────────────────────────── */
     @media (max-width: 600px) {
       .title-group span { font-size: 2em; }
-      h2               { font-size: 0.9em; }
-      .arrow-up        { font-size: 1.8em; }
-      .access-message  { font-size: 1em; }
-      .stat-message    { font-size: 0.7em; margin-top: -0.1em; }
+      h2 { font-size: 1.4em; }
+      .arrow-up { font-size: 1.8em; }
+      .access-message { font-size: 1em; }
+      .stat-message { font-size: 1.2em; }
       #popup-form input,
       #popup-form button { width: 90%; font-size: 0.9em; }
       .sign-up-btn,
-      .schedule-btn    { bottom: 10%; font-size: 0.9em; }
-      #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
+      .schedule-btn { bottom: 10%; font-size: 0.9em; }
+      #calendly-popup .calendly-inline-widget {
+        width: 90%; height: 400px;
+      }
     }
   </style>
 </head>
 
 <body>
+  <!-- Page Header -->
   <header>
+    <!-- Brand logo + text -->
     <div class="brand">
-      <img
-        src="https://i.postimg.cc/DZPhCTMZ/IMG-20250430-WA0007.jpg"
-        alt="STEMSphere Logo"
-        class="brand-logo"
-      />
+      <span class="brand-logo">SP</span>
       <span class="brand-text">STEMSphere</span>
     </div>
 
+    <!-- Two-line main title -->
     <div class="title-group">
       <span>Other Courses Teach.</span>
       <span>We Transform.</span>
     </div>
 
+    <!-- Subtitle below title -->
     <h2>Better → Smarter → Faster Learning!</h2>
 
+    <!-- Course topics bar -->
     <div class="course-bar">
-      <span>MATH</span><span>|</span><span>Chemistry</span><span>|</span><span>Biology</span><span>|</span>
+      <span>MATH</span><span>|</span><span>Chemistry</span>
+      <span>|</span><span>Biology</span><span>|</span>
       <span>Coding & more</span>
     </div>
   </header>
 
+  <!-- Main Content -->
   <main>
+    <!-- Electric glow frame wrapper -->
     <div class="electric-frame">
+
+      <!-- Video container + overlay -->
       <div class="video-container">
         <div class="cover-overlay">
           <div class="play-btn">▶</div>
@@ -346,6 +371,7 @@
         <div class="click-overlay"></div>
       </div>
 
+      <!-- Lead-capture popup form with progress bar -->
       <div id="popup-form">
         <div class="progress-container">
           <div class="progress-bar"></div>
@@ -363,12 +389,17 @@
         </form>
       </div>
 
-      <button class="sign-up-btn" onclick="window.location='https://www.stemsphere.academy'">
+      <!-- Sign-up and schedule buttons -->
+      <button
+        class="sign-up-btn"
+        onclick="window.location='https://www.stemsphere.academy'"
+      >
         Sign Up Now
       </button>
       <button class="schedule-btn">Schedule Now</button>
     </div>
 
+    <!-- Arrow indicator + messages -->
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Play ↻ in your regular browser</div>
     <p class="stat-message">Watch for access details</p>
