@@ -20,22 +20,53 @@
       text-align: center;
     }
 
+    /* Make header a positioning context for the brand */
     header {
+      position: relative;
       padding: 3em 1em 1em;
+    }
+
+    /* NEW BRAND STYLES: top-left “STEMSphere / SP” */
+    .brand {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      text-align: left;
+    }
+    .brand span {
+      display: block;
+      font-size: 1.1em;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .brand span:first-child {
+      color: #ffffff; /* STEMSphere in white */
+    }
+    .brand span:last-child {
+      color: #ff0000; /* SP in red */
     }
 
     .title-group {
       display: inline-block;
       margin-bottom: 0.4em;
     }
+    /* override old yellow title color */
+    /* .title-group span { color: #FFDD00; } */
 
+    /* New two-line title colors */
     .title-group span {
       display: block;
       font-size: 2.8em;
       font-weight: 700;
-      color: #FFDD00;
       letter-spacing: 1px;
       margin: 0.4em 0;
+      color: #ffffff;          /* default white */
+    }
+    .title-group span:first-child {
+      color: #ff0000;          /* first line red */
+    }
+    .title-group span:last-child {
+      color: #ffffff;          /* second line white */
     }
 
     h2 {
@@ -102,7 +133,6 @@
       border-radius: 8px;
     }
 
-    /* semi-transparent overlay with custom play icon */
     .cover-overlay {
       position: absolute;
       top: 0;
@@ -136,7 +166,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 700;  /* above cover */
+      z-index: 700;
       cursor: pointer;
     }
 
@@ -273,6 +303,12 @@
 
 <body>
   <header>
+    <!-- Top-left brand -->
+    <div class="brand">
+      <span>STEMSphere</span>
+      <span>SP</span>
+    </div>
+
     <div class="title-group">
       <span>Other Courses Teach.</span>
       <span>We Transform.</span>
@@ -292,7 +328,6 @@
   <main>
     <div class="electric-frame">
       <div class="video-container">
-        <!-- now shows semi-transparent overlay + play icon -->
         <div class="cover-overlay">
           <div class="play-btn">▶</div>
         </div>
@@ -357,7 +392,7 @@
 
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
-        host: 'https://www.youtube-nocookie.com',
+        host: 'https://www.youtube.com-nocookie.com',
         videoId: '9bvO-33YZxE',
         playerVars: {
           controls: 0,
@@ -435,5 +470,3 @@
   </script>
 </body>
 </html>
-
-
