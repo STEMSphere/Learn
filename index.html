@@ -20,13 +20,12 @@
       text-align: center;
     }
 
-    /* Make header a positioning context for the brand */
     header {
       position: relative;
       padding: 3em 1em 1em;
     }
 
-    /* NEW BRAND STYLES: top-left “STEMSphere / SP” */
+    /* Top-left STEMSphere / SP */
     .brand {
       position: absolute;
       top: 1rem;
@@ -39,35 +38,24 @@
       font-weight: 700;
       line-height: 1;
     }
-    .brand span:first-child {
-      color: #ffffff; /* STEMSphere in white */
-    }
-    .brand span:last-child {
-      color: #ff0000; /* SP in red */
-    }
+    .brand span:first-child { color: #ffffff; }
+    .brand span:last-child  { color: #ff0000; }
 
     .title-group {
       display: inline-block;
       margin-bottom: 0.4em;
     }
-    /* override old yellow title color */
-    /* .title-group span { color: #FFDD00; } */
-
-    /* New two-line title colors */
+    /* Two-line title: first red, second white */
     .title-group span {
       display: block;
       font-size: 2.8em;
       font-weight: 700;
       letter-spacing: 1px;
       margin: 0.4em 0;
-      color: #ffffff;          /* default white */
+      color: #ffffff;
     }
-    .title-group span:first-child {
-      color: #ff0000;          /* first line red */
-    }
-    .title-group span:last-child {
-      color: #ffffff;          /* second line white */
-    }
+    .title-group span:first-child { color: #ff0000; }
+    .title-group span:last-child  { color: #ffffff; }
 
     h2 {
       font-size: 1.4em;
@@ -86,9 +74,7 @@
       color: #fff;
       margin-top: 0.6em;
     }
-    .course-bar span + span {
-      margin-left: 0.5em;
-    }
+    .course-bar span + span { margin-left: 0.5em; }
 
     main {
       max-width: 850px;
@@ -135,10 +121,8 @@
 
     .cover-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.5);
       z-index: 600;
       display: flex;
@@ -154,18 +138,14 @@
 
     #player {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
     }
 
     .click-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 700;
       cursor: pointer;
     }
@@ -173,10 +153,8 @@
     #popup-form {
       display: none;
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
@@ -294,8 +272,10 @@
       .arrow-up { font-size: 1.8em; }
       .access-message { font-size: 1.2em; }
       .stat-message { font-size: 0.9em; }
-      #popup-form input, #popup-form button { width: 90%; font-size: 0.9em; }
-      .sign-up-btn, .schedule-btn { bottom: 10%; font-size: 0.9em; }
+      #popup-form input,
+      #popup-form button { width: 90%; font-size: 0.9em; }
+      .sign-up-btn,
+      .schedule-btn { bottom: 10%; font-size: 0.9em; }
       #calendly-popup .calendly-inline-widget { width: 90%; height: 400px; }
     }
   </style>
@@ -303,7 +283,6 @@
 
 <body>
   <header>
-    <!-- Top-left brand -->
     <div class="brand">
       <span>STEMSphere</span>
       <span>SP</span>
@@ -315,12 +294,8 @@
     </div>
     <h2>Better → Smarter → Faster Learning!</h2>
     <div class="course-bar">
-      <span>MATH</span>
-      <span>|</span>
-      <span>Chemistry</span>
-      <span>|</span>
-      <span>Biology</span>
-      <span>|</span>
+      <span>MATH</span><span>|</span><span>Chemistry</span>
+      <span>|</span><span>Biology</span><span>|</span>
       <span>Coding & more</span>
     </div>
   </header>
@@ -392,7 +367,7 @@
 
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
-        host: 'https://www.youtube.com-nocookie.com',
+        host: 'https://www.youtube-nocookie.com',
         videoId: '9bvO-33YZxE',
         playerVars: {
           controls: 0,
@@ -445,7 +420,7 @@
       }
       if (!flags.schedule && t >= scheduleTime) {
         flags.schedule = true;
-        document.querySelector('.schedule-btn').style.display = 'block';
+        document.querySelector('.schedule-btn').stijl.display = 'block';
       }
     }
 
@@ -470,3 +445,4 @@
   </script>
 </body>
 </html>
+```
