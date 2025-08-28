@@ -537,6 +537,228 @@
 </body>
 </html>
 
+<!-- BEGIN: Courses & Tutoring Styles -->
+<style>
+  /* Section Styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+  }
+  h2 {
+    color: #ff0000;
+    font-size: 2em;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  p.intro {
+    color: #ddd;
+    text-align: center;
+    max-width: 800px;
+    margin: 0.5rem auto 2rem;
+  }
+  .course-grid,
+  .tutor-grid {
+    display: grid;
+    grid-gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+  }
+  .course-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  .course-tile,
+  .tutor-subject {
+    background: #111;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .course-tile img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 0.5rem;
+  }
+  .course-tile h3 {
+    color: #fff;
+    font-size: 1.25em;
+    margin: 0.5rem 0;
+  }
+  .course-tile p {
+    color: #ddd;
+    font-size: 0.9em;
+  }
+  .tutor-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .tutor-subject img {
+    width: 48px;
+    height: 48px;
+    float: left;
+    margin-right: 1rem;
+  }
+  .tutor-subject h4 {
+    color: #ff0000;
+    font-size: 1.1em;
+    margin: 0 0 0.5rem;
+  }
+  .tutor-subject ul {
+    color: #ddd;
+    font-size: 0.9em;
+    text-align: left;
+    padding-left: 1.2rem;
+    margin: 0;
+  }
+  .cta-button {
+    display: inline-block;
+    background: #ff0000;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 1rem auto 3rem;
+    text-align: center;
+  }
+</style>
+<!-- END: Courses & Tutoring Styles -->
+
+<!-- BEGIN: On-Demand Courses Section -->
+<section id="on-demand-courses">
+  <h2>Learn Anywhere, Anytime with Our On-Demand Courses</h2>
+  <p class="intro">
+    Choose from expert-led, 5–10 minute video modules with quizzes and cheat-sheets. No schedule required—learn at your own pace.
+  </p>
+  <div class="course-grid">
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_MATH" alt="Math Icon">
+      <h3>Algebra Essentials</h3>
+      <p>Master variables, equations, and functions.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_MATH" alt="Geometry Icon">
+      <h3>Geometry Foundations</h3>
+      <p>Understand shapes, theorems, and proofs.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_MATH" alt="Pre-Calculus Icon">
+      <h3>Pre-Calculus &amp; Trigonometry</h3>
+      <p>Functions, limits, and trig identities.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_MATH" alt="Calculus Icon">
+      <h3>AP® Calculus AB &amp; BC</h3>
+      <p>Full exam prep for derivatives &amp; integrals.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_MATH" alt="Statistics Icon">
+      <h3>AP® Statistics</h3>
+      <p>Data analysis, probability, and inference.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_CHEM" alt="Chemistry Icon">
+      <h3>General Chemistry Crash Course</h3>
+      <p>Atomic structure, reactions, and stoichiometry.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_CHEM" alt="Organic Chem Icon">
+      <h3>Organic Chemistry Deep Dive</h3>
+      <p>Reactions, mechanisms, and nomenclature.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_CHEM" alt="IB Chemistry Icon">
+      <h3>IB Chemistry SL &amp; HL Prep</h3>
+      <p>Curriculum-aligned modules &amp; practice.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_BIO" alt="Biology Icon">
+      <h3>AP® Biology Masterclass</h3>
+      <p>Cell biology, genetics, and ecology.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_BIO" alt="MCAT Bio Icon">
+      <h3>MCAT Biology Review</h3>
+      <p>Biochemistry, physiology, and systems.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_SPEAK" alt="Public Speaking Icon">
+      <h3>Public Speaking Foundations</h3>
+      <p>Voice control, body language, and structure.</p>
+    </div>
+    <div class="course-tile">
+      <img src="IMAGE_URL_ICON_ENG" alt="English Icon">
+      <h3>IELTS &amp; TOEFL English Skills</h3>
+      <p>Reading, writing, speaking, and listening.</p>
+    </div>
+  </div>
+</section>
+<!-- END: On-Demand Courses Section -->
+
+<!-- BEGIN: Tutoring Subjects Section -->
+<section id="tutoring-subjects">
+  <h2>Personalized Tutoring in Every Subject We Offer</h2>
+  <p class="intro">
+    One-on-one or small-group sessions with our expert tutors. From weekly check-ins to intensive exam prep, we cover every level.
+  </p>
+  <div class="tutor-grid">
+    <div class="tutor-subject">
+      <img src="IMAGE_URL_ICON_MATH_LARGE" alt="Math Tutoring Icon">
+      <h4>Math</h4>
+      <ul>
+        <li>Elementary → Fractions, Decimals</li>
+        <li>Middle → Pre-Algebra, Ratios</li>
+        <li>High → Algebra I &amp; II, Geometry, Trig</li>
+        <li>College → Calc I–III, Linear Algebra, DE, Statistics</li>
+      </ul>
+    </div>
+    <div class="tutor-subject">
+      <img src="IMAGE_URL_ICON_BIO_LARGE" alt="Biology Tutoring Icon">
+      <h4>Biology</h4>
+      <ul>
+        <li>Middle → Cells &amp; Genetics Basics</li>
+        <li>High → AP® Bio, IB SL/HL</li>
+        <li>College → Molecular Bio, Ecology, Physiology</li>
+        <li>MCAT Prep: Biochemistry, Cell Biology</li>
+      </ul>
+    </div>
+    <div class="tutor-subject">
+      <img src="IMAGE_URL_ICON_CHEM_LARGE" alt="Chemistry Tutoring Icon">
+      <h4>Chemistry</h4>
+      <ul>
+        <li>High → General &amp; Organic Chem</li>
+        <li>AP® Chem, IB SL/HL</li>
+        <li>College → Physical, Inorganic, Analytical</li>
+        <li>Exam Prep: SAT II, GRE Subject, MCAT, A-Level &amp; GCSE</li>
+      </ul>
+    </div>
+    <div class="tutor-subject">
+      <img src="IMAGE_URL_ICON_SPEAK_LARGE" alt="Public Speaking Tutoring Icon">
+      <h4>Public Speaking</h4>
+      <ul>
+        <li>Voice &amp; Tone, Body Language</li>
+        <li>Slides &amp; Storytelling</li>
+        <li>Debate &amp; Persuasion</li>
+        <li>Interviews &amp; Speech Contests</li>
+      </ul>
+    </div>
+    <div class="tutor-subject">
+      <img src="IMAGE_URL_ICON_ENG_LARGE" alt="English Tutoring Icon">
+      <h4>English</h4>
+      <ul>
+        <li>Grammar &amp; Vocabulary</li>
+        <li>SAT/ACT Reading &amp; Comprehension</li>
+        <li>Essay Writing &amp; Rhetoric</li>
+        <li>IELTS &amp; TOEFL All Sections</li>
+      </ul>
+    </div>
+  </div>
+  <a href="#" class="cta-button">Book a Free Consultation</a>
+</section>
+<!-- END: Tutoring Subjects Section -->
+
+
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (Mobile Fix) -->
 
 <!-- Floating Chat Icon -->
