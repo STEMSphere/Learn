@@ -547,42 +547,124 @@
 </style>
 <!-- END: Section Heading Overrides -->
 
+
+<!-- BEGIN: Courses & Tutoring Styles -->
+<style>
+  /* Section Styles */
+  body {
+    font-family: Arial, sans-serif;
+  }
+  h2 {
+    color: #ffffff;
+    font-size: 2em;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  p.intro {
+    color: #ddd;
+    text-align: center;
+    max-width: 800px;
+    margin: 0.5rem auto 2rem;
+  }
+  .course-grid,
+  .tutor-grid {
+    display: grid;
+    grid-gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+  }
+  .course-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  .course-tile,
+  .tutor-subject {
+    background: #111;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .course-tile img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 0.5rem;
+  }
+  .course-tile h3 {
+    color: #fff;
+    font-size: 1.25em;
+    margin: 0.5rem 0;
+  }
+  .course-tile p {
+    color: #ddd;
+    font-size: 0.9em;
+  }
+  .tutor-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  .tutor-subject img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 0.5rem;
+  }
+  .tutor-subject h4 {
+    color: #ff0000;
+    font-size: 1.1em;
+    margin: 0;
+  }
+  .cta-button {
+    display: inline-block;
+    background: #ff0000;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 1rem auto 3rem;
+    text-align: center;
+  }
+</style>
+<!-- END: Courses & Tutoring Styles -->
+
 <!-- BEGIN: On-Demand Courses Section -->
 <section id="on-demand-courses">
   <h2>Learn Anywhere, Anytime with Our On-Demand Courses</h2>
+  <p class="intro">
+    Choose from expert-led, 5–10 minute video modules with quizzes and cheat-sheets. No schedule required—learn at your own pace.
+  </p>
   <div class="course-grid">
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_SAT_MATH" alt="SAT Math Icon">
       <h3>SAT Math</h3>
-      <p>Comprehensive SAT math prep.</p>
+      <p>Comprehensive SAT Math prep.</p>
     </div>
     <div class="course-tile">
-      <img src="IMAGE_URL_ICON_CHEM" alt="Chemistry Icon">
+      <img src="IMAGE_URL_ICON_CHEMISTRY" alt="Chemistry Icon">
       <h3>Chemistry</h3>
       <p>Fundamentals of chemical principles.</p>
     </div>
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_AI" alt="AI Made Easy Icon">
       <h3>AI Made Easy</h3>
-      <p>Hands-on introduction to AI.</p>
+      <p>Hands-on introduction to AI concepts.</p>
     </div>
     <div class="course-tile">
       <img src="IMAGE_URL_ICON_PYTHON" alt="Python Programming Icon">
       <h3>Python Programming</h3>
-      <p>Learn Python basics &amp; beyond.</p>
+      <p>Learn Python basics and beyond.</p>
     </div>
     <div class="course-tile">
-      <img src="IMAGE_URL_ICON_SPEAK" alt="Public Speaking Icon">
+      <img src="IMAGE_URL_ICON_PUBLIC_SPEAKING" alt="Public Speaking Icon">
       <h3>Public Speaking Foundations</h3>
       <p>Master voice, tone, and presence.</p>
     </div>
     <div class="course-tile">
-      <img src="IMAGE_URL_ICON_BIO" alt="General Biology Icon">
+      <img src="IMAGE_URL_ICON_GENERAL_BIOLOGY" alt="General Biology Icon">
       <h3>General Biology</h3>
-      <p>Explore cell biology &amp; ecology.</p>
+      <p>Explore cell biology and ecology.</p>
     </div>
     <div class="course-tile">
-      <img src="IMAGE_URL_ICON_KIDS_BIO" alt="Kids Biology Icon">
+      <img src="IMAGE_URL_ICON_KIDS_BIOLOGY" alt="Kids Biology Icon">
       <h3>Kids Biology</h3>
       <p>Fun biology for young learners.</p>
     </div>
@@ -593,6 +675,9 @@
 <!-- BEGIN: Tutoring Subjects Section -->
 <section id="tutoring-subjects">
   <h2>Personalized Tutoring in Every Subject We Offer</h2>
+  <p class="intro">
+    One-on-one or small-group sessions with our expert tutors. From weekly check-ins to intensive exam prep, we cover every level.
+  </p>
   <div class="tutor-grid">
     <div class="tutor-subject">
       <img src="IMAGE_URL_ICON_ALGEBRA" alt="Algebra Essentials Icon">
@@ -603,11 +688,11 @@
       <h4>Geometry Foundations</h4>
     </div>
     <div class="tutor-subject">
-      <img src="IMAGE_URL_ICON_PRECALC" alt="Pre-Calculus & Trig Icon">
+      <img src="IMAGE_URL_ICON_PRECALC" alt="Pre-Calculus &amp; Trig Icon">
       <h4>Pre-Calculus &amp; Trigonometry</h4>
     </div>
     <div class="tutor-subject">
-      <img src="IMAGE_URL_ICON_CALC" alt="AP Calculus AB & BC Icon">
+      <img src="IMAGE_URL_ICON_CALC" alt="AP Calculus AB &amp; BC Icon">
       <h4>AP® Calculus AB &amp; BC</h4>
     </div>
     <div class="tutor-subject">
@@ -623,7 +708,7 @@
       <h4>Organic Chemistry Deep Dive</h4>
     </div>
     <div class="tutor-subject">
-      <img src="IMAGE_URL_ICON_IB_CHEM" alt="IB Chemistry SL & HL Icon">
+      <img src="IMAGE_URL_ICON_IB_CHEM" alt="IB Chemistry SL &amp; HL Icon">
       <h4>IB Chemistry SL &amp; HL Prep</h4>
     </div>
     <div class="tutor-subject">
@@ -635,14 +720,15 @@
       <h4>MCAT Biology Review</h4>
     </div>
     <div class="tutor-subject">
-      <img src="IMAGE_URL_ICON_PSPEAK" alt="Public Speaking Foundations Icon">
+      <img src="IMAGE_URL_ICON_PUBLIC_SPEAKING" alt="Public Speaking Icon">
       <h4>Public Speaking Foundations</h4>
     </div>
     <div class="tutor-subject">
-      <img src="IMAGE_URL_ICON_ENG_SKILLS" alt="IELTS & TOEFL English Skills Icon">
+      <img src="IMAGE_URL_ICON_ENG" alt="English Icon">
       <h4>IELTS &amp; TOEFL English Skills</h4>
     </div>
   </div>
+  <a href="#" class="cta-button">Book a Free Consultation</a>
 </section>
 <!-- END: Tutoring Subjects Section -->
 
