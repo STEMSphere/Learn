@@ -13,7 +13,7 @@
   />
 
   <style>
-    /* ─── Section: Base Styles ───────────────────────────────────────── */
+    /* ─── Base Styles ───────────────────────────────────────────── */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -22,13 +22,13 @@
       text-align: center;
     }
 
-    /* ─── Section: Header Container ────────────────────────────────── */
+    /* ─── Header Container ──────────────────────────────────────── */
     header {
       position: relative;
       padding: 3em 1em 1em;
     }
 
-    /* ─── Section: Brand Logo (SP in red square + STEMSphere) ──────── */
+    /* ─── Brand Logo (SP in red square + STEMSphere) ────────────── */
     .brand {
       position: absolute;
       top: 1rem;
@@ -37,15 +37,14 @@
       align-items: center;
     }
     .brand-logo {
-      display: inline-block;
       width: 1.8em;
       height: 1.8em;
       line-height: 1.8em;
-      text-align: center;
       background-color: #ff0000;
       color: #ffffff;
       font-weight: 700;
       font-size: 1.1em;
+      text-align: center;
       border-radius: 4px;
       margin-right: 0.5em;
     }
@@ -55,30 +54,33 @@
       font-weight: 700;
     }
 
-    /* ─── Section: Title Group (Two-line Title) ─────────────────────── */
+    /* ─── Title Group (Two-line Title) ─────────────────────────── */
     .title-group {
       display: inline-block;
-      margin-bottom: 0.4em;
+      margin-bottom: 0.2em;
     }
     .title-group span {
       display: block;
       font-size: 2.8em;
       font-weight: 700;
       letter-spacing: 1px;
-      margin: 0.4em 0;
-      color: #ffffff;
+      margin: 0.2em 0;             /* reduced vertical gap */
     }
-    .title-group span:first-child { color: #ff0000; }
-    .title-group span:last-child  { color: #ffffff; }
+    .title-group span:first-child {
+      color: #ffffff;             /* Other Courses Teach. in white */
+    }
+    .title-group span:last-child {
+      color: #ff0000;             /* We Transform. in red */
+    }
 
-    /* ─── Section: Subtitle under Title ───────────────────────────── */
+    /* ─── Subtitle under Title ─────────────────────────────────── */
     h2 {
       font-size: 1.4em;
       color: #ccc;
       margin-top: 0.2em;
     }
 
-    /* ─── Section: Course Bar ──────────────────────────────────────── */
+    /* ─── Course Bar ───────────────────────────────────────────── */
     .course-bar {
       display: inline-flex;
       align-items: center;
@@ -92,14 +94,14 @@
     }
     .course-bar span + span { margin-left: 0.5em; }
 
-    /* ─── Section: Main Container ─────────────────────────────────── */
+    /* ─── Main Container ───────────────────────────────────────── */
     main {
       max-width: 850px;
       margin: auto;
       padding: 2em 1em 3em;
     }
 
-    /* ─── Section: Electric Frame (Blue Glow) ─────────────────────── */
+    /* ─── Electric Frame (Blue Glow) ───────────────────────────── */
     .electric-frame {
       display: block !important;
       position: relative;
@@ -113,7 +115,7 @@
       z-index: 500;
     }
 
-    /* ─── Section: Video Container ────────────────────────────────── */
+    /* ─── Video Container ──────────────────────────────────────── */
     .video-container {
       position: relative;
       padding-bottom: 56.25%;
@@ -122,14 +124,12 @@
       border-radius: 8px;
     }
 
-    /* ─── Section: Play Overlay ───────────────────────────────────── */
+    /* ─── Play Overlay ─────────────────────────────────────────── */
     .cover-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
       z-index: 600;
       display: flex;
       align-items: center;
@@ -142,25 +142,21 @@
       opacity: 0.8;
     }
 
-    /* ─── Section: Video IFrame Target ───────────────────────────── */
+    /* ─── Video IFrame Target ─────────────────────────────────── */
     #player {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
     }
     .click-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 700;
       cursor: pointer;
     }
 
-    /* ─── Section: Progress Bar Styles ───────────────────────────── */
+    /* ─── Progress Bar Styles ─────────────────────────────────── */
     .progress-container {
       width: 80%;
       max-width: 300px;
@@ -176,14 +172,12 @@
       background: #ff0000;
     }
 
-    /* ─── Section: Lead-Capture Popup Form ───────────────────────── */
+    /* ─── Lead-Capture Popup Form ─────────────────────────────── */
     #popup-form {
       display: none;
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       color: #fff;
       z-index: 1000;
@@ -192,8 +186,16 @@
       justify-content: center;
       padding: 1em;
     }
-    #popup-form h3 { margin-bottom: 0.2em; font-size: 1.4em; font-weight: 700; }
-    #popup-form p  { margin-bottom: 1em;   font-size: 1em;   color: #ccc; }
+    #popup-form h3 {
+      margin-bottom: 0.2em;
+      font-size: 1.4em;
+      font-weight: 700;
+    }
+    #popup-form p {
+      margin-bottom: 1em;
+      font-size: 1em;
+      color: #ccc;
+    }
     #popup-form input {
       width: 80%;
       max-width: 300px;
@@ -216,7 +218,7 @@
       cursor: pointer;
     }
 
-    /* ─── Section: Sign-Up & Schedule Buttons ────────────────────── */
+    /* ─── Sign-Up & Schedule Buttons ───────────────────────────── */
     .sign-up-btn,
     .schedule-btn {
       display: none;
@@ -235,7 +237,7 @@
     .sign-up-btn { left: 10%; }
     .schedule-btn { right: 10%; }
 
-    /* ─── Section: Arrow Indicator ───────────────────────────────── */
+    /* ─── Arrow Indicator ─────────────────────────────────────── */
     .arrow-up {
       font-size: 2.2em;
       color: #FFA500;
@@ -244,7 +246,7 @@
       margin: 0.3em 0 0;
     }
 
-    /* ─── Section: Access Message ───────────────────────────────── */
+    /* ─── Access Message ───────────────────────────────────────── */
     .access-message {
       font-size: 1.1em;
       font-weight: 700;
@@ -252,32 +254,29 @@
       margin-top: 0.3em;
     }
 
-    /* ─── Section: Statistic Message ────────────────────────────── */
+    /* ─── Statistic Message (Replaced) ────────────────────────── */
     .stat-message {
       font-size: 0.95em;
-      color: #ccc;
+      color: #ff0000;
+      text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
       margin-top: 1.2em;
       padding: 0 1em;
       line-height: 1.4em;
     }
 
-    /* ─── Section: Calendly Popup Overlay ───────────────────────── */
+    /* ─── Calendly Popup Overlay ───────────────────────────────── */
     #calendly-popup {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.85);
       z-index: 1500;
       align-items: center;
       justify-content: center;
     }
     #calendly-popup .calendly-inline-widget {
-      width: 320px;
-      height: 580px;
-      border: none;
+      width: 320px; height: 580px; border: none;
     }
     #calendly-popup .close-cal {
       margin-top: 1em;
@@ -289,7 +288,7 @@
       cursor: pointer;
     }
 
-    /* ─── Section: Footer Styles ────────────────────────────────── */
+    /* ─── Footer Styles ───────────────────────────────────────── */
     footer {
       font-size: 0.85em;
       color: #bbb;
@@ -297,7 +296,7 @@
       border-top: 1px solid #333;
     }
 
-    /* ─── Section: Responsive Media Queries ────────────────────── */
+    /* ─── Responsive Media Queries ────────────────────────────── */
     @media (max-width: 600px) {
       .title-group span { font-size: 2em; }
       h2 { font-size: 1.2em; }
@@ -309,15 +308,14 @@
       .sign-up-btn,
       .schedule-btn { bottom: 10%; font-size: 0.9em; }
       #calendly-popup .calendly-inline-widget {
-        width: 90%;
-        height: 400px;
+        width: 90%; height: 400px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!-- ─── Section: Page Header ─────────────────────────────────────── -->
+  <!-- Page Header -->
   <header>
     <!-- Brand logo + text -->
     <div class="brand">
@@ -336,17 +334,13 @@
 
     <!-- Course topics bar -->
     <div class="course-bar">
-      <span>MATH</span>
-      <span>|</span>
-      <span>Chemistry</span>
-      <span>|</span>
-      <span>Biology</span>
-      <span>|</span>
+      <span>MATH</span><span>|</span><span>Chemistry</span>
+      <span>|</span><span>Biology</span><span>|</span>
       <span>Coding & more</span>
     </div>
   </header>
 
-  <!-- ─── Section: Main Content ───────────────────────────────────── -->
+  <!-- Main Content -->
   <main>
     <!-- Electric glow frame wrapper -->
     <div class="electric-frame">
@@ -391,13 +385,10 @@
     <!-- Arrow indicator + messages -->
     <div class="arrow-up">↑↑↑↑</div>
     <div class="access-message">Play ↻ in your regular browser</div>
-    <p class="stat-message">
-      9 out of 10 students don't complete the courses they start.
-      STEMSphere Academy breaks these statistics
-    </p>
+    <p class="stat-message">Watch for access details</p>
   </main>
 
-  <!-- ─── Section: Calendly Inline Popup ─────────────────────────── -->
+  <!-- Calendly Inline Popup -->
   <div id="calendly-popup">
     <div
       class="calendly-inline-widget"
@@ -406,18 +397,18 @@
     <button class="close-cal">Close</button>
   </div>
 
-  <!-- ─── Section: Footer ─────────────────────────────────────────── -->
+  <!-- Footer -->
   <footer>© 2025 STEMSphere Academy. All rights reserved.</footer>
 
-  <!-- ─── Section: External Scripts ───────────────────────────────── -->
+  <!-- External Scripts -->
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script>
-    // ─── Section: Load YouTube IFrame API ─────────────────────────
+    // Load YouTube IFrame API
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.head.appendChild(tag);
 
-    // ─── Section: Variables & Control Flags ───────────────────────
+    // Variables & Control Flags
     let player,
         pauseTime    = 140,
         signUpTime   = 384,
@@ -425,7 +416,7 @@
         intervalId,
         flags = { form: false, signUp: false, schedule: false };
 
-    // ─── Section: Initialize Player ───────────────────────────────
+    // Initialize Player
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
         host: 'https://www.youtube-nocookie.com',
@@ -446,7 +437,7 @@
       });
     }
 
-    // ─── Section: Player Ready Handler ────────────────────────────
+    // Player Ready Handler
     function onPlayerReady() {
       document.querySelector('.click-overlay').addEventListener('click', () => {
         if (player.getPlayerState() === YT.PlayerState.PLAYING) {
@@ -457,7 +448,7 @@
       });
     }
 
-    // ─── Section: Player State Change Handler ─────────────────────
+    // Player State Change Handler
     function onPlayerStateChange(event) {
       const cover = document.querySelector('.cover-overlay');
       if (event.data === YT.PlayerState.PLAYING) {
@@ -469,7 +460,7 @@
       }
     }
 
-    // ─── Section: Milestone Checker ───────────────────────────────
+    // Milestone Checker
     function checkMilestones() {
       const t = player.getCurrentTime();
       if (!flags.form && t >= pauseTime) {
@@ -488,7 +479,7 @@
       }
     }
 
-    // ─── Section: DOM Ready & UI Event Handlers ───────────────────
+    // DOM Ready & UI Event Handlers
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('leadForm').addEventListener('submit', e => {
         e.preventDefault();
