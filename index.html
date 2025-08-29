@@ -1086,6 +1086,163 @@
   </details>
 </section>
 
+
+
+<!-- BEGIN: Pricing & Membership Section -->
+<style>
+  #pricing-section {
+    background: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 3rem 1rem;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  #pricing-section h2 {
+    font-size: 2.2em;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+
+  #pricing-section p {
+    max-width: 800px;
+    margin: 0.5rem auto 1.5rem;
+    line-height: 1.6;
+    color: #ddd;
+  }
+
+  #pricing-section .highlight {
+    color: #ff0044;
+    font-weight: bold;
+  }
+
+  #pricing-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 2rem auto;
+    max-width: 700px;
+    text-align: left;
+  }
+
+  #pricing-section ul li {
+    position: relative;
+    padding-left: 2em;
+    margin: 1rem 0;
+    font-size: 1.05em;
+    color: #ddd;
+  }
+
+  #pricing-section ul li::before {
+    content: "➤";
+    position: absolute;
+    left: 0;
+    color: #FF8C00;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  #pricing-section .conversion-box {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #222;
+    border-radius: 6px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #pricing-section .conversion-box input,
+  #pricing-section .conversion-box select {
+    padding: 0.6rem;
+    margin: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    width: 45%;
+  }
+
+  #pricing-section .conversion-box button {
+    padding: 0.6rem 1.2rem;
+    background: #ff0044;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  #pricing-section .conversion-result {
+    margin-top: 1rem;
+    font-size: 1.1em;
+    color: #00dffc;
+  }
+
+  @media (max-width: 600px) {
+    #pricing-section ul li {
+      font-size: 1em;
+    }
+    #pricing-section .conversion-box input,
+    #pricing-section .conversion-box select {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>
+
+<section id="pricing-section">
+  <h2>💸 What Are Our Costs?</h2>
+  <p>
+    We offer flexible monthly memberships designed to fit your learning style and budget.  
+    Each course is billed monthly, and you can switch tiers anytime.
+  </p>
+
+  <ul>
+    <li><span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month</li>
+    <li><span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month</li>
+    <li><span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month</li>
+  </ul>
+
+  <p>
+    We accept payments in <span class="highlight">most global currencies</span>, and you can use the converter below to estimate your local cost.
+  </p>
+
+  <div class="conversion-box">
+    <input type="number" id="usdAmount" placeholder="Amount in USD" />
+    <select id="currencySelect">
+      <option value="EUR">EUR (Euro)</option>
+      <option value="GBP">GBP (British Pound)</option>
+      <option value="NGN">NGN (Naira)</option>
+      <option value="INR">INR (Rupee)</option>
+      <option value="CAD">CAD (Canadian Dollar)</option>
+      <option value="AUD">AUD (Australian Dollar)</option>
+      <option value="JPY">JPY (Yen)</option>
+    </select>
+    <button onclick="convertCurrency()">Convert</button>
+    <div class="conversion-result" id="conversionResult"></div>
+  </div>
+</section>
+
+<script>
+  async function convertCurrency() {
+    const amount = parseFloat(document.getElementById('usdAmount').value);
+    const currency = document.getElementById('currencySelect').value;
+    if (!amount || !currency) return;
+
+    try {
+      const res = await fetch(`https://api.exchangerate.host/latest?base=USD&symbols=${currency}`);
+      const data = await res.json();
+      const rate = data.rates[currency];
+      const converted = (amount * rate).toFixed(2);
+      document.getElementById('conversionResult').innerText = `${amount} USD ≈ ${converted} ${currency}`;
+    } catch (err) {
+      document.getElementById('conversionResult').innerText = "Conversion failed. Try again.";
+    }
+  }
+</script>
+<!-- END: Pricing & Membership Section -->
+
+
 <footer>
   © 2025 STEMSphere Academy. All rights reserved.
   <nav class="footer-links">
