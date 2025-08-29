@@ -73,17 +73,15 @@
       color: #ff0000;             /* We Transform! in red */
     }
 
-    /* ─── Subtitle under Title ─────────────────────────────────── */
-   <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var subtitle = document.querySelector(".title-group + h2");
-    if (subtitle) {
-      subtitle.style.cssText =
-        "font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
-    }
-  });
-</script>
-
+  /* ─── Subtitle under Title ─────────────────────────────────── */
+h2 {
+  font-size: 1.2em;        
+  white-space: nowrap;     
+  overflow: hidden;        
+  text-overflow: ellipsis; 
+  color: #ccc;
+  margin-top: 0.2em;
+}
 
     /* ─── Course Bar ───────────────────────────────────────────── */
     .course-bar {
