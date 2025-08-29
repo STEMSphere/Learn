@@ -1008,6 +1008,8 @@
 
 <!-- BEGIN: Pricing & Membership Section -->
 
+<!-- BEGIN: Pricing & Membership Section -->
+
 <!-- SECTION: Scoped Styles -->
 <style>
   #pricing-section {
@@ -1019,17 +1021,16 @@
     box-sizing: border-box;
   }
 
-  /* New: Wrapper for content excluding banner */
+  /* Wrapper for all content (no banner image) */
   #pricing-section .content-wrapper {
     border: 1px solid #FFD700;
     border-radius: 6px;
     padding: 2rem;
-    margin-top: 2rem;
   }
 
   #pricing-section h2 {
     font-size: 2.2em;
-    margin: 1.5rem 0 1rem;
+    margin: 0 0 1rem;
   }
 
   #pricing-section p {
@@ -1093,41 +1094,32 @@
 
 <!-- SECTION: Pricing Content -->
 <section id="pricing-section">
-
-  <!-- SUBSECTION: Banner Image -->
-  <img
-    src="https://i.postimg.cc/bJWWLpq5/In-Shot-20250829-150205226.jpg"
-    alt="STEMSphere Membership Tiers Banner"
-    style="max-width:100%; height:auto; border-radius:8px; margin-bottom:2rem;"
-  />
-
-  <!-- SUBSECTION: Gold-Bordered Wrapper -->
   <div class="content-wrapper">
 
-    <!-- SUBSECTION: Title -->
+    <!-- Title -->
     <h2>What Are Our Costs?</h2>
 
-    <!-- SUBSECTION: Membership Description -->
+    <!-- Membership Description -->
     <p>
       We offer flexible monthly memberships designed to fit your learning style and budget.  
       Each course is billed monthly, and each plan covers <span class="highlight">one subject that meets once a week</span>.  
       Most students stack several classes to build the schedule that works best for them.
     </p>
 
-    <!-- SUBSECTION: Pricing Tiers -->
+    <!-- Pricing Tiers -->
     <ul>
       <li><span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month</li>
       <li><span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month</li>
       <li><span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month</li>
     </ul>
 
-    <!-- SUBSECTION: Currency Support Info -->
+    <!-- Currency Support Info -->
     <p>
       We accept payments in <span class="highlight">most global currencies</span>, including USD, EUR, GBP, NGN, INR, CAD, AUD, JPY, HKD, SGD, PHP, KRW, MYR, THB, TWD, ZAR, BRL, MXN, and more.  
       Use the converter below to estimate your local cost.
     </p>
 
-    <!-- SUBSECTION: Currency Converter (OANDA Widget) -->
+    <!-- Currency Converter (OANDA Widget) -->
     <div class="conversion-box">
       <div id="oanda_ecc">
         <span>Currency Converter by OANDA</span>
@@ -1136,12 +1128,12 @@
     </div>
 
   </div><!-- /.content-wrapper -->
-
 </section>
 
 <!-- END: Pricing & Membership Section -->
 
-<!-- FULL-LANGUAGE TRANSLATOR BAR (TOP-RIGHT) -->
+
+<!-- START:FULL-LANGUAGE TRANSLATOR BAR (TOP-RIGHT) -->
 <style>
   #fallback-translator {
     position: fixed;
