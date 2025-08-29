@@ -1006,6 +1006,179 @@
 </section>
 <!-- END: Why Choose Our Tutoring Section -->
 
+<!-- BEGIN: Pricing & Membership Section -->
+<style>
+  #pricing-section {
+    background: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 3rem 1rem;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  #pricing-section h2 {
+    font-size: 2.2em;
+    margin: 1.5rem 0 1rem;
+    color: #fff;
+  }
+
+  #pricing-section p {
+    max-width: 800px;
+    margin: 0.5rem auto 1.5rem;
+    line-height: 1.6;
+    color: #ddd;
+  }
+
+  #pricing-section .highlight {
+    color: #ff0044;
+    font-weight: bold;
+  }
+
+  #pricing-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 2rem auto;
+    max-width: 700px;
+    text-align: left;
+  }
+
+  #pricing-section ul li {
+    position: relative;
+    padding-left: 2em;
+    margin: 1rem 0;
+    font-size: 1.05em;
+    color: #ddd;
+  }
+
+  #pricing-section ul li::before {
+    content: "➤";
+    position: absolute;
+    left: 0;
+    color: #FF8C00;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  #pricing-section .conversion-box {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #222;
+    border-radius: 6px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #pricing-section .conversion-box input,
+  #pricing-section .conversion-box select {
+    padding: 0.6rem;
+    margin: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    width: 45%;
+  }
+
+  #pricing-section .conversion-box button {
+    padding: 0.6rem 1.2rem;
+    background: #ff0044;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  #pricing-section .conversion-result {
+    margin-top: 1rem;
+    font-size: 1.1em;
+    color: #00dffc;
+  }
+
+  @media (max-width: 600px) {
+    #pricing-section ul li {
+      font-size: 1em;
+    }
+    #pricing-section .conversion-box input,
+    #pricing-section .conversion-box select {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>
+
+<section id="pricing-section">
+  <img
+    src="https://i.postimg.cc/bJWWLpq5/In-Shot-20250829-150205226.jpg"
+    alt="STEMSphere Membership Tiers Banner"
+    style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 2rem;"
+  />
+
+  <h2>What Are Our Costs?</h2>
+
+  <p>
+    We offer flexible monthly memberships designed to fit your learning style and budget.  
+    Each course is billed monthly, and each plan covers <span class="highlight">one subject that meets once a week</span>.  
+    Most students stack several classes to build the schedule that works best for them.
+  </p>
+
+  <ul>
+    <li><span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month</li>
+    <li><span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month</li>
+    <li><span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month</li>
+  </ul>
+
+  <p>
+    We accept payments in <span class="highlight">most global currencies</span>, including USD, EUR, GBP, NGN, INR, CAD, AUD, JPY, HKD, SGD, PHP, KRW, MYR, THB, TWD, ZAR, BRL, MXN, and more.
+    Use the converter below to estimate your local cost.
+  </p>
+
+  <div class="conversion-box">
+    <input type="number" id="usdAmount" placeholder="Amount in USD" />
+    <select id="currencySelect">
+      <option value="EUR">EUR (Euro)</option>
+      <option value="GBP">GBP (British Pound)</option>
+      <option value="NGN">NGN (Naira)</option>
+      <option value="INR">INR (Rupee)</option>
+      <option value="CAD">CAD (Canadian Dollar)</option>
+      <option value="AUD">AUD (Australian Dollar)</option>
+      <option value="JPY">JPY (Yen)</option>
+      <option value="HKD">HKD (Hong Kong Dollar)</option>
+      <option value="SGD">SGD (Singapore Dollar)</option>
+      <option value="PHP">PHP (Philippine Peso)</option>
+      <option value="KRW">KRW (South Korean Won)</option>
+      <option value="MYR">MYR (Malaysian Ringgit)</option>
+      <option value="THB">THB (Thai Baht)</option>
+      <option value="TWD">TWD (Taiwan Dollar)</option>
+      <option value="ZAR">ZAR (South African Rand)</option>
+      <option value="BRL">BRL (Brazilian Real)</option>
+      <option value="MXN">MXN (Mexican Peso)</option>
+    </select>
+    <button onclick="convertCurrency()">Convert</button>
+    <div class="conversion-result" id="conversionResult"></div>
+  </div>
+</section>
+
+<script>
+  async function convertCurrency() {
+    const amount = parseFloat(document.getElementById('usdAmount').value);
+    const currency = document.getElementById('currencySelect').value;
+    if (!amount || !currency) return;
+
+    try {
+      const res = await fetch(`https://api.exchangerate.host/convert?from=USD&to=${currency}&amount=${amount}`);
+      const data = await res.json();
+      const converted = data.result.toFixed(2);
+      document.getElementById('conversionResult').innerText = `${amount} USD ≈ ${converted} ${currency}`;
+    } catch (err) {
+      document.getElementById('conversionResult').innerText = "Conversion failed. Try again.";
+    }
+  }
+</script>
+<!-- END: Pricing & Membership Section -->
+
+
 <!-- BEGIN: FAQ & Contact Section -->
 <style>
   /* FAQ & Contact Styles */
@@ -1067,7 +1240,7 @@
 
   <details>
     <summary>How do I book a free trial session?</summary>
-    <p>Click the “Book Your Free Trial” button above or reach out to us via email. We’ll schedule your session within 24 hours and match you with the perfect tutor.</p>
+    <p> Its not a free trial but more of a free diagnostics. We offer a free diagnostics/ mini session with one of our enrollments specilaist. The goal of our enrollments sepcialist is to match you with a tutor that fits your learning style. Click the “Book Your Free Trial” button above or reach out to us via email. We’ll schedule your session within 24 hours and match you with the perfect tutor.</p>
   </details>
 
   <details>
@@ -1085,193 +1258,6 @@
     <p>We accept all major credit cards and PayPal. Rates vary by tutor and format; view detailed pricing on our Pricing page or email support for a custom package.</p>
   </details>
 </section>
-
-<!-- BEGIN: Pricing & Membership Section -->
-<style>
-  #pricing-section {
-    background: #111;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    padding: 3rem 1rem;
-    box-sizing: border-box;
-    text-align: center;
-  }
-
-  #pricing-section h2 {
-    font-size: 2.2em;
-    margin-bottom: 1rem;
-    color: #fff;
-  }
-
-  #pricing-section p {
-    max-width: 800px;
-    margin: 0.5rem auto 1.5rem;
-    line-height: 1.6;
-    color: #ddd;
-  }
-
-  #pricing-section .highlight {
-    color: #ff0044;
-    font-weight: bold;
-  }
-
-  #pricing-section ul {
-    list-style: none;
-    padding: 0;
-    margin: 2rem auto;
-    max-width: 700px;
-    text-align: left;
-  }
-
-  #pricing-section ul li {
-    position: relative;
-    padding-left: 2em;
-    margin: 1rem 0;
-    font-size: 1.05em;
-    color: #ddd;
-    cursor: pointer;
-  }
-
-  #pricing-section ul li::before {
-    content: "➤";
-    position: absolute;
-    left: 0;
-    color: #FF8C00;
-    font-size: 1.2em;
-    line-height: 1;
-  }
-
-  .pricing-note {
-    display: none;
-    margin: 0.5rem 0 0 2em;
-    font-size: 0.95em;
-    color: #aaa;
-  }
-
-  #pricing-section .conversion-box {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: #222;
-    border-radius: 6px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  #pricing-section .conversion-box input,
-  #pricing-section .conversion-box select {
-    padding: 0.6rem;
-    margin: 0.5rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 1em;
-    width: 45%;
-  }
-
-  #pricing-section .conversion-box button {
-    padding: 0.6rem 1.2rem;
-    background: #ff0044;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  #pricing-section .conversion-result {
-    margin-top: 1rem;
-    font-size: 1.1em;
-    color: #00dffc;
-  }
-
-  @media (max-width: 600px) {
-    #pricing-section ul li {
-      font-size: 1em;
-    }
-    #pricing-section .conversion-box input,
-    #pricing-section .conversion-box select {
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
-  }
-</style>
-
-<section id="pricing-section">
-  <h2>What Are Our Costs?</h2>
-
-  <img
-    src="https://i.postimg.cc/bJWWLpq5/In-Shot-20250829-150205226.jpg"
-    alt="STEMSphere Membership Tiers Banner"
-    style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 2rem;"
-  />
-
-  <p>
-    We offer flexible monthly memberships designed to fit your learning style and budget.  
-    Each course is billed monthly, and you can switch tiers anytime.
-  </p>
-
-  <ul>
-    <li onclick="toggleNote(this)">
-      <span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month
-      <div class="pricing-note">This plan covers one subject that meets once a week.</div>
-    </li>
-    <li onclick="toggleNote(this)">
-      <span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month
-      <div class="pricing-note">This plan covers one subject that meets once a week.</div>
-    </li>
-    <li onclick="toggleNote(this)">
-      <span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month
-      <div class="pricing-note">This plan covers one subject that meets once a week.</div>
-    </li>
-  </ul>
-
-  <p>
-    We accept payments in <span class="highlight">most global currencies</span>, and you can use the converter below to estimate your local cost.
-  </p>
-
-  <div class="conversion-box">
-    <input type="number" id="usdAmount" placeholder="Amount in USD" />
-    <select id="currencySelect">
-      <option value="EUR">EUR (Euro)</option>
-      <option value="GBP">GBP (British Pound)</option>
-      <option value="NGN">NGN (Naira)</option>
-      <option value="INR">INR (Rupee)</option>
-      <option value="CAD">CAD (Canadian Dollar)</option>
-      <option value="AUD">AUD (Australian Dollar)</option>
-      <option value="JPY">JPY (Yen)</option>
-    </select>
-    <button onclick="convertCurrency()">Convert</button>
-    <div class="conversion-result" id="conversionResult"></div>
-  </div>
-</section>
-
-<script>
-  function toggleNote(item) {
-    const note = item.querySelector('.pricing-note');
-    if (note.style.display === 'block') {
-      note.style.display = 'none';
-    } else {
-      note.style.display = 'block';
-    }
-  }
-
-  async function convertCurrency() {
-    const amount = parseFloat(document.getElementById('usdAmount').value);
-    const currency = document.getElementById('currencySelect').value;
-    if (!amount || !currency) return;
-
-    try {
-      const res = await fetch(`https://api.exchangerate.host/latest?base=USD&symbols=${currency}`);
-      const data = await res.json();
-      const rate = data.rates[currency];
-      const converted = (amount * rate).toFixed(2);
-      document.getElementById('conversionResult').innerText = `${amount} USD ≈ ${converted} ${currency}`;
-    } catch (err) {
-      document.getElementById('conversionResult').innerText = "Conversion failed. Try again.";
-    }
-  }
-</script>
-<!-- END: Pricing & Membership Section -->
 
 
 <footer>
