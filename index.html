@@ -13,326 +13,259 @@
   />
 
   <style>
-    /* ─── Base Styles ───────────────────────────────────────────── */
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #000;
-      color: #fff;
-      text-align: center;
-    }
+  /* ─── Base Styles ───────────────────────────────────────────── */
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+  }
 
-    /* ─── Header Container ──────────────────────────────────────── */
-    header {
-      position: relative;
-      padding: 3em 1em 1em;
-    }
+  /* ─── Header Container ──────────────────────────────────────── */
+  header {
+    position: relative;
+    padding: 3em 1em 1em;
+  }
 
-    /* ─── Brand Logo (SP in red square + STEMSphere) ────────────── */
-    .brand {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      display: flex;
-      align-items: center;
-    }
-    .brand-logo {
-      width: 1.8em;
-      height: 1.8em;
-      line-height: 1.8em;
-      background-color: #ff0000;
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 1.1em;
-      text-align: center;
-      border-radius: 4px;
-      margin-right: 0.5em;
-    }
-    .brand-text {
-      color: #ffffff;
-      font-size: 1.2em;
-      font-weight: 700;
-    }
+  /* ─── Brand Logo (SP in red square + STEMSphere) ────────────── */
+  .brand {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: flex;
+    align-items: center;
+  }
+  .brand-logo {
+    width: 1.8em;
+    height: 1.8em;
+    line-height: 1.8em;
+    background-color: #ff0000;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.1em;
+    text-align: center;
+    border-radius: 4px;
+    margin-right: 0.5em;
+  }
+  .brand-text {
+    color: #ffffff;
+    font-size: 1.2em;
+    font-weight: 700;
+  }
 
-    /* ─── Title Group (Two-line Title) ─────────────────────────── */
-    .title-group {
-      display: inline-block;
-      margin-bottom: 0.2em;
-    }
-    .title-group span {
-      display: block;
-      font-size: 2.8em;
-      font-weight: 700;
-      letter-spacing: 1px;
-      margin: 0.2em 0;             /* reduced vertical gap */
-    }
-    .title-group span:first-child {
-      color: #ffffff;             /* Other Courses Teach. in white */
-    }
-    .title-group span:last-child {
-      color: #ff0000;             /* We Transform! in red */
-    }
+  /* ─── Title Group (Two-line Title) ─────────────────────────── */
+  .title-group {
+    display: inline-block;
+    margin-bottom: 0.2em;
+  }
+  .title-group span {
+    display: block;
+    font-size: 2.8em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0.2em 0;
+  }
+  .title-group span:first-child { color: #ffffff; }
+  .title-group span:last-child  { color: #ff0000; }
 
   /* ─── Subtitle under Title ─────────────────────────────────── */
-h2 {
-  font-size: 1.2em;        
-  white-space: nowrap;     
-  overflow: hidden;        
-  text-overflow: ellipsis; 
-  color: #ccc;
-  margin-top: 0.2em;
-}
+  h2 {
+    /* auto-shrink between 0.8em and 1.6em based on viewport */
+    font-size: clamp(0.8em, 4.5vw, 1.6em);
+    white-space: nowrap;
+    color: #ccc;
+    margin-top: 0.2em;
+  }
 
-    /* ─── Course Bar ───────────────────────────────────────────── */
-    .course-bar {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.4em 1em;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #00f8ff, #ff00d0);
-      font-weight: 700;
-      font-size: 0.95em;
-      color: #fff;
-      margin-top: 0.6em;
-    }
-    .course-bar span + span { margin-left: 0.5em; }
+  /* ─── Course Bar ───────────────────────────────────────────── */
+  .course-bar {
+    display: inline-flex;
+    flex-wrap: wrap;             /* allow wrapping on narrow screens */
+    justify-content: center;
+    align-items: center;
+    padding: 0.4em 1em;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #00f8ff, #ff00d0);
+    font-weight: 700;
+    font-size: 0.95em;
+    color: #fff;
+    margin-top: 0.6em;
+  }
+  .course-bar span + span { margin-left: 0.5em; }
 
-    /* ─── Main Container ───────────────────────────────────────── */
-    main {
-      max-width: 850px;
-      margin: auto;
-      padding: 2em 1em 3em;
-    }
+  /* ─── Main Container ───────────────────────────────────────── */
+  main {
+    max-width: 850px;
+    margin: auto;
+    padding: 2em 1em 3em;
+  }
 
-    /* ─── Electric Frame (Blue Glow + Flicker) ─────────────────── */
-    .electric-frame {
-      display: block !important;
-      position: relative;
-      padding: 10px;
-      border-radius: 12px;
-      margin: 0 auto;
-      background-color: #000;
-      box-shadow: 0 0 12px #00aaff;
-      animation: flicker 3s infinite alternate;
-      max-width: 800px;
-      z-index: 500;
-    }
+  /* ─── Electric Frame (Blue Glow + Flicker) ─────────────────── */
+  .electric-frame {
+    display: block !important;
+    position: relative;
+    padding: 10px;
+    border-radius: 12px;
+    margin: 0 auto;
+    background-color: #000;
+    box-shadow: 0 0 12px #00aaff;
+    animation: flicker 3s infinite alternate;
+    max-width: 800px;
+    z-index: 500;
+  }
+  @keyframes flicker {
+    0%,100% { box-shadow: 0 0 12px #00aaff; }
+    40%     { box-shadow: 0 0 20px #00ffff; }
+    60%     { box-shadow: 0 0 8px  #0088ff; }
+  }
 
-    /* ── REINTRODUCE FLICKER ANIMATION ─────────────────────────── */
-    @-webkit-keyframes flicker {
-      0%, 100% { box-shadow: 0 0 12px #00aaff; }
-      40%      { box-shadow: 0 0 20px #00ffff; }
-      60%      { box-shadow: 0 0 8px  #0088ff; }
-    }
-    @-moz-keyframes flicker {
-      0%, 100% { box-shadow: 0 0 12px #00aaff; }
-      40%      { box-shadow: 0 0 20px #00ffff; }
-      60%      { box-shadow: 0 0 8px  #0088ff; }
-    }
-    @keyframes flicker {
-      0%, 100% { box-shadow: 0 0 12px #00aaff; }
-      40%      { box-shadow: 0 0 20px #00ffff; }
-      60%      { box-shadow: 0 0 8px  #0088ff; }
-    }
+  /* ─── Video Container ──────────────────────────────────────── */
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  .cover-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .cover-overlay .play-btn {
+    font-size: 4em;
+    color: #fff;
+    opacity: 0.8;
+  }
+  #player,
+  .click-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .click-overlay { cursor: pointer; z-index: 700; }
 
-    /* ─── Video Container ──────────────────────────────────────── */
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-      overflow: hidden;
-      border-radius: 8px;
-    }
+  /* ─── Progress Bar Styles ─────────────────────────────────── */
+  .progress-container {
+    width: 80%;
+    max-width: 300px;
+    height: 0.75em;
+    background: #333;
+    border-radius: 4px;
+    margin-bottom: 1em;
+    overflow: hidden;
+  }
+  .progress-bar {
+    width: 50%;
+    height: 100%;
+    background: #ff0000;
+  }
 
-    /* ─── Play Overlay ─────────────────────────────────────────── */
-    .cover-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-    .cover-overlay .play-btn {
-      font-size: 4em;
-      color: #fff;
-      opacity: 0.8;
-    }
+  /* ─── Lead-Capture Popup Form ─────────────────────────────── */
+  #popup-form {
+    display: none;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    z-index: 1000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
+  #popup-form h3   { font-size: 1.4em; margin-bottom: 0.2em; font-weight: 700; }
+  #popup-form p    { margin-bottom: 1em; font-size: 1em; color: #ccc; }
+  #popup-form input,
+  #popup-form button {
+    width: 80%;
+    max-width: 300px;
+    padding: 0.8em;
+    margin: 0.5em 0;
+    border: none;
+    border-radius: 4px;
+    background: #222;
+    color: #fff;
+    font-size: 1em;
+  }
+  #popup-form button { background: #ff0000; font-weight: 700; }
 
-    /* ─── Video IFrame Target ─────────────────────────────────── */
-    #player {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-    }
-    .click-overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 700;
-      cursor: pointer;
-    }
+  /* ─── Sign-Up & Schedule Buttons ───────────────────────────── */
+  .sign-up-btn,
+  .schedule-btn {
+    display: none;
+    position: absolute;
+    bottom: 15%;
+    padding: 0.8em 1.2em;
+    border: none;
+    border-radius: 4px;
+    background: #00FF00;
+    color: #000;
+    font-weight: 700;
+    box-shadow: 0 0 8px rgba(0,255,0,0.7);
+    cursor: pointer;
+    z-index: 900;
+  }
+  .sign-up-btn { left: 10%; }
+  .schedule-btn { right: 10%; }
 
-    /* ─── Progress Bar Styles ─────────────────────────────────── */
-    .progress-container {
-      width: 80%;
-      max-width: 300px;
-      height: 0.75em;
-      background: #333;
-      border-radius: 4px;
-      margin-bottom: 1em;
-      overflow: hidden;
-    }
-    .progress-bar {
-      width: 50%;
-      height: 100%;
-      background: #ff0000;
-    }
+  /* ─── Arrow Indicator ─────────────────────────────────────── */
+  .arrow-up {
+    font-size: 2.2em;
+    color: #FFA500;
+    text-shadow: 0 0 6px #ffcc66;
+    letter-spacing: 0.5em;
+    margin: 0.3em 0 0;
+  }
 
-    /* ─── Lead-Capture Popup Form ─────────────────────────────── */
-    #popup-form {
-      display: none;
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      color: #fff;
-      z-index: 1000;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1em;
-    }
-    #popup-form h3 {
-      margin-bottom: 0.2em;
-      font-size: 1.4em;
-      font-weight: 700;
-    }
-    #popup-form p {
-      margin-bottom: 1em;
-      font-size: 1em;
-      color: #ccc;
-    }
-    #popup-form input {
-      width: 80%;
-      max-width: 300px;
-      padding: 0.8em;
-      margin: 0.5em 0;
-      border: none;
-      border-radius: 4px;
-      background: #222;
-      color: #fff;
-      font-size: 1em;
-    }
-    #popup-form button {
-      padding: 0.8em 1.2em;
-      margin-top: 0.5em;
-      border: none;
-      border-radius: 4px;
-      background: #ff0000;
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-    }
+  /* ─── Access & Statistic Messages ─────────────────────────── */
+  .access-message {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin: 0.1em 0;
+  }
+  .stat-message {
+    font-size: 1.6em;
+    font-weight: 900;
+    color: #ff0000;
+    text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
+    line-height: 1.2em;
+    margin: 0;
+    padding: 0 1em;
+  }
 
-    /* ─── Sign-Up & Schedule Buttons ───────────────────────────── */
+  /* ─── Calendly & Footer ───────────────────────────────────── */
+  #calendly-popup { display: none; /* ... */ }
+  footer { font-size: 0.85em; color: #bbb; padding: 2em 1em; border-top: 1px solid #333; }
+
+  /* ─── Responsive Media Queries ────────────────────────────── */
+  @media (max-width: 600px) {
+    .title-group span  { font-size: 2em; }
+    h2 {
+      /* clamp down smaller on phones */
+      font-size: clamp(0.6em, 7vw, 1em);
+    }
+    .arrow-up         { font-size: 1.8em; }
+    .access-message   { font-size: 1em; }
+    .stat-message     { font-size: 1.2em; }
+    #popup-form input,
+    #popup-form button { width: 90%; font-size: 0.9em; }
     .sign-up-btn,
-    .schedule-btn {
-      display: none;
-      position: absolute;
-      bottom: 15%;
-      padding: 0.8em 1.2em;
-      border: none;
-      border-radius: 4px;
-      background: #00FF00;
-      color: #000;
-      font-weight: 700;
-      box-shadow: 0 0 8px rgba(0,255,0,0.7);
-      cursor: pointer;
-      z-index: 900;
-    }
-    .sign-up-btn { left: 10%; }
-    .schedule-btn { right: 10%; }
-
-    /* ─── Arrow Indicator ─────────────────────────────────────── */
-    .arrow-up {
-      font-size: 2.2em;
-      color: #FFA500;
-      text-shadow: 0 0 6px #ffcc66;
-      letter-spacing: 0.5em;
-      margin: 0.3em 0 0;
-    }
-
-    /* ─── Access Message ───────────────────────────────────────── */
-    .access-message {
-  font-size: 1.1em;           
-  font-weight: 700;
-  margin-top: 0.1em;        
-  margin-bottom: 0;
-}
-
-    /* ─── Statistic Message (Enlarged) ────────────────────────── */
-    .stat-message {
-  font-size: 1.6em;      
-  font-weight: 900; 
-  color: #ff0000;
-  text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
-  margin-top: 0;  
-  padding: 0 1em;
-  line-height: 1.2em;
-    }
-
-    /* ─── Calendly Popup Overlay ───────────────────────────────── */
-    #calendly-popup {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85);
-      z-index: 1500;
-      align-items: center;
-      justify-content: center;
-    }
+    .schedule-btn     { bottom: 10%; font-size: 0.9em; }
     #calendly-popup .calendly-inline-widget {
-      width: 320px; height: 580px; border: none;
+      width: 90%;
+      height: 400px;
     }
-    #calendly-popup .close-cal {
-      margin-top: 1em;
-      padding: 0.5em 1em;
-      background: #FFDD00;
-      color: #000;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    /* ─── Footer Styles ───────────────────────────────────────── */
-    footer {
-      font-size: 0.85em;
-      color: #bbb;
-      padding: 2em 1em;
-      border-top: 1px solid #333;
-    }
-
-    /* ─── Responsive Media Queries ────────────────────────────── */
-    @media (max-width: 600px) {
-      .title-group span { font-size: 2em; }
-      h2 { font-size: 1.4em; }
-      .arrow-up { font-size: 1.8em; }
-      .access-message { font-size: 1em; }
-      .stat-message { font-size: 1.2em; }
-      #popup-form input,
-      #popup-form button { width: 90%; font-size: 0.9em; }
-      .sign-up-btn,
-      .schedule-btn { bottom: 10%; font-size: 0.9em; }
-      #calendly-popup .calendly-inline-widget {
-        width: 90%; height: 400px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 
 <body>
