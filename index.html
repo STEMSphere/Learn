@@ -64,42 +64,42 @@
       font-size: 2.8em;
       font-weight: 700;
       letter-spacing: 1px;
-      margin: 0.2em 0;             /* reduced vertical gap */
+      margin: 0.2em 0;
     }
     .title-group span:first-child {
-      color: #ffffff;             /* Other Courses Teach. in white */
+      color: #ffffff;
     }
     .title-group span:last-child {
-      color: #ff0000;             /* We Transform! in red */
+      color: #ff0000;
     }
 
-/* ─── Subtitle under Title ─────────────────────────────────── */
-h2 {
-  font-size: 0.8em;           /* half of your current 1.6em */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #ccc;
-  margin-top: 0.2em;
-}
+    /* ─── Subtitle under Title ─────────────────────────────────── */
+    h2 {
+      font-size: 0.8em;           /* halved from 1.6em */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #ccc;
+      margin-top: 0.2em;
+    }
 
-/* ─── Course Bar (allow wrapping) ──────────────────────────── */
-.course-bar {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  padding: 0.4em 1em;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #00f8ff, #ff00d0);
-  font-weight: 700;
-  font-size: 0.95em;
-  color: #fff;
-  margin-top: 0.6em;
-}
-.course-bar span + span {
-  margin-left: 0.5em;
-}
+    /* ─── Course Bar (allow wrapping) ──────────────────────────── */
+    .course-bar {
+      display: inline-flex;
+      flex-wrap: wrap;            /* allow wrapping */
+      justify-content: center;
+      align-items: center;
+      padding: 0.4em 1em;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #00f8ff, #ff00d0);
+      font-weight: 700;
+      font-size: 0.95em;
+      color: #fff;
+      margin-top: 0.6em;
+    }
+    .course-bar span + span {
+      margin-left: 0.5em;
+    }
 
     /* ─── Main Container ───────────────────────────────────────── */
     main {
@@ -122,7 +122,6 @@ h2 {
       z-index: 500;
     }
 
-    /* ── REINTRODUCE FLICKER ANIMATION ─────────────────────────── */
     @-webkit-keyframes flicker {
       0%, 100% { box-shadow: 0 0 12px #00aaff; }
       40%      { box-shadow: 0 0 20px #00ffff; }
@@ -272,21 +271,21 @@ h2 {
 
     /* ─── Access Message ───────────────────────────────────────── */
     .access-message {
-  font-size: 1.1em;           
-  font-weight: 700;
-  margin-top: 0.1em;        
-  margin-bottom: 0;
-}
+      font-size: 1.1em;
+      font-weight: 700;
+      margin-top: 0.1em;
+      margin-bottom: 0;
+    }
 
     /* ─── Statistic Message (Enlarged) ────────────────────────── */
     .stat-message {
-  font-size: 1.6em;      
-  font-weight: 900; 
-  color: #ff0000;
-  text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
-  margin-top: 0;  
-  padding: 0 1em;
-  line-height: 1.2em;
+      font-size: 1.6em;
+      font-weight: 900;
+      color: #ff0000;
+      text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
+      margin-top: 0;
+      padding: 0 1em;
+      line-height: 1.2em;
     }
 
     /* ─── Calendly Popup Overlay ───────────────────────────────── */
@@ -324,7 +323,7 @@ h2 {
     /* ─── Responsive Media Queries ────────────────────────────── */
     @media (max-width: 600px) {
       .title-group span { font-size: 2em; }
-      h2 { font-size: 0.7em; }
+      h2 { font-size: 0.7em; }   /* halved from 1.4em */
       .arrow-up { font-size: 1.8em; }
       .access-message { font-size: 1em; }
       .stat-message { font-size: 1.2em; }
@@ -333,12 +332,12 @@ h2 {
       .sign-up-btn,
       .schedule-btn { bottom: 10%; font-size: 0.9em; }
       #calendly-popup .calendly-inline-widget {
-        width: 90%; height: 400px;
+        width: 90%;
+        height: 400px;
       }
     }
   </style>
 </head>
-
 <body>
   <!-- Page Header -->
   <header>
@@ -379,142 +378,152 @@ h2 {
         <div class="click-overlay"></div>
       </div>
 
-     <!-- Lead-capture popup form with progress bar -->
-<style>
-  .progress-container {
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 15px;
-    overflow: hidden;
-    height: 30px;
-    margin-bottom: 1em;
-  }
-  .progress-bar {
-    width: 50%;
-    height: 100%;
-    background-color: #00aaff;
-    text-align: center;
-    line-height: 30px;
-    font-weight: bold;
-    color: #fff;
-    font-size: 1.2em;
-  }
-</style>
-<div id="popup-form">
-  <div class="progress-container">
-    <div class="progress-bar">50%</div>
+      <!-- Lead-capture popup form with progress bar -->
+      <style>
+        .progress-container {
+          width: 100%;
+          background-color: #e0e0e0;
+          border-radius: 15px;
+          overflow: hidden;
+          height: 30px;
+          margin-bottom: 1em;
+        }
+        .progress-bar {
+          width: 50%;
+          height: 100%;
+          background-color: #00aaff;
+          text-align: center;
+          line-height: 30px;
+          font-weight: bold;
+          color: #fff;
+          font-size: 1.2em;
+        }
+      </style>
+      <div id="popup-form">
+        <div class="progress-container">
+          <div class="progress-bar">50%</div>
+        </div>
+        <h3>Still watching the Video?</h3>
+        <p>Enter your details below:</p>
+        <form
+          id="leadForm"
+          method="POST"
+          action="https://hooks.zapier.com/hooks/catch/24231572/uhdsp55/"
+        >
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
+          <button type="submit">Submit & Continue</button>
+        </form>
+      </div>
+
+      <!-- Sign-up and schedule buttons -->
+      <button
+        class="sign-up-btn"
+        onclick="window.location='https://courses.stemsphere.academy/'"
+      >
+        Sign Up Now
+      </button>
+      <button
+        class="schedule-btn"
+        onclick="document.getElementById('chatLauncher').click()"
+      >
+        Schedule Now
+      </button>
+    </div>
+
+    <!-- Arrow indicator + messages -->
+    <div class="arrow-up">↑↑↑↑</div>
+    <div class="access-message">Play ↻ in your regular browser</div>
+    <p class="stat-message">Watch for access details</p>
+  </main>
+
+  <!-- Calendly Inline Popup -->
+  <div id="calendly-popup">
+    <div
+      class="calendly-inline-widget"
+      data-url="https://calendly.com/stemxsphere/trialclass"
+    ></div>
+    <button class="close-cal">Close</button>
   </div>
-  <h3>Still watching the Video?</h3>
-  <p>Enter your details below:</p>
-  <form
-    id="leadForm"
-    method="POST"
-    action="https://hooks.zapier.com/hooks/catch/24231572/uhdsp55/"
-  >
-    <input type="text" name="name" placeholder="Your Name" required />
-    <input type="email" name="email" placeholder="Your Email" required />
-    <button type="submit">Submit & Continue</button>
-  </form>
-</div>
-<!-- Sign-up and schedule buttons -->
-<button class="sign-up-btn" onclick="window.location='https://courses.stemsphere.academy/'">
-  Sign Up Now
-</button>
-<button class="schedule-btn" onclick="document.getElementById('chatLauncher').click()">
-  Schedule Now
-</button>
-</div>
 
-<!-- Arrow indicator + messages -->
-<div class="arrow-up">↑↑↑↑</div>
-<div class="access-message">Play ↻ in your regular browser</div>
-<p class="stat-message">Watch for access details</p>
-</main>
+  <!-- External Scripts -->
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+  <script>
+    // Load YouTube IFrame API
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
 
-<!-- Calendly Inline Popup -->
-<div id="calendly-popup">
-  <div class="calendly-inline-widget" data-url="https://calendly.com/stemxsphere/trialclass"></div>
-  <button class="close-cal">Close</button>
-</div>
+    // Variables & Control Flags
+    let player,
+        pauseTime = 140,
+        signUpTime = 384,
+        scheduleTime = 394,
+        intervalId,
+        flags = { form: false, signUp: false, schedule: false };
 
-<!-- External Scripts -->
-<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-<script>
-  // Load YouTube IFrame API
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
+    // Initialize Player
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        host: 'https://www.youtube-nocookie.com',
+        videoId: '9bvO-33YZxE',
+        playerVars: {
+          controls: 0,
+          disablekb: 1,
+          modestbranding: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          enablejsapi: 1,
+          autoplay: 0
+        },
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange
+        }
+      });
+    }
 
-  // Variables & Control Flags
-  let player,
-      pauseTime = 140,
-      signUpTime = 384,
-      scheduleTime = 394,
-      intervalId,
-      flags = { form: false, signUp: false, schedule: false };
+    // Player Ready Handler
+    function onPlayerReady() {
+      document.querySelector('.click-overlay').addEventListener('click', () => {
+        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      });
+    }
 
-  // Initialize Player
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-      host: 'https://www.youtube-nocookie.com',
-      videoId: '9bvO-33YZxE',
-      playerVars: {
-        controls: 0,
-        disablekb: 1,
-        modestbranding: 1,
-        rel: 0,
-        iv_load_policy: 3,
-        enablejsapi: 1,
-        autoplay: 0
-      },
-      events: {
-        onReady: onPlayerReady,
-        onStateChange: onPlayerStateChange
-      }
-    });
-  }
-
-  // Player Ready Handler
-  function onPlayerReady() {
-    document.querySelector('.click-overlay').addEventListener('click', () => {
-      if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-        player.pauseVideo();
+    // Player State Change Handler
+    function onPlayerStateChange(event) {
+      const cover = document.querySelector('.cover-overlay');
+      if (event.data === YT.PlayerState.PLAYING) {
+        cover.style.display = 'none';
+        intervalId = setInterval(checkMilestones, 500);
       } else {
-        player.playVideo();
+        cover.style.display = 'flex';
+        clearInterval(intervalId);
       }
-    });
-  }
+    }
 
-  // Player State Change Handler
-  function onPlayerStateChange(event) {
-    const cover = document.querySelector('.cover-overlay');
-    if (event.data === YT.PlayerState.PLAYING) {
-      cover.style.display = 'none';
-      intervalId = setInterval(checkMilestones, 500);
-    } else {
-      cover.style.display = 'flex';
-      clearInterval(intervalId);
+    // Milestone Checker
+    function checkMilestones() {
+      const t = player.getCurrentTime();
+      if (!flags.form && t >= pauseTime) {
+        flags.form = true;
+        clearInterval(intervalId);
+        player.pauseVideo();
+        document.getElementById('popup-form').style.display = 'flex';
+      }
+      if (!flags.signUp && t >= signUpTime) {
+        flags.signUp = true;
+        document.querySelector('.sign-up-btn').style.display = 'block';
+      }
+      if (!flags.schedule && t >= scheduleTime) {
+        flags.schedule = true;
+        document.querySelector('.schedule-btn').style.display = 'block';
+      }
     }
-  }
-
-  // Milestone Checker
-  function checkMilestones() {
-    const t = player.getCurrentTime();
-    if (!flags.form && t >= pauseTime) {
-      flags.form = true;
-      clearInterval(intervalId);
-      player.pauseVideo();
-      document.getElementById('popup-form').style.display = 'flex';
-    }
-    if (!flags.signUp && t >= signUpTime) {
-      flags.signUp = true;
-      document.querySelector('.sign-up-btn').style.display = 'block';
-    }
-    if (!flags.schedule && t >= scheduleTime) {
-      flags.schedule = true;
-      document.querySelector('.schedule-btn').style.display = 'block';
-    }
-  }
 
   // DOM Ready & UI Event Handlers
   document.addEventListener('DOMContentLoaded', () => {
