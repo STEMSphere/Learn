@@ -870,6 +870,135 @@
   <!-- END: On-Demand Courses Section -->
 </div>
 
+<!-- BEGIN: Why Choose Our Tutoring Section (Mobile‐First Responsive) -->
+<style>
+  /* Container & Typography */
+  #why-choose {
+    background: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+  }
+
+  #why-choose h2 {
+    font-size: clamp(1.75rem, 6vw, 2.2rem);
+    text-align: center;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    white-space: normal;      /* allow wrapping on small screens */
+  }
+
+  #why-choose p {
+    max-width: 800px;
+    width: 100%;
+    margin: 0.75rem auto;
+    line-height: 1.6;
+    color: #ddd;
+    text-align: center;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+  }
+
+  /* Bullet List */
+  #why-choose ul {
+    list-style: none;
+    padding: 0;
+    margin: 2rem auto;
+    max-width: 800px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #why-choose ul li {
+    position: relative;
+    padding-left: 1.5em;      /* space for the custom bullet */
+    margin-bottom: 1rem;
+    color: #ddd;
+    text-align: left;         /* ensure text lines start at same point */
+  }
+
+  #why-choose ul li::before {
+    content: "♦";
+    position: absolute;
+    left: 0;
+    top: 0.2em;               /* vertically center bullet */
+    color: #FF8C00;
+    font-size: 1.1em;
+    line-height: 1;
+  }
+
+  /* Highlighted text */
+  #why-choose .highlight {
+    color: #ff0044;
+  }
+
+  /* Statistic callout */
+  #why-choose .stat {
+    text-align: center;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    margin: 2rem 0 1rem;
+    color: #ddd;
+  }
+
+  /* Mobile tweaks */
+  @media (max-width: 480px) {
+    #why-choose {
+      padding: 1.5rem 0.75rem;
+    }
+    #why-choose h2 {
+      font-size: clamp(1.5rem, 7vw, 1.9rem);
+    }
+    #why-choose p {
+      font-size: 0.95rem;
+      margin: 0.5rem auto;
+    }
+    #why-choose ul li {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+    #why-choose .stat {
+      font-size: clamp(0.9rem, 5vw, 1.1rem);
+    }
+  }
+</style>
+
+<section id="why-choose">
+  <h2>Why <span class="highlight">STEMSphere</span> Tutoring Is Unmatched</h2>
+
+  <p>
+    At STEMSphere, every session is crafted to <span class="highlight">unlock your full potential</span>.  
+    Our tutors blend deep STEM expertise with personalized teaching techniques that adapt to your style, pace, and goals.
+  </p>
+
+  <p>
+    Beyond grades, we cultivate <span class="highlight">critical thinking</span>,  
+    <span class="highlight">confidence</span>, and a genuine passion for learning—so concepts stick for life.
+  </p>
+
+  <ul>
+    <li>Tailored study plans targeting your unique challenges</li>
+    <li>Hands-on exercises and real-world applications</li>
+    <li>Regular progress check-ins with actionable feedback</li>
+    <li>Exclusive resources: practice exams, cheat-sheets, and tutorials</li>
+    <li>Flexible formats: one-on-one, small groups, or on-demand videos</li>
+    <li>Certified STEM experts & exam prep specialists</li>
+    <li>Encouraging, supportive environment for every learner</li>
+  </ul>
+
+  <p class="stat">
+    <span class="highlight">4 out of 5 students</span> see significant gains within  
+    <span class="highlight">just 4 weeks</span> of tutoring.
+  </p>
+
+  <p>
+    Ready to transform your academic journey?  
+    <span class="highlight">Join STEMSphere today</span> and start seeing real results.
+  </p>
+</section>
+<!-- END: Why Choose Our Tutoring Section -->
+
+
 
 <!-- Footer -->
   <footer>© 2025 STEMSphere Academy. All rights reserved.</footer>
