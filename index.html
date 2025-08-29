@@ -1018,20 +1018,32 @@
     text-align: center;
     box-sizing: border-box;
   }
+
+  /* New: Wrapper for content excluding banner */
+  #pricing-section .content-wrapper {
+    border: 1px solid #FFD700;
+    border-radius: 6px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
   #pricing-section h2 {
     font-size: 2.2em;
     margin: 1.5rem 0 1rem;
   }
+
   #pricing-section p {
     max-width: 800px;
     margin: 0.5rem auto 1.5rem;
     line-height: 1.6;
     color: #ddd;
   }
+
   #pricing-section .highlight {
     color: #ff0044;
     font-weight: bold;
   }
+
   #pricing-section ul {
     list-style: none;
     padding: 0;
@@ -1039,12 +1051,14 @@
     max-width: 700px;
     text-align: left;
   }
+
   #pricing-section ul li {
     position: relative;
     padding-left: 2em;
     margin: 1rem 0;
     color: #ddd;
   }
+
   #pricing-section ul li::before {
     content: "➤";
     position: absolute;
@@ -1053,43 +1067,27 @@
     font-size: 1.2em;
     line-height: 1;
   }
+
+  /* Converter Container */
   #pricing-section .conversion-box {
-    margin-top: 2rem;
-    background: #222;
+    margin: 2rem auto 0;
     padding: 1rem;
+    background: #222;
     border-radius: 6px;
     max-width: 600px;
-    margin: 2rem auto 0;
+    text-align: center;
   }
-  #pricing-section .conversion-box input,
-  #pricing-section .conversion-box select {
-    padding: 0.6rem;
-    margin: 0.5rem;
-    border: none;
-    border-radius: 4px;
-    width: 45%;
-    font-size: 1em;
+
+  #oanda_ecc {
+    width: 100%;
   }
-  #pricing-section .conversion-box button {
-    padding: 0.6rem 1.2rem;
-    background: #ff0044;
+
+  #oanda_ecc span {
     color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  #pricing-section .conversion-result {
-    margin-top: 1rem;
-    font-size: 1.1em;
-    color: #00dffc;
-  }
-  @media (max-width: 600px) {
-    #pricing-section .conversion-box input,
-    #pricing-section .conversion-box select {
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
+    font-size: 0.85em;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
   }
 </style>
 
@@ -1103,78 +1101,43 @@
     style="max-width:100%; height:auto; border-radius:8px; margin-bottom:2rem;"
   />
 
-  <!-- SUBSECTION: Title -->
-  <h2>What Are Our Costs?</h2>
+  <!-- SUBSECTION: Gold-Bordered Wrapper -->
+  <div class="content-wrapper">
 
-  <!-- SUBSECTION: Membership Description -->
-  <p>
-    We offer flexible monthly memberships designed to fit your learning style and budget.  
-    Each course is billed monthly, and each plan covers <span class="highlight">one subject that meets once a week</span>.  
-    Most students stack several classes to build the schedule that works best for them.
-  </p>
+    <!-- SUBSECTION: Title -->
+    <h2>What Are Our Costs?</h2>
 
-  <!-- SUBSECTION: Pricing Tiers -->
-  <ul>
-    <li><span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month</li>
-    <li><span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month</li>
-    <li><span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month</li>
-  </ul>
+    <!-- SUBSECTION: Membership Description -->
+    <p>
+      We offer flexible monthly memberships designed to fit your learning style and budget.  
+      Each course is billed monthly, and each plan covers <span class="highlight">one subject that meets once a week</span>.  
+      Most students stack several classes to build the schedule that works best for them.
+    </p>
 
-  <!-- SUBSECTION: Currency Support Info -->
-  <p>
-    We accept payments in <span class="highlight">most global currencies</span>, including USD, EUR, GBP, NGN, INR, CAD, AUD, JPY, HKD, SGD, PHP, KRW, MYR, THB, TWD, ZAR, BRL, MXN, and more.  
-    Use the converter below to estimate your local cost.
-  </p>
+    <!-- SUBSECTION: Pricing Tiers -->
+    <ul>
+      <li><span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month</li>
+      <li><span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month</li>
+      <li><span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month</li>
+    </ul>
 
-  <!-- SECTION: Currency Converter -->
-  <div class="conversion-box">
-    <input id="usdAmount" type="number" placeholder="Amount in USD" />
-    <select id="currencySelect">
-      <option value="EUR">EUR (Euro)</option>
-      <option value="GBP">GBP (British Pound)</option>
-      <option value="NGN">NGN (Naira)</option>
-      <option value="INR">INR (Indian Rupee)</option>
-      <option value="CAD">CAD (Canadian Dollar)</option>
-      <option value="AUD">AUD (Australian Dollar)</option>
-      <option value="JPY">JPY (Japanese Yen)</option>
-      <option value="HKD">HKD (Hong Kong Dollar)</option>
-      <option value="SGD">SGD (Singapore Dollar)</option>
-      <option value="PHP">PHP (Philippine Peso)</option>
-      <option value="KRW">KRW (South Korean Won)</option>
-      <option value="MYR">MYR (Malaysian Ringgit)</option>
-      <option value="THB">THB (Thai Baht)</option>
-      <option value="TWD">TWD (New Taiwan Dollar)</option>
-      <option value="ZAR">ZAR (South African Rand)</option>
-      <option value="BRL">BRL (Brazilian Real)</option>
-      <option value="MXN">MXN (Mexican Peso)</option>
-    </select>
-    <button onclick="convertCurrency()">Convert</button>
-    <div id="conversionResult" class="conversion-result"></div>
-  </div>
+    <!-- SUBSECTION: Currency Support Info -->
+    <p>
+      We accept payments in <span class="highlight">most global currencies</span>, including USD, EUR, GBP, NGN, INR, CAD, AUD, JPY, HKD, SGD, PHP, KRW, MYR, THB, TWD, ZAR, BRL, MXN, and more.  
+      Use the converter below to estimate your local cost.
+    </p>
+
+    <!-- SUBSECTION: Currency Converter (OANDA Widget) -->
+    <div class="conversion-box">
+      <div id="oanda_ecc">
+        <span>Currency Converter by OANDA</span>
+        <script src="https://www.oanda.com/embedded/converter/get/b2FuZGFlY2N1c2VyLy9kZWZhdWx0/?lang=en"></script>
+      </div>
+    </div>
+
+  </div><!-- /.content-wrapper -->
+
 </section>
-
-<!-- SECTION: Converter Script -->
-<script>
-  async function convertCurrency() {
-    const amount = parseFloat(document.getElementById('usdAmount').value);
-    const currency = document.getElementById('currencySelect').value;
-    if (!amount || !currency) return;
-
-    try {
-      const res = await fetch(
-        `https://api.exchangerate.host/convert?from=USD&to=${currency}&amount=${amount}`
-      );
-      const data = await res.json();
-      if (!data.result) throw new Error('No result');
-      const converted = parseFloat(data.result).toFixed(2);
-      document.getElementById('conversionResult').innerText =
-        `${amount} USD ≈ ${converted} ${currency}`;
-    } catch (err) {
-      document.getElementById('conversionResult').innerText =
-        'Conversion failed. Try again.';
-    }
-  }
-</script>
 
 <!-- END: Pricing & Membership Section -->
 
