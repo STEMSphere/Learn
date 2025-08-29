@@ -1086,8 +1086,6 @@
   </details>
 </section>
 
-
-
 <!-- BEGIN: Pricing & Membership Section -->
 <style>
   #pricing-section {
@@ -1131,6 +1129,7 @@
     margin: 1rem 0;
     font-size: 1.05em;
     color: #ddd;
+    cursor: pointer;
   }
 
   #pricing-section ul li::before {
@@ -1140,6 +1139,13 @@
     color: #FF8C00;
     font-size: 1.2em;
     line-height: 1;
+  }
+
+  .pricing-note {
+    display: none;
+    margin: 0.5rem 0 0 2em;
+    font-size: 0.95em;
+    color: #aaa;
   }
 
   #pricing-section .conversion-box {
@@ -1191,16 +1197,32 @@
 </style>
 
 <section id="pricing-section">
-  <h2>💸 What Are Our Costs?</h2>
+  <h2>What Are Our Costs?</h2>
+
+  <img
+    src="https://i.postimg.cc/bJWWLpq5/In-Shot-20250829-150205226.jpg"
+    alt="STEMSphere Membership Tiers Banner"
+    style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 2rem;"
+  />
+
   <p>
     We offer flexible monthly memberships designed to fit your learning style and budget.  
     Each course is billed monthly, and you can switch tiers anytime.
   </p>
 
   <ul>
-    <li><span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month</li>
-    <li><span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month</li>
-    <li><span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month</li>
+    <li onclick="toggleNote(this)">
+      <span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month
+      <div class="pricing-note">This plan covers one subject that meets once a week.</div>
+    </li>
+    <li onclick="toggleNote(this)">
+      <span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month
+      <div class="pricing-note">This plan covers one subject that meets once a week.</div>
+    </li>
+    <li onclick="toggleNote(this)">
+      <span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month
+      <div class="pricing-note">This plan covers one subject that meets once a week.</div>
+    </li>
   </ul>
 
   <p>
@@ -1224,6 +1246,15 @@
 </section>
 
 <script>
+  function toggleNote(item) {
+    const note = item.querySelector('.pricing-note');
+    if (note.style.display === 'block') {
+      note.style.display = 'none';
+    } else {
+      note.style.display = 'block';
+    }
+  }
+
   async function convertCurrency() {
     const amount = parseFloat(document.getElementById('usdAmount').value);
     const currency = document.getElementById('currencySelect').value;
