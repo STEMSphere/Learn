@@ -74,11 +74,16 @@
     }
 
     /* ─── Subtitle under Title ─────────────────────────────────── */
-    h2 {
-      font-size: 0.3em;           
-      color: #ccc;
-      margin-top: 0.2em;
+   <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var subtitle = document.querySelector(".title-group + h2");
+    if (subtitle) {
+      subtitle.style.cssText =
+        "font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;";
     }
+  });
+</script>
+
 
     /* ─── Course Bar ───────────────────────────────────────────── */
     .course-bar {
