@@ -1007,6 +1007,8 @@
 <!-- END: Why Choose Our Tutoring Section -->
 
 <!-- BEGIN: Pricing & Membership Section -->
+
+<!-- SECTION: Scoped Styles -->
 <style>
   #pricing-section {
     background: #111;
@@ -1108,32 +1110,40 @@
   }
 </style>
 
+<!-- SECTION: Pricing Content -->
 <section id="pricing-section">
+
+  <!-- SUBSECTION: Banner Image -->
   <img
     src="https://i.postimg.cc/bJWWLpq5/In-Shot-20250829-150205226.jpg"
     alt="STEMSphere Membership Tiers Banner"
     style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 2rem;"
   />
 
+  <!-- SUBSECTION: Title -->
   <h2>What Are Our Costs?</h2>
 
+  <!-- SUBSECTION: Membership Description -->
   <p>
     We offer flexible monthly memberships designed to fit your learning style and budget.  
     Each course is billed monthly, and each plan covers <span class="highlight">one subject that meets once a week</span>.  
     Most students stack several classes to build the schedule that works best for them.
   </p>
 
+  <!-- SUBSECTION: Pricing Tiers -->
   <ul>
     <li><span class="highlight">1-on-1 Private Tutoring</span> — $175 USD/month</li>
     <li><span class="highlight">Small Group (up to 4 students)</span> — $98 USD/month</li>
     <li><span class="highlight">Mid Group Class (6–10 students)</span> — $48 USD/month</li>
   </ul>
 
+  <!-- SUBSECTION: Currency Info -->
   <p>
     We accept payments in <span class="highlight">most global currencies</span>, including USD, EUR, GBP, NGN, INR, CAD, AUD, JPY, HKD, SGD, PHP, KRW, MYR, THB, TWD, ZAR, BRL, MXN, and more.
     Use the converter below to estimate your local cost.
   </p>
 
+  <!-- SECTION: Currency Converter -->
   <div class="conversion-box">
     <input type="number" id="usdAmount" placeholder="Amount in USD" />
     <select id="currencySelect">
@@ -1160,6 +1170,7 @@
   </div>
 </section>
 
+<!-- SECTION: Converter Script -->
 <script>
   async function convertCurrency() {
     const amount = parseFloat(document.getElementById('usdAmount').value);
@@ -1167,15 +1178,18 @@
     if (!amount || !currency) return;
 
     try {
-      const res = await fetch(`https://api.exchangerate.host/convert?from=USD&to=${currency}&amount=${amount}`);
+      const res = await fetch(`https://api.exchangerate.host/latest?base=USD`);
       const data = await res.json();
-      const converted = data.result.toFixed(2);
+      const rate = data.rates[currency];
+      if (!rate) throw new Error("Rate not found");
+      const converted = (amount * rate).toFixed(2);
       document.getElementById('conversionResult').innerText = `${amount} USD ≈ ${converted} ${currency}`;
     } catch (err) {
       document.getElementById('conversionResult').innerText = "Conversion failed. Try again.";
     }
   }
 </script>
+
 <!-- END: Pricing & Membership Section -->
 
 
