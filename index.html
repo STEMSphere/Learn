@@ -64,30 +64,28 @@
       font-size: 2.8em;
       font-weight: 700;
       letter-spacing: 1px;
-      margin: 0.2em 0;
+      margin: 0.2em 0;             /* reduced vertical gap */
     }
     .title-group span:first-child {
-      color: #ffffff;
+      color: #ffffff;             /* Other Courses Teach. in white */
     }
     .title-group span:last-child {
-      color: #ff0000;
+      color: #ff0000;             /* We Transform! in red */
     }
 
-    /* ─── Subtitle under Title ─────────────────────────────────── */
-    h2 {
-      font-size: 0.8em;           /* halved from 1.6em */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: #ccc;
-      margin-top: 0.2em;
-    }
+  /* ─── Subtitle under Title ─────────────────────────────────── */
+h2 {
+  font-size: 1.2em;        
+  white-space: nowrap;     
+  overflow: hidden;        
+  text-overflow: ellipsis; 
+  color: #ccc;
+  margin-top: 0.2em;
+}
 
-    /* ─── Course Bar (allow wrapping) ──────────────────────────── */
+    /* ─── Course Bar ───────────────────────────────────────────── */
     .course-bar {
       display: inline-flex;
-      flex-wrap: wrap;            /* allow wrapping */
-      justify-content: center;
       align-items: center;
       padding: 0.4em 1em;
       border-radius: 999px;
@@ -97,9 +95,7 @@
       color: #fff;
       margin-top: 0.6em;
     }
-    .course-bar span + span {
-      margin-left: 0.5em;
-    }
+    .course-bar span + span { margin-left: 0.5em; }
 
     /* ─── Main Container ───────────────────────────────────────── */
     main {
@@ -122,6 +118,7 @@
       z-index: 500;
     }
 
+    /* ── REINTRODUCE FLICKER ANIMATION ─────────────────────────── */
     @-webkit-keyframes flicker {
       0%, 100% { box-shadow: 0 0 12px #00aaff; }
       40%      { box-shadow: 0 0 20px #00ffff; }
@@ -271,21 +268,21 @@
 
     /* ─── Access Message ───────────────────────────────────────── */
     .access-message {
-      font-size: 1.1em;
-      font-weight: 700;
-      margin-top: 0.1em;
-      margin-bottom: 0;
-    }
+  font-size: 1.1em;           
+  font-weight: 700;
+  margin-top: 0.1em;        
+  margin-bottom: 0;
+}
 
     /* ─── Statistic Message (Enlarged) ────────────────────────── */
     .stat-message {
-      font-size: 1.6em;
-      font-weight: 900;
-      color: #ff0000;
-      text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
-      margin-top: 0;
-      padding: 0 1em;
-      line-height: 1.2em;
+  font-size: 1.6em;      
+  font-weight: 900; 
+  color: #ff0000;
+  text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
+  margin-top: 0;  
+  padding: 0 1em;
+  line-height: 1.2em;
     }
 
     /* ─── Calendly Popup Overlay ───────────────────────────────── */
@@ -323,7 +320,7 @@
     /* ─── Responsive Media Queries ────────────────────────────── */
     @media (max-width: 600px) {
       .title-group span { font-size: 2em; }
-      h2 { font-size: 0.7em; }   /* halved from 1.4em */
+      h2 { font-size: 1.4em; }
       .arrow-up { font-size: 1.8em; }
       .access-message { font-size: 1em; }
       .stat-message { font-size: 1.2em; }
@@ -332,12 +329,12 @@
       .sign-up-btn,
       .schedule-btn { bottom: 10%; font-size: 0.9em; }
       #calendly-popup .calendly-inline-widget {
-        width: 90%;
-        height: 400px;
+        width: 90%; height: 400px;
       }
     }
   </style>
 </head>
+
 <body>
   <!-- Page Header -->
   <header>
@@ -378,152 +375,142 @@
         <div class="click-overlay"></div>
       </div>
 
-      <!-- Lead-capture popup form with progress bar -->
-      <style>
-        .progress-container {
-          width: 100%;
-          background-color: #e0e0e0;
-          border-radius: 15px;
-          overflow: hidden;
-          height: 30px;
-          margin-bottom: 1em;
-        }
-        .progress-bar {
-          width: 50%;
-          height: 100%;
-          background-color: #00aaff;
-          text-align: center;
-          line-height: 30px;
-          font-weight: bold;
-          color: #fff;
-          font-size: 1.2em;
-        }
-      </style>
-      <div id="popup-form">
-        <div class="progress-container">
-          <div class="progress-bar">50%</div>
-        </div>
-        <h3>Still watching the Video?</h3>
-        <p>Enter your details below:</p>
-        <form
-          id="leadForm"
-          method="POST"
-          action="https://hooks.zapier.com/hooks/catch/24231572/uhdsp55/"
-        >
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Your Email" required />
-          <button type="submit">Submit & Continue</button>
-        </form>
-      </div>
-
-      <!-- Sign-up and schedule buttons -->
-      <button
-        class="sign-up-btn"
-        onclick="window.location='https://courses.stemsphere.academy/'"
-      >
-        Sign Up Now
-      </button>
-      <button
-        class="schedule-btn"
-        onclick="document.getElementById('chatLauncher').click()"
-      >
-        Schedule Now
-      </button>
-    </div>
-
-    <!-- Arrow indicator + messages -->
-    <div class="arrow-up">↑↑↑↑</div>
-    <div class="access-message">Play ↻ in your regular browser</div>
-    <p class="stat-message">Watch for access details</p>
-  </main>
-
-  <!-- Calendly Inline Popup -->
-  <div id="calendly-popup">
-    <div
-      class="calendly-inline-widget"
-      data-url="https://calendly.com/stemxsphere/trialclass"
-    ></div>
-    <button class="close-cal">Close</button>
+     <!-- Lead-capture popup form with progress bar -->
+<style>
+  .progress-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 30px;
+    margin-bottom: 1em;
+  }
+  .progress-bar {
+    width: 50%;
+    height: 100%;
+    background-color: #00aaff;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.2em;
+  }
+</style>
+<div id="popup-form">
+  <div class="progress-container">
+    <div class="progress-bar">50%</div>
   </div>
+  <h3>Still watching the Video?</h3>
+  <p>Enter your details below:</p>
+  <form
+    id="leadForm"
+    method="POST"
+    action="https://hooks.zapier.com/hooks/catch/24231572/uhdsp55/"
+  >
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="email" name="email" placeholder="Your Email" required />
+    <button type="submit">Submit & Continue</button>
+  </form>
+</div>
+<!-- Sign-up and schedule buttons -->
+<button class="sign-up-btn" onclick="window.location='https://courses.stemsphere.academy/'">
+  Sign Up Now
+</button>
+<button class="schedule-btn" onclick="document.getElementById('chatLauncher').click()">
+  Schedule Now
+</button>
+</div>
 
-  <!-- External Scripts -->
-  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-  <script>
-    // Load YouTube IFrame API
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(tag);
+<!-- Arrow indicator + messages -->
+<div class="arrow-up">↑↑↑↑</div>
+<div class="access-message">Play ↻ in your regular browser</div>
+<p class="stat-message">Watch for access details</p>
+</main>
 
-    // Variables & Control Flags
-    let player,
-        pauseTime = 140,
-        signUpTime = 384,
-        scheduleTime = 394,
-        intervalId,
-        flags = { form: false, signUp: false, schedule: false };
+<!-- Calendly Inline Popup -->
+<div id="calendly-popup">
+  <div class="calendly-inline-widget" data-url="https://calendly.com/stemxsphere/trialclass"></div>
+  <button class="close-cal">Close</button>
+</div>
 
-    // Initialize Player
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        host: 'https://www.youtube-nocookie.com',
-        videoId: '9bvO-33YZxE',
-        playerVars: {
-          controls: 0,
-          disablekb: 1,
-          modestbranding: 1,
-          rel: 0,
-          iv_load_policy: 3,
-          enablejsapi: 1,
-          autoplay: 0
-        },
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
-        }
-      });
-    }
+<!-- External Scripts -->
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<script>
+  // Load YouTube IFrame API
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
 
-    // Player Ready Handler
-    function onPlayerReady() {
-      document.querySelector('.click-overlay').addEventListener('click', () => {
-        if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-          player.pauseVideo();
-        } else {
-          player.playVideo();
-        }
-      });
-    }
+  // Variables & Control Flags
+  let player,
+      pauseTime = 140,
+      signUpTime = 384,
+      scheduleTime = 394,
+      intervalId,
+      flags = { form: false, signUp: false, schedule: false };
 
-    // Player State Change Handler
-    function onPlayerStateChange(event) {
-      const cover = document.querySelector('.cover-overlay');
-      if (event.data === YT.PlayerState.PLAYING) {
-        cover.style.display = 'none';
-        intervalId = setInterval(checkMilestones, 500);
-      } else {
-        cover.style.display = 'flex';
-        clearInterval(intervalId);
+  // Initialize Player
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      host: 'https://www.youtube-nocookie.com',
+      videoId: '9bvO-33YZxE',
+      playerVars: {
+        controls: 0,
+        disablekb: 1,
+        modestbranding: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        enablejsapi: 1,
+        autoplay: 0
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange
       }
-    }
+    });
+  }
 
-    // Milestone Checker
-    function checkMilestones() {
-      const t = player.getCurrentTime();
-      if (!flags.form && t >= pauseTime) {
-        flags.form = true;
-        clearInterval(intervalId);
+  // Player Ready Handler
+  function onPlayerReady() {
+    document.querySelector('.click-overlay').addEventListener('click', () => {
+      if (player.getPlayerState() === YT.PlayerState.PLAYING) {
         player.pauseVideo();
-        document.getElementById('popup-form').style.display = 'flex';
+      } else {
+        player.playVideo();
       }
-      if (!flags.signUp && t >= signUpTime) {
-        flags.signUp = true;
-        document.querySelector('.sign-up-btn').style.display = 'block';
-      }
-      if (!flags.schedule && t >= scheduleTime) {
-        flags.schedule = true;
-        document.querySelector('.schedule-btn').style.display = 'block';
-      }
+    });
+  }
+
+  // Player State Change Handler
+  function onPlayerStateChange(event) {
+    const cover = document.querySelector('.cover-overlay');
+    if (event.data === YT.PlayerState.PLAYING) {
+      cover.style.display = 'none';
+      intervalId = setInterval(checkMilestones, 500);
+    } else {
+      cover.style.display = 'flex';
+      clearInterval(intervalId);
     }
+  }
+
+  // Milestone Checker
+  function checkMilestones() {
+    const t = player.getCurrentTime();
+    if (!flags.form && t >= pauseTime) {
+      flags.form = true;
+      clearInterval(intervalId);
+      player.pauseVideo();
+      document.getElementById('popup-form').style.display = 'flex';
+    }
+    if (!flags.signUp && t >= signUpTime) {
+      flags.signUp = true;
+      document.querySelector('.sign-up-btn').style.display = 'block';
+    }
+    if (!flags.schedule && t >= scheduleTime) {
+      flags.schedule = true;
+      document.querySelector('.schedule-btn').style.display = 'block';
+    }
+  }
 
   // DOM Ready & UI Event Handlers
   document.addEventListener('DOMContentLoaded', () => {
@@ -565,240 +552,6 @@
 
 
 
-
-
-
-<!-- BEGIN: Courses & Tutoring Styles -->
-<style>
-  /* Section Styles */
-  body {
-    font-family: Arial, sans-serif;
-  }
-  h2 {
-    color: #ffffff;
-    font-size: 2em;
-    text-align: center;
-    margin-top: 2rem;
-  }
-  p.intro {
-    color: #ddd;
-    text-align: center;
-    max-width: 800px;
-    margin: 0.5rem auto 2rem;
-  }
-  .tutor-grid,
-  .course-grid {
-    display: grid;
-    grid-gap: 1rem;
-    max-width: 1200px;
-    margin: 0 auto 3rem;
-    padding: 0 1rem;
-  }
-  .tutor-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-  .tutor-subject,
-  .course-tile {
-    background: #111;
-    border: 2px solid #ff0000;
-    border-radius: 8px;
-    padding: 1rem;
-    text-align: center;
-  }
-  .tutor-subject img,
-  .course-tile img {
-    display: block;
-    margin: 0 auto 0.5rem;
-  }
-  .tutor-subject img {
-    width: 48px;
-    height: 48px;
-  }
-  .course-tile img {
-    width: 64px;
-    height: 64px;
-  }
-  .tutor-subject h4 {
-    color: #ff0000;
-    font-size: 1.1em;
-    margin: 0.5rem 0 0.25rem;
-  }
-  .tutor-desc {
-    color: #ddd;
-    font-size: 0.9em;
-    margin: 0.25rem 0 0.75rem;
-  }
-  .course-tile h3 {
-    color: #fff;
-    font-size: 1.25em;
-    margin: 0.5rem 0;
-  }
-  .course-tile p {
-    color: #ddd;
-    font-size: 0.9em;
-  }
-  .buy-button {
-    display: inline-block;
-    background: #ffffff;
-    color: #ff0000;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: bold;
-    margin-top: 1rem;
-  }
-  .tutoring-banner {
-    width: 100%;
-    max-width: 1200px;
-    display: block;
-    margin: 1rem auto;
-  }
-  .cta-button {
-    display: inline-block;
-    background: #ff0000;
-    color: #fff;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: bold;
-    margin: 1rem auto 3rem;
-    text-align: center;
-  }
-</style>
-<!-- END: Courses & Tutoring Styles -->
-
-<!-- BEGIN: Tutoring Subjects Section -->
-<section id="tutoring-subjects">
-  <h2>Personalized Tutoring in Every Subject We Offer</h2>
-  <p class="intro">
-    One-on-one or small-group sessions with our expert tutors. From weekly check-ins to intensive exam prep, we cover every level.
-  </p>
-  <img
-    src="https://i.postimg.cc/mkZDYz4T/Ads-11.png"
-    alt="Tutoring Banner"
-    class="tutoring-banner"
-  >
-  <div class="tutor-grid">
-    <!-- Updated order: English Mastery and Public Speaking first -->
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/ZRyfZcDM/Screenshot-2025-08-28-195306.png" alt="English Mastery Icon">
-      <h4>English Mastery</h4>
-      <p class="tutor-desc">Improve reading, writing, and speaking.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/43xqCpgD/9104950.png" alt="Public Speaking Icon">
-      <h4>Public Speaking Foundations</h4>
-      <p class="tutor-desc">Enhance your confidence and clarity.</p>
-    </div>
-
-    <!-- Remaining subjects in original order -->
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/PxKCCzDt/Screenshot-2025-08-28-191534.png" alt="Algebra Essentials Icon">
-      <h4>Algebra Essentials</h4>
-      <p class="tutor-desc">From linear equations to polynomials.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/xCjCVJ4B/2792361.png" alt="Geometry Foundations Icon">
-      <h4>Geometry Foundations</h4>
-      <p class="tutor-desc">Master shapes, angles, and proofs.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/VvpLt7kc/Screenshot-2025-08-28-192149.png" alt="Pre-Calculus & Trig Icon">
-      <h4>Pre-Calculus &amp; Trigonometry</h4>
-      <p class="tutor-desc">Functions, limits, and trig insights.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/mDhsSQqZ/Screenshot-2025-08-28-191639.png" alt="AP® Calculus AB & BC Icon">
-      <h4>AP® Calculus AB &amp; BC</h4>
-      <p class="tutor-desc">Intensive prep for derivatives and integrals.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/MGH6s2f8/5932783.png" alt="AP® Statistics Icon">
-      <h4>AP® Statistics</h4>
-      <p class="tutor-desc">Data analysis and probability fundamentals.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/dVtw1PBT/test-tube-and-chemical-compound-chemistry-colored-icon-vector.jpg" alt="General Chemistry Icon">
-      <h4>General Chemistry Crash Course</h4>
-      <p class="tutor-desc">Core concepts in atoms and reactions.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/FHdhttVb/Screenshot-2025-08-28-193154.png" alt="Organic Chemistry Icon">
-      <h4>Organic Chemistry Deep Dive</h4>
-      <p class="tutor-desc">Mechanisms and organic compound synthesis.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/xCR2G99Q/images-1.jpg" alt="IB Chemistry SL & HL Icon">
-      <h4>IB Chemistry SL &amp; HL Prep</h4>
-      <p class="tutor-desc">Curriculum-focused chemistry strategies.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/RFPYVhMW/Screenshot-2025-08-28-193929.png" alt="AP® Biology Masterclass Icon">
-      <h4>AP® Biology Masterclass</h4>
-      <p class="tutor-desc">Dive into cell biology and genetics.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/FHVXX9JL/Screenshot-2025-08-28-194223.png" alt="MCAT Biology Review Icon">
-      <h4>MCAT Biology Review</h4>
-      <p class="tutor-desc">High-yield biology for MCAT success.</p>
-    </div>
-  </div>
-  <a href="#" class="cta-button">Book your free trial</a>
-</section>
-<!-- END: Tutoring Subjects Section -->
-
-<!-- BEGIN: On-Demand Courses Section -->
-<section id="on-demand-courses">
-  <h2>Learn Anywhere, Anytime with Our On-Demand Courses</h2>
-  <p class="intro">
-    Choose from expert-led, video modules with quizzes and cheat-sheets. No schedule required—learn at your own pace.
-  </p>
-  <div class="course-grid">
-    <div class="course-tile">
-      <img src="https://i.postimg.cc/rmW97pD6/Screenshot-2025-08-28-195737.png" alt="SAT Math Icon">
-      <h3>SAT Math</h3>
-      <p>Comprehensive SAT Math prep.</p>
-      <a href="#" class="buy-button">Buy Now</a>
-    </div>
-    <div class="course-tile">
-      <img src="https://i.postimg.cc/dVtw1PBT/test-tube-and-chemical-compound-chemistry-colored-icon-vector.jpg" alt="Chemistry Icon">
-      <h3>Chemistry</h3>
-      <p>Fundamentals of chemical principles.</p>
-      <a href="#" class="buy-button">Buy Now</a>
-    </div>
-    <div class="course-tile">
-      <img src="https://i.postimg.cc/4yQQNFvB/AI-Essentials-Your-Step-by-Step-Guide-to-Artificial-Intelligence.jpg" alt="AI Made Easy Icon">
-      <h3>AI Made Easy</h3>
-      <p>Hands-on introduction to AI concepts.</p>
-      <a href="#" class="buy-button">Buy Now</a>
-    </div>
-    <div class="course-tile">
-      <img src="https://i.postimg.cc/B6GFLBny/futuristic-AI.jpg" alt="Python Programming Icon">
-      <h3>Python Programming</h3>
-      <p>Learn Python basics and beyond.</p>
-      <a href="#" class="buy-button">Buy Now</a>
-    </div>
-    <div class="course-tile">
-      <img src="https://i.postimg.cc/43xqCpgD/9104950.png" alt="Public Speaking Icon">
-      <h3>Public Speaking Foundations</h3>
-      <p>Master voice, tone, and presence.</p>
-      <a href="#" class="buy-button">Buy Now</a>
-    </div>
-    <div class="course-tile">
-      <img src="https://i.postimg.cc/gkGKBmd5/In-Shot-20250525-224615129.jpg" alt="General Biology Icon">
-      <h3>General Biology</h3>
-      <p>Explore cell biology and ecology.</p>
-      <a href="#" class="buy-button">Coming Soon</a>
-    </div>
-    <div class="course-tile">
-      <img src="https://i.postimg.cc/SNZcT9g2/In-Shot-20250525-224009854.jpg" alt="Kids Biology Icon">
-      <h3>Kids Biology</h3>
-      <p>Fun biology for young learners.</p>
-      <a href="#" class="buy-button">Coming Soon</a>
-    </div>
-  </div>
-</section>
-<!-- END: On-Demand Courses Section -->
 
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (Mobile Fix) -->
