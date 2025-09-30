@@ -76,53 +76,48 @@
   /* ─── Subtitle ────────────────────────────────────────────── */
   h2 { font-size: clamp(0.8em, 4.5vw, 1.6em); white-space: nowrap; color: #ccc; margin-top: 0.2em; }
 
- <!-- 🌟 BEGIN: Banner Video + Statistic Message Section -->
-<main>
-  <!-- Banner Video -->
-  <div class="banner-video">
-    <video autoplay muted loop playsinline style="width:100%; border-radius:12px;">
-      <source src="https://learn.stemsphere.academy/assets/StemspherebannerVid29S3pt.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
+  /* ─── Course Bar ───────────────────────────────────────────── */
+  .course-bar {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0.4em 1em;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #00f8ff, #ff00d0);
+    font-weight: 700;
+    font-size: 0.95em;
+    color: #fff;
+    margin-top: 0.6em;
+  }
+  .course-bar span + span { margin-left: 0.5em; }
 
-  <!-- Statistic Message -->
-  <p class="stat-message">4/5 students improve in only 3 weeks!</p>
-</main>
+  /* ─── Banner Video ────────────────────────────────────────── */
+  .banner-video { width: 100%; max-width: 850px; margin: 0 auto 2em; border-radius: 12px; overflow: hidden; }
+  .banner-video video { width: 100%; height: auto; display: block; border-radius: 12px; }
 
-<style>
-/* Banner Video Styling */
-.banner-video {
-  width: 100%;
-  max-width: 850px;
-  margin: 0 auto 2em;
-  border-radius: 12px;
-  overflow: hidden;
-}
-.banner-video video {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 12px;
-}
 
-/* Fluorescent Red Statistic Message */
-.stat-message {
-  font-size: 1.6em;
-  font-weight: 900;
-  color: #ff0033; /* neon red */
-  text-shadow:
-    0 0 5px #ff0033,
-    0 0 10px #ff0033,
-    0 0 20px #ff1a4d,
-    0 0 40px #ff3366;
-  line-height: 1.2em;
-  margin: 0.5em 0;
-  padding: 0 1em;
-  text-align: center;
-}
-</style>
-<!-- 🌟 END: Banner Video + Statistic Message Section -->
+<body>
+  <!-- Page Header -->
+  <header>
+    <div class="brand">
+      <span class="brand-logo">SP</span>
+      <span class="brand-text">STEMSphere</span>
+    </div>
+
+    <div class="title-group">
+      <span>Other Courses Teach.</span>
+      <span>We Transform!</span>
+    </div>
+
+    <h2>Kids → High School → College & Adult Learners!</h2>
+
+    <div class="course-bar">
+      <span>MATH</span><span>|</span><span>Chemistry</span>
+      <span>|</span><span>Biology</span><span>|</span>
+      <span>Coding & more</span>
+    </div>
+  </header>
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (Mobile Fix) -->
 
