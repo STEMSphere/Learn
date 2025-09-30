@@ -76,232 +76,53 @@
   /* ─── Subtitle ────────────────────────────────────────────── */
   h2 { font-size: clamp(0.8em, 4.5vw, 1.6em); white-space: nowrap; color: #ccc; margin-top: 0.2em; }
 
-  /* ─── Course Bar ───────────────────────────────────────────── */
-  .course-bar {
-    display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    padding: 0.4em 1em;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #00f8ff, #ff00d0);
-    font-weight: 700;
-    font-size: 0.95em;
-    color: #fff;
-    margin-top: 0.6em;
-  }
-  .course-bar span + span { margin-left: 0.5em; }
-
-  /* ─── Banner Video ────────────────────────────────────────── */
-  .banner-video { width: 100%; max-width: 850px; margin: 0 auto 2em; border-radius: 12px; overflow: hidden; }
-  .banner-video video { width: 100%; height: auto; display: block; border-radius: 12px; }
-
-  /* ─── Progress Bar ────────────────────────────────────────── */
-  .progress-container { width: 80%; max-width: 300px; height: 0.75em; background: #333; border-radius: 4px; margin-bottom: 1em; overflow: hidden; }
-  .progress-bar { width: 50%; height: 100%; background: #ff0000; }
-
-  /* (… keep the rest of your CSS here …) */
-  </style>
-</head>
-
-<body>
-  <!-- Page Header -->
-  <header>
-    <div class="brand">
-      <span class="brand-logo">SP</span>
-      <span class="brand-text">STEMSphere</span>
-    </div>
-
-    <div class="title-group">
-      <span>Other Courses Teach.</span>
-      <span>We Transform!</span>
-    </div>
-
-    <h2>Kids → High School → College & Adult Learners!</h2>
-
-    <div class="course-bar">
-      <span>MATH</span><span>|</span><span>Chemistry</span>
-      <span>|</span><span>Biology</span><span>|</span>
-      <span>Coding & more</span>
-    </div>
-  </header>
-
-
-
-     <!-- Lead-capture popup form with progress bar -->
-<style>
-  .progress-container {
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 15px;
-    overflow: hidden;
-    height: 30px;
-    margin-bottom: 1em;
-  }
-  .progress-bar {
-    width: 50%;
-    height: 100%;
-    background-color: #00aaff;
-    text-align: center;
-    line-height: 30px;
-    font-weight: bold;
-    color: #fff;
-    font-size: 1.2em;
-  }
-</style>
-<div id="popup-form">
-  <div class="progress-container">
-    <div class="progress-bar">50%</div>
+ <!-- 🌟 BEGIN: Banner Video + Statistic Message Section -->
+<main>
+  <!-- Banner Video -->
+  <div class="banner-video">
+    <video autoplay muted loop playsinline style="width:100%; border-radius:12px;">
+      <source src="https://learn.stemsphere.academy/assets/StemspherebannerVid29S3pt.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
-  <h3>Still watching the Video?</h3>
-  <p>Enter your details below:</p>
-  <form
-    id="leadForm"
-    method="POST"
-    action="https://hooks.zapier.com/hooks/catch/24416556/uhzn3os/"
-  >
-    <input type="text" name="name" placeholder="Your Name" required />
-    <input type="email" name="email" placeholder="Your Email" required />
-    <button type="submit">Submit & Continue</button>
-  </form>
-</div>
-<!-- Sign-up and schedule buttons -->
-<button class="sign-up-btn" onclick="window.location='https://courses.stemsphere.academy/'">
-  Sign Up Now
-</button>
-<button class="schedule-btn" onclick="document.getElementById('chatLauncher').click()">
-  Schedule Now
-</button>
-</div>
 
-<!-- Arrow indicator + messages -->
-<div class="arrow-up">↑↑↑↑</div>
-<p class="stat-message"> 4/5 students improve in only 3 weeks!</p>
+  <!-- Statistic Message -->
+  <p class="stat-message">4/5 students improve in only 3 weeks!</p>
 </main>
 
-<!-- Calendly Inline Popup -->
-<div id="calendly-popup">
-  <div class="calendly-inline-widget" data-url="https://calendly.com/stemxsphere/trialclass"></div>
-  <button class="close-cal">Close</button>
-</div>
-
-<!-- External Scripts -->
-<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-<script>
-  // Load YouTube IFrame API
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
-
-  // Variables & Control Flags
-  let player,
-      pauseTime = 159,
-      signUpTime = 404,
-      scheduleTime = 411,
-      intervalId,
-      flags = { form: false, signUp: false, schedule: false };
-
-  // Initialize Player
-  function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-      host: 'https://www.youtube-nocookie.com',
-      videoId: 'N7aB7HByh0s',
-      playerVars: {
-        controls: 0,
-        disablekb: 1,
-        modestbranding: 1,
-        rel: 0,
-        iv_load_policy: 3,
-        enablejsapi: 1,
-        autoplay: 0
-      },
-      events: {
-        onReady: onPlayerReady,
-        onStateChange: onPlayerStateChange
-      }
-    });
-  }
-
-  // Player Ready Handler
-  function onPlayerReady() {
-    document.querySelector('.click-overlay').addEventListener('click', () => {
-      if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-        player.pauseVideo();
-      } else {
-        player.playVideo();
-      }
-    });
-  }
-
-  // Player State Change Handler
-  function onPlayerStateChange(event) {
-    const cover = document.querySelector('.cover-overlay');
-    if (event.data === YT.PlayerState.PLAYING) {
-      cover.style.display = 'none';
-      intervalId = setInterval(checkMilestones, 500);
-    } else {
-      cover.style.display = 'flex';
-      clearInterval(intervalId);
-    }
-  }
-
-  // Milestone Checker
-  function checkMilestones() {
-    const t = player.getCurrentTime();
-    if (!flags.form && t >= pauseTime) {
-      flags.form = true;
-      clearInterval(intervalId);
-      player.pauseVideo();
-      document.getElementById('popup-form').style.display = 'flex';
-    }
-    if (!flags.signUp && t >= signUpTime) {
-      flags.signUp = true;
-      document.querySelector('.sign-up-btn').style.display = 'block';
-    }
-    if (!flags.schedule && t >= scheduleTime) {
-      flags.schedule = true;
-      document.querySelector('.schedule-btn').style.display = 'block';
-    }
-  }
-
-  // DOM Ready & UI Event Handlers
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('leadForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const data = new FormData(e.target);
-      fetch(e.target.action, {
-        method: 'POST',
-        body: data,
-        mode: 'no-cors'
-      }).finally(() => {
-        document.getElementById('popup-form').style.display = 'none';
-        player.playVideo();
-      });
-    });
-
-    // Schedule Now → open STEMSphere chat launcher
-    document.querySelector('.schedule-btn').addEventListener('click', () => {
-      document.getElementById('chatLauncher').click();
-    });
-
-    document.querySelector('.close-cal').addEventListener('click', () => {
-      document.getElementById('calendly-popup').style.display = 'none';
-    });
-  });
-</script>
-</body>
-</html>
-
-<!-- BEGIN: Section Heading Overrides -->
 <style>
-  /* Make only these section titles white */
-  #on-demand-courses h2,
-  #tutoring-subjects h2 {
-    color: #ffffff !important;
-  }
-</style>
-<!-- END: Section Heading Overrides -->
+/* Banner Video Styling */
+.banner-video {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto 2em;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.banner-video video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
 
+/* Fluorescent Red Statistic Message */
+.stat-message {
+  font-size: 1.6em;
+  font-weight: 900;
+  color: #ff0033; /* neon red */
+  text-shadow:
+    0 0 5px #ff0033,
+    0 0 10px #ff0033,
+    0 0 20px #ff1a4d,
+    0 0 40px #ff3366;
+  line-height: 1.2em;
+  margin: 0.5em 0;
+  padding: 0 1em;
+  text-align: center;
+}
+</style>
+<!-- 🌟 END: Banner Video + Statistic Message Section -->
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (Mobile Fix) -->
 
