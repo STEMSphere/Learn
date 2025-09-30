@@ -96,6 +96,13 @@
   .banner-video { width: 100%; max-width: 850px; margin: 0 auto 2em; border-radius: 12px; overflow: hidden; }
   .banner-video video { width: 100%; height: auto; display: block; border-radius: 12px; }
 
+  /* ─── Progress Bar ────────────────────────────────────────── */
+  .progress-container { width: 80%; max-width: 300px; height: 0.75em; background: #333; border-radius: 4px; margin-bottom: 1em; overflow: hidden; }
+  .progress-bar { width: 50%; height: 100%; background: #ff0000; }
+
+  /* (… keep the rest of your CSS here …) */
+  </style>
+</head>
 
 <body>
   <!-- Page Header -->
@@ -118,6 +125,183 @@
       <span>Coding & more</span>
     </div>
   </header>
+
+
+
+     <!-- Lead-capture popup form with progress bar -->
+<style>
+  .progress-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 30px;
+    margin-bottom: 1em;
+  }
+  .progress-bar {
+    width: 50%;
+    height: 100%;
+    background-color: #00aaff;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.2em;
+  }
+</style>
+<div id="popup-form">
+  <div class="progress-container">
+    <div class="progress-bar">50%</div>
+  </div>
+  <h3>Still watching the Video?</h3>
+  <p>Enter your details below:</p>
+  <form
+    id="leadForm"
+    method="POST"
+    action="https://hooks.zapier.com/hooks/catch/24416556/uhzn3os/"
+  >
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="email" name="email" placeholder="Your Email" required />
+    <button type="submit">Submit & Continue</button>
+  </form>
+</div>
+<!-- Sign-up and schedule buttons -->
+<button class="sign-up-btn" onclick="window.location='https://courses.stemsphere.academy/'">
+  Sign Up Now
+</button>
+<button class="schedule-btn" onclick="document.getElementById('chatLauncher').click()">
+  Schedule Now
+</button>
+</div>
+
+<!-- Arrow indicator + messages -->
+<div class="arrow-up">↑↑↑↑</div>
+<p class="stat-message"> 4/5 students improve in only 3 weeks!</p>
+</main>
+
+<!-- Calendly Inline Popup -->
+<div id="calendly-popup">
+  <div class="calendly-inline-widget" data-url="https://calendly.com/stemxsphere/trialclass"></div>
+  <button class="close-cal">Close</button>
+</div>
+
+<!-- External Scripts -->
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<script>
+  // Load YouTube IFrame API
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+
+  // Variables & Control Flags
+  let player,
+      pauseTime = 159,
+      signUpTime = 404,
+      scheduleTime = 411,
+      intervalId,
+      flags = { form: false, signUp: false, schedule: false };
+
+  // Initialize Player
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      host: 'https://www.youtube-nocookie.com',
+      videoId: 'N7aB7HByh0s',
+      playerVars: {
+        controls: 0,
+        disablekb: 1,
+        modestbranding: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        enablejsapi: 1,
+        autoplay: 0
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange
+      }
+    });
+  }
+
+  // Player Ready Handler
+  function onPlayerReady() {
+    document.querySelector('.click-overlay').addEventListener('click', () => {
+      if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+        player.pauseVideo();
+      } else {
+        player.playVideo();
+      }
+    });
+  }
+
+  // Player State Change Handler
+  function onPlayerStateChange(event) {
+    const cover = document.querySelector('.cover-overlay');
+    if (event.data === YT.PlayerState.PLAYING) {
+      cover.style.display = 'none';
+      intervalId = setInterval(checkMilestones, 500);
+    } else {
+      cover.style.display = 'flex';
+      clearInterval(intervalId);
+    }
+  }
+
+  // Milestone Checker
+  function checkMilestones() {
+    const t = player.getCurrentTime();
+    if (!flags.form && t >= pauseTime) {
+      flags.form = true;
+      clearInterval(intervalId);
+      player.pauseVideo();
+      document.getElementById('popup-form').style.display = 'flex';
+    }
+    if (!flags.signUp && t >= signUpTime) {
+      flags.signUp = true;
+      document.querySelector('.sign-up-btn').style.display = 'block';
+    }
+    if (!flags.schedule && t >= scheduleTime) {
+      flags.schedule = true;
+      document.querySelector('.schedule-btn').style.display = 'block';
+    }
+  }
+
+  // DOM Ready & UI Event Handlers
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('leadForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const data = new FormData(e.target);
+      fetch(e.target.action, {
+        method: 'POST',
+        body: data,
+        mode: 'no-cors'
+      }).finally(() => {
+        document.getElementById('popup-form').style.display = 'none';
+        player.playVideo();
+      });
+    });
+
+    // Schedule Now → open STEMSphere chat launcher
+    document.querySelector('.schedule-btn').addEventListener('click', () => {
+      document.getElementById('chatLauncher').click();
+    });
+
+    document.querySelector('.close-cal').addEventListener('click', () => {
+      document.getElementById('calendly-popup').style.display = 'none';
+    });
+  });
+</script>
+</body>
+</html>
+
+<!-- BEGIN: Section Heading Overrides -->
+<style>
+  /* Make only these section titles white */
+  #on-demand-courses h2,
+  #tutoring-subjects h2 {
+    color: #ffffff !important;
+  }
+</style>
+<!-- END: Section Heading Overrides -->
+
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (Mobile Fix) -->
 
@@ -803,6 +987,81 @@
   </article>
 
 </section>
+
+  <!-- ─── Blog Section ────────────────────────────────────────── -->
+<section id="blog" style="margin:3em 0; text-align:left; max-width:850px; margin:auto;">
+
+  <!-- Chemistry Blog -->
+  <article class="blog-post" style="margin-bottom:3em;">
+    <h2 class="blog-title">Why Cinematic Chemistry Tutoring Works</h2>
+    <p class="blog-body">
+      At STEMSphere Academy, chemistry comes alive. Our <strong>AP Chemistry tutoring online</strong>
+      sessions transform reaction mechanisms and stoichiometry into vivid, memorable lessons.
+      Students in <strong>New York</strong> and <strong>California</strong> rely on us for
+      <strong>organic chemistry tutoring</strong>, while families in <strong>Chicago</strong>
+      trust us for exam prep that delivers results. Across <strong>Hong Kong</strong> and
+      <strong>Singapore</strong>, we’re known for <strong>IB Chemistry HL tutoring</strong>
+      and <strong>HKDSE chemistry prep</strong> that builds confidence and clarity.
+    </p>
+    <p class="blog-body">
+      Whether you’re tackling molecular bonding or preparing for high‑stakes exams, our cinematic
+      approach ensures every learner feels like the hero of their own academic journey.
+    </p>
+    <h3 class="blog-subtitle">Topics we excel at</h3>
+    <ul class="blog-topics">
+      <li>AP Chemistry tutor online</li>
+      <li>IB Chemistry HL tutoring in Singapore</li>
+      <li>HKDSE chemistry prep Hong Kong</li>
+      <li>Organic chemistry tutor New York</li>
+      <li>Stoichiometry help California</li>
+      <li>Chemistry exam coaching Chicago</li>
+    </ul>
+  </article>
+
+  <!-- Math Blog -->
+  <article class="blog-post">
+    <h2 class="blog-title">Why Cinematic Math Tutoring Works</h2>
+    <p class="blog-body">
+      Math isn’t just numbers—it’s a story. Our <strong>SAT Math help for gifted students</strong>
+      and <strong>AP Calculus tutoring online</strong> sessions use cinematic clarity to make
+      complex concepts unforgettable. From <strong>geometry enrichment classes in California</strong>
+      to <strong>IB Math HL tutoring in New York</strong>, we engineer every lesson for results.
+      Families in <strong>Chicago</strong> choose us for <strong>algebra mastery</strong>, while
+      students in <strong>Hong Kong</strong> and <strong>Singapore</strong> rely on us for
+      <strong>IB Math SL/HL prep</strong> and <strong>HKAT math tutoring</strong>.
+    </p>
+    <p class="blog-body">
+      Whether it’s derivatives in calculus, probability in statistics, or geometry foundations,
+      STEMSphere Academy ensures every learner gains confidence, speed, and exam‑ready precision.
+    </p>
+    <h3 class="blog-subtitle">Topics we excel at</h3>
+    <ul class="blog-topics">
+      <li>SAT Math help for gifted students</li>
+      <li>AP Calculus tutor online</li>
+      <li>IB Math HL tutoring New York</li>
+      <li>Geometry enrichment classes California</li>
+      <li>Algebra tutor Chicago</li>
+      <li>HKAT math tutoring Hong Kong</li>
+      <li>IB Math SL/HL prep Singapore</li>
+    </ul>
+  </article>
+
+</section>
+<style>
+/* Blog styling */
+#blog { margin: 3em 0; }
+.blog-post { margin-bottom: 3em; }
+.blog-title { color: #ff0000; font-size: 1.8em; margin-bottom: 0.5em; }
+.blog-subtitle { color: #ffffff; font-size: 1.1em; margin-top: 1em; }
+.blog-body { color: #ddd; line-height: 1.6; }
+.blog-topics {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  color: #ccc;
+}
+.blog-topics li { margin: 0.25em 0; }
+</style>
+<!-- ─── End blog section ────────────────────────────────────── -->
 
 <!-- BEGIN: FAQ & Contact Section -->
 <style>
