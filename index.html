@@ -19,7 +19,7 @@
   <link rel="canonical" href="https://learn.stemsphere.academy">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://learn.stemsphere.academy/assets/favicon.png">
+  <link rel="icon" type="image/png" href="https://learn.stemsphere.academy/assets/logo2.png">
 
   <!-- Structured Data (Schema) -->
   <script type="application/ld+json">
@@ -795,10 +795,10 @@ h2 { font-size: clamp(0.8em, 4.5vw, 1.6em); white-space: nowrap; color: #ccc; ma
 <!-- END FULL-LANGUAGE TRANSLATOR BAR (TOP-RIGHT) -->
 
 <!-- ─── Blog Section ────────────────────────────────────────── -->
-<section id="blog" style="margin:3em 0; text-align:left; max-width:850px; margin:auto; background:#ffffff; padding:2em; border-radius:8px;">
+<section id="blog">
 
   <!-- Chemistry Blog -->
-  <article class="blog-post" style="margin-bottom:3em;">
+  <article class="blog-post">
     <h2 class="blog-title">Why Cinematic Chemistry Tutoring Works</h2>
     <p class="blog-body">
       At STEMSphere Academy, chemistry comes alive. Our <strong>AP Chemistry tutoring online</strong>
@@ -856,20 +856,47 @@ h2 { font-size: clamp(0.8em, 4.5vw, 1.6em); white-space: nowrap; color: #ccc; ma
 
 <style>
 /* Blog styling */
-#blog { margin: 3em 0; background:#fff; }
-.blog-post { margin-bottom: 3em; }
-.blog-title { color: #ff0000; font-size: 1.8em; margin-bottom: 0.5em; }
-.blog-subtitle { color: #ff0000; font-size: 1.1em; margin-top: 1em; }
-.blog-body { color: #000; line-height: 1.6; }
+#blog {
+  margin: 0;                 /* remove side margins */
+  padding: 3em 2em;          /* breathing room */
+  background: #fff;          /* full white background */
+  width: 100%;               /* span full width */
+  box-sizing: border-box;
+}
+
+.blog-post {
+  margin: 0 auto 3em;
+  max-width: 850px;          /* keep text readable */
+}
+
+.blog-title {
+  color: #ff0000;            /* red main titles */
+  font-size: 1.8em;
+  margin-bottom: 0.5em;
+}
+
+.blog-subtitle {
+  color: #000;               /* black for "Topics we excel at" */
+  font-size: 1.1em;
+  margin-top: 1em;
+}
+
+.blog-body {
+  color: #000;               /* black body text */
+  line-height: 1.6;
+}
+
 .blog-topics {
   list-style-type: disc;
   padding-left: 1.5em;
-  color: #000;
+  color: #000;               /* black list items */
 }
-.blog-topics li { margin: 0.25em 0; }
+
+.blog-topics li {
+  margin: 0.25em 0;
+}
 </style>
 <!-- ─── End blog section ────────────────────────────────────── -->
-
 
 <!-- BEGIN: FAQ & Contact Section -->
 <style>
