@@ -1,1 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://learn.stemsphere.academy/sitemap.xml
 
