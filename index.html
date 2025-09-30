@@ -111,7 +111,7 @@ h2 {
 
 /* ─── Course Bar ───────────────────────────────────────────── */
 .course-bar {
-  display: flex;
+  display: inline-flex;       /* inline so it hugs content */
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
@@ -121,8 +121,7 @@ h2 {
   font-weight: 700;
   font-size: 1.1em;
   color: #fff;
-  margin: 0.8em auto 0;
-  max-width: 100%;
+  margin-top: 0.8em;
   white-space: nowrap;
 }
 .course-bar span + span { margin-left: 0.5em; }
@@ -455,6 +454,7 @@ h2 {
     alt="Tutoring Banner"
     class="tutoring-banner"
   />
+
   <div class="tutor-grid">
     <div class="tutor-subject">
       <img src="https://i.postimg.cc/43xqCpgD/9104950.png" alt="Public Speaking Icon" />
@@ -522,15 +522,24 @@ h2 {
 <style>
 /* Tutoring Subjects Section */
 #tutoring-subjects {
-  background: #f9f9f9; /* ✅ off-white background */
-  color: #000;
+  background: #000; /* banner area stays black */
   padding: 3rem 1rem;
 }
 #tutoring-subjects h2,
 #tutoring-subjects p.intro {
-  color: #000;
+  color: #fff;
 }
+.tutoring-banner {
+  margin: 1.5rem auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+/* Grid area with dark grey background */
 .tutor-grid {
+  background: #444;
+  padding: 2rem 1rem;
+  border-radius: 8px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 1rem;
@@ -538,7 +547,7 @@ h2 {
   margin: 2rem auto;
 }
 .tutor-subject {
-  background: #fff;
+  background: #666;
   border: 2px solid #ff0000;
   border-radius: 8px;
   padding: 1rem;
@@ -550,7 +559,7 @@ h2 {
   margin: 0.5rem 0;
 }
 .tutor-subject .tutor-desc {
-  color: #000;
+  color: #fff;
   font-size: 0.9em;
 }
 .tutor-subject img {
