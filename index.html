@@ -83,17 +83,23 @@ header {
 /* ─── Title Group ─────────────────────────────────────────── */
 .title-group {
   display: block;
-  margin-top: 5em; /* ✅ increased so titles sit clearly below logo */
+  margin-top: 5em;
 }
 .title-group span {
   display: block;
-  font-size: 2em; /* keep main titles large */
+  font-size: 2em;
   font-weight: 700;
   letter-spacing: 1px;
   margin: 0.2em 0;
 }
 .title-group span:first-child { color: #fff; }
 .title-group span:last-child  { color: #ff0000; }
+
+@media (min-width: 992px) {
+  .title-group span {
+    font-size: 3em;
+  }
+}
 
 /* ─── Subtitle ────────────────────────────────────────────── */
 h2 {
@@ -105,17 +111,19 @@ h2 {
 
 /* ─── Course Bar ───────────────────────────────────────────── */
 .course-bar {
-  display: inline-flex;
-  flex-wrap: wrap;
+  display: flex;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  padding: 0.5em 1.2em;              
+  padding: 0.5em 1.2em;
   border-radius: 999px;
   background: linear-gradient(90deg, #00f8ff, #ff00d0);
   font-weight: 700;
-  font-size: 1.1em;                  
+  font-size: 1.1em;
   color: #fff;
-  margin-top: 0.8em;                
+  margin: 0.8em auto 0;
+  max-width: 100%;
+  white-space: nowrap;
 }
 .course-bar span + span { margin-left: 0.5em; }
 
@@ -436,7 +444,7 @@ h2 {
 <!-- END: Courses & Tutoring Styles -->
 
 <div class="courses-tutoring">
- <!-- BEGIN: Tutoring Subjects Section -->
+<!-- BEGIN: Tutoring Subjects Section -->
 <section id="tutoring-subjects">
   <h2>Personalized Tutoring in Every Subject We Offer</h2>
   <p class="intro">
@@ -509,18 +517,49 @@ h2 {
       <p class="tutor-desc">Improve reading, writing, and speaking.</p>
     </div>
   </div>
-
-  <!-- CTA Button: capitalized and opens the fullscreen Calendly wizard -->
-  <a
-    href="#"
-    class="cta-button"
-    onclick="event.preventDefault(); document.getElementById('chatLauncher').click();"
-  >
-    Book Your Free Session
-  </a>
 </section>
-<!-- END: Tutoring Subjects Section -->
 
+<style>
+/* Tutoring Subjects Section */
+#tutoring-subjects {
+  background: #f9f9f9; /* ✅ off-white background */
+  color: #000;
+  padding: 3rem 1rem;
+}
+#tutoring-subjects h2,
+#tutoring-subjects p.intro {
+  color: #000;
+}
+.tutor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 1rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+.tutor-subject {
+  background: #fff;
+  border: 2px solid #ff0000;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+.tutor-subject h4 {
+  color: #ff0000;
+  font-size: 1.1em;
+  margin: 0.5rem 0;
+}
+.tutor-subject .tutor-desc {
+  color: #000;
+  font-size: 0.9em;
+}
+.tutor-subject img {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.5rem;
+}
+</style>
+<!-- END: Tutoring Subjects Section -->
 
 <!-- BEGIN: Why Choose Our Tutoring Section (Mobile‐First Responsive) -->
 <style>
