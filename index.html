@@ -74,10 +74,21 @@ header {
   align-items: center;
 }
 .brand-logo {
-  width: 1.8em; 
+  width: 1.8em;
   height: 1.8em;
-  display: block;
+  line-height: 1.8em;
+  background-color: #ff0000;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1em;
+  text-align: center;
+  border-radius: 4px;
   margin-right: 0.5em;
+}
+.brand-text {
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: 700;
 }
 
 /* ─── Title Group ─────────────────────────────────────────── */
@@ -111,7 +122,7 @@ h2 {
 
 /* ─── Course Bar ───────────────────────────────────────────── */
 .course-bar {
-  display: inline-flex;       /* inline so it hugs content */
+  display: inline-flex; /* inline so it hugs content */
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
@@ -143,10 +154,10 @@ h2 {
 
 /* ─── Statistic Message ───────────────────────────────────── */
 .stat-message {
-  font-size: 1em;          /* smaller */
+  font-size: 1em; /* smaller */
   font-weight: 700;
-  color: tomato;           /* softer red */
-  text-shadow: none;       /* no glow */
+  color: tomato; /* softer red */
+  text-shadow: none; /* no glow */
   line-height: 1.4em;
   margin: 1em 0;
   padding: 0 1em;
@@ -157,7 +168,8 @@ h2 {
 <!-- Page Header -->
 <header>
   <div class="brand">
-    <img src="/assets/favconsp1.2.png" alt="STEMSphere" class="brand-logo">
+    <span class="brand-logo">SP</span>
+    <span class="brand-text">STEMSphere</span>
   </div>
 
   <div class="title-group">
