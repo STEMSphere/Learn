@@ -74,11 +74,11 @@ header {
   align-items: center;
 }
 .brand-logo {
-  width: 1.8em; height: 1.8em; line-height: 1.8em;
-  background-color: #ff0000; color: #fff; font-weight: 700; font-size: 1.1em;
-  text-align: center; border-radius: 4px; margin-right: 0.5em;
+  width: 1.8em; 
+  height: 1.8em;
+  display: block;
+  margin-right: 0.5em;
 }
-.brand-text { color: #fff; font-size: 1.2em; font-weight: 700; }
 
 /* ─── Title Group ─────────────────────────────────────────── */
 .title-group {
@@ -126,7 +126,6 @@ h2 {
 }
 .course-bar span + span { margin-left: 0.5em; }
 
-
 /* ─── Banner Video ────────────────────────────────────────── */
 .banner-video {
   width: 100%;
@@ -158,8 +157,7 @@ h2 {
 <!-- Page Header -->
 <header>
   <div class="brand">
-    <span class="brand-logo">SP</span>
-    <span class="brand-text">STEMSphere</span>
+    <img src="/assets/favconsp1.2.png" alt="STEMSphere" class="brand-logo">
   </div>
 
   <div class="title-group">
@@ -942,34 +940,33 @@ h2 {
   max-width: 850px;
 }
 .blog-title {
-  color: tomato;              /* ✅ tomato red restored */
+  color: tomato !important;   /* ✅ force tomato red */
   font-size: 1.8em;
   margin-bottom: 0.5em;
-  text-align: center;         /* ✅ centered */
+  text-align: center;
 }
 .blog-subtitle {
   color: #000;
   font-size: 1.1em;
   margin-top: 1em;
-  text-align: left;           /* ✅ left aligned */
+  text-align: left;
 }
 .blog-body {
   color: #000;
   line-height: 1.6;
-  text-align: left;           /* ✅ left aligned */
+  text-align: left;
 }
 .blog-topics {
   list-style-type: disc;
   padding-left: 1.5em;
   color: #000;
-  text-align: left;           /* ✅ left aligned */
+  text-align: left;
 }
 .blog-topics li {
   margin: 0.25em 0;
 }
 </style>
 <!-- ─── End blog section ────────────────────────────────────── -->
-
 
 
 <!-- BEGIN: FAQ & Contact Section -->
