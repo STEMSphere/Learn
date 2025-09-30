@@ -81,9 +81,13 @@ header {
 .brand-text { color: #fff; font-size: 1.2em; font-weight: 700; }
 
 /* ─── Title Group ─────────────────────────────────────────── */
+.title-group {
+  display: block;
+  margin-top: 3.5em; /* sits below logo */
+}
 .title-group span {
   display: block;
-  font-size: clamp(2rem, 5vw, 3rem); /* scales responsively */
+  font-size: 2em; /* smaller */
   font-weight: 700;
   letter-spacing: 1px;
   margin: 0.2em 0;
@@ -93,7 +97,7 @@ header {
 
 /* ─── Subtitle ────────────────────────────────────────────── */
 h2 {
-  font-size: clamp(0.9rem, 3vw, 1.4rem); /* keep smaller than title */
+  font-size: clamp(0.8em, 4.5vw, 1.4em);
   white-space: nowrap;
   color: #ccc;
   margin-top: 0.2em;
@@ -105,16 +109,15 @@ h2 {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  padding: 0.6em 1.2em;
+  padding: 0.4em 1em;
   border-radius: 999px;
   background: linear-gradient(90deg, #00f8ff, #ff00d0);
   font-weight: 700;
-  font-size: clamp(1rem, 2.2vw, 1.6rem); /* ✅ bigger on desktop */
+  font-size: 0.95em;
   color: #fff;
-  margin-top: 0.8em;
+  margin-top: 0.6em;
 }
-.course-bar span + span { margin-left: 0.6em; }
-
+.course-bar span + span { margin-left: 0.5em; }
 
 /* ─── Banner Video ────────────────────────────────────────── */
 .banner-video {
