@@ -120,6 +120,13 @@ h2 {
   margin-top: 0.2em;
 }
 
+/* ✅ Mobile tweak: make subtitle a tad smaller */
+@media (max-width: 600px) {
+  h2 {
+    font-size: 0.9em; /* slightly smaller on mobile */
+  }
+}
+
 /* ─── Course Bar ───────────────────────────────────────────── */
 .course-bar {
   display: inline-flex; /* inline so it hugs content */
@@ -185,6 +192,7 @@ h2 {
     <span>Coding & more</span>
   </div>
 </header>
+
 
 <!-- Banner Video -->
 <div class="banner-video">
