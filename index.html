@@ -12,14 +12,14 @@
   <!-- Open Graph (Social Sharing) -->
   <meta property="og:title" content="STEMSphere Academy | Cinematic STEM Tutoring">
   <meta property="og:description" content="Book a demo for cinematic tutoring in Math and Chemistry. Engineered for gifted learners and exam warriors.">
-  <meta property="og:image" content="https://drive.google.com/uc?export=view&id=17znRur2sr2_ccUiGlm3CRKgHrG8r5PTn">
+  <meta property="og:image" content="https://learn.stemsphere.academy/assets/og-banner.jpg">
   <meta property="og:url" content="https://learn.stemsphere.academy">
 
   <!-- Canonical URL -->
   <link rel="canonical" href="https://learn.stemsphere.academy">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://drive.google.com/uc?export=view&id=1voylE5wdjXpMoQBXrPmHWd0s6KVfmZhj">
+  <link rel="icon" type="image/png" href="https://learn.stemsphere.academy/assets/favicon.png">
 
   <!-- Structured Data (Schema) -->
   <script type="application/ld+json">
@@ -62,62 +62,24 @@
     padding: 3em 1em 1em;
   }
 
-  /* ─── Brand Logo (SP in red square + STEMSphere) ────────────── */
-  .brand {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    display: flex;
-    align-items: center;
-  }
-  .brand-logo {
-    width: 1.8em;
-    height: 1.8em;
-    line-height: 1.8em;
-    background-color: #ff0000;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 1.1em;
-    text-align: center;
-    border-radius: 4px;
-    margin-right: 0.5em;
-  }
-  .brand-text {
-    color: #ffffff;
-    font-size: 1.2em;
-    font-weight: 700;
-  }
+  /* ─── Brand Logo ───────────────────────────────────────────── */
+  .brand { position: absolute; top: 1rem; left: 1rem; display: flex; align-items: center; }
+  .brand-logo { width: 1.8em; height: 1.8em; line-height: 1.8em; background-color: #ff0000; color: #fff; font-weight: 700; font-size: 1.1em; text-align: center; border-radius: 4px; margin-right: 0.5em; }
+  .brand-text { color: #fff; font-size: 1.2em; font-weight: 700; }
 
-  /* ─── Title Group (Two-line Title) ─────────────────────────── */
-  .title-group {
-    display: inline-block;
-    margin-bottom: 0.2em;
-  }
-  .title-group span {
-    display: block;
-    font-size: 2.8em;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin: 0.2em 0;
-  }
-  .title-group span:first-child { color: #ffffff; }
-  .title-group span:last-child  { color: #ff0000; }
+  /* ─── Title Group ─────────────────────────────────────────── */
+  .title-group { display: inline-block; margin-bottom: 0.2em; }
+  .title-group span { display: block; font-size: 2.8em; font-weight: 700; letter-spacing: 1px; margin: 0.2em 0; }
+  .title-group span:first-child { color: #fff; }
+  .title-group span:last-child { color: #ff0000; }
 
-  /* ─── Subtitle under Title ─────────────────────────────────── */
-  h2 {
-    font-size: clamp(0.8em, 4.5vw, 1.6em);
-    white-space: nowrap;
-    color: #ccc;
-    margin-top: 0.2em;
-  }
-  </style>
-</head>
-
+  /* ─── Subtitle ────────────────────────────────────────────── */
+  h2 { font-size: clamp(0.8em, 4.5vw, 1.6em); white-space: nowrap; color: #ccc; margin-top: 0.2em; }
 
   /* ─── Course Bar ───────────────────────────────────────────── */
   .course-bar {
     display: inline-flex;
-    flex-wrap: wrap;             /* allow wrapping on narrow screens */
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     padding: 0.4em 1em;
@@ -130,72 +92,33 @@
   }
   .course-bar span + span { margin-left: 0.5em; }
 
-  /* ─── Main Container ───────────────────────────────────────── */
-main {
-  max-width: 850px;
-  margin: auto;
-  padding: 2em 1em 3em;
-}
+  /* ─── Banner Video ────────────────────────────────────────── */
+  .banner-video { width: 100%; max-width: 850px; margin: 0 auto 2em; border-radius: 12px; overflow: hidden; }
+  .banner-video video { width: 100%; height: auto; display: block; border-radius: 12px; }
 
-/* ─── Banner Video Styling ─────────────────────────────────── */
-.banner-video {
-  width: 100%;
-  max-width: 850px;
-  margin: 0 auto 2em;
-  border-radius: 12px;
-  overflow: hidden;
-}
-.banner-video video {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 12px;
-}
+  /* ─── Progress Bar ────────────────────────────────────────── */
+  .progress-container { width: 80%; max-width: 300px; height: 0.75em; background: #333; border-radius: 4px; margin-bottom: 1em; overflow: hidden; }
+  .progress-bar { width: 50%; height: 100%; background: #ff0000; }
 
-  /* ─── Arrow Indicator ─────────────────────────────────────── */
-  .arrow-up {
-    font-size: 2.2em;
-    color: #FFA500;
-    text-shadow: 0 0 6px #ffcc66;
-    letter-spacing: 0.5em;
-    margin: 0.3em 0 0;
-  }
-
-  /* ─── Access & Statistic Messages ─────────────────────────── */
-  .access-message {
-    font-size: 1.1em;
-    font-weight: 700;
-    margin: 0.1em 0;
-  }
-  .stat-message {
-    font-size: 1.6em;
-    font-weight: 900;
-    color: #ff0000;
-    text-shadow: 0 0 8px #ff0000, 0 0 16px #aa0000;
-    line-height: 1.2em;
-    margin: 0;
-    padding: 0 1em;
-  }
+  /* (… keep the rest of your CSS here …) */
+  </style>
+</head>
 
 <body>
   <!-- Page Header -->
   <header>
-    <!-- Brand logo + text -->
     <div class="brand">
       <span class="brand-logo">SP</span>
       <span class="brand-text">STEMSphere</span>
     </div>
 
-    <!-- Two-line main title -->
     <div class="title-group">
       <span>Other Courses Teach.</span>
       <span>We Transform!</span>
     </div>
 
-    <!-- Subtitle below title -->
-    <h2>Kids → High School → College& Adult Learners!</h2>
+    <h2>Kids → High School → College & Adult Learners!</h2>
 
-    <!-- Course topics bar -->
     <div class="course-bar">
       <span>MATH</span><span>|</span><span>Chemistry</span>
       <span>|</span><span>Biology</span><span>|</span>
@@ -204,7 +127,52 @@ main {
   </header>
 
 
-     
+
+     <!-- Lead-capture popup form with progress bar -->
+<style>
+  .progress-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 30px;
+    margin-bottom: 1em;
+  }
+  .progress-bar {
+    width: 50%;
+    height: 100%;
+    background-color: #00aaff;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.2em;
+  }
+</style>
+<div id="popup-form">
+  <div class="progress-container">
+    <div class="progress-bar">50%</div>
+  </div>
+  <h3>Still watching the Video?</h3>
+  <p>Enter your details below:</p>
+  <form
+    id="leadForm"
+    method="POST"
+    action="https://hooks.zapier.com/hooks/catch/24416556/uhzn3os/"
+  >
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="email" name="email" placeholder="Your Email" required />
+    <button type="submit">Submit & Continue</button>
+  </form>
+</div>
+<!-- Sign-up and schedule buttons -->
+<button class="sign-up-btn" onclick="window.location='https://courses.stemsphere.academy/'">
+  Sign Up Now
+</button>
+<button class="schedule-btn" onclick="document.getElementById('chatLauncher').click()">
+  Schedule Now
+</button>
+</div>
 
 <!-- Arrow indicator + messages -->
 <div class="arrow-up">↑↑↑↑</div>
@@ -216,6 +184,113 @@ main {
   <div class="calendly-inline-widget" data-url="https://calendly.com/stemxsphere/trialclass"></div>
   <button class="close-cal">Close</button>
 </div>
+
+<!-- External Scripts -->
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<script>
+  // Load YouTube IFrame API
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+
+  // Variables & Control Flags
+  let player,
+      pauseTime = 159,
+      signUpTime = 404,
+      scheduleTime = 411,
+      intervalId,
+      flags = { form: false, signUp: false, schedule: false };
+
+  // Initialize Player
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      host: 'https://www.youtube-nocookie.com',
+      videoId: 'N7aB7HByh0s',
+      playerVars: {
+        controls: 0,
+        disablekb: 1,
+        modestbranding: 1,
+        rel: 0,
+        iv_load_policy: 3,
+        enablejsapi: 1,
+        autoplay: 0
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange
+      }
+    });
+  }
+
+  // Player Ready Handler
+  function onPlayerReady() {
+    document.querySelector('.click-overlay').addEventListener('click', () => {
+      if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+        player.pauseVideo();
+      } else {
+        player.playVideo();
+      }
+    });
+  }
+
+  // Player State Change Handler
+  function onPlayerStateChange(event) {
+    const cover = document.querySelector('.cover-overlay');
+    if (event.data === YT.PlayerState.PLAYING) {
+      cover.style.display = 'none';
+      intervalId = setInterval(checkMilestones, 500);
+    } else {
+      cover.style.display = 'flex';
+      clearInterval(intervalId);
+    }
+  }
+
+  // Milestone Checker
+  function checkMilestones() {
+    const t = player.getCurrentTime();
+    if (!flags.form && t >= pauseTime) {
+      flags.form = true;
+      clearInterval(intervalId);
+      player.pauseVideo();
+      document.getElementById('popup-form').style.display = 'flex';
+    }
+    if (!flags.signUp && t >= signUpTime) {
+      flags.signUp = true;
+      document.querySelector('.sign-up-btn').style.display = 'block';
+    }
+    if (!flags.schedule && t >= scheduleTime) {
+      flags.schedule = true;
+      document.querySelector('.schedule-btn').style.display = 'block';
+    }
+  }
+
+  // DOM Ready & UI Event Handlers
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('leadForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const data = new FormData(e.target);
+      fetch(e.target.action, {
+        method: 'POST',
+        body: data,
+        mode: 'no-cors'
+      }).finally(() => {
+        document.getElementById('popup-form').style.display = 'none';
+        player.playVideo();
+      });
+    });
+
+    // Schedule Now → open STEMSphere chat launcher
+    document.querySelector('.schedule-btn').addEventListener('click', () => {
+      document.getElementById('chatLauncher').click();
+    });
+
+    document.querySelector('.close-cal').addEventListener('click', () => {
+      document.getElementById('calendly-popup').style.display = 'none';
+    });
+  });
+</script>
+</body>
+</html>
 
 <!-- BEGIN: Section Heading Overrides -->
 <style>
@@ -877,29 +952,18 @@ main {
       Why Cinematic Chemistry Tutoring Works
     </h2>
     <p>
-      STEMSphere Academy delivers <strong>AP Chemistry tutoring online</strong> and 
-      <strong>IB Chemistry HL prep</strong> that transforms abstract concepts into vivid, 
-      unforgettable lessons. From <strong>organic chemistry tutors in New York</strong> to 
-      <strong>stoichiometry help in California</strong>, our cinematic approach resonates with 
-      students across the United States. Parents in <strong>Chicago</strong> trust us for 
-      <strong>chemistry exam coaching</strong>, while families in <strong>Hong Kong</strong> and 
-      <strong>Singapore</strong> rely on us for <strong>HKDSE chemistry prep</strong> and 
-      <strong>A‑Level tutoring</strong>. 
+      At STEMSphere Academy, chemistry comes alive. Our <strong>AP Chemistry tutoring online</strong> 
+      sessions transform reaction mechanisms and stoichiometry into vivid, memorable lessons. 
+      Students in <strong>New York</strong> and <strong>California</strong> rely on us for 
+      <strong>organic chemistry tutoring</strong>, while families in <strong>Chicago</strong> 
+      trust us for exam prep that delivers results. Across <strong>Hong Kong</strong> and 
+      <strong>Singapore</strong>, we’re known for <strong>IB Chemistry HL tutoring</strong> 
+      and <strong>HKDSE chemistry prep</strong> that builds confidence and clarity.
     </p>
     <p>
-      Whether you’re tackling <strong>reaction mechanisms</strong>, <strong>molecular bonding</strong>, 
-      or <strong>exam‑specific strategies</strong>, our tutors engineer clarity and confidence. 
-      Every session is designed for gifted learners and exam warriors who demand results.
+      Whether you’re tackling molecular bonding or preparing for high‑stakes exams, our cinematic 
+      approach ensures every learner feels like the hero of their own academic journey.
     </p>
-    <h3 style="margin-top:1em;">Long‑Tail Keywords We Rank For</h3>
-    <ul>
-      <li>AP Chemistry tutor online</li>
-      <li>IB Chemistry HL tutoring in Singapore</li>
-      <li>HKDSE chemistry prep Hong Kong</li>
-      <li>Organic chemistry tutor New York</li>
-      <li>Stoichiometry help California</li>
-      <li>Chemistry exam coaching Chicago</li>
-    </ul>
   </article>
 
   <!-- Math Blog -->
@@ -908,29 +972,18 @@ main {
       Why Cinematic Math Tutoring Works
     </h2>
     <p>
-      Math is more than numbers—it’s a story. Our <strong>SAT Math help for gifted students</strong> 
-      and <strong>AP Calculus tutoring online</strong> use cinematic clarity to make complex concepts 
-      unforgettable. From <strong>geometry enrichment classes in California</strong> to 
-      <strong>IB Math HL tutoring in New York</strong>, we engineer every lesson for results. 
+      Math isn’t just numbers—it’s a story. Our <strong>SAT Math help for gifted students</strong> 
+      and <strong>AP Calculus tutoring online</strong> sessions use cinematic clarity to make 
+      complex concepts unforgettable. From <strong>geometry enrichment classes in California</strong> 
+      to <strong>IB Math HL tutoring in New York</strong>, we engineer every lesson for results. 
       Families in <strong>Chicago</strong> choose us for <strong>algebra mastery</strong>, while 
       students in <strong>Hong Kong</strong> and <strong>Singapore</strong> rely on us for 
       <strong>IB Math SL/HL prep</strong> and <strong>HKAT math tutoring</strong>.
     </p>
     <p>
-      Whether it’s <strong>derivatives in AP Calculus</strong>, <strong>probability in Statistics</strong>, 
-      or <strong>geometry foundations</strong>, STEMSphere Academy ensures every learner gains 
-      confidence, speed, and exam‑ready precision.
+      Whether it’s derivatives in calculus, probability in statistics, or geometry foundations, 
+      STEMSphere Academy ensures every learner gains confidence, speed, and exam‑ready precision.
     </p>
-    <h3 style="margin-top:1em;">Long‑Tail Keywords We Rank For</h3>
-    <ul>
-      <li>SAT Math help for gifted students</li>
-      <li>AP Calculus tutor online</li>
-      <li>IB Math HL tutoring New York</li>
-      <li>Geometry enrichment classes California</li>
-      <li>Algebra tutor Chicago</li>
-      <li>HKAT math tutoring Hong Kong</li>
-      <li>IB Math SL/HL prep Singapore</li>
-    </ul>
   </article>
 
 </section>
