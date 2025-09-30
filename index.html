@@ -95,78 +95,42 @@
   .course-bar span + span { margin-left: 0.5em; }
 
   /* ─── Main Container ───────────────────────────────────────── */
-  main {
-    max-width: 850px;
-    margin: auto;
-    padding: 2em 1em 3em;
-  }
+main {
+  max-width: 850px;
+  margin: auto;
+  padding: 2em 1em 3em;
+}
 
-  /* ─── Electric Frame (Blue Glow + Flicker) ─────────────────── */
-  .electric-frame {
-    display: block !important;
-    position: relative;
-    padding: 10px;
-    border-radius: 12px;
-    margin: 0 auto;
-    background-color: #000;
-    box-shadow: 0 0 12px #00aaff;
-    animation: flicker 3s infinite alternate;
-    max-width: 800px;
-    z-index: 500;
-  }
-  @keyframes flicker {
-    0%,100% { box-shadow: 0 0 12px #00aaff; }
-    40%     { box-shadow: 0 0 20px #00ffff; }
-    60%     { box-shadow: 0 0 8px  #0088ff; }
-  }
+/* ─── Banner Video Styling ─────────────────────────────────── */
+.banner-video {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto 2em;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.banner-video video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
 
-  /* ─── Video Container ──────────────────────────────────────── */
-  .video-container {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    overflow: hidden;
-    border-radius: 8px;
-  }
-  .cover-overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-  .cover-overlay .play-btn {
-    font-size: 4em;
-    color: #fff;
-    opacity: 0.8;
-  }
-  #player,
-  .click-overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-  }
-  .click-overlay { cursor: pointer; z-index: 700; }
-
-  /* ─── Progress Bar Styles ─────────────────────────────────── */
-  .progress-container {
-    width: 80%;
-    max-width: 300px;
-    height: 0.75em;
-    background: #333;
-    border-radius: 4px;
-    margin-bottom: 1em;
-    overflow: hidden;
-  }
-  .progress-bar {
-    width: 50%;
-    height: 100%;
-    background: #ff0000;
-  }
+/* ─── Progress Bar Styles ─────────────────────────────────── */
+.progress-container {
+  width: 80%;
+  max-width: 300px;
+  height: 0.75em;
+  background: #333;
+  border-radius: 4px;
+  margin-bottom: 1em;
+  overflow: hidden;
+}
+.progress-bar {
+  width: 50%;
+  height: 100%;
+  background: #ff0000;
+}
 
   /* ─── Lead-Capture Popup Form ─────────────────────────────── */
   #popup-form {
@@ -294,19 +258,6 @@
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main>
-    <!-- Electric glow frame wrapper -->
-    <div class="electric-frame">
-
-      <!-- Video container + overlay -->
-      <div class="video-container">
-        <div class="cover-overlay">
-          <div class="play-btn">▶</div>
-        </div>
-        <div id="player"></div>
-        <div class="click-overlay"></div>
-      </div>
 
      <!-- Lead-capture popup form with progress bar -->
 <style>
@@ -356,7 +307,6 @@
 
 <!-- Arrow indicator + messages -->
 <div class="arrow-up">↑↑↑↑</div>
-<div class="access-message">Play ↻ in your regular browser</div>
 <p class="stat-message"> 4/5 students improve in only 3 weeks!</p>
 </main>
 
