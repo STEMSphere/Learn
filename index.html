@@ -56,7 +56,7 @@
     text-align: center;
   }
 
- <style>
+<style>
 /* ─── Header Container ──────────────────────────────────────── */
 header {
   position: relative;
@@ -65,7 +65,13 @@ header {
 }
 
 /* ─── Brand Logo ───────────────────────────────────────────── */
-.brand { position: absolute; top: 1rem; left: 1rem; display: flex; align-items: center; }
+.brand {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+}
 .brand-logo {
   width: 1.8em; height: 1.8em; line-height: 1.8em;
   background-color: #ff0000; color: #fff; font-weight: 700; font-size: 1.1em;
@@ -74,13 +80,27 @@ header {
 .brand-text { color: #fff; font-size: 1.2em; font-weight: 700; }
 
 /* ─── Title Group ─────────────────────────────────────────── */
-.title-group { display: inline-block; margin-bottom: 0.2em; }
-.title-group span { display: block; font-size: 2.8em; font-weight: 700; letter-spacing: 1px; margin: 0.2em 0; }
+.title-group {
+  display: block;
+  margin-top: 3.5em; /* sits below logo */
+}
+.title-group span {
+  display: block;
+  font-size: 2em; /* smaller */
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0.2em 0;
+}
 .title-group span:first-child { color: #fff; }
 .title-group span:last-child  { color: #ff0000; }
 
 /* ─── Subtitle ────────────────────────────────────────────── */
-h2 { font-size: clamp(0.8em, 4.5vw, 1.6em); white-space: nowrap; color: #ccc; margin-top: 0.2em; }
+h2 {
+  font-size: clamp(0.8em, 4.5vw, 1.4em);
+  white-space: nowrap;
+  color: #ccc;
+  margin-top: 0.2em;
+}
 
 /* ─── Course Bar ───────────────────────────────────────────── */
 .course-bar {
@@ -99,59 +119,64 @@ h2 { font-size: clamp(0.8em, 4.5vw, 1.6em); white-space: nowrap; color: #ccc; ma
 .course-bar span + span { margin-left: 0.5em; }
 
 /* ─── Banner Video ────────────────────────────────────────── */
-.banner-video { width: 100%; max-width: 850px; margin: 2em auto; border-radius: 12px; overflow: hidden; }
-.banner-video video { width: 100%; height: auto; display: block; border-radius: 12px; }
+.banner-video {
+  width: 100%;
+  max-width: 850px;
+  margin: 2em auto;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.banner-video video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
 
-/* ─── Neon Statistic Message ──────────────────────────────── */
+/* ─── Statistic Message ───────────────────────────────────── */
 .stat-message {
-  font-size: 1.6em;
-  font-weight: 900;
-  color: #ff0033;
-  text-shadow:
-    0 0 5px #ff0033,
-    0 0 10px #ff0033,
-    0 0 20px #ff1a4d,
-    0 0 40px #ff3366;
-  line-height: 1.2em;
-  margin: 0.5em 0;
+  font-size: 1em;          /* smaller */
+  font-weight: 700;
+  color: tomato;           /* softer red */
+  text-shadow: none;       /* no glow */
+  line-height: 1.4em;
+  margin: 1em 0;
   padding: 0 1em;
   text-align: center;
 }
 </style>
 
-<body>
-  <!-- Page Header -->
-  <header>
-    <div class="brand">
-      <span class="brand-logo">SP</span>
-      <span class="brand-text">STEMSphere</span>
-    </div>
-
-    <div class="title-group">
-      <span>Other Courses Teach.</span>
-      <span>We Transform!</span>
-    </div>
-
-    <h2>Kids → High School → College & Adult Learners!</h2>
-
-    <div class="course-bar">
-      <span>MATH</span><span>|</span><span>Chemistry</span>
-      <span>|</span><span>Biology</span><span>|</span>
-      <span>Coding & more</span>
-    </div>
-  </header>
-
-  <!-- Banner Video -->
-  <div class="banner-video">
-    <video autoplay muted loop playsinline>
-      <source src="https://learn.stemsphere.academy/assets/StemspherebannerVid29S3pt.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+<!-- Page Header -->
+<header>
+  <div class="brand">
+    <span class="brand-logo">SP</span>
+    <span class="brand-text">STEMSphere</span>
   </div>
 
-  <!-- Statistic Message -->
-  <p class="stat-message">4/5 students improve in only 3 weeks!</p>
-</body>
+  <div class="title-group">
+    <span>Other Courses Teach.</span>
+    <span>We Transform!</span>
+  </div>
+
+  <h2>Kids → High School → College & Adult Learners!</h2>
+
+  <div class="course-bar">
+    <span>MATH</span><span>|</span><span>Chemistry</span>
+    <span>|</span><span>Biology</span><span>|</span>
+    <span>Coding & more</span>
+  </div>
+</header>
+
+<!-- Banner Video -->
+<div class="banner-video">
+  <video autoplay muted loop playsinline>
+    <source src="https://learn.stemsphere.academy/assets/StemspherebannerVid29S3pt.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<!-- Statistic Message -->
+<p class="stat-message">4/5 students improve in only 3 weeks!</p>
 
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (Mobile Fix) -->
