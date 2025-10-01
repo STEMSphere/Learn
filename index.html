@@ -212,15 +212,32 @@ h2 {
     style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; font-size:20px; font-weight:bold; padding:15px 30px; border:none; border-radius:8px; cursor:pointer; box-shadow:0 0 15px rgba(0,123,255,0.7); animation:pulse 1.5s infinite;">
     🚀 Book Your Enrollment Session Now
   </button>
+  <!-- Three Softer Arrows -->
   <div style="position:absolute; top:-45px; left:50%; transform:translateX(-50%); font-size:26px; color:#fff; text-shadow:0 0 6px #00c6ff; animation:bounce 1.8s infinite;">⬇⬇⬇</div>
 </div>
 
-<div id="highIntentWizard" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#ffffff; font-family:sans-serif; z-index:2000; overflow:auto;">
-  <!-- Close Button (top-left, just an X in black) -->
+<!-- Fullscreen High-Intent Wizard -->
+<div id="highIntentWizard" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#ffffff; font-family:sans-serif; box-shadow:0 0 20px rgba(0,0,0,0.3); z-index:2000; overflow:auto;">
+  
+  <!-- Close Button (below bar) -->
   <button onclick="document.getElementById('highIntentWizard').style.display='none'"
-    style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
-  <div id="highStepContent" style="margin-top:60px;"></div>
+    style="display:block; margin:10px auto; font-size:28px; background:none; border:none; cursor:pointer; z-index:2001;">✖</button>
+  
+  <!-- Dynamic Step Content -->
+  <div id="highStepContent" style="margin-top:20px;"></div>
 </div>
+
+<style>
+  @keyframes pulse {
+    0% { box-shadow:0 0 10px rgba(0,123,255,0.7); }
+    50% { box-shadow:0 0 25px rgba(0,198,255,1); }
+    100% { box-shadow:0 0 10px rgba(0,123,255,0.7); }
+  }
+  @keyframes bounce {
+    0%,100% { transform:translate(-50%,0); }
+    50% { transform:translate(-50%,8px); }
+  }
+</style>
 
 <script>
   let hiData = { age:"", subject:"", style:"", help:"" };
@@ -233,18 +250,24 @@ h2 {
     renderHighStep();
   });
 
-  // EXACT same progress bar logic as your working wizard
   function updateProgress(pct) {
-    const container = document.getElementById("highStepContent");
-    container.parentElement.querySelector("#progressBar")?.remove();
+    // Remove any existing bar
+    document.getElementById("highStepContent")
+      .parentElement.querySelector("#progressBar")?.remove();
+
+    // Build bar container
     const bar = document.createElement("div");
     bar.id = "progressBar";
     bar.style = "height:10px; background:#e0e0e0; border-radius:5px; margin:20px;";
+    
+    // Fill
     const fill = document.createElement("div");
     fill.id = "progressFill";
     fill.style = `height:100%; width:${pct}%; background:#007bff; border-radius:5px;`;
     bar.appendChild(fill);
-    container.before(bar);
+
+    // Insert ABOVE step content
+    document.getElementById("highStepContent").before(bar);
   }
 
   function renderHighStep(){
@@ -328,6 +351,7 @@ h2 {
     }
   }
 </script>
+
 <!-- 🌟 END: High-Intent Popup Wizard -->
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (with Persistent Close X) -->
