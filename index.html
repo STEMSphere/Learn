@@ -218,10 +218,11 @@ h2 {
 
 <!-- Fullscreen High-Intent Wizard -->
 <div id="highIntentWizard" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fdfdfd; font-family:sans-serif; z-index:2000; overflow:auto;">
-  <!-- Close Button (bottom-left, black) -->
+  <!-- Progress bar will be injected here -->
+  <!-- Close Button (top-left, just an X in black) -->
   <button onclick="document.getElementById('highIntentWizard').style.display='none'"
-    style="position:fixed; bottom:20px; left:20px; font-size:18px; background:#000; color:#fff; border:none; padding:8px 14px; border-radius:4px; cursor:pointer; z-index:2001;">✖ Close</button>
-  <div id="highStepContent" style="margin-top:40px; padding:20px; color:#000;"></div>
+    style="position:absolute; top:15px; left:20px; font-size:22px; background:none; color:#000; border:none; cursor:pointer; z-index:2001;">✖</button>
+  <div id="highStepContent" style="margin-top:60px; padding:20px; color:#000;"></div>
 </div>
 
 <style>
@@ -248,15 +249,15 @@ h2 {
   });
 
   function updateProgress(pct) {
-    document.getElementById("highStepContent").parentElement.querySelector("#progressBar")?.remove();
+    document.getElementById("highIntentWizard").querySelector("#progressBar")?.remove();
     const bar = document.createElement("div");
     bar.id = "progressBar";
-    bar.style = "height:10px; background:#e0e0e0; border-radius:5px; margin-bottom:20px;";
+    bar.style = "position:absolute; top:0; left:0; width:100%; height:10px; background:#e0e0e0;";
     const fill = document.createElement("div");
     fill.id = "progressFill";
-    fill.style = `height:100%; width:${pct}%; background:#007bff; border-radius:5px;`;
+    fill.style = `height:100%; width:${pct}%; background:#007bff;`;
     bar.appendChild(fill);
-    document.getElementById("highStepContent").before(bar);
+    document.getElementById("highIntentWizard").prepend(bar);
   }
 
   function renderHighStep(){
@@ -339,6 +340,7 @@ h2 {
   }
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
+
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (with Persistent Close X) -->
 
