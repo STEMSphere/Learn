@@ -218,10 +218,18 @@ h2 {
 
 <!-- Fullscreen High-Intent Wizard -->
 <div id="highIntentWizard" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#ffffff; font-family:sans-serif; z-index:2000; overflow:auto;">
-  <!-- Close Button (top-left, just an X in black) -->
+  
+  <!-- Progress Bar (always at top) -->
+  <div id="progressBarContainer" style="width:100%; height:10px; background:#e0e0e0; border-radius:5px; margin:0;">
+    <div id="progressFill" style="height:100%; width:0%; background:#007bff; border-radius:5px;"></div>
+  </div>
+
+  <!-- Close Button (just below bar) -->
   <button onclick="document.getElementById('highIntentWizard').style.display='none'"
-    style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
-  <div id="highStepContent" style="margin-top:60px;"></div>
+    style="display:block; margin:10px auto; font-size:24px; background:none; border:none; color:#000; cursor:pointer;">✖</button>
+    
+  <!-- Dynamic Wizard Content -->
+  <div id="highStepContent" style="margin-top:20px; text-align:center;"></div>
 </div>
 
 <style>
@@ -247,18 +255,10 @@ h2 {
     renderHighStep();
   });
 
-  // Progress bar identical to your working wizard: inserted just above the content block
+  // Progress bar updater
   function updateProgress(pct) {
-    const container = document.getElementById("highStepContent");
-    container.parentElement.querySelector("#progressBar")?.remove();
-    const bar = document.createElement("div");
-    bar.id = "progressBar";
-    bar.style = "height:10px; background:#e0e0e0; border-radius:5px; margin:20px;";
-    const fill = document.createElement("div");
-    fill.id = "progressFill";
-    fill.style = `height:100%; width:${pct}%; background:#007bff; border-radius:5px;`;
-    bar.appendChild(fill);
-    container.before(bar);
+    const fill = document.getElementById("progressFill");
+    if (fill) fill.style.width = pct + "%";
   }
 
   function renderHighStep(){
@@ -342,6 +342,7 @@ h2 {
     }
   }
 </script>
+
 <!-- 🌟 END: High-Intent Popup Wizard -->
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (with Persistent Close X) -->
