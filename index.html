@@ -218,8 +218,8 @@ h2 {
 
 <!-- Fullscreen High-Intent Wizard -->
 <div id="highIntentWizard" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fdfdfd; font-family:sans-serif; z-index:2000; overflow:auto;">
-  <!-- Progress bar and close will be injected before this content block -->
-  <div id="highStepContent" style="margin-top:60px; padding:20px; color:#000;"></div>
+  <!-- Progress bar and close X will be injected above the content -->
+  <div id="highStepContent" style="margin-top:80px; padding:20px; color:#000;"></div>
 </div>
 
 <style>
@@ -240,39 +240,40 @@ h2 {
 
   document.getElementById("highIntentLauncher").addEventListener("click", function(){
     hiStep = 0;
-    updateProgress(0);
-    injectClose();
     document.getElementById("highIntentWizard").style.display = "block";
+    updateProgress(10);
+    injectCloseX();
     renderHighStep();
   });
 
-  // Progress bar identical behavior: inserted before the step content block
+  // Progress bar identical to your other wizard (inserted just above content)
   function updateProgress(pct) {
-    const wizard = document.getElementById("highIntentWizard");
     const stepContent = document.getElementById("highStepContent");
+    const wizard = document.getElementById("highIntentWizard");
     wizard.querySelector("#progressBar")?.remove();
     const bar = document.createElement("div");
     bar.id = "progressBar";
     bar.style = "height:10px; background:#e0e0e0; border-radius:5px; margin:20px;";
     const fill = document.createElement("div");
     fill.id = "progressFill";
-    fill.style = `height:100%; width:${pct}%; background:#007bff; border-radius:5px; transition:width 0.3s ease;`;
+    fill.style = `height:100%; width:${pct}%; background:#007bff; border-radius:5px; transition:width 0.25s ease;`;
     bar.appendChild(fill);
     stepContent.before(bar);
   }
 
-  // Close button: top-left, plain black “✖”, injected under the progress bar
-  function injectClose() {
-    const wizard = document.getElementById("highIntentWizard");
+  // Close button (top-left, just an X in black), injected under the progress bar
+  function injectCloseX() {
     const stepContent = document.getElementById("highStepContent");
-    wizard.querySelector("#hiCloseBtn")?.remove();
+    const wizard = document.getElementById("highIntentWizard");
+    wizard.querySelector("#hiCloseX")?.remove();
     const btn = document.createElement("button");
-    btn.id = "hiCloseBtn";
+    btn.id = "hiCloseX";
     btn.textContent = "✖";
-    btn.style = "position:relative; margin:0 0 0 20px; font-size:22px; background:none; color:#000; border:none; cursor:pointer; z-index:2001;";
+    btn.style = "display:inline-block; margin:0 0 0 20px; font-size:22px; background:none; color:#000; border:none; cursor:pointer;";
     btn.onclick = () => { wizard.style.display = "none"; };
-    // Insert the close button right before the step content (progress bar remains above it)
     stepContent.before(btn);
+    // ensure content doesn't jump under the bar/close
+    stepContent.style.marginTop = "80px";
   }
 
   function renderHighStep(){
@@ -356,6 +357,7 @@ h2 {
   }
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
+
 
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (with Persistent Close X) -->
