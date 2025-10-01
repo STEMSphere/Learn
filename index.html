@@ -205,17 +205,18 @@ h2 {
 <!-- Statistic Message -->
 <p class="stat-message">4/5 students improve in only 3 weeks!</p>
 
-<!-- 🌟 BEGIN: High-Intent Popup Wizard (Blue Gradient Button + Softer Arrows) -->
+<!-- 🌟 BEGIN: High-Intent Popup Wizard -->
 
 <div id="highIntentCTA" style="position:relative; text-align:center; margin:40px;">
   <button id="highIntentLauncher"
     style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; font-size:20px; font-weight:bold; padding:15px 30px; border:none; border-radius:8px; cursor:pointer; box-shadow:0 0 15px rgba(0,123,255,0.7); animation:pulse 1.5s infinite;">
     🚀 Book Your Enrollment Session Now
   </button>
-  <!-- Softer Arrows -->
+  <!-- Softer Arrow -->
   <div style="position:absolute; top:-45px; left:50%; transform:translateX(-50%); font-size:26px; color:#fff; text-shadow:0 0 6px #00c6ff; animation:bounce 1.8s infinite;">⬇</div>
 </div>
 
+<!-- Fullscreen High-Intent Wizard -->
 <div id="highIntentWizard" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fdfdfd; font-family:sans-serif; z-index:2000; overflow:auto;">
   <!-- Close Button -->
   <button onclick="document.getElementById('highIntentWizard').style.display='none'"
@@ -236,7 +237,7 @@ h2 {
 </style>
 
 <script>
-  let hiData = { subject:"", goal:"" };
+  let hiData = { age:"", subject:"", style:"", goal:"" };
   let hiStep = 0;
 
   document.getElementById("highIntentLauncher").addEventListener("click", function(){
@@ -257,14 +258,19 @@ h2 {
     } else if(hiStep===1){
       c.innerHTML = `
         <h3>📘 Choose Subject</h3>
-        ${["Math","Chemistry","English (Public Speaking)"].map(s=>`
-          <button onclick="hiData.subject='${s}'; hiStep=2; renderHighStep()" 
-            style="margin:5px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${s}</button>`).join("")}
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          ${["Public Speaking (English)","Math","Chemistry","Python Programming","Biology","AI Made Easy","English Speaking and Writing"].map(s=>`
+            <button onclick="hiData.subject='${s}'; hiStep=2; renderHighStep()" 
+              style="margin:5px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${s}</button>`).join("")}
+        </div>
       `;
     } else if(hiStep===2){
       c.innerHTML = `
         <h3>🗣️ What’s your child’s biggest challenge?</h3>
-        <textarea id="hiGoal" style="width:100%; height:100px; padding:10px; border:1px solid #ccc; border-radius:6px;"></textarea>
+        <div style="border:1px solid #ccc; border-radius:6px; padding:10px; margin:10px 0;">
+          <textarea id="hiGoal" placeholder="Type your message here..." 
+            style="width:100%; height:100px; padding:10px; border:none; resize:vertical; font-size:14px;"></textarea>
+        </div>
         <button onclick="hiData.goal=document.getElementById('hiGoal').value; hiStep=3; renderHighStep()" 
           style="margin-top:10px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px;">Continue</button>
       `;
