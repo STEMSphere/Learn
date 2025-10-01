@@ -345,22 +345,27 @@ h2 {
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
 
-<!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (with Progress Bar + Close X) -->
+<!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
 
-<!-- Floating Chat Icon (your banana image) -->
+<!-- Floating Chat Icon -->
 <img src="https://i.postimg.cc/gkZjDw5b/gemini-2-5-flash-image-preview-nano-banana-instead-of-try-free-1.png" 
      id="chatLauncher"
      style="position:fixed; bottom:30px; right:30px; z-index:999; cursor:pointer; width:60px;" />
 
 <!-- Fullscreen Form Wizard -->
 <div id="chatWizard" 
-     style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#ffffff; font-family:sans-serif; box-shadow:0 0 20px rgba(0,0,0,0.3); z-index:1000; overflow:auto;">
+     style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#ffffff; font-family:sans-serif; z-index:1000; overflow:auto;">
   
-  <!-- Persistent Close Button (✖ top-right) -->
-  <button onclick="document.getElementById('chatWizard').style.display='none'"
-    style="position:absolute; top:15px; right:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:1001;">✖</button>
-  
-  <div id="stepContent" style="margin-top:60px;"></div>
+  <!-- Progress bar will be injected here -->
+  <div id="progressWrapper"></div>
+
+  <!-- Close Button (✖ black, under progress bar, left aligned) -->
+  <div style="margin:10px 20px;">
+    <button onclick="document.getElementById('chatWizard').style.display='none'"
+      style="font-size:22px; background:none; border:none; color:#000; cursor:pointer;">✖</button>
+  </div>
+
+  <div id="stepContent" style="margin-top:10px;"></div>
 </div>
 
 <script type="text/javascript">
@@ -374,17 +379,17 @@ h2 {
     renderStep();
   });
 
-  // Progress bar identical to your working wizard
+  // Progress bar identical to working wizard
   function updateProgress(pct) {
-    document.getElementById("stepContent").parentElement.querySelector("#progressBar")?.remove();
+    document.getElementById("progressWrapper").innerHTML = "";
     const bar = document.createElement("div");
     bar.id = "progressBar";
-    bar.style = "height:10px; background:#e0e0e0; border-radius:5px; margin:20px;";
+    bar.style = "height:10px; background:#e0e0e0; border-radius:5px; margin:20px 20px 0 20px;";
     const fill = document.createElement("div");
     fill.id = "progressFill";
     fill.style = `height:100%; width:${pct}%; background:#009688; border-radius:5px; transition:width 0.25s ease;`;
     bar.appendChild(fill);
-    document.getElementById("stepContent").before(bar);
+    document.getElementById("progressWrapper").appendChild(bar);
   }
 
   function renderStep() {
@@ -472,6 +477,7 @@ h2 {
   }
 </script>
 <!-- 🌟 END: STEMSphere Floating Quiz Wizard -->
+
 
 <!-- BEGIN: Courses & Tutoring Styles -->
 <style>
