@@ -212,8 +212,8 @@ h2 {
     style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; font-size:20px; font-weight:bold; padding:15px 30px; border:none; border-radius:8px; cursor:pointer; box-shadow:0 0 15px rgba(0,123,255,0.7); animation:pulse 1.5s infinite;">
     🚀 Book Your Enrollment Session Now
   </button>
-  <!-- Softer Arrow -->
-  <div style="position:absolute; top:-45px; left:50%; transform:translateX(-50%); font-size:26px; color:#fff; text-shadow:0 0 6px #00c6ff; animation:bounce 1.8s infinite;">⬇</div>
+  <!-- Three Softer Arrows -->
+  <div style="position:absolute; top:-45px; left:50%; transform:translateX(-50%); font-size:26px; color:#fff; text-shadow:0 0 6px #00c6ff; animation:bounce 1.8s infinite;">⬇⬇⬇</div>
 </div>
 
 <!-- Fullscreen High-Intent Wizard -->
@@ -237,7 +237,7 @@ h2 {
 </style>
 
 <script>
-  let hiData = { age:"", subject:"", style:"", goal:"" };
+  let hiData = { subject:"", goal:"" };
   let hiStep = 0;
 
   document.getElementById("highIntentLauncher").addEventListener("click", function(){
@@ -259,14 +259,14 @@ h2 {
       c.innerHTML = `
         <h3>📘 Choose Subject</h3>
         <div style="display:flex; flex-wrap:wrap; gap:10px;">
-          ${["Public Speaking (English)","Math","Chemistry","Python Programming","Biology","AI Made Easy","English Speaking and Writing"].map(s=>`
+          ${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing"].map(s=>`
             <button onclick="hiData.subject='${s}'; hiStep=2; renderHighStep()" 
               style="margin:5px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${s}</button>`).join("")}
         </div>
       `;
     } else if(hiStep===2){
       c.innerHTML = `
-        <h3>🗣️ What’s your child’s biggest challenge?</h3>
+        <h3>🗣️ What’s the student’s biggest challenge?</h3>
         <div style="border:1px solid #ccc; border-radius:6px; padding:10px; margin:10px 0;">
           <textarea id="hiGoal" placeholder="Type your message here..." 
             style="width:100%; height:100px; padding:10px; border:none; resize:vertical; font-size:14px;"></textarea>
@@ -284,7 +284,7 @@ h2 {
       s.src="https://assets.calendly.com/assets/external/widget.js";
       s.onload=()=>{
         Calendly.initInlineWidget({
-          url:"https://calendly.com/stemxsphere/enrollment?hide_gdpr_banner=1",
+          url:"https://calendly.com/stemxsphere/trialclass?hide_gdpr_banner=1",
           parentElement:document.getElementById("calendlyHigh"),
           prefill:{ customAnswers:{ a1:hiData.subject, a2:hiData.goal } }
         });
@@ -294,6 +294,7 @@ h2 {
   }
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
+
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (with Persistent Close X) -->
 
@@ -334,7 +335,6 @@ h2 {
 
   function renderStep() {
     const container = document.getElementById("stepContent");
-
     if (step === 0) {
       updateProgress(10);
       container.innerHTML = `
@@ -388,7 +388,7 @@ h2 {
       updateProgress(100);
       container.innerHTML = `
         <h2 style="padding:0 20px; color:#000000;">✅ Tutor Found!</h2>
-        <p style="padding:0 20px; color:#000000;">We are loading the calendar… book your enrollment session below with our specialist.</p>
+        <p style="padding:0 20px; color:#000000;">We are loading the calendar… book your free diagnostic session below with our enrollment tutor.</p>
         <div id="calendlyFrameContainer" style="width:100%; height:80vh; overflow:hidden;">
           <div id="calendlyFrame" style="width:100%; height:100%;"></div>
         </div>
@@ -398,7 +398,7 @@ h2 {
       calendlyScript.src = "https://assets.calendly.com/assets/external/widget.js";
       calendlyScript.onload = () => {
         Calendly.initInlineWidget({
-          url: "https://calendly.com/stemxsphere/enrollment?hide_gdpr_banner=1",
+          url: "https://calendly.com/stemxsphere/trialclass?hide_gdpr_banner=1",
           parentElement: document.getElementById("calendlyFrame"),
           prefill: {
             customAnswers: {
