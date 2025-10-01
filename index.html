@@ -205,9 +205,140 @@ h2 {
 <!-- Statistic Message -->
 <p class="stat-message">4/5 students improve in only 3 weeks!</p>
 
+<!-- 🌟 BEGIN: High-Intent Popup Wizard -->
+
+<div id="highIntentCTA" style="position:relative; text-align:center; margin:40px;">
+  <button id="highIntentLauncher"
+    style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; font-size:20px; font-weight:bold; padding:15px 30px; border:none; border-radius:8px; cursor:pointer; box-shadow:0 0 15px rgba(0,123,255,0.7); animation:pulse 1.5s infinite;">
+    🚀 Book Your Enrollment Session Now
+  </button>
+  <!-- Three Softer Arrows -->
+  <div style="position:absolute; top:-45px; left:50%; transform:translateX(-50%); font-size:26px; color:#fff; text-shadow:0 0 6px #00c6ff; animation:bounce 1.8s infinite;">⬇⬇⬇</div>
+</div>
+
+<!-- Fullscreen High-Intent Wizard -->
+<div id="highIntentWizard" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fdfdfd; font-family:sans-serif; z-index:2000; overflow:auto;">
+  <!-- Close Button (bottom-left, black) -->
+  <button onclick="document.getElementById('highIntentWizard').style.display='none'"
+    style="position:fixed; bottom:20px; left:20px; font-size:18px; background:#000; color:#fff; border:none; padding:8px 14px; border-radius:4px; cursor:pointer; z-index:2001;">✖ Close</button>
+  <div id="highStepContent" style="margin-top:40px; padding:20px; color:#000;"></div>
+</div>
+
+<style>
+  @keyframes pulse {
+    0% { box-shadow:0 0 10px rgba(0,123,255,0.7); }
+    50% { box-shadow:0 0 25px rgba(0,198,255,1); }
+    100% { box-shadow:0 0 10px rgba(0,123,255,0.7); }
+  }
+  @keyframes bounce {
+    0%,100% { transform:translate(-50%,0); }
+    50% { transform:translate(-50%,8px); }
+  }
+</style>
+
+<script>
+  let hiData = { age:"", subject:"", style:"", help:"" };
+  let hiStep = 0;
+
+  document.getElementById("highIntentLauncher").addEventListener("click", function(){
+    hiStep = 0;
+    updateProgress(0);
+    document.getElementById("highIntentWizard").style.display = "block";
+    renderHighStep();
+  });
+
+  function updateProgress(pct) {
+    document.getElementById("highStepContent").parentElement.querySelector("#progressBar")?.remove();
+    const bar = document.createElement("div");
+    bar.id = "progressBar";
+    bar.style = "height:10px; background:#e0e0e0; border-radius:5px; margin-bottom:20px;";
+    const fill = document.createElement("div");
+    fill.id = "progressFill";
+    fill.style = `height:100%; width:${pct}%; background:#007bff; border-radius:5px;`;
+    bar.appendChild(fill);
+    document.getElementById("highStepContent").before(bar);
+  }
+
+  function renderHighStep(){
+    const c = document.getElementById("highStepContent");
+
+    if(hiStep===0){
+      updateProgress(10);
+      c.innerHTML = `
+        <h2 style="color:#000;">🎯 Enrollment Session Request</h2>
+        <p style="color:#000;">Secure your child’s future with a private consultation. Let’s start:</p>
+        <button onclick="hiStep=1; renderHighStep()" style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px;">Begin</button>
+      `;
+    } else if(hiStep===1){
+      updateProgress(25);
+      c.innerHTML = `
+        <h3 style="color:#000;">🧒 Your age group:</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          ${["Elementary","Middle School","High School","College","Adult Learner"].map(age=>`
+            <button onclick="hiData.age='${age}'; hiStep=2; renderHighStep()" 
+              style="margin:5px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${age}</button>`).join("")}
+        </div>
+      `;
+    } else if(hiStep===2){
+      updateProgress(45);
+      c.innerHTML = `
+        <h3 style="color:#000;">📘 Choose your subject:</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          ${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing"].map(s=>`
+            <button onclick="hiData.subject='${s}'; hiStep=3; renderHighStep()" 
+              style="margin:5px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${s}</button>`).join("")}
+        </div>
+      `;
+    } else if(hiStep===3){
+      updateProgress(65);
+      c.innerHTML = `
+        <h3 style="color:#000;">🎓 Preferred learning style:</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          ${["1-on-1 Tutoring","Group Classes","On-Demand Course"].map(style=>`
+            <button onclick="hiData.style='${style}'; hiStep=4; renderHighStep()" 
+              style="margin:5px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${style}</button>`).join("")}
+        </div>
+      `;
+    } else if(hiStep===4){
+      updateProgress(85);
+      c.innerHTML = `
+        <h3 style="color:#000;">🗣️ What do you need help with?</h3>
+        <p style="color:#000;"><strong>Let us know your learning goals, challenges, or anything specific you’d like support with:</strong></p>
+        <div style="border:1px solid #ccc; border-radius:6px; padding:10px; margin:10px 0;">
+          <textarea id="hiGoal" placeholder="Type your message here..." 
+            style="width:100%; height:100px; padding:10px; border:none; resize:vertical; font-size:14px;"></textarea>
+        </div>
+        <button onclick="hiData.help=document.getElementById('hiGoal').value; hiStep=5; renderHighStep()" 
+          style="margin-top:10px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px;">Continue</button>
+      `;
+    } else if(hiStep===5){
+      updateProgress(100);
+      c.innerHTML = `
+        <h2 style="color:#000;">✅ Enrollment Specialist Ready</h2>
+        <p style="color:#000;">Book your private enrollment session below. Our specialist will run a mini-assessment and match your child with the ideal tutor.</p>
+        <div id="calendlyHigh" style="height:80vh;"></div>
+      `;
+      const s = document.createElement("script");
+      s.src="https://assets.calendly.com/assets/external/widget.js";
+      s.onload=()=>{
+        Calendly.initInlineWidget({
+          url:"https://calendly.com/stemxsphere/trialclass?hide_gdpr_banner=1",
+          parentElement:document.getElementById("calendlyHigh"),
+          prefill:{ customAnswers:{ 
+            a1:hiData.subject, 
+            a2:hiData.age, 
+            a3:hiData.style, 
+            a4:hiData.help 
+          } },
+          utm:{}
+        });
+      };
+      s.async = true;
+      document.body.appendChild(s);
+    }
+  }
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
-
 
 <!-- 🌟 BEGIN: STEMSphere Chat Launcher + Fullscreen Calendly Prefill (with Persistent Close X) -->
 
