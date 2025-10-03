@@ -421,7 +421,14 @@ h2 {
 
   const reviewsBody = wrapper.querySelector('#reviews-body');
   let currentIndex = 0;
-  const batchSize = 20; // ✅ load 20 at a time
+  const batchSize = 20;
+
+  // Create persistent "See more" button once
+  const seeMoreBtn = document.createElement('button');
+  seeMoreBtn.id = 'see-more-reviews';
+  seeMoreBtn.textContent = 'See more reviews';
+  seeMoreBtn.style.cssText = "background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em; margin-top:1em; display:block;";
+  seeMoreBtn.addEventListener('click', renderNextBatch);
 
   function renderNextBatch() {
     const slice = reviews.slice(currentIndex, currentIndex + batchSize);
@@ -446,19 +453,9 @@ h2 {
     });
     currentIndex += batchSize;
 
-    // ✅ Always keep "See more" until the very end
-    let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
-    if (currentIndex < reviews.length) {
-      if (!seeMoreBtn) {
-        seeMoreBtn = document.createElement('button');
-        seeMoreBtn.id = 'see-more-reviews';
-        seeMoreBtn.textContent = 'See more reviews';
-        seeMoreBtn.style.cssText = "background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em; margin-top:1em;";
-        seeMoreBtn.addEventListener('click', renderNextBatch);
-        reviewsBody.appendChild(seeMoreBtn);
-      }
-    } else if (seeMoreBtn) {
-      seeMoreBtn.remove(); // only remove once ALL reviews are shown
+    // Hide button only when ALL reviews are shown
+    if (currentIndex >= reviews.length) {
+      seeMoreBtn.style.display = 'none';
     }
   }
 
@@ -469,6 +466,7 @@ h2 {
     e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
     if (!show && currentIndex === 0) {
       renderNextBatch();
+      reviewsBody.appendChild(seeMoreBtn);
     }
   });
 
@@ -477,7 +475,6 @@ h2 {
 })();
 </script>
 <!-- End Reviews Dropdown Script -->
-
 
 <!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
 
