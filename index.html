@@ -421,11 +421,12 @@ h2 {
 
   const reviewsBody = wrapper.querySelector('#reviews-body');
   let currentIndex = 0;
-  const pageSize = 5;
+  const batchSize = 20; // ✅ show 20 at a time
 
   function renderNextBatch() {
-    const slice = reviews.slice(currentIndex, currentIndex + pageSize);
+    const slice = reviews.slice(currentIndex, currentIndex + batchSize);
     slice.forEach(r => {
+      const reply = (r[5] || "").trim();
       const div = document.createElement('div');
       div.style.marginBottom = '1.5em';
       div.innerHTML = `
@@ -435,15 +436,15 @@ h2 {
           .replace(/☆/g, '<span style="color:#555;">★</span>')}<br>
         <small style="color:#aaa;">${new Date(r[3]).toLocaleDateString()}</small>
         <p style="margin:0.4em 0 0; color:#ccc; line-height:1.4;">${r[1]}</p>
-        ${r[5] ? `
+        ${reply ? `
           <div style="margin-left:1em; margin-top:0.3em;">
             <div style="font-size:0.85em; color:#89c4ff; margin-bottom:0.2em; font-weight:600;">Instructor Reply:</div>
-            <div style="font-size:0.85em; color:#7fbfff; font-style:italic;">${r[5]}</div>
+            <div style="font-size:0.85em; color:#7fbfff; font-style:italic;">${reply}</div>
           </div>` : ''}
       `;
       reviewsBody.appendChild(div);
     });
-    currentIndex += pageSize;
+    currentIndex += batchSize;
 
     // Add or remove "See more reviews" button
     let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
@@ -476,7 +477,6 @@ h2 {
 })();
 </script>
 <!-- End Reviews Dropdown Script -->
-
 
 <!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
 
