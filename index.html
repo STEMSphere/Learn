@@ -363,6 +363,8 @@ h2 {
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
   
+<button class="cta-button">🚀 Book Your Enrollment Session Now</button>
+
 <!-- Reviews Dropdown Script -->
 <script>
   (async () => {
@@ -375,7 +377,6 @@ h2 {
       r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, ''))
     );
 
-    // ✅ Pull ALL reviews, newest first, excluding "facebook"
     const reviews = rows
       .filter(r => r[2] && !/facebook/i.test(r[1]))
       .sort((a, b) => new Date(b[3]) - new Date(a[3]));
@@ -385,7 +386,6 @@ h2 {
     const avg = (reviews.reduce((sum, r) => sum + (parseFloat(r[2])||0), 0) / reviews.length).toFixed(1);
     const count = reviews.length;
 
-    // Create wrapper and inject directly where script is placed
     const wrapper = document.createElement('div');
     wrapper.className = 'reviews-summary';
     wrapper.style.cssText = `
@@ -402,9 +402,7 @@ h2 {
           ⭐ Enrolled by students globally
         </span>
       </div>
-      <h3 style="
-        font-weight:600; margin:0.8em 0 0.6em; color:#fff;
-      ">
+      <h3 style="font-weight:600; margin:0.8em 0 0.6em; color:#fff;">
         <span style="color:#FFD700; font-size:1.2em;">★</span>
         ${avg} (${count} review${count>1?'s':''})
       </h3>
@@ -425,11 +423,9 @@ h2 {
       <div id="reviews-body" style="margin-top:1.2em; display:none;"></div>
     `;
 
-    // Insert wrapper right where the script tag is
     const scriptTag = document.currentScript;
     scriptTag.parentNode.insertBefore(wrapper, scriptTag);
 
-    // ✅ Pagination logic
     const reviewsBody = wrapper.querySelector('#reviews-body');
     let currentIndex = 0;
     const pageSize = 20;
@@ -452,20 +448,18 @@ h2 {
           </p>
           ${r[5] ? `
             <div style="margin-left:1em; margin-top:0.3em;">
-              <div style="
-                font-size:0.85em; color:#89c4ff; margin-bottom:0.2em;
-                font-weight:600;
-              ">Instructor Reply:</div>
-              <div style="
-                font-size:0.85em; color:#7fbfff; font-style:italic;
-              ">${r[5]}</div>
+              <div style="font-size:0.85em; color:#89c4ff; margin-bottom:0.2em; font-weight:600;">
+                Instructor Reply:
+              </div>
+              <div style="font-size:0.85em; color:#7fbfff; font-style:italic;">
+                ${r[5]}
+              </div>
             </div>` : ''}
         `;
         reviewsBody.appendChild(div);
       });
       currentIndex += pageSize;
 
-      // Add or remove "See more" button
       let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
       if (currentIndex < reviews.length) {
         if (!seeMoreBtn) {
@@ -492,12 +486,13 @@ h2 {
       reviewsBody.style.display = show ? 'none' : 'block';
       e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
       if (!show && currentIndex === 0) {
-        renderNextBatch(); // load first 20 on expand
+        renderNextBatch();
       }
     });
   })();
 </script>
 <!-- End Reviews Dropdown Script -->
+
 
 <!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
 
