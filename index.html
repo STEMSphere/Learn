@@ -365,137 +365,132 @@ h2 {
 
 <!-- Reviews Dropdown Script -->
 <script>
-  (async () => {
-    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRSWqhCcu_XZW7SW5uZ3UZdKzvLm2zNw8DvMZV2TD_gcts6K-DBrLwd88pnXVn0xl0fxRRfGW0Y4iyN/pub?output=csv';
-    const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSd0lD5dU8nsUbBzfqqRkLflTkJVrAQyvZXI81uXXyOPXpoUdA/viewform?usp=header';
+(async () => {
+  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRSWqhCcu_XZW7SW5uZ3UZdKzvLm2zNw8DvMZV2TD_gcts6K-DBrLwd88pnXVn0xl0fxRRfGW0Y4iyN/pub?output=csv';
+  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSd0lD5dU8nsUbBzfqqRkLflTkJVrAQyvZXI81uXXyOPXpoUdA/viewform?usp=header';
 
-    const res = await fetch(csvUrl);
-    const text = await res.text();
-    const rows = text.trim().split('\n').slice(1).map(r =>
-      r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, ''))
-    );
+  const res = await fetch(csvUrl);
+  const text = await res.text();
+  const rows = text.trim().split('\n').slice(1).map(r =>
+    r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, ''))
+  );
 
-    // ✅ Pull ALL reviews, newest first, excluding "facebook"
-    const reviews = rows
-      .filter(r => r[2] && !/facebook/i.test(r[1]))
-      .sort((a, b) => new Date(b[3]) - new Date(a[3]));
+  const reviews = rows
+    .filter(r => r[2] && !/facebook/i.test(r[1]))
+    .sort((a, b) => new Date(b[3]) - new Date(a[3]));
 
-    if (!reviews.length) return;
+  if (!reviews.length) return;
 
-    const avg = (reviews.reduce((sum, r) => sum + (parseFloat(r[2])||0), 0) / reviews.length).toFixed(1);
-    const count = reviews.length;
+  const avg = (reviews.reduce((sum, r) => sum + (parseFloat(r[2])||0), 0) / reviews.length).toFixed(1);
+  const count = reviews.length;
 
-    // Create wrapper and inject directly where script is placed
-    const wrapper = document.createElement('div');
-    wrapper.className = 'reviews-summary';
-    wrapper.style.cssText = `
-      margin:2em 0; padding-top:1em; border-top:1px solid #444;
-      color:#ccc; font-family:inherit;
-    `;
-    wrapper.innerHTML = `
-      <div style="margin-bottom:0.5em;">
-        <span style="
-          background:#2e7d32; color:#fff;
-          padding:0.3em 0.8em; border-radius:20px;
-          font-size:0.9em; font-weight:bold;
-        ">
-          ⭐ Enrolled by students globally
-        </span>
-      </div>
-      <h3 style="font-weight:600; margin:0.8em 0 0.6em; color:#fff;">
-        <span style="color:#FFD700; font-size:1.2em;">★</span>
-        ${avg} (${count} review${count>1?'s':''})
-      </h3>
-      <div style="display:flex; gap:0.8em; flex-wrap:wrap; margin:1em 0;">
-        <button id="toggle-reviews" style="
-          padding:0.5em 1em; font-size:0.95em;
-          background:linear-gradient(145deg,#2a2a2a,#1e1e1e);
-          color:#f1f1f1; border:1px solid #555;
-          border-radius:6px; cursor:pointer;
-        ">See all reviews</button>
-        <button id="submit-review" style="
-          padding:0.5em 1em; font-size:0.95em;
-          background:linear-gradient(145deg,#2a2a2a,#1e1e1e);
-          color:#f1f1f1; border:1px solid #555;
-          border-radius:6px; cursor:pointer;
-        ">Submit a review</button>
-      </div>
-      <div id="reviews-body" style="margin-top:1.2em; display:none;"></div>
-    `;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'reviews-summary';
+  wrapper.style.cssText = `
+    margin:2em 0; padding-top:1em; border-top:1px solid #444;
+    color:#ccc; font-family:inherit;
+  `;
+  wrapper.innerHTML = `
+    <div style="margin-bottom:0.5em;">
+      <span style="
+        background:#2e7d32; color:#fff;
+        padding:0.3em 0.8em; border-radius:20px;
+        font-size:0.9em; font-weight:bold;
+      ">
+        ⭐ Enrolled by students globally
+      </span>
+    </div>
+    <h3 style="font-weight:600; margin:0.8em 0 0.6em; color:#fff;">
+      <span style="color:#FFD700; font-size:1.2em;">★</span>
+      ${avg} (${count} review${count>1?'s':''})
+    </h3>
+    <div style="display:flex; gap:0.8em; flex-wrap:wrap; margin:1em 0;">
+      <button id="toggle-reviews" style="
+        padding:0.5em 1em; font-size:0.95em;
+        background:linear-gradient(145deg,#2a2a2a,#1e1e1e);
+        color:#f1f1f1; border:1px solid #555;
+        border-radius:6px; cursor:pointer;
+      ">See all reviews</button>
+      <button id="submit-review" style="
+        padding:0.5em 1em; font-size:0.95em;
+        background:linear-gradient(145deg,#2a2a2a,#1e1e1e);
+        color:#f1f1f1; border:1px solid #555;
+        border-radius:6px; cursor:pointer;
+      ">Submit a review</button>
+    </div>
+    <div id="reviews-body" style="margin-top:1.2em; display:none;"></div>
+  `;
 
-    // Insert wrapper right where the script tag is
-    const scriptTag = document.currentScript;
-    scriptTag.parentNode.insertBefore(wrapper, scriptTag);
+  // ✅ FIX: insert after the script tag, not before
+  const scriptTag = document.currentScript;
+  scriptTag.parentNode.insertBefore(wrapper, scriptTag.nextSibling);
 
-    // ✅ Pagination logic
-    const reviewsBody = wrapper.querySelector('#reviews-body');
-    let currentIndex = 0;
-    const pageSize = 20;
+  const reviewsBody = wrapper.querySelector('#reviews-body');
+  let currentIndex = 0;
+  const pageSize = 20;
 
-    function renderNextBatch() {
-      const slice = reviews.slice(currentIndex, currentIndex + pageSize);
-      slice.forEach(r => {
-        const div = document.createElement('div');
-        div.style.marginBottom = '1.5em';
-        div.innerHTML = `
-          <strong style="color:#eee;">${r[0]||'Anonymous'}</strong>
-          ${'★'.repeat(+r[2]).padEnd(5,'☆')
-            .replace(/★/g, '<span style="color:#FFD700;">★</span>')
-            .replace(/☆/g, '<span style="color:#ccc;">★</span>')}<br>
-          <small style="color:#aaa;">
-            ${new Date(r[3]).toLocaleDateString()}
-          </small>
-          <p style="margin:0.4em 0 0; color:#ccc; line-height:1.4;">
-            ${r[1]}
-          </p>
-          ${r[5] ? `
-            <div style="margin-left:1em; margin-top:0.3em;">
-              <div style="font-size:0.85em; color:#89c4ff; margin-bottom:0.2em; font-weight:600;">
-                Instructor Reply:
-              </div>
-              <div style="font-size:0.85em; color:#7fbfff; font-style:italic;">
-                ${r[5]}
-              </div>
-            </div>` : ''}
-        `;
-        reviewsBody.appendChild(div);
-      });
-      currentIndex += pageSize;
-
-      // Add or remove "See more" button
-      let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
-      if (currentIndex < reviews.length) {
-        if (!seeMoreBtn) {
-          seeMoreBtn = document.createElement('button');
-          seeMoreBtn.id = 'see-more-reviews';
-          seeMoreBtn.textContent = 'See more reviews';
-          seeMoreBtn.style.cssText = `
-            padding:0.5em 1em; font-size:0.95em;
-            background:linear-gradient(145deg,#2a2a2a,#1e1e1e);
-            color:#f1f1f1; border:1px solid #555;
-            border-radius:6px; cursor:pointer; margin-top:1em;
-          `;
-          seeMoreBtn.addEventListener('click', renderNextBatch);
-          reviewsBody.appendChild(seeMoreBtn);
-        }
-      } else if (seeMoreBtn) {
-        seeMoreBtn.remove();
-      }
-    }
-
-    wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
-    wrapper.querySelector('#toggle-reviews').addEventListener('click', e => {
-      const show = reviewsBody.style.display === 'block';
-      reviewsBody.style.display = show ? 'none' : 'block';
-      e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
-      if (!show && currentIndex === 0) {
-        renderNextBatch(); // load first 20 on expand
-      }
+  function renderNextBatch() {
+    const slice = reviews.slice(currentIndex, currentIndex + pageSize);
+    slice.forEach(r => {
+      const div = document.createElement('div');
+      div.style.marginBottom = '1.5em';
+      div.innerHTML = `
+        <strong style="color:#eee;">${r[0]||'Anonymous'}</strong>
+        ${'★'.repeat(+r[2]).padEnd(5,'☆')
+          .replace(/★/g, '<span style="color:#FFD700;">★</span>')
+          .replace(/☆/g, '<span style="color:#ccc;">★</span>')}<br>
+        <small style="color:#aaa;">
+          ${new Date(r[3]).toLocaleDateString()}
+        </small>
+        <p style="margin:0.4em 0 0; color:#ccc; line-height:1.4;">
+          ${r[1]}
+        </p>
+        ${r[5] ? `
+          <div style="margin-left:1em; margin-top:0.3em;">
+            <div style="font-size:0.85em; color:#89c4ff; margin-bottom:0.2em; font-weight:600;">
+              Instructor Reply:
+            </div>
+            <div style="font-size:0.85em; color:#7fbfff; font-style:italic;">
+              ${r[5]}
+            </div>
+          </div>` : ''}
+      `;
+      reviewsBody.appendChild(div);
     });
-  })();
+    currentIndex += pageSize;
+
+    let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
+    if (currentIndex < reviews.length) {
+      if (!seeMoreBtn) {
+        seeMoreBtn = document.createElement('button');
+        seeMoreBtn.id = 'see-more-reviews';
+        seeMoreBtn.textContent = 'See more reviews';
+        seeMoreBtn.style.cssText = `
+          padding:0.5em 1em; font-size:0.95em;
+          background:linear-gradient(145deg,#2a2a2a,#1e1e1e);
+          color:#f1f1f1; border:1px solid #555;
+          border-radius:6px; cursor:pointer; margin-top:1em;
+        `;
+        seeMoreBtn.addEventListener('click', renderNextBatch);
+        reviewsBody.appendChild(seeMoreBtn);
+      }
+    } else if (seeMoreBtn) {
+      seeMoreBtn.remove();
+    }
+  }
+
+  wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
+  wrapper.querySelector('#toggle-reviews').addEventListener('click', e => {
+    const show = reviewsBody.style.display === 'block';
+    reviewsBody.style.display = show ? 'none' : 'block';
+    e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
+    if (!show && currentIndex === 0) {
+      renderNextBatch();
+    }
+  });
+})();
 </script>
 <!-- End Reviews Dropdown Script -->
-
 
 
 <!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
