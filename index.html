@@ -421,7 +421,7 @@ h2 {
     <div id="reviews-body" style="margin-top:1.2em; display:none;"></div>
   `;
 
-  // ✅ FIX: insert after the script tag, not before
+  // ✅ FIX: insert AFTER the script tag so it shows up
   const scriptTag = document.currentScript;
   scriptTag.parentNode.insertBefore(wrapper, scriptTag.nextSibling);
 
