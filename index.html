@@ -385,6 +385,7 @@ h2 {
     const avg = (reviews.reduce((sum, r) => sum + (parseFloat(r[2])||0), 0) / reviews.length).toFixed(1);
     const count = reviews.length;
 
+    // Create wrapper and inject directly where script is placed
     const wrapper = document.createElement('div');
     wrapper.className = 'reviews-summary';
     wrapper.style.cssText = `
@@ -423,10 +424,13 @@ h2 {
       </div>
       <div id="reviews-body" style="margin-top:1.2em; display:none;"></div>
     `;
-    document.getElementById('reviews-container').appendChild(wrapper);
+
+    // Insert wrapper right where the script tag is
+    const scriptTag = document.currentScript;
+    scriptTag.parentNode.insertBefore(wrapper, scriptTag);
 
     // ✅ Pagination logic
-    const reviewsBody = document.getElementById('reviews-body');
+    const reviewsBody = wrapper.querySelector('#reviews-body');
     let currentIndex = 0;
     const pageSize = 20;
 
@@ -462,7 +466,7 @@ h2 {
       currentIndex += pageSize;
 
       // Add or remove "See more" button
-      let seeMoreBtn = document.getElementById('see-more-reviews');
+      let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
       if (currentIndex < reviews.length) {
         if (!seeMoreBtn) {
           seeMoreBtn = document.createElement('button');
@@ -482,8 +486,8 @@ h2 {
       }
     }
 
-    document.getElementById('submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
-    document.getElementById('toggle-reviews').addEventListener('click', e => {
+    wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
+    wrapper.querySelector('#toggle-reviews').addEventListener('click', e => {
       const show = reviewsBody.style.display === 'block';
       reviewsBody.style.display = show ? 'none' : 'block';
       e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
