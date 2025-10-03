@@ -7,10 +7,10 @@
 
   <!-- SEO Title & Description -->
   <title>STEMSphere Academy | Cinematic Math & Chemistry Tutoring for SAT, AP, IB, HKAT</title>
-  <meta name="description" content="Book a demo with STEMSphere Academy—cinematic tutoring in Math and Chemistry for SAT, AP, IB, and HKAT. Designed for gifted learners and exam warriors.">
+  <meta name="description" content="Book a demo with STEMSphere AcadeFrmy—cinematic tutoring in Math and Chemistry for SAT, AP, IB, and HKAT. Designed for gifted learners and exam warriors.">
 
  <!-- Open Graph (Social Sharing) -->
-<meta property="og:title" content="STEMSphere Academy | Cinematic STEM Tutoring">
+<meta property="og:title" content="STEMSphere Academy | Cinematic STEM TuFtoring">
 <meta property="og:description" content="Book a demo for cinematic tutoring in Math and Chemistry. Engineered for gifted learners and exam warriors.">
 <meta property="og:image" content="https://learn.stemsphere.academy/assets/SSTEMSphereAcademybanner.png">
 <meta property="og:url" content="https://learn.stemsphere.academy">
@@ -421,7 +421,7 @@ h2 {
 
   const reviewsBody = wrapper.querySelector('#reviews-body');
   let currentIndex = 0;
-  const batchSize = 20; // ✅ show 20 at a time
+  const batchSize = 20; // ✅ load 20 at a time
 
   function renderNextBatch() {
     const slice = reviews.slice(currentIndex, currentIndex + batchSize);
@@ -446,7 +446,7 @@ h2 {
     });
     currentIndex += batchSize;
 
-    // Add or remove "See more reviews" button
+    // ✅ Always keep "See more" until the very end
     let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
     if (currentIndex < reviews.length) {
       if (!seeMoreBtn) {
@@ -458,7 +458,7 @@ h2 {
         reviewsBody.appendChild(seeMoreBtn);
       }
     } else if (seeMoreBtn) {
-      seeMoreBtn.remove();
+      seeMoreBtn.remove(); // only remove once ALL reviews are shown
     }
   }
 
@@ -477,6 +477,7 @@ h2 {
 })();
 </script>
 <!-- End Reviews Dropdown Script -->
+
 
 <!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
 
