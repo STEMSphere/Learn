@@ -363,9 +363,8 @@ h2 {
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
 
-<!-- Reviews Widget -->
+<!-- Reviews Dropdown Script -->
 <div id="reviews-container"></div>
-
 <script>
 (async () => {
   const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRSWqhCcu_XZW7SW5uZ3UZdKzvLm2zNw8DvMZV2TD_gcts6K-DBrLwd88pnXVn0xl0fxRRfGW0Y4iyN/pub?output=csv';
@@ -388,52 +387,60 @@ h2 {
 
   const wrapper = document.createElement('div');
   wrapper.className = 'reviews-summary';
-  wrapper.style.cssText = "margin:2em 0; padding-top:1em; border-top:1px solid #444; color:#ccc; font-family:inherit;";
+  wrapper.style.cssText = "margin:2em 0; color:#ccc; font-family:inherit; text-align:center;";
   wrapper.innerHTML = `
-    <div style="margin-bottom:0.5em;">
-      <span style="background:#2e7d32; color:#fff; padding:0.3em 0.8em; border-radius:20px; font-size:0.9em; font-weight:bold;">
-        ⭐ Enrolled by students globally
+    <div style="margin-bottom:0.8em;">
+      <span style="background:#007bff; color:#fff; padding:0.4em 1em; border-radius:20px; font-size:0.95em; font-weight:bold; display:inline-block;">
+        4/5 students improve in only 3 weeks!
       </span>
     </div>
-    <h3 style="font-weight:600; margin:0.8em 0 0.6em; color:#fff;">
+    <h3 style="font-weight:600; margin:0.6em 0; color:#fff;">
       <span style="color:#FFD700; font-size:1.2em;">★</span>
       ${avg} (${count} review${count>1?'s':''})
     </h3>
-    <div style="display:flex; gap:0.8em; flex-wrap:wrap; margin:1em 0;">
-      <button id="toggle-reviews">See all reviews</button>
-      <button id="submit-review">Submit a review</button>
+    <div style="margin:1em 0; display:flex; justify-content:center; gap:1.5em;">
+      <button id="toggle-reviews" style="background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em;">
+        See all reviews
+      </button>
+      <button id="submit-review" style="background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em;">
+        Submit a review
+      </button>
     </div>
-    <div id="reviews-body" style="margin-top:1.2em; display:none;">
-      ${reviews.map(r => `
-        <div style="margin-bottom:1.5em;">
-          <strong style="color:#eee;">${r[0]||'Anonymous'}</strong>
-          ${'★'.repeat(+r[2]).padEnd(5,'☆')
-            .replace(/★/g, '<span style="color:#FFD700;">★</span>')
-            .replace(/☆/g, '<span style="color:#ccc;">★</span>')}<br>
-          <small style="color:#aaa;">${new Date(r[3]).toLocaleDateString()}</small>
-          <p style="margin:0.4em 0 0; color:#ccc; line-height:1.4;">${r[1]}</p>
-          ${r[5] ? `
-            <div style="margin-left:1em; margin-top:0.3em;">
-              <div style="font-size:0.85em; color:#89c4ff; margin-bottom:0.2em; font-weight:600;">Instructor Reply:</div>
-              <div style="font-size:0.85em; color:#7fbfff; font-style:italic;">${r[5]}</div>
-            </div>` : ''}
-        </div>
-      `).join('')}
-    </div>
+    <div id="reviews-body" style="margin-top:1.2em; display:none; max-height:400px; overflow-y:auto; text-align:left;"></div>
   `;
 
   document.getElementById('reviews-container').appendChild(wrapper);
 
-  document.getElementById('submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
-  document.getElementById('toggle-reviews').addEventListener('click', e => {
-    const body = document.getElementById('reviews-body');
-    const show = body.style.display === 'block';
-    body.style.display = show ? 'none' : 'block';
+  const reviewsBody = wrapper.querySelector('#reviews-body');
+  reviews.forEach(r => {
+    const div = document.createElement('div');
+    div.style.marginBottom = '1.5em';
+    div.innerHTML = `
+      <strong style="color:#eee;">${r[0]||'Anonymous'}</strong>
+      ${'★'.repeat(+r[2]).padEnd(5,'☆')
+        .replace(/★/g, '<span style="color:#FFD700;">★</span>')
+        .replace(/☆/g, '<span style="color:#555;">★</span>')}<br>
+      <small style="color:#aaa;">${new Date(r[3]).toLocaleDateString()}</small>
+      <p style="margin:0.4em 0 0; color:#ccc; line-height:1.4;">${r[1]}</p>
+      ${r[5] ? `
+        <div style="margin-left:1em; margin-top:0.3em;">
+          <div style="font-size:0.85em; color:#89c4ff; margin-bottom:0.2em; font-weight:600;">Instructor Reply:</div>
+          <div style="font-size:0.85em; color:#7fbfff; font-style:italic;">${r[5]}</div>
+        </div>` : ''}
+    `;
+    reviewsBody.appendChild(div);
+  });
+
+  wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
+  wrapper.querySelector('#toggle-reviews').addEventListener('click', e => {
+    const show = reviewsBody.style.display === 'block';
+    reviewsBody.style.display = show ? 'none' : 'block';
     e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
   });
 })();
 </script>
 <!-- End Reviews Dropdown Script -->
+
 
 <!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
 
