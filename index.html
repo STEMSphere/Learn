@@ -362,8 +362,6 @@ h2 {
   }
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
-  
-<button class="cta-button">🚀 Book Your Enrollment Session Now</button>
 
 <!-- Reviews Dropdown Script -->
 <script>
@@ -377,6 +375,7 @@ h2 {
       r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, ''))
     );
 
+    // ✅ Pull ALL reviews, newest first, excluding "facebook"
     const reviews = rows
       .filter(r => r[2] && !/facebook/i.test(r[1]))
       .sort((a, b) => new Date(b[3]) - new Date(a[3]));
@@ -386,6 +385,7 @@ h2 {
     const avg = (reviews.reduce((sum, r) => sum + (parseFloat(r[2])||0), 0) / reviews.length).toFixed(1);
     const count = reviews.length;
 
+    // Create wrapper and inject directly where script is placed
     const wrapper = document.createElement('div');
     wrapper.className = 'reviews-summary';
     wrapper.style.cssText = `
@@ -423,9 +423,11 @@ h2 {
       <div id="reviews-body" style="margin-top:1.2em; display:none;"></div>
     `;
 
+    // Insert wrapper right where the script tag is
     const scriptTag = document.currentScript;
     scriptTag.parentNode.insertBefore(wrapper, scriptTag);
 
+    // ✅ Pagination logic
     const reviewsBody = wrapper.querySelector('#reviews-body');
     let currentIndex = 0;
     const pageSize = 20;
@@ -460,6 +462,7 @@ h2 {
       });
       currentIndex += pageSize;
 
+      // Add or remove "See more" button
       let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
       if (currentIndex < reviews.length) {
         if (!seeMoreBtn) {
@@ -486,12 +489,13 @@ h2 {
       reviewsBody.style.display = show ? 'none' : 'block';
       e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
       if (!show && currentIndex === 0) {
-        renderNextBatch();
+        renderNextBatch(); // load first 20 on expand
       }
     });
   })();
 </script>
 <!-- End Reviews Dropdown Script -->
+
 
 
 <!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
