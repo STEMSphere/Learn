@@ -373,7 +373,7 @@ h2 {
     r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, ''))
   );
 
-  // ✅ Exclude Facebook/FacebookAds rows
+  // ✅ Filter out junk rows
   const reviews = rows
     .filter(r => {
       const name = (r[0] || "").toLowerCase();
@@ -381,9 +381,7 @@ h2 {
       return (
         r[2] &&
         !name.includes("facebook") &&
-        !textVal.includes("facebook") &&
-        !name.includes("facebookads") &&
-        !textVal.includes("facebookads")
+        !textVal.includes("facebook")
       );
     })
     .sort((a, b) => new Date(b[3]) - new Date(a[3]));
@@ -394,8 +392,6 @@ h2 {
   const count = reviews.length;
 
   const wrapper = document.createElement('div');
-  wrapper.className = 'reviews-summary';
-  wrapper.style.cssText = "margin:2em 0; color:#ccc; font-family:inherit; text-align:center;";
   wrapper.innerHTML = `
     <div style="margin-bottom:0.8em;">
       <span style="background:#007bff; color:#fff; padding:0.4em 1em; border-radius:20px; font-size:0.95em; font-weight:bold; display:inline-block;">
@@ -416,16 +412,14 @@ h2 {
     </div>
     <div id="reviews-body" style="margin-top:1.2em; display:none; text-align:left;"></div>
   `;
-
   document.getElementById('reviews-container').appendChild(wrapper);
 
   const reviewsBody = wrapper.querySelector('#reviews-body');
   let currentIndex = 0;
   const batchSize = 20;
 
-  // Create persistent "See more" button once
+  // Persistent button
   const seeMoreBtn = document.createElement('button');
-  seeMoreBtn.id = 'see-more-reviews';
   seeMoreBtn.textContent = 'See more reviews';
   seeMoreBtn.style.cssText = "background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em; margin-top:1em; display:block;";
   seeMoreBtn.addEventListener('click', renderNextBatch);
@@ -453,24 +447,25 @@ h2 {
     });
     currentIndex += batchSize;
 
-    // Hide button only when ALL reviews are shown
+    // ✅ Keep button until all reviews are shown
     if (currentIndex >= reviews.length) {
-      seeMoreBtn.style.display = 'none';
+      seeMoreBtn.remove();
+    } else if (!reviewsBody.contains(seeMoreBtn)) {
+      reviewsBody.appendChild(seeMoreBtn);
     }
   }
 
-  // Toggle reviews visibility
+  // Toggle reviews
   wrapper.querySelector('#toggle-reviews').addEventListener('click', e => {
     const show = reviewsBody.style.display === 'block';
     reviewsBody.style.display = show ? 'none' : 'block';
     e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
     if (!show && currentIndex === 0) {
       renderNextBatch();
-      reviewsBody.appendChild(seeMoreBtn);
     }
   });
 
-  // Submit review button
+  // Submit review
   wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
 })();
 </script>
