@@ -447,11 +447,14 @@ h2 {
     });
     currentIndex += batchSize;
 
-    // ✅ Keep button until all reviews are shown
-    if (currentIndex >= reviews.length) {
-      seeMoreBtn.remove();
-    } else if (!reviewsBody.contains(seeMoreBtn)) {
+    // ✅ Always move button to bottom
+    if (currentIndex < reviews.length) {
+      if (reviewsBody.contains(seeMoreBtn)) {
+        reviewsBody.removeChild(seeMoreBtn);
+      }
       reviewsBody.appendChild(seeMoreBtn);
+    } else {
+      seeMoreBtn.remove();
     }
   }
 
@@ -470,6 +473,7 @@ h2 {
 })();
 </script>
 <!-- End Reviews Dropdown Script -->
+
 
 <!-- 🌟 BEGIN: STEMSphere Floating Quiz Wizard (Progress Bar + Black X under it) -->
 
