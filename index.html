@@ -220,9 +220,6 @@ h2 {
   </video>
 </div>
 
-<!-- Statistic Message -->
-<p class="stat-message">4/5 students improve in only 3 weeks!</p>
-
 <!-- 🌟 BEGIN: High-Intent Popup Wizard -->
 
 <div id="highIntentCTA" style="position:relative; text-align:center; margin:40px;">
@@ -376,8 +373,13 @@ h2 {
     r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, ''))
   );
 
+  // ✅ Exclude Facebook rows (name or text)
   const reviews = rows
-    .filter(r => r[2] && !/facebook/i.test(r[1]))
+    .filter(r => {
+      const name = (r[0] || "").toLowerCase();
+      const textVal = (r[1] || "").toLowerCase();
+      return r[2] && !name.includes("facebook") && !textVal.includes("facebook");
+    })
     .sort((a, b) => new Date(b[3]) - new Date(a[3]));
 
   if (!reviews.length) return;
