@@ -373,7 +373,7 @@ h2 {
     r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, ''))
   );
 
-  // ✅ Exclude Facebook/FacebookAds rows (name or text)
+  // ✅ Exclude Facebook/FacebookAds rows
   const reviews = rows
     .filter(r => {
       const name = (r[0] || "").toLowerCase();
@@ -407,22 +407,19 @@ h2 {
       ${avg} (${count} review${count>1?'s':''})
     </h3>
     <div style="margin:1em 0; display:flex; justify-content:center; gap:1.5em;">
+      <button id="toggle-reviews" style="background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em;">
+        See all reviews
+      </button>
       <button id="submit-review" style="background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em;">
         Submit a review
       </button>
     </div>
-    <div id="reviews-body" style="margin-top:1.2em; text-align:left;"></div>
-    <div style="text-align:center; margin-top:1em;">
-      <button id="see-more-reviews" style="background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em;">
-        See more reviews
-      </button>
-    </div>
+    <div id="reviews-body" style="margin-top:1.2em; display:none; text-align:left;"></div>
   `;
 
   document.getElementById('reviews-container').appendChild(wrapper);
 
   const reviewsBody = wrapper.querySelector('#reviews-body');
-  const seeMoreBtn = wrapper.querySelector('#see-more-reviews');
   let currentIndex = 0;
   const pageSize = 5;
 
@@ -448,15 +445,33 @@ h2 {
     });
     currentIndex += pageSize;
 
-    if (currentIndex >= reviews.length) {
-      seeMoreBtn.style.display = 'none';
+    // Add or remove "See more reviews" button
+    let seeMoreBtn = wrapper.querySelector('#see-more-reviews');
+    if (currentIndex < reviews.length) {
+      if (!seeMoreBtn) {
+        seeMoreBtn = document.createElement('button');
+        seeMoreBtn.id = 'see-more-reviews';
+        seeMoreBtn.textContent = 'See more reviews';
+        seeMoreBtn.style.cssText = "background:none; border:none; color:#00c6ff; cursor:pointer; font-size:0.95em; margin-top:1em;";
+        seeMoreBtn.addEventListener('click', renderNextBatch);
+        reviewsBody.appendChild(seeMoreBtn);
+      }
+    } else if (seeMoreBtn) {
+      seeMoreBtn.remove();
     }
   }
 
-  // Initial load
-  renderNextBatch();
+  // Toggle reviews visibility
+  wrapper.querySelector('#toggle-reviews').addEventListener('click', e => {
+    const show = reviewsBody.style.display === 'block';
+    reviewsBody.style.display = show ? 'none' : 'block';
+    e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
+    if (!show && currentIndex === 0) {
+      renderNextBatch();
+    }
+  });
 
-  seeMoreBtn.addEventListener('click', renderNextBatch);
+  // Submit review button
   wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
 })();
 </script>
