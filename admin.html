@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | STEMSphere Academy</title>
   
-  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
-  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,7 +16,6 @@
       min-height: 100vh;
     }
     
-    /* Header */
     header {
       background: #fff;
       padding: 1rem 2rem;
@@ -59,54 +56,14 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
-      transition: all 0.3s;
-    }
-    .logout-btn:hover {
-      background: #cc0000;
     }
 
-    /* Container */
     .admin-container {
       max-width: 1400px;
       margin: 2rem auto;
       padding: 0 1rem;
     }
 
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      border-bottom: 2px solid #ddd;
-    }
-    .tab {
-      padding: 1rem 2rem;
-      background: none;
-      border: none;
-      border-bottom: 3px solid transparent;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1em;
-      color: #666;
-      transition: all 0.3s;
-    }
-    .tab.active {
-      color: #ff0000;
-      border-bottom-color: #ff0000;
-    }
-    .tab:hover {
-      color: #ff0000;
-    }
-
-    /* Tab Content */
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Stats Cards */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -131,16 +88,45 @@
       color: #ff0000;
     }
 
-    /* Table */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #ddd;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 1rem 2rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      color: #666;
+    }
+    .tab.active {
+      color: #ff0000;
+      border-bottom-color: #ff0000;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
     .data-table {
       background: #fff;
       border-radius: 8px;
-      overflow: hidden;
+      overflow-x: auto;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 800px;
     }
     th {
       background: #f8f8f8;
@@ -153,11 +139,7 @@
       padding: 1rem;
       border-bottom: 1px solid #eee;
     }
-    tr:hover {
-      background: #f9f9f9;
-    }
 
-    /* Action Buttons */
     .btn-small {
       padding: 0.4rem 0.8rem;
       border-radius: 4px;
@@ -165,31 +147,17 @@
       cursor: pointer;
       font-size: 0.85em;
       font-weight: 600;
-      transition: all 0.3s;
+      margin: 0.2rem;
     }
     .btn-assign {
       background: #007bff;
       color: #fff;
     }
-    .btn-assign:hover {
-      background: #0056b3;
-    }
     .btn-complete {
       background: #28a745;
       color: #fff;
     }
-    .btn-complete:hover {
-      background: #1e7e34;
-    }
-    .btn-cancel {
-      background: #dc3545;
-      color: #fff;
-    }
-    .btn-cancel:hover {
-      background: #c82333;
-    }
 
-    /* Status Badge */
     .status-badge {
       padding: 0.3rem 0.8rem;
       border-radius: 20px;
@@ -197,19 +165,14 @@
       font-weight: 600;
     }
     .status-scheduled {
-      background: rgba(0,255,0,0.2);
+      background: rgba(0,200,0,0.2);
       color: #008800;
     }
     .status-completed {
       background: rgba(128,128,128,0.2);
       color: #666;
     }
-    .status-cancelled {
-      background: rgba(255,0,0,0.2);
-      color: #cc0000;
-    }
 
-    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -231,12 +194,6 @@
       border-radius: 8px;
       max-width: 500px;
       width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .modal-content h2 {
-      margin-bottom: 1rem;
-      color: #000;
     }
     .form-group {
       margin-bottom: 1rem;
@@ -245,7 +202,6 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
-      color: #333;
     }
     .form-group input,
     .form-group select {
@@ -253,7 +209,6 @@
       padding: 0.75rem;
       border: 1px solid #ddd;
       border-radius: 6px;
-      font-size: 1em;
     }
     .btn-primary {
       background: #ff0000;
@@ -265,9 +220,6 @@
       font-weight: 600;
       margin-right: 0.5rem;
     }
-    .btn-primary:hover {
-      background: #cc0000;
-    }
     .btn-secondary {
       background: #6c757d;
       color: #fff;
@@ -277,18 +229,12 @@
       cursor: pointer;
       font-weight: 600;
     }
-    .btn-secondary:hover {
-      background: #5a6268;
-    }
 
-    /* Loading */
     .loading {
       text-align: center;
       padding: 3rem;
       color: #666;
     }
-
-    /* Empty State */
     .empty-state {
       text-align: center;
       padding: 3rem;
@@ -297,7 +243,6 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="brand">
       <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
@@ -307,9 +252,7 @@
     <button class="logout-btn" onclick="logout()">Logout</button>
   </header>
 
-  <!-- Admin Container -->
   <div class="admin-container">
-    <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card">
         <h3>Total Students</h3>
@@ -329,74 +272,67 @@
       </div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
       <button class="tab active" onclick="showTab('bookings')">All Bookings</button>
       <button class="tab" onclick="showTab('students')">Students</button>
       <button class="tab" onclick="showTab('teachers')">Teachers</button>
     </div>
 
-    <!-- Bookings Tab -->
     <div id="bookingsTab" class="tab-content active">
       <div class="data-table">
-        <table id="bookingsTable">
+        <table>
           <thead>
             <tr>
               <th>Student</th>
               <th>Subject</th>
-              <th>Age Group</th>
-              <th>Learning Style</th>
               <th>Date</th>
+              <th>Time</th>
               <th>Instructor</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="bookingsBody">
-            <tr><td colspan="8" class="loading">Loading bookings...</td></tr>
+            <tr><td colspan="7" class="loading">Loading bookings...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Students Tab -->
     <div id="studentsTab" class="tab-content">
       <div class="data-table">
-        <table id="studentsTable">
+        <table>
           <thead>
             <tr>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
               <th>Age Group</th>
-              <th>Assigned Teacher</th>
               <th>Total Sessions</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="studentsBody">
-            <tr><td colspan="7" class="loading">Loading students...</td></tr>
+            <tr><td colspan="6" class="loading">Loading students...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Teachers Tab -->
     <div id="teachersTab" class="tab-content">
       <button class="btn-primary" onclick="showAddTeacherModal()" style="margin-bottom:1rem;">+ Add Teacher</button>
       <div class="data-table">
-        <table id="teachersTable">
+        <table>
           <thead>
             <tr>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
-              <th>Students Assigned</th>
-              <th>Actions</th>
+              <th>Students</th>
             </tr>
           </thead>
           <tbody id="teachersBody">
-            <tr><td colspan="5" class="loading">Loading teachers...</td></tr>
+            <tr><td colspan="4" class="loading">Loading teachers...</td></tr>
           </tbody>
         </table>
       </div>
@@ -410,7 +346,7 @@
       <div class="form-group">
         <label>Select Teacher</label>
         <select id="teacherSelect">
-          <option value="">Loading teachers...</option>
+          <option value="">Loading...</option>
         </select>
       </div>
       <div>
@@ -448,7 +384,6 @@
   </div>
 
   <script>
-    // ✅ YOUR CREDENTIALS
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -457,8 +392,8 @@
 
     let currentBookingId = null;
     let currentStudentId = null;
+    let allTeachers = [];
 
-    // Check admin authentication
     async function checkAdminAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -467,7 +402,6 @@
         return;
       }
 
-      // Check if user is admin
       const { data: profile } = await supabaseClient
         .from('profiles')
         .select('role')
@@ -480,14 +414,12 @@
         return;
       }
 
-      // Load all data
       loadStats();
       loadBookings();
       loadStudents();
       loadTeachers();
     }
 
-    // Load Stats
     async function loadStats() {
       const { data: students } = await supabaseClient
         .from('profiles')
@@ -510,7 +442,6 @@
       document.getElementById('totalTeachers').textContent = teachers?.length || 0;
     }
 
-    // Load All Bookings
     async function loadBookings() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
@@ -523,7 +454,7 @@
       const tbody = document.getElementById('bookingsBody');
 
       if (error || !bookings || bookings.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No bookings found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No bookings found</td></tr>';
         return;
       }
 
@@ -531,9 +462,8 @@
         <tr>
           <td><strong>${booking.profiles?.full_name || 'Unknown'}</strong><br><small>${booking.profiles?.email}</small></td>
           <td>${booking.subject || 'N/A'}</td>
-          <td>${booking.age_group || 'N/A'}</td>
-          <td>${booking.learning_style || 'N/A'}</td>
           <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
+          <td>${booking.session_time || 'TBD'}</td>
           <td>${booking.instructor_name || 'Not assigned'}</td>
           <td><span class="status-badge status-${booking.status}">${booking.status}</span></td>
           <td>
@@ -544,7 +474,6 @@
       `).join('');
     }
 
-    // Load Students
     async function loadStudents() {
       const { data: students, error } = await supabaseClient
         .from('profiles')
@@ -555,11 +484,48 @@
       const tbody = document.getElementById('studentsBody');
 
       if (error || !students || students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No students found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students found</td></tr>';
         return;
       }
 
-            // Get assignment counts
+            const { data: bookings } = await supabaseClient
+        .from('bookings')
+        .select('user_id');
+
+      tbody.innerHTML = students.map(student => {
+        const sessionCount = bookings?.filter(b => b.user_id === student.id).length || 0;
+
+        return `
+          <tr>
+            <td><strong>${student.full_name}</strong></td>
+            <td>${student.email}</td>
+            <td>${student.phone || 'N/A'}</td>
+            <td>${student.age_group || 'N/A'}</td>
+            <td>${sessionCount}</td>
+            <td>
+              <button class="btn-small btn-assign" onclick="showAssignTeacherModal(null, '${student.id}')">Assign Teacher</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function loadTeachers() {
+      const { data: teachers, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('role', 'teacher')
+        .order('created_at', { ascending: false });
+
+      allTeachers = teachers || [];
+
+      const tbody = document.getElementById('teachersBody');
+
+      if (error || !teachers || teachers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No teachers found. Add your first teacher!</td></tr>';
+        return;
+      }
+
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('teacher_id');
@@ -573,26 +539,19 @@
             <td>${teacher.email}</td>
             <td>${teacher.phone || 'N/A'}</td>
             <td>${studentCount}</td>
-            <td>
-              <button class="btn-small btn-cancel" onclick="deleteTeacher('${teacher.id}', '${teacher.full_name}')">Remove</button>
-            </td>
           </tr>
         `;
       }).join('');
     }
 
-    // Show Tab
     function showTab(tabName) {
-      // Update tab buttons
       document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
       event.target.classList.add('active');
 
-      // Update tab content
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.getElementById(tabName + 'Tab').classList.add('active');
     }
 
-    // Show Assign Teacher Modal
     function showAssignTeacherModal(bookingId, studentId) {
       currentBookingId = bookingId;
       currentStudentId = studentId;
@@ -609,7 +568,6 @@
       document.getElementById('assignTeacherModal').classList.add('active');
     }
 
-    // Assign Teacher
     async function assignTeacher() {
       const teacherId = document.getElementById('teacherSelect').value;
       
@@ -619,15 +577,9 @@
       }
 
       const teacher = allTeachers.find(t => t.id === teacherId);
-      
-      if (!teacher) {
-        alert('Teacher not found');
-        return;
-      }
 
-      // If assigning from a booking
       if (currentBookingId) {
-        const { error: bookingError } = await supabaseClient
+        const { error } = await supabaseClient
           .from('bookings')
           .update({
             assigned_teacher_id: teacherId,
@@ -635,13 +587,12 @@
           })
           .eq('id', currentBookingId);
 
-        if (bookingError) {
-          alert('Error assigning teacher to booking: ' + bookingError.message);
+        if (error) {
+          alert('Error: ' + error.message);
           return;
         }
       }
 
-      // Create or update teacher assignment
       const { error: assignError } = await supabaseClient
         .from('teacher_assignments')
         .upsert({
@@ -653,19 +604,16 @@
         });
 
       if (assignError) {
-        alert('Error creating assignment: ' + assignError.message);
+        alert('Error: ' + assignError.message);
         return;
       }
 
       alert('✅ Teacher assigned successfully!');
       closeModal('assignTeacherModal');
-      
-      // Reload data
       loadBookings();
       loadStudents();
     }
 
-    // Mark Booking as Complete
     async function markComplete(bookingId) {
       if (!confirm('Mark this session as completed?')) return;
 
@@ -683,7 +631,6 @@
       }
     }
 
-    // Show Add Teacher Modal
     function showAddTeacherModal() {
       document.getElementById('teacherName').value = '';
       document.getElementById('teacherEmail').value = '';
@@ -692,7 +639,6 @@
       document.getElementById('addTeacherModal').classList.add('active');
     }
 
-    // Add Teacher
     async function addTeacher() {
       const name = document.getElementById('teacherName').value;
       const email = document.getElementById('teacherEmail').value;
@@ -704,18 +650,16 @@
         return;
       }
 
-      // Create auth user
       const { data: authData, error: authError } = await supabaseClient.auth.signUp({
         email,
         password,
       });
 
       if (authError) {
-        alert('Error creating account: ' + authError.message);
+        alert('Error: ' + authError.message);
         return;
       }
 
-      // Create teacher profile
       const { error: profileError } = await supabaseClient
         .from('profiles')
         .insert({
@@ -737,39 +681,15 @@
       loadTeachers();
     }
 
-    // Delete Teacher
-    async function deleteTeacher(teacherId, teacherName) {
-      if (!confirm(`Remove teacher "${teacherName}"? This will not delete their account, only remove their teacher role.`)) {
-        return;
-      }
-
-      // Change role to student (or you can delete the profile)
-      const { error } = await supabaseClient
-        .from('profiles')
-        .update({ role: 'student' })
-        .eq('id', teacherId);
-
-      if (error) {
-        alert('Error: ' + error.message);
-      } else {
-        alert('✅ Teacher removed!');
-        loadStats();
-        loadTeachers();
-      }
-    }
-
-    // Close Modal
     function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
     }
 
-    // Logout
     async function logout() {
       await supabaseClient.auth.signOut();
       window.location.href = 'login.html';
     }
 
-    // Initialize
     checkAdminAuth();
   </script>
 </body>
