@@ -13,8 +13,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
-      color: #fff;
+      background: #ffffff;
+      color: #000;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -22,33 +22,26 @@
       padding: 1rem;
     }
     .auth-container {
-      background: #222;
+      background: #fff;
       border: 2px solid #ff0000;
       border-radius: 12px;
       padding: 2rem;
       max-width: 400px;
       width: 100%;
-      box-shadow: 0 8px 32px rgba(255,0,0,0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
     }
     .logo {
       text-align: center;
       margin-bottom: 2rem;
     }
-    .brand-logo {
-      display: inline-block;
-      width: 50px;
-      height: 50px;
-      background: #ff0000;
-      color: #fff;
-      font-weight: 700;
-      font-size: 1.5em;
-      line-height: 50px;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
+    .logo img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1rem;
     }
     h2 {
       text-align: center;
-      color: #fff;
+      color: #000;
       margin-bottom: 1.5rem;
       font-size: 1.5rem;
     }
@@ -60,9 +53,9 @@
     .tab-btn {
       flex: 1;
       padding: 0.75rem;
-      background: #333;
-      border: none;
-      color: #fff;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      color: #000;
       cursor: pointer;
       border-radius: 6px;
       font-weight: 600;
@@ -70,6 +63,8 @@
     }
     .tab-btn.active {
       background: #ff0000;
+      color: #fff;
+      border-color: #ff0000;
     }
     .form-group {
       margin-bottom: 1rem;
@@ -77,21 +72,23 @@
     label {
       display: block;
       margin-bottom: 0.5rem;
-      color: #ddd;
+      color: #333;
       font-size: 0.9rem;
+      font-weight: 600;
     }
     input, select {
       width: 100%;
       padding: 0.75rem;
-      background: #333;
-      border: 1px solid #555;
+      background: #f8f8f8;
+      border: 1px solid #ddd;
       border-radius: 6px;
-      color: #fff;
+      color: #000;
       font-size: 1rem;
     }
     input:focus, select:focus {
       outline: none;
       border-color: #ff0000;
+      background: #fff;
     }
     .btn-primary {
       width: 100%;
@@ -122,14 +119,14 @@
       font-size: 0.9rem;
     }
     .error {
-      background: rgba(255,0,0,0.2);
+      background: rgba(255,0,0,0.1);
       border: 1px solid #ff0000;
-      color: #ff6b6b;
+      color: #cc0000;
     }
     .success {
-      background: rgba(0,255,0,0.2);
-      border: 1px solid #00ff00;
-      color: #90ee90;
+      background: rgba(0,200,0,0.1);
+      border: 1px solid #00cc00;
+      color: #008800;
     }
     .hidden {
       display: none;
@@ -139,18 +136,29 @@
       margin-top: 1rem;
     }
     .back-link a {
-      color: #00dffc;
+      color: #ff0000;
       text-decoration: none;
+      font-weight: 600;
     }
     .back-link a:hover {
       text-decoration: underline;
+    }
+    .support-info {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .support-info a {
+      color: #ff0000;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <div class="auth-container">
     <div class="logo">
-      <div class="brand-logo">SP</div>
+      <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy Logo">
       <h2>Student Portal</h2>
     </div>
 
@@ -206,6 +214,10 @@
       </div>
       <button type="submit" class="btn-primary" id="signupBtn">Create Account</button>
     </form>
+
+    <div class="support-info">
+      Need help? Email <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
+    </div>
 
     <div class="back-link">
       <a href="index.html">← Back to Home</a>
@@ -308,11 +320,12 @@
           email,
           full_name: fullName,
           age_group: ageGroup,
-          phone: phone || null
+          phone: phone || null,
+          role: 'student'
         });
 
       if (profileError) {
-        showError('Account created but profile setup failed. Please contact support.');
+        showError('Account created but profile setup failed. Please contact support@stemsphere.academy for assistance.');
         document.getElementById('signupBtn').disabled = false;
         return;
       }
