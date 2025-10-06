@@ -34,16 +34,9 @@
       align-items: center;
       gap: 0.5rem;
     }
-    .brand-logo {
+    .brand img {
       width: 40px;
       height: 40px;
-      background: #ff0000;
-      color: #fff;
-      font-weight: 700;
-      text-align: center;
-      line-height: 40px;
-      border-radius: 6px;
-      font-size: 1.2em;
     }
     .brand-text {
       font-size: 1.2em;
@@ -227,7 +220,7 @@
   <!-- Header -->
   <header>
     <div class="brand">
-      <div class="brand-logo">SP</div>
+      <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
       <span class="brand-text">STEMSphere Academy</span>
     </div>
     <div class="header-right">
@@ -303,7 +296,7 @@
         .from('bookings')
         .select('*')
         .eq('user_id', userId)
-        .order('session_date', { ascending: true });
+        .order('booking_date', { ascending: false });
 
       if (error) {
         console.error('Error loading bookings:', error);
@@ -315,10 +308,10 @@
       }
 
       const now = new Date();
-      now.setHours(0, 0, 0, 0); // Reset to start of day for comparison
+      now.setHours(0, 0, 0, 0);
       
       const upcoming = bookings.filter(b => {
-        if (!b.session_date) return false;
+        if (!b.session_date) return b.status === 'scheduled';
         const sessionDate = new Date(b.session_date);
         return sessionDate >= now && b.status === 'scheduled';
       });
@@ -368,6 +361,7 @@
               <h3>${booking.subject || 'Tutoring Session'}</h3>
               <p>📅 ${dateStr}</p>
               <p>⏰ ${timeStr}</p>
+              <p>👨‍🏫 Instructor: ${booking.instructor_name || 'STEMSphere Enrollment Advisor'}</p>
               <p>👤 ${booking.age_group || 'N/A'} | ${booking.learning_style || 'N/A'}</p>
               ${booking.help_needed ? `<p>📝 ${booking.help_needed}</p>` : ''}
             </div>
