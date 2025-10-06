@@ -151,7 +151,6 @@
       color: #999;
     }
 
-    /* Booking Wizard Modal */
     .wizard-modal {
       display: none;
       position: fixed;
@@ -248,7 +247,6 @@
     </div>
   </div>
 
-  <!-- Booking Wizard Modal -->
   <div id="bookingWizard" class="wizard-modal">
     <button onclick="closeBookingWizard()"
       style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
@@ -376,7 +374,7 @@
                 style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${age}</button>`).join("")}
           </div>
         `;
-            } else if(wizardStep===2){
+      } else if(wizardStep===2){
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📘 Choose your subject:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
@@ -385,7 +383,7 @@
                 style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${s}</button>`).join("")}
           </div>
         `;
-      } else if(wizardStep===3){
+            } else if(wizardStep===3){
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">🎓 Preferred learning style:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
@@ -411,7 +409,6 @@
         
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
-          <p style="padding:0 20px; color:#666; margin-bottom:1rem;">Sessions are 25 minutes. Must be booked at least 12 hours in advance (max 4 days ahead).</p>
           
           <div style="padding:0 20px; margin-bottom:1rem;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600;">🌍 Your Timezone:</label>
@@ -538,7 +535,6 @@
           help_needed: wizardData.help,
           session_date: wizardData.date,
           session_time: wizardData.time,
-          timezone: wizardData.timezone,
           status: 'scheduled',
           instructor_name: 'STEMSphere Enrollment Advisor'
         })
