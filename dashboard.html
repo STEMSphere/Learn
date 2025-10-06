@@ -90,10 +90,6 @@
       font-size: 1em;
       animation: pulse 1.5s infinite;
     }
-    .book-btn:hover {
-      transform: scale(1.05);
-      transition: transform 0.2s;
-    }
 
     @keyframes pulse {
       0% { box-shadow:0 0 10px rgba(0,123,255,0.5); }
@@ -225,7 +221,7 @@
       <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
       <span class="brand-text">STEMSphere Academy</span>
     </div>
-    <button class="logout-btn" id="logoutBtn">Logout</button>
+    <button class="logout-btn" onclick="logout()">Logout</button>
   </header>
 
   <div class="dashboard-container">
@@ -233,7 +229,7 @@
       <h1>Welcome, <span id="userName">Student</span>! 👋</h1>
       <p id="userEmail"></p>
       <p id="userAge"></p>
-      <button class="book-btn" id="bookBtn">
+      <button class="book-btn" onclick="openBookingWizard()">
         🚀 Book a Trial/New Session
       </button>
     </div>
@@ -252,7 +248,8 @@
   </div>
 
   <div id="bookingWizard" class="wizard-modal">
-    <button id="closeWizardBtn" style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
+    <button onclick="closeBookingWizard()"
+      style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
     <div id="wizardContent" style="margin-top:60px;"></div>
   </div>
 
@@ -276,14 +273,13 @@
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentUserId = null;
-    let wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "" };
+    let wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: "" };
     let wizardStep = 0;
 
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
       if (!session) {
-        alert('Session expired. Please login again.');
         window.location.href = 'login.html';
         return;
       }
@@ -300,11 +296,6 @@
         document.getElementById('userName').textContent = profile.full_name || 'Student';
         document.getElementById('userEmail').textContent = profile.email;
         document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
-      } else {
-        alert('Profile not found. Please contact support.');
-        await supabaseClient.auth.signOut();
-        window.location.href = 'login.html';
-        return;
       }
 
       loadSessions();
@@ -354,18 +345,18 @@
     }
 
     function openBookingWizard() {
-      console.log('Opening booking wizard...');
       wizardStep = 0;
-      wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "" };
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: userTimezone };
       document.getElementById('bookingWizard').classList.add('active');
       renderWizardStep();
     }
 
     function closeBookingWizard() {
-      console.log('Closing booking wizard...');
       document.getElementById('bookingWizard').classList.remove('active');
-    }
-        function renderWizardStep() {
+    }    
+    
+    function renderWizardStep() {
       const c = document.getElementById('wizardContent');
 
       if(wizardStep===0){
@@ -415,15 +406,15 @@
         const today = new Date();
         const minDate = new Date(today.getTime() + (12 * 60 * 60 * 1000));
         const maxDate = new Date(today.getTime() + (4 * 24 * 60 * 60 * 1000));
-        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
+          <p style="padding:0 20px; color:#666; margin-bottom:1rem;">Sessions are 25 minutes. Must be booked at least 12 hours in advance (max 4 days ahead).</p>
           
           <div style="padding:0 20px; margin-bottom:1rem;">
-            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Your Timezone:</label>
-            <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px;">
-              <option value="${userTimezone}">${userTimezone} (Detected)</option>
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">🌍 Your Timezone:</label>
+            <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:400px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
+              <option value="${wizardData.timezone}">${wizardData.timezone} (Auto-detected)</option>
               <option value="America/New_York">Eastern Time (ET)</option>
               <option value="America/Chicago">Central Time (CT)</option>
               <option value="America/Denver">Mountain Time (MT)</option>
@@ -439,7 +430,7 @@
           </div>
 
           <div style="padding:0 20px;">
-            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Select Date:</label>
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">📆 Select Date:</label>
             <input type="date" id="wizardDate" 
               min="${minDate.toISOString().split('T')[0]}" 
               max="${maxDate.toISOString().split('T')[0]}"
@@ -457,13 +448,25 @@
       }
     }
 
+    function updateTimezone() {
+      const selectedTimezone = document.getElementById('timezoneSelect').value;
+      wizardData.timezone = selectedTimezone;
+      
+      // If date is already selected, regenerate time slots with new timezone
+      const selectedDate = document.getElementById('wizardDate').value;
+      if (selectedDate) {
+        generateTimeSlots();
+      }
+    }
+
     function generateTimeSlots() {
       const selectedDate = document.getElementById('wizardDate').value;
       if (!selectedDate) return;
 
-      const date = new Date(selectedDate);
+      const date = new Date(selectedDate + 'T00:00:00');
       const dayOfWeek = date.getDay();
 
+      // Check if Sunday (closed)
       if (dayOfWeek === 0) {
         document.getElementById('timeSlotsWizard').innerHTML = 
           '<p style="color:#ff0000; margin-top:1rem;">❌ Sorry, we are closed on Sundays. Please select another day.</p>';
@@ -471,17 +474,23 @@
         return;
       }
 
+      // Generate time slots from 9 AM to 8 PM (30-min intervals)
       const slots = [];
       for (let hour = 9; hour < 20; hour++) {
         for (let min = 0; min < 60; min += 30) {
-          const period = hour >= 12 ? 'PM' : 'AM';
-          const displayHour = hour > 12 ? hour - 12 : hour;
+          // 24-hour format
           const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          
+          // 12-hour format for display
+          const period = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
           const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
+          
           slots.push({ time24: timeStr24, time12: timeStr12 });
         }
       }
 
+      // Filter out slots that are less than 12 hours from now
       const now = new Date();
       const minTime = new Date(now.getTime() + (12 * 60 * 60 * 1000));
       
@@ -502,7 +511,7 @@
       wizardData.date = selectedDate;
       
       const container = document.getElementById('timeSlotsWizard');
-      container.innerHTML = '<div class="time-slots">' + 
+      container.innerHTML = '<p style="margin-bottom:0.5rem; font-weight:600;">⏰ Available Time Slots:</p><div class="time-slots">' + 
         availableSlots.map(slot => 
           `<div class="time-slot" onclick="selectTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
         ).join('') + '</div>';
@@ -517,21 +526,15 @@
       document.getElementById('confirmBtn').style.display = 'block';
     }
 
-    function updateTimezone() {
-      const selectedDate = document.getElementById('wizardDate').value;
-      if (selectedDate) {
-        generateTimeSlots();
-      }
-    }
-
     async function confirmBooking() {
       if (!wizardData.date || !wizardData.time) {
         alert('Please select both date and time');
         return;
       }
 
-      document.getElementById('confirmBtn').disabled = true;
-      document.getElementById('confirmBtn').textContent = '⏳ Booking...';
+      const confirmBtn = document.getElementById('confirmBtn');
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = '⏳ Booking...';
 
       const { data, error } = await supabaseClient
         .from('bookings')
@@ -543,6 +546,7 @@
           help_needed: wizardData.help,
           session_date: wizardData.date,
           session_time: wizardData.time,
+          timezone: wizardData.timezone,
           status: 'scheduled',
           instructor_name: 'STEMSphere Enrollment Advisor'
         })
@@ -551,11 +555,12 @@
 
       if (error) {
         alert('Error booking session: ' + error.message);
-        document.getElementById('confirmBtn').disabled = false;
-        document.getElementById('confirmBtn').textContent = 'Confirm Booking';
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Confirm Booking';
         return;
       }
 
+      // Update user's age group
       await supabaseClient
         .from('profiles')
         .update({ age_group: wizardData.age })
@@ -571,20 +576,7 @@
       window.location.href = 'login.html';
     }
 
-    // Event listeners
-    document.addEventListener('DOMContentLoaded', function() {
-      // Book button event listener
-      document.getElementById('bookBtn').addEventListener('click', openBookingWizard);
-      
-      // Close wizard button event listener
-      document.getElementById('closeWizardBtn').addEventListener('click', closeBookingWizard);
-      
-      // Logout button event listener
-      document.getElementById('logoutBtn').addEventListener('click', logout);
-      
-      // Initialize auth check
-      checkAuth();
-    });
+    checkAuth();
   </script>
 </body>
 </html>
