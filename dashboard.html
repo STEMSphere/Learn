@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | STEMSphere Academy</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+    }
+    
+    /* Header */
+    header {
+      background: #111;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #ff0000;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: #ff0000;
+      color: #fff;
+      font-weight: 700;
+      text-align: center;
+      line-height: 40px;
+      border-radius: 6px;
+      font-size: 1.2em;
+    }
+    .brand-text {
+      font-size: 1.2em;
+      font-weight: 700;
+      color: #fff;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logout-btn {
+      background: #ff0000;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .logout-btn:hover {
+      background: #cc0000;
+      transform: translateY(-2px);
+    }
+
+    /* Container */
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    /* Welcome Card */
+    .welcome-card {
+      background: linear-gradient(135deg, #222 0%, #333 100%);
+      border: 2px solid #ff0000;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(255,0,0,0.2);
+    }
+    .welcome-card h1 {
+      margin: 0 0 0.5rem 0;
+      color: #fff;
+      font-size: 2em;
+    }
+    .welcome-card p {
+      margin: 0.3rem 0;
+      color: #ddd;
+      font-size: 1em;
+    }
+    .book-btn {
+      display: inline-block;
+      background: linear-gradient(90deg, #007bff, #00c6ff);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      margin-top: 1rem;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    .book-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,198,255,0.4);
+    }
+
+    /* Sessions Section */
+    .sessions-section {
+      margin-bottom: 3rem;
+    }
+    .sessions-section h2 {
+      color: #fff;
+      border-bottom: 2px solid #ff0000;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.8em;
+    }
+
+    /* Session Cards */
+    .session-card {
+      background: #222;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      transition: all 0.3s;
+    }
+    .session-card:hover {
+      border-color: #ff0000;
+      transform: translateX(5px);
+    }
+    .session-info {
+      flex: 1;
+      min-width: 250px;
+    }
+    .session-info h3 {
+      margin: 0 0 0.5rem 0;
+      color: #00dffc;
+      font-size: 1.3em;
+    }
+    .session-info p {
+      margin: 0.25rem 0;
+      color: #ddd;
+      font-size: 0.95rem;
+    }
+    .session-status {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    .status-scheduled {
+      background: rgba(0,255,0,0.2);
+      color: #90ee90;
+      border: 1px solid #00ff00;
+    }
+    .status-completed {
+      background: rgba(128,128,128,0.2);
+      color: #ccc;
+      border: 1px solid #666;
+    }
+    .status-cancelled {
+      background: rgba(255,0,0,0.2);
+      color: #ff6b6b;
+      border: 1px solid #ff0000;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #888;
+    }
+    .empty-state p {
+      font-size: 1.1em;
+      margin: 0.5rem 0;
+    }
+
+    /* Loading Spinner */
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #00dffc;
+      font-size: 1.2em;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .welcome-card h1 {
+        font-size: 1.5em;
+      }
+      .sessions-section h2 {
+        font-size: 1.4em;
+      }
+      .session-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .session-status {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">SP</div>
+      <span class="brand-text">STEMSphere Academy</span>
+    </div>
+    <div class="header-right">
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- Dashboard Container -->
+  <div class="dashboard-container">
+    <!-- Welcome Card -->
+    <div class="welcome-card">
+      <h1>Welcome, <span id="userName">Student</span>! 👋</h1>
+      <p id="userEmail"></p>
+      <p id="userAge"></p>
+      <button class="book-btn" onclick="window.location.href='index.html#book'">
+        📅 Book a New Session
+      </button>
+    </div>
+
+    <!-- Upcoming Sessions -->
+    <div class="sessions-section">
+      <h2>📚 Upcoming Sessions</h2>
+      <div id="upcomingSessions">
+        <div class="loading">Loading your sessions...</div>
+      </div>
+    </div>
+
+    <!-- Past Sessions -->
+    <div class="sessions-section">
+      <h2>✅ Past Sessions</h2>
+      <div id="pastSessions">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ✅ YOUR CREDENTIALS
+    const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+    
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Check authentication
+    async function checkAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Load user profile
+      const { data: profile, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile) {
+        document.getElementById('userName').textContent = profile.full_name || 'Student';
+        document.getElementById('userEmail').textContent = profile.email;
+        document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
+      }
+
+      // Load bookings
+      loadBookings(session.user.id);
+    }
+
+    async function loadBookings(userId) {
+      const { data: bookings, error } = await supabaseClient
+        .from('bookings')
+        .select('*')
+        .eq('user_id', userId)
+        .order('session_date', { ascending: true });
+
+      if (error) {
+        console.error('Error loading bookings:', error);
+        document.getElementById('upcomingSessions').innerHTML = 
+          '<div class="empty-state"><p>❌ Error loading sessions</p></div>';
+        document.getElementById('pastSessions').innerHTML = 
+          '<div class="empty-state"><p>❌ Error loading sessions</p></div>';
+        return;
+      }
+
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // Reset to start of day for comparison
+      
+      const upcoming = bookings.filter(b => {
+        if (!b.session_date) return false;
+        const sessionDate = new Date(b.session_date);
+        return sessionDate >= now && b.status === 'scheduled';
+      });
+      
+      const past = bookings.filter(b => {
+        if (!b.session_date) return false;
+        const sessionDate = new Date(b.session_date);
+        return sessionDate < now || b.status === 'completed' || b.status === 'cancelled';
+      });
+
+      renderBookings('upcomingSessions', upcoming);
+      renderBookings('pastSessions', past);
+    }
+
+    function renderBookings(containerId, bookings) {
+      const container = document.getElementById(containerId);
+      const isUpcoming = containerId === 'upcomingSessions';
+      
+      if (bookings.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>📅 No ${isUpcoming ? 'upcoming' : 'past'} sessions yet.</p>
+            ${isUpcoming ? '<p>Book your first session to get started!</p>' : ''}
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = bookings.map(booking => {
+        const date = booking.session_date ? new Date(booking.session_date) : null;
+        const dateStr = date ? date.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }) : 'Date TBD';
+        
+        const timeStr = booking.session_time || 'Time TBD';
+        const statusClass = `status-${booking.status || 'scheduled'}`;
+        const statusText = booking.status === 'scheduled' ? '✓ Scheduled' : 
+                          booking.status === 'completed' ? '✓ Completed' : 
+                          '✗ Cancelled';
+
+        return `
+          <div class="session-card">
+            <div class="session-info">
+              <h3>${booking.subject || 'Tutoring Session'}</h3>
+              <p>📅 ${dateStr}</p>
+              <p>⏰ ${timeStr}</p>
+              <p>👤 ${booking.age_group || 'N/A'} | ${booking.learning_style || 'N/A'}</p>
+              ${booking.help_needed ? `<p>📝 ${booking.help_needed}</p>` : ''}
+            </div>
+            <div class="session-status ${statusClass}">${statusText}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
+    }
+
+    // Initialize
+    checkAuth();
+  </script>
+</body>
+</html>
