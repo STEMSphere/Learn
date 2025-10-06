@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Portal - Login | STEMSphere Academy</title>
+  <title>Portal Login | STEMSphere Academy</title>
   
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
@@ -153,13 +153,27 @@
       color: #ff0000;
       text-decoration: none;
     }
+    .forgot-password {
+      text-align: right;
+      margin-top: 0.5rem;
+    }
+    .forgot-password a {
+      color: #ff0000;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <div class="auth-container">
     <div class="logo">
       <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy Logo">
-      <h2>Student Portal</h2>
+      <h2>STEMSphere Portal</h2>
     </div>
 
     <div class="tab-buttons">
@@ -179,6 +193,9 @@
       <div class="form-group">
         <label>Password</label>
         <input type="password" id="loginPassword" required>
+      </div>
+      <div class="forgot-password">
+        <a onclick="showTab('reset')">Forgot Password?</a>
       </div>
       <button type="submit" class="btn-primary" id="loginBtn">Login</button>
     </form>
@@ -215,6 +232,21 @@
       <button type="submit" class="btn-primary" id="signupBtn">Create Account</button>
     </form>
 
+    <!-- PASSWORD RESET FORM -->
+    <form id="resetForm" class="hidden">
+      <p style="margin-bottom: 1rem; color: #666; font-size: 0.9rem;">
+        Enter your email address and we'll send you a link to reset your password.
+      </p>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="resetEmail" required>
+      </div>
+      <button type="submit" class="btn-primary" id="resetBtn">Send Reset Link</button>
+      <div class="back-link" style="margin-top: 1rem;">
+        <a onclick="showTab('login')">← Back to Login</a>
+      </div>
+    </form>
+
     <div class="support-info">
       Need help? Email <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
     </div>
@@ -234,15 +266,24 @@
 
     function showTab(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
       
+      // Hide all forms
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('resetForm').classList.add('hidden');
+      
+      // Show selected form
       if (tab === 'login') {
         document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('signupForm').classList.add('hidden');
-      } else {
-        document.getElementById('loginForm').classList.add('hidden');
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      } else if (tab === 'signup') {
         document.getElementById('signupForm').classList.remove('hidden');
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      } else if (tab === 'reset') {
+        document.getElementById('resetForm').classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       }
+      
       hideMessages();
     }
 
@@ -332,6 +373,28 @@
 
       showSuccess('Account created successfully! Redirecting to dashboard...');
       setTimeout(() => window.location.href = 'dashboard.html', 2000);
+    });
+
+    // PASSWORD RESET
+    document.getElementById('resetForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessages();
+      document.getElementById('resetBtn').disabled = true;
+
+      const email = document.getElementById('resetEmail').value;
+
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password.html',
+      });
+
+      if (error) {
+        showError(error.message);
+        document.getElementById('resetBtn').disabled = false;
+      } else {
+        showSuccess('Password reset link sent! Check your email.');
+        document.getElementById('resetBtn').disabled = false;
+        document.getElementById('resetEmail').value = '';
+      }
     });
 
     // Check if already logged in
