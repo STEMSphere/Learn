@@ -1,1 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal - Login | STEMSphere Academy</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .auth-container {
+      background: #222;
+      border: 2px solid #ff0000;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(255,0,0,0.3);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .brand-logo {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      background: #ff0000;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.5em;
+      line-height: 50px;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    .tab-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 0.75rem;
+      background: #333;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .tab-btn.active {
+      background: #ff0000;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #ddd;
+      font-size: 0.9rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      background: #333;
+      border: 1px solid #555;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 1rem;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #ff0000;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(90deg, #ff0000, #cc0000);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: all 0.3s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,0,0,0.4);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .message {
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+      font-size: 0.9rem;
+    }
+    .error {
+      background: rgba(255,0,0,0.2);
+      border: 1px solid #ff0000;
+      color: #ff6b6b;
+    }
+    .success {
+      background: rgba(0,255,0,0.2);
+      border: 1px solid #00ff00;
+      color: #90ee90;
+    }
+    .hidden {
+      display: none;
+    }
+    .back-link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .back-link a {
+      color: #00dffc;
+      text-decoration: none;
+    }
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="logo">
+      <div class="brand-logo">SP</div>
+      <h2>Student Portal</h2>
+    </div>
 
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="showTab('login')">Login</button>
+      <button class="tab-btn" onclick="showTab('signup')">Sign Up</button>
+    </div>
+
+    <div class="message error" id="errorMsg"></div>
+    <div class="message success" id="successMsg"></div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" required>
+      </div>
+      <button type="submit" class="btn-primary" id="loginBtn">Login</button>
+    </form>
+
+    <!-- SIGNUP FORM -->
+    <form id="signupForm" class="hidden">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="signupName" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signupEmail" required>
+      </div>
+      <div class="form-group">
+        <label>Password (min 6 characters)</label>
+        <input type="password" id="signupPassword" required minlength="6">
+      </div>
+      <div class="form-group">
+        <label>Age Group</label>
+        <select id="signupAge" required>
+          <option value="">Select...</option>
+          <option value="Elementary">Elementary</option>
+          <option value="Middle School">Middle School</option>
+          <option value="High School">High School</option>
+          <option value="College">College</option>
+          <option value="Adult Learner">Adult Learner</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Phone (optional)</label>
+        <input type="tel" id="signupPhone">
+      </div>
+      <button type="submit" class="btn-primary" id="signupBtn">Create Account</button>
+    </form>
+
+    <div class="back-link">
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    // ✅ YOUR CREDENTIALS (already filled in)
+    const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+    
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function showTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      if (tab === 'login') {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('signupForm').classList.add('hidden');
+      } else {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('signupForm').classList.remove('hidden');
+      }
+      hideMessages();
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('successMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function hideMessages() {
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+
+    // LOGIN
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessages();
+      document.getElementById('loginBtn').disabled = true;
+      
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+
+      if (error) {
+        showError(error.message);
+        document.getElementById('loginBtn').disabled = false;
+      } else {
+        showSuccess('Login successful! Redirecting...');
+        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+      }
+    });
+
+    // SIGNUP
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessages();
+      document.getElementById('signupBtn').disabled = true;
+
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const fullName = document.getElementById('signupName').value;
+      const ageGroup = document.getElementById('signupAge').value;
+      const phone = document.getElementById('signupPhone').value;
+
+      // Create auth user
+      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+        email,
+        password,
+      });
+
+      if (authError) {
+        showError(authError.message);
+        document.getElementById('signupBtn').disabled = false;
+        return;
+      }
+
+      // Create profile
+      const { error: profileError } = await supabaseClient
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          email,
+          full_name: fullName,
+          age_group: ageGroup,
+          phone: phone || null
+        });
+
+      if (profileError) {
+        showError('Account created but profile setup failed. Please contact support.');
+        document.getElementById('signupBtn').disabled = false;
+        return;
+      }
+
+      showSuccess('Account created successfully! Redirecting to dashboard...');
+      setTimeout(() => window.location.href = 'dashboard.html', 2000);
+    });
+
+    // Check if already logged in
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        window.location.href = 'dashboard.html';
+      }
+    });
+  </script>
+</body>
+</html>
