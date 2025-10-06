@@ -7,7 +7,6 @@
   
   <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -25,8 +24,6 @@
       align-items: center;
       border-bottom: 3px solid #007bff;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      flex-wrap: wrap;
-      gap: 1rem;
     }
     .brand {
       display: flex;
@@ -52,7 +49,7 @@
       margin-left: 0.5rem;
     }
     .logout-btn {
-      background: #ff0000;
+      background: #007bff;
       color: #fff;
       border: none;
       padding: 0.6rem 1.2rem;
@@ -62,22 +59,26 @@
     }
 
     .teacher-container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 2rem auto;
       padding: 0 1rem;
     }
 
-    .welcome-card {
+    .welcome-section {
       background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
       color: #fff;
-      border-radius: 12px;
       padding: 2rem;
+      border-radius: 12px;
       margin-bottom: 2rem;
       box-shadow: 0 4px 20px rgba(0,123,255,0.3);
     }
-    .welcome-card h1 {
+    .welcome-section h1 {
       margin: 0 0 0.5rem 0;
       font-size: 2em;
+    }
+    .welcome-section p {
+      margin: 0;
+      opacity: 0.9;
     }
 
     .stats-grid {
@@ -104,34 +105,33 @@
       color: #007bff;
     }
 
-    .section-title {
-      font-size: 1.8em;
-      color: #000;
-      border-bottom: 2px solid #007bff;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1.5rem;
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #ddd;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 1rem 2rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      color: #666;
+    }
+    .tab.active {
+      color: #007bff;
+      border-bottom-color: #007bff;
     }
 
-    .students-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
-      margin-bottom: 3rem;
+    .tab-content {
+      display: none;
     }
-    .student-card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .student-card h3 {
-      color: #007bff;
-      margin-bottom: 0.5rem;
-    }
-    .student-card p {
-      color: #666;
-      font-size: 0.9em;
-      margin: 0.3rem 0;
+    .tab-content.active {
+      display: block;
     }
 
     .data-table {
@@ -139,12 +139,11 @@
       border-radius: 8px;
       overflow-x: auto;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      margin-bottom: 3rem;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 600px;
+      min-width: 800px;
     }
     th {
       background: #f8f8f8;
@@ -156,6 +155,24 @@
     td {
       padding: 1rem;
       border-bottom: 1px solid #eee;
+    }
+
+    .btn-small {
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin: 0.2rem;
+    }
+    .btn-complete {
+      background: #28a745;
+      color: #fff;
+    }
+    .btn-view {
+      background: #007bff;
+      color: #fff;
     }
 
     .status-badge {
@@ -173,17 +190,6 @@
       color: #666;
     }
 
-    .btn-complete {
-      background: #28a745;
-      color: #fff;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.85em;
-      font-weight: 600;
-    }
-
     .loading {
       text-align: center;
       padding: 3rem;
@@ -193,6 +199,18 @@
       text-align: center;
       padding: 3rem;
       color: #999;
+    }
+
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #007bff;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+    }
+    .info-box p {
+      margin: 0;
+      color: #004085;
     }
   </style>
 </head>
@@ -207,9 +225,9 @@
   </header>
 
   <div class="teacher-container">
-    <div class="welcome-card">
+    <div class="welcome-section">
       <h1>Welcome, <span id="teacherName">Teacher</span>! 👨‍🏫</h1>
-      <p id="teacherEmail"></p>
+      <p>Manage your students and upcoming sessions</p>
     </div>
 
     <div class="stats-grid">
@@ -225,243 +243,258 @@
         <h3>Completed Sessions</h3>
         <div class="number" id="completedSessions">-</div>
       </div>
+      <div class="stat-card">
+        <h3>Total Sessions</h3>
+        <div class="number" id="totalSessions">-</div>
+      </div>
     </div>
 
-    <h2 class="section-title">👥 My Students</h2>
-    <div class="students-grid" id="studentsGrid">
-      <div class="loading">Loading your students...</div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('sessions')">My Sessions</button>
+      <button class="tab" onclick="showTab('students')">My Students</button>
     </div>
 
-    <h2 class="section-title">📚 Upcoming Sessions</h2>
-    <div class="data-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Student</th>
-            <th>Subject</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="upcomingSessionsBody">
-          <tr><td colspan="6" class="loading">Loading sessions...</td></tr>
-        </tbody>
-      </table>
+    <div id="sessionsTab" class="tab-content active">
+      <div class="info-box">
+        <p>📅 These are sessions assigned to you. Mark them as complete after each session.</p>
+      </div>
+      <div class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Student Details</th>
+              <th>Subject & Style</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status & Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="sessionsBody">
+            <tr><td colspan="6" class="loading">Loading sessions...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <h2 class="section-title">✅ Past Sessions</h2>
-    <div class="data-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Student</th>
-            <th>Subject</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="pastSessionsBody">
-          <tr><td colspan="5" class="loading">Loading...</td></tr>
-        </tbody>
-      </table>
+    <div id="studentsTab" class="tab-content">
+      <div class="info-box">
+        <p>👥 These are the students assigned to you by the admin.</p>
+      </div>
+      <div class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Age Group</th>
+              <th>Total Sessions</th>
+            </tr>
+          </thead>
+          <tbody id="studentsBody">
+            <tr><td colspan="5" class="loading">Loading students...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-
-  <script>
+    <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+    
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let teacherId = null;
+    let currentTeacherId = null;
 
-    // Check teacher authentication
     async function checkTeacherAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
       if (!session) {
-        window.location.href = 'login.html';
+        window.location.href = 'teacher-login.html';
         return;
       }
 
-      teacherId = session.user.id;
+      currentTeacherId = session.user.id;
 
-      // Check if user is teacher
       const { data: profile } = await supabaseClient
         .from('profiles')
         .select('*')
-        .eq('id', teacherId)
+        .eq('id', currentTeacherId)
         .single();
 
       if (!profile || profile.role !== 'teacher') {
         alert('Access denied. Teachers only.');
-        window.location.href = 'dashboard.html';
+        window.location.href = 'teacher-login.html';
         return;
       }
 
-      // Display teacher info
       document.getElementById('teacherName').textContent = profile.full_name || 'Teacher';
-      document.getElementById('teacherEmail').textContent = profile.email;
 
-      // Load data
-      loadStudents();
+      loadStats();
       loadSessions();
+      loadStudents();
     }
 
-    // Load Teacher's Students
-    async function loadStudents() {
-      // Get assigned students
-      const { data: assignments, error } = await supabaseClient
+    async function loadStats() {
+      // Get students assigned to this teacher
+      const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
-        .select(`
-          student_id,
-          profiles!teacher_assignments_student_id_fkey(id, full_name, email, phone, age_group)
-        `)
-        .eq('teacher_id', teacherId);
+        .select('student_id')
+        .eq('teacher_id', currentTeacherId);
 
-      const container = document.getElementById('studentsGrid');
+      const studentIds = assignments?.map(a => a.student_id) || [];
 
-      if (error || !assignments || assignments.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>📭 No students assigned yet.</p><p>Contact admin to get students assigned to you.</p></div>';
-        document.getElementById('totalStudents').textContent = '0';
-        return;
-      }
+      // Get sessions assigned to this teacher
+      const { data: sessions } = await supabaseClient
+        .from('bookings')
+        .select('id, status')
+        .eq('assigned_teacher_id', currentTeacherId);
 
-      document.getElementById('totalStudents').textContent = assignments.length;
-
-      container.innerHTML = assignments.map(assignment => {
-        const student = assignment.profiles;
-        return `
-          <div class="student-card">
-            <h3>${student.full_name}</h3>
-            <p>📧 ${student.email}</p>
-            <p>📱 ${student.phone || 'No phone'}</p>
-            <p>🎓 ${student.age_group || 'N/A'}</p>
-          </div>
-        `;
-      }).join('');
+      document.getElementById('totalStudents').textContent = studentIds.length || 0;
+      document.getElementById('upcomingSessions').textContent = 
+        sessions?.filter(s => s.status === 'scheduled').length || 0;
+      document.getElementById('completedSessions').textContent = 
+        sessions?.filter(s => s.status === 'completed').length || 0;
+      document.getElementById('totalSessions').textContent = sessions?.length || 0;
     }
 
-    // Load Teacher's Sessions
     async function loadSessions() {
-      // Get all bookings where teacher is assigned
+      // Get all bookings assigned to this teacher
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
-        .select(`
-          *,
-          profiles!bookings_user_id_fkey(full_name, email)
-        `)
-        .eq('assigned_teacher_id', teacherId)
-        .order('session_date', { ascending: true });
+        .select('*')
+        .eq('assigned_teacher_id', currentTeacherId)
+        .order('session_date', { ascending: false });
 
-      if (error) {
-        console.error('Error loading sessions:', error);
+      const tbody = document.getElementById('sessionsBody');
+
+      if (error || !bookings || bookings.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No sessions assigned yet. Check with your admin.</td></tr>';
         return;
       }
 
-      const now = new Date();
-      now.setHours(0, 0, 0, 0);
+      // Get student profiles
+      const userIds = [...new Set(bookings.map(b => b.user_id))];
 
-      const upcoming = bookings?.filter(b => {
-        if (!b.session_date) return b.status === 'scheduled';
-        const sessionDate = new Date(b.session_date);
-        return sessionDate >= now && b.status === 'scheduled';
-      }) || [];
+      const { data: profiles } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', userIds);
 
-      const past = bookings?.filter(b => {
-        if (!b.session_date) return false;
-        const sessionDate = new Date(b.session_date);
-        return sessionDate < now || b.status === 'completed';
-      }) || [];
+      const profileMap = {};
+      profiles?.forEach(p => {
+        profileMap[p.id] = p;
+      });
 
-      document.getElementById('upcomingSessions').textContent = upcoming.length;
-      document.getElementById('completedSessions').textContent = past.length;
-
-      renderUpcomingSessions(upcoming);
-      renderPastSessions(past);
-    }
-
-    // Render Upcoming Sessions
-    function renderUpcomingSessions(sessions) {
-      const tbody = document.getElementById('upcomingSessionsBody');
-
-      if (sessions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No upcoming sessions</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = sessions.map(session => {
-        const date = session.session_date ? new Date(session.session_date).toLocaleDateString() : 'TBD';
-        const time = session.session_time || 'TBD';
-
+      tbody.innerHTML = bookings.map(booking => {
+        const profile = profileMap[booking.user_id] || {};
+        
         return `
           <tr>
-            <td><strong>${session.profiles?.full_name || 'Unknown'}</strong><br><small>${session.profiles?.email}</small></td>
-            <td>${session.subject || 'N/A'}</td>
-            <td>${date}</td>
-            <td>${time}</td>
-            <td>${session.learning_style || 'N/A'}</td>
-            <td><span class="status-badge status-${session.status}">${session.status}</span></td>
             <td>
-              ${session.status === 'scheduled' ? `<button class="btn-complete" onclick="markComplete('${session.id}')">Complete</button>` : ''}
+              <strong>${profile.full_name || 'Unknown Student'}</strong><br>
+              <small>${profile.email || 'No email'}</small><br>
+              <small style="color:#666;">Age: ${booking.age_group || 'N/A'}</small>
+            </td>
+            <td>
+              <strong>${booking.subject || 'N/A'}</strong><br>
+              <small style="color:#666;">Style: ${booking.learning_style || 'N/A'}</small>
+            </td>
+            <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
+            <td>${booking.session_time || 'TBD'}</td>
+            <td>
+              <span class="status-badge status-${booking.status}">${booking.status}</span><br>
+              ${booking.help_needed ? `<small style="color:#666; display:block; margin-top:0.5rem;"><strong>Notes:</strong> ${booking.help_needed}</small>` : ''}
+            </td>
+            <td>
+              ${booking.status === 'scheduled' ? `<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>` : '<span style="color:#28a745;">✓ Done</span>'}
             </td>
           </tr>
         `;
       }).join('');
     }
 
-       // Render Past Sessions
-    function renderPastSessions(sessions) {
-      const tbody = document.getElementById('pastSessionsBody');
+    async function loadStudents() {
+      // Get students assigned to this teacher
+      const { data: assignments } = await supabaseClient
+        .from('teacher_assignments')
+        .select('student_id')
+        .eq('teacher_id', currentTeacherId);
 
-      if (sessions.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No past sessions yet</td></tr>';
+      const tbody = document.getElementById('studentsBody');
+
+      if (!assignments || assignments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No students assigned yet. Contact your admin.</td></tr>';
         return;
       }
 
-      tbody.innerHTML = sessions.map(session => {
-        const date = session.session_date ? new Date(session.session_date).toLocaleDateString() : 'TBD';
-        const time = session.session_time || 'TBD';
+      const studentIds = assignments.map(a => a.student_id);
+
+      // Get student profiles
+      const { data: students } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .in('id', studentIds)
+        .eq('role', 'student');
+
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No students found.</td></tr>';
+        return;
+      }
+
+      // Get session counts for each student
+      const { data: bookings } = await supabaseClient
+        .from('bookings')
+        .select('user_id')
+        .eq('assigned_teacher_id', currentTeacherId);
+
+      tbody.innerHTML = students.map(student => {
+        const sessionCount = bookings?.filter(b => b.user_id === student.id).length || 0;
 
         return `
           <tr>
-            <td><strong>${session.profiles?.full_name || 'Unknown'}</strong><br><small>${session.profiles?.email}</small></td>
-            <td>${session.subject || 'N/A'}</td>
-            <td>${date}</td>
-            <td>${time}</td>
-            <td><span class="status-badge status-${session.status}">${session.status}</span></td>
+            <td><strong>${student.full_name}</strong></td>
+            <td>${student.email}</td>
+            <td>${student.phone || 'N/A'}</td>
+            <td>${student.age_group || 'N/A'}</td>
+            <td>${sessionCount}</td>
           </tr>
         `;
       }).join('');
     }
 
-    // Mark Session as Complete
-    async function markComplete(sessionId) {
+    function showTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(tabName + 'Tab').classList.add('active');
+    }
+
+    async function markComplete(bookingId) {
       if (!confirm('Mark this session as completed?')) return;
 
       const { error } = await supabaseClient
         .from('bookings')
         .update({ status: 'completed' })
-        .eq('id', sessionId);
+        .eq('id', bookingId);
 
       if (error) {
         alert('Error: ' + error.message);
       } else {
         alert('✅ Session marked as completed!');
+        loadStats();
         loadSessions();
       }
     }
 
-    // Logout
     async function logout() {
       await supabaseClient.auth.signOut();
-      window.location.href = 'login.html';
+      window.location.href = 'teacher-login.html';
     }
 
-    // Initialize
     checkTeacherAuth();
   </script>
 </body>
