@@ -262,29 +262,19 @@ h2 {
 </style>
 
 <script>
-  // Initialize Supabase (if not already done in your page)
-  const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
-  const { createClient } = supabase;
-  const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
   // Unique data and step for High-Intent flow
-  let hiData = { age:"", subject:"", style:"", help:"", userId: null };
+  let hiData = { age:"", subject:"", style:"", help:"" };
   let hiStep = 0;
 
   // Launch High-Intent wizard
-  document.getElementById("highIntentLauncher").addEventListener("click", async function(){
-    // Check if logged in
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    hiData.userId = session?.user?.id || null;
-    
+  document.getElementById("highIntentLauncher").addEventListener("click", function(){
     hiStep = 0;
     hiUpdateProgress(10);
     document.getElementById("highIntentWizard").style.display = "block";
     renderHighStep();
   });
 
-  // UNIQUE progress bar function
+  // UNIQUE progress bar function + IDs to avoid collisions with the other wizard
   function hiUpdateProgress(pct) {
     const container = document.getElementById("highStepContent");
     container.parentElement.querySelector("#hiProgressBar")?.remove();
@@ -298,73 +288,24 @@ h2 {
     container.before(bar);
   }
 
-  async function renderHighStep(){
+  function renderHighStep(){
     const c = document.getElementById("highStepContent");
 
-    // Step 0: Check if logged in
     if(hiStep===0){
-      if (!hiData.userId) {
-        // Show signup/login form
-        hiUpdateProgress(5);
-        c.innerHTML = `
-          <h2 style="padding:0 20px; color:#000;">👋 First, let's create your account</h2>
-          <p style="padding:0 20px; color:#000;">Already have an account? <a href="#" onclick="showLoginFormHi(); return false;" style="color:#007bff;">Login here</a></p>
-          
-          <div id="authFormContainer" style="max-width:400px; margin:20px auto; padding:0 20px;">
-            <div id="authMessageHi" style="display:none; padding:10px; border-radius:5px; margin-bottom:15px;"></div>
-            
-            <!-- Signup Form -->
-            <div id="signupFormHi">
-              <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px; color:#000;">Full Name</label>
-                <input type="text" id="hiSignupName" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
-              </div>
-              <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px; color:#000;">Email</label>
-                <input type="email" id="hiSignupEmail" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
-              </div>
-              <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px; color:#000;">Password (min 6 characters)</label>
-                <input type="password" id="hiSignupPassword" required minlength="6" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
-              </div>
-              <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px; color:#000;">Phone (optional)</label>
-                <input type="tel" id="hiSignupPhone" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
-              </div>
-              <button onclick="handleSignupHi()" style="width:100%; background:#007bff; color:#fff; padding:12px; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Create Account & Continue</button>
-            </div>
-
-            <!-- Login Form (hidden by default) -->
-            <div id="loginFormHi" style="display:none;">
-              <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px; color:#000;">Email</label>
-                <input type="email" id="hiLoginEmail" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
-              </div>
-              <div style="margin-bottom:15px;">
-                <label style="display:block; margin-bottom:5px; color:#000;">Password</label>
-                <input type="password" id="hiLoginPassword" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
-              </div>
-              <button onclick="handleLoginHi()" style="width:100%; background:#007bff; color:#fff; padding:12px; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Login & Continue</button>
-              <p style="margin-top:10px; text-align:center;"><a href="#" onclick="showSignupFormHi(); return false;" style="color:#007bff;">Need an account? Sign up</a></p>
-            </div>
-          </div>
-        `;
-        return;
-      }
-      // If logged in, skip to step 1
-      hiStep = 1;
-      renderHighStep();
-      return;
-    }
-
-    if(hiStep===1){
+      hiUpdateProgress(10);
+      c.innerHTML = `
+        <h2 style="padding:0 20px; color:#000;">🎯 Enrollment Session Request</h2>
+        <p style="padding:0 20px; color:#000;">Secure your child’s future with a private consultation. Let’s start:</p>
+        <button onclick="hiStep=1; renderHighStep()" style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px;">Begin</button>
+      `;
+    } else if(hiStep===1){
       hiUpdateProgress(25);
       c.innerHTML = `
         <h3 style="padding:0 20px; color:#000;">🧒 Your age group:</h3>
         <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
           ${["Elementary","Middle School","High School","College","Adult Learner"].map(age=>`
             <button onclick="hiData.age='${age}'; hiStep=2; renderHighStep()" 
-              style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${age}</button>`).join("")}
+              style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${age}</button>`).join("")}
         </div>
       `;
     } else if(hiStep===2){
@@ -374,7 +315,7 @@ h2 {
         <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
           ${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing"].map(s=>`
             <button onclick="hiData.subject='${s}'; hiStep=3; renderHighStep()" 
-              style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${s}</button>`).join("")}
+              style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${s}</button>`).join("")}
         </div>
       `;
     } else if(hiStep===3){
@@ -384,169 +325,52 @@ h2 {
         <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
           ${["1-on-1 Tutoring","Group Classes","On-Demand Course"].map(style=>`
             <button onclick="hiData.style='${style}'; hiStep=4; renderHighStep()" 
-              style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${style}</button>`).join("")}
+              style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px;">${style}</button>`).join("")}
         </div>
       `;
     } else if(hiStep===4){
       hiUpdateProgress(85);
       c.innerHTML = `
         <h3 style="padding:0 20px; color:#000;">🗣️ What do you need help with?</h3>
-        <p style="padding:0 20px; color:#000;"><strong>Let us know your learning goals:</strong></p>
+        <p style="padding:0 20px; color:#000;"><strong>Let us know your learning goals, challenges, or anything specific you’d like support with:</strong></p>
         <div style="border:1px solid #ccc; border-radius:5px; padding:10px; margin:10px 20px;">
           <textarea id="hiGoal" placeholder="Type your message here..."
             style="width:100%; padding:10px; height:100px; border:none; resize:vertical; font-size:14px;"></textarea>
         </div>
         <button onclick="hiData.help=document.getElementById('hiGoal').value; hiStep=5; renderHighStep()" 
-          style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Continue</button>
+          style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px;">Continue</button>
       `;
     } else if(hiStep===5){
-      await saveBookingHi();
-    }
-  }
-
-  function showLoginFormHi() {
-    document.getElementById('signupFormHi').style.display = 'none';
-    document.getElementById('loginFormHi').style.display = 'block';
-  }
-
-  function showSignupFormHi() {
-    document.getElementById('loginFormHi').style.display = 'none';
-    document.getElementById('signupFormHi').style.display = 'block';
-  }
-
-  function showAuthMessageHi(msg, isError) {
-    const el = document.getElementById('authMessageHi');
-    el.textContent = msg;
-    el.style.display = 'block';
-    el.style.background = isError ? 'rgba(255,0,0,0.1)' : 'rgba(0,255,0,0.1)';
-    el.style.border = `1px solid ${isError ? '#ff0000' : '#00ff00'}`;
-    el.style.color = isError ? '#ff0000' : '#008800';
-  }
-
-  async function handleSignupHi() {
-    const name = document.getElementById('hiSignupName').value;
-    const email = document.getElementById('hiSignupEmail').value;
-    const password = document.getElementById('hiSignupPassword').value;
-    const phone = document.getElementById('hiSignupPhone').value;
-
-    if (!name || !email || !password) {
-      showAuthMessageHi('Please fill in all required fields', true);
-      return;
-    }
-
-    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-      email,
-      password,
-    });
-
-    if (authError) {
-      showAuthMessageHi(authError.message, true);
-      return;
-    }
-
-    const { error: profileError } = await supabaseClient
-      .from('profiles')
-      .insert({
-        id: authData.user.id,
-        email,
-        full_name: name,
-        age_group: 'Not specified',
-        phone: phone || null,
-        role: 'student'
-      });
-
-    if (profileError) {
-      showAuthMessageHi('Account created but profile failed. Please email support@stemsphere.academy for assistance.', true);
-      return;
-    }
-
-    showAuthMessageHi('✅ Account created! Continuing...', false);
-    hiData.userId = authData.user.id;
-    setTimeout(() => {
-      hiStep = 1;
-      renderHighStep();
-    }, 1000);
-  }
-
-  async function handleLoginHi() {
-    const email = document.getElementById('hiLoginEmail').value;
-    const password = document.getElementById('hiLoginPassword').value;
-
-    if (!email || !password) {
-      showAuthMessageHi('Please enter email and password', true);
-      return;
-    }
-
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ 
-      email, 
-      password 
-    });
-
-    if (error) {
-      showAuthMessageHi(error.message, true);
-      return;
-    }
-
-    showAuthMessageHi('✅ Login successful! Continuing...', false);
-    hiData.userId = data.user.id;
-    setTimeout(() => {
-      hiStep = 1;
-      renderHighStep();
-    }, 1000);
-  }
-
-  async function saveBookingHi() {
-    hiUpdateProgress(100);
-    const c = document.getElementById("highStepContent");
-    c.innerHTML = `
-      <div style="text-align:center; padding:40px 20px;">
-        <h2 style="color:#000;">⏳ Saving your trial session request...</h2>
-      </div>
-    `;
-
-    const { data, error } = await supabaseClient
-      .from('bookings')
-      .insert({
-        user_id: hiData.userId,
-        subject: hiData.subject,
-        age_group: hiData.age,
-        learning_style: hiData.style,
-        help_needed: hiData.help,
-        status: 'scheduled',
-        instructor_name: 'STEMSphere Enrollment Advisor',
-        session_date: null,
-        session_time: null
-      })
-      .select()
-      .single();
-
-    if (error) {
+      hiUpdateProgress(100);
       c.innerHTML = `
-        <div style="text-align:center; padding:40px 20px;">
-          <h2 style="color:#ff0000;">❌ Error saving booking</h2>
-          <p style="color:#000;">${error.message}</p>
-          <button onclick="hiStep=0; renderHighStep()" style="margin-top:20px; background:#007bff; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Try Again</button>
-        </div>
+        <h2 style="padding:0 20px; color:#000;">✅ Enrollment Specialist Ready</h2>
+        <p style="padding:0 20px; color:#000;">Book your private enrollment session below. Our specialist will run a mini-assessment and match your child with the ideal tutor.</p>
+        <div id="calendlyHigh" style="width:100%; height:80vh;"></div>
       `;
-      return;
+      const s = document.createElement("script");
+      s.src = "https://assets.calendly.com/assets/external/widget.js";
+      s.onload = () => {
+        Calendly.initInlineWidget({
+          url: "https://calendly.com/stemxsphere/trialclass?hide_gdpr_banner=1",
+          parentElement: document.getElementById("calendlyHigh"),
+          prefill: {
+            customAnswers: {
+              a1: hiData.subject,
+              a2: hiData.age,
+              a3: hiData.style,
+              a4: hiData.help
+            }
+          },
+          utm: {}
+        });
+      };
+      s.async = true;
+      document.body.appendChild(s);
     }
-
-    await supabaseClient
-      .from('profiles')
-      .update({ age_group: hiData.age })
-      .eq('id', hiData.userId);
-
-    c.innerHTML = `
-      <div style="text-align:center; padding:40px 20px;">
-        <h2 style="color:#00aa00;">✅ Trial Session Request Submitted!</h2>
-        <p style="color:#000; font-size:1.1em; margin:20px 0;">Thank you! Our enrollment advisor will contact you within 24 hours to schedule your trial session.</p>
-        <p style="color:#555; margin:10px 0;">Check your email and dashboard for updates.</p>
-        <button onclick="window.location.href='dashboard.html'" style="margin-top:20px; background:#007bff; color:#fff; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Go to Dashboard</button>
-      </div>
-    `;
   }
 </script>
 <!-- 🌟 END: High-Intent Popup Wizard -->
+
 
 <!-- Reviews Dropdown Script -->
 <div id="reviews-container"></div>
