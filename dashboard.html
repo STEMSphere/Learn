@@ -5,27 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard | STEMSphere Academy</title>
   
-  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
-  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #000;
-      color: #fff;
+      background: #f5f5f5;
+      color: #000;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     
-        /* Header */
     header {
-      background: #111;
+      background: #fff;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid #ff0000;
+      border-bottom: 3px solid #ff0000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       flex-wrap: wrap;
       gap: 1rem;
     }
@@ -41,12 +42,7 @@
     .brand-text {
       font-size: 1.2em;
       font-weight: 700;
-      color: #fff;
-    }
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+      color: #000;
     }
     .logout-btn {
       background: #ff0000;
@@ -56,97 +52,73 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
-      transition: all 0.3s;
-    }
-    .logout-btn:hover {
-      background: #cc0000;
-      transform: translateY(-2px);
     }
 
-    /* Container */
     .dashboard-container {
       max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1rem;
+      flex: 1;
     }
 
-    /* Welcome Card */
     .welcome-card {
-      background: linear-gradient(135deg, #222 0%, #333 100%);
+      background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%);
       border: 2px solid #ff0000;
       border-radius: 12px;
       padding: 2rem;
       margin-bottom: 2rem;
-      box-shadow: 0 4px 20px rgba(255,0,0,0.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
     .welcome-card h1 {
       margin: 0 0 0.5rem 0;
-      color: #fff;
+      color: #000;
       font-size: 2em;
     }
     .welcome-card p {
       margin: 0.3rem 0;
-      color: #ddd;
+      color: #333;
       font-size: 1em;
     }
     .book-btn {
-      display: inline-block;
       background: linear-gradient(90deg, #007bff, #00c6ff);
       color: #fff;
       padding: 0.75rem 1.5rem;
       border-radius: 8px;
-      text-decoration: none;
       font-weight: 700;
       margin-top: 1rem;
-      transition: all 0.3s;
       border: none;
       cursor: pointer;
       font-size: 1em;
     }
-    .book-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,198,255,0.4);
-    }
 
-    /* Sessions Section */
     .sessions-section {
       margin-bottom: 3rem;
     }
     .sessions-section h2 {
-      color: #fff;
+      color: #000;
       border-bottom: 2px solid #ff0000;
       padding-bottom: 0.5rem;
       margin-bottom: 1.5rem;
       font-size: 1.8em;
     }
 
-    /* Session Cards */
     .session-card {
-      background: #222;
-      border: 1px solid #444;
+      background: #fff;
+      border: 1px solid #ddd;
       border-radius: 8px;
       padding: 1.5rem;
       margin-bottom: 1rem;
-      transition: all 0.3s;
-    }
-    .session-card:hover {
-      border-color: #ff0000;
-      transform: translateX(5px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .session-info h3 {
       margin: 0 0 0.5rem 0;
-      color: #00dffc;
+      color: #007bff;
       font-size: 1.3em;
     }
     .session-info p {
       margin: 0.25rem 0;
-      color: #ddd;
+      color: #666;
       font-size: 0.95rem;
-    }
-    .waiting-notice {
-      color: #ff9800;
-      font-weight: 600;
-      margin-top: 0.5rem;
     }
     .status-badge {
       display: inline-block;
@@ -157,64 +129,121 @@
       margin-top: 0.5rem;
     }
     .status-scheduled {
-      background: rgba(0,255,0,0.2);
-      color: #90ee90;
-      border: 1px solid #00ff00;
+      background: rgba(0,200,0,0.2);
+      color: #008800;
+      border: 1px solid #00cc00;
     }
     .status-completed {
       background: rgba(128,128,128,0.2);
-      color: #ccc;
-      border: 1px solid #666;
+      color: #666;
+      border: 1px solid #999;
     }
 
-    /* Empty State */
     .empty-state {
       text-align: center;
       padding: 3rem 1rem;
-      color: #888;
-    }
-    .empty-state p {
-      font-size: 1.1em;
-      margin: 0.5rem 0;
+      color: #999;
     }
 
-    /* Loading */
     .loading {
       text-align: center;
       padding: 3rem;
+      color: #007bff;
+    }
+
+    /* Calendar Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .calendar {
+      margin: 1rem 0;
+    }
+    .time-slots {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .time-slot {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .time-slot:hover {
+      background: #e3f2fd;
+      border-color: #007bff;
+    }
+    .time-slot.selected {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+    .time-slot.disabled {
+      background: #f5f5f5;
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* Footer */
+    footer {
+      background: #000;
+      color: #bbb;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      font-size: 0.9em;
+      margin-top: auto;
+    }
+    .footer-links a,
+    .footer-contact a {
       color: #00dffc;
-      font-size: 1.2em;
+      text-decoration: none;
+      margin: 0 0.5rem;
     }
 
     @media (max-width: 768px) {
       header {
         flex-direction: column;
-        text-align: center;
       }
-      .welcome-card h1 {
-        font-size: 1.5em;
-      }
-      .sessions-section h2 {
-        font-size: 1.4em;
+      .time-slots {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="brand">
       <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
       <span class="brand-text">STEMSphere Academy</span>
     </div>
-    <div class="header-right">
-      <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
   </header>
 
-  <!-- Dashboard Container -->
   <div class="dashboard-container">
-    <!-- Welcome Card -->
     <div class="welcome-card">
       <h1>Welcome, <span id="userName">Student</span>! 👋</h1>
       <p id="userEmail"></p>
@@ -224,7 +253,6 @@
       </button>
     </div>
 
-    <!-- Upcoming Sessions -->
     <div class="sessions-section">
       <h2>📚 Upcoming Sessions</h2>
       <div id="upcomingSessions">
@@ -232,14 +260,50 @@
       </div>
     </div>
 
-    <!-- Past Sessions -->
     <div class="sessions-section">
       <h2>✅ Past Sessions</h2>
       <div id="pastSessions">
         <div class="loading">Loading...</div>
       </div>
     </div>
+
+    <div style="background:#fff; border-radius:8px; padding:2rem; margin-top:2rem; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+      <h3 style="color:#000; margin-bottom:1rem;">Need Help?</h3>
+      <p style="color:#666;">Contact our support team at <a href="mailto:support@stemsphere.academy" style="color:#ff0000; text-decoration:none; font-weight:600;">support@stemsphere.academy</a></p>
+    </div>
   </div>
+
+  <!-- Schedule Modal -->
+  <div id="scheduleModal" class="modal">
+    <div class="modal-content">
+      <h2 style="color:#000; margin-bottom:1rem;">Schedule Your Trial Session</h2>
+      <p style="color:#666; margin-bottom:1rem;">Select a date and time (sessions are 25 minutes)</p>
+      
+      <div class="form-group">
+        <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Select Date:</label>
+        <input type="date" id="sessionDate" style="width:100%; padding:0.75rem; border:1px solid #ddd; border-radius:6px;">
+      </div>
+
+      <div id="timeSlotsContainer" style="margin-top:1rem;"></div>
+
+      <div style="margin-top:2rem; display:flex; gap:1rem;">
+        <button onclick="confirmSchedule()" style="flex:1; background:#ff0000; color:#fff; padding:0.75rem; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Confirm</button>
+        <button onclick="closeModal()" style="flex:1; background:#6c757d; color:#fff; padding:0.75rem; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 STEMSphere Academy. All rights reserved.
+    <nav class="footer-links">
+      <a href="#faq">FAQs</a> |
+      <a href="/privacy.html">Privacy Policy</a>
+    </nav>
+    <p class="footer-contact">
+      Need help? Contact us at 
+      <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
+    </p>
+  </footer>
 
   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
@@ -247,6 +311,9 @@
     
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentBookingId = null;
+    let selectedTimeSlot = null;
 
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -256,7 +323,7 @@
         return;
       }
 
-      const { data: profile, error } = await supabaseClient
+      const { data: profile } = await supabaseClient
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
@@ -279,10 +346,8 @@
         .order('booking_date', { ascending: false });
 
       if (error) {
-        console.error('Error loading bookings:', error);
+        console.error('Error:', error);
         document.getElementById('upcomingSessions').innerHTML = 
-          '<div class="empty-state"><p>❌ Error loading sessions</p></div>';
-        document.getElementById('pastSessions').innerHTML = 
           '<div class="empty-state"><p>❌ Error loading sessions</p></div>';
         return;
       }
@@ -327,11 +392,13 @@
           year: 'numeric', 
           month: 'long', 
           day: 'numeric' 
-        }) : 'Date TBD';
+        }) : 'Not scheduled yet';
         
-        const timeStr = booking.session_time || 'Time TBD';
+        const timeStr = booking.session_time || 'Time not set';
         const statusClass = `status-${booking.status || 'scheduled'}`;
         const statusText = booking.status === 'scheduled' ? '✓ Scheduled' : '✓ Completed';
+
+        const needsScheduling = !booking.session_date && booking.status === 'scheduled';
 
         return `
           <div class="session-card">
@@ -342,12 +409,118 @@
               <p>👨‍🏫 Instructor: ${booking.instructor_name || 'STEMSphere Enrollment Advisor'}</p>
               <p>👤 ${booking.age_group || 'N/A'} | ${booking.learning_style || 'N/A'}</p>
               ${booking.help_needed ? `<p>📝 ${booking.help_needed}</p>` : ''}
-              ${!booking.session_date ? '<p class="waiting-notice">⏳ Waiting for admin to schedule your trial session</p>' : ''}
               <span class="status-badge ${statusClass}">${statusText}</span>
+              ${needsScheduling ? `<button onclick="openScheduleModal('${booking.id}')" style="margin-top:1rem; background:#007bff; color:#fff; padding:0.5rem 1rem; border:none; border-radius:6px; cursor:pointer; font-weight:600;">📅 Schedule Now</button>` : ''}
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    function openScheduleModal(bookingId) {
+      currentBookingId = bookingId;
+      selectedTimeSlot = null;
+      
+      // Set min/max dates
+      const today = new Date();
+      const minDate = new Date(today.getTime() + (12 * 60 * 60 * 1000)); // 12 hours from now
+      const maxDate = new Date(today.getTime() + (4 * 24 * 60 * 60 * 1000)); // 4 days from now
+      
+      const dateInput = document.getElementById('sessionDate');
+      dateInput.min = minDate.toISOString().split('T')[0];
+      dateInput.max = maxDate.toISOString().split('T')[0];
+      dateInput.value = '';
+      
+      document.getElementById('timeSlotsContainer').innerHTML = '';
+      document.getElementById('scheduleModal').classList.add('active');
+      
+      dateInput.addEventListener('change', generateTimeSlots);
+    }
+        function generateTimeSlots() {
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (!selectedDate) return;
+
+      const date = new Date(selectedDate);
+      const dayOfWeek = date.getDay();
+
+      // Check if Sunday (closed)
+      if (dayOfWeek === 0) {
+        document.getElementById('timeSlotsContainer').innerHTML = 
+          '<p style="color:#ff0000; text-align:center;">❌ Sorry, we are closed on Sundays. Please select another day.</p>';
+        return;
+      }
+
+      // Generate time slots from 9 AM to 8 PM (30-min intervals)
+      const slots = [];
+      for (let hour = 9; hour < 20; hour++) {
+        for (let min = 0; min < 60; min += 30) {
+          const timeStr = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          slots.push(timeStr);
+        }
+      }
+
+      // Check if selected date is today and filter out past times
+      const now = new Date();
+      const minTime = new Date(now.getTime() + (12 * 60 * 60 * 1000)); // 12 hours from now
+      
+      const availableSlots = slots.filter(timeStr => {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        const slotDateTime = new Date(date);
+        slotDateTime.setHours(hours, minutes, 0, 0);
+        return slotDateTime >= minTime;
+      });
+
+      if (availableSlots.length === 0) {
+        document.getElementById('timeSlotsContainer').innerHTML = 
+          '<p style="color:#ff0000; text-align:center;">❌ No available slots for this date. Please select a later date.</p>';
+        return;
+      }
+
+      const container = document.getElementById('timeSlotsContainer');
+      container.innerHTML = '<div class="time-slots">' + 
+        availableSlots.map(time => 
+          `<div class="time-slot" onclick="selectTimeSlot('${time}')">${time}</div>`
+        ).join('') + '</div>';
+    }
+
+    function selectTimeSlot(time) {
+      document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+      selectedTimeSlot = time;
+    }
+
+    async function confirmSchedule() {
+      const selectedDate = document.getElementById('sessionDate').value;
+
+      if (!selectedDate || !selectedTimeSlot) {
+        alert('Please select both a date and time slot');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({
+          session_date: selectedDate,
+          session_time: selectedTimeSlot
+        })
+        .eq('id', currentBookingId);
+
+      if (error) {
+        alert('Error scheduling session: ' + error.message);
+      } else {
+        alert('✅ Trial session scheduled successfully!');
+        closeModal();
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        loadBookings(session.user.id);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('scheduleModal').classList.remove('active');
+      currentBookingId = null;
+      selectedTimeSlot = null;
     }
 
     async function logout() {
@@ -359,3 +532,5 @@
   </script>
 </body>
 </html>
+
+    function generateTimeSlots() {
