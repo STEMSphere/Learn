@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Login | STEMSphere Academy</title>
+  <title>Student Portal Login | STEMSphere Academy</title>
   
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
@@ -173,13 +173,27 @@
     .forgot-password a:hover {
       text-decoration: underline;
     }
+    .portal-links {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #ddd;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .portal-links a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0 0.5rem;
+    }
   </style>
 </head>
 <body>
   <div class="auth-container">
     <div class="logo">
       <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy Logo">
-      <h2>STEMSphere Portal</h2>
+      <h2>Student Portal</h2>
     </div>
 
     <div class="tab-buttons">
@@ -254,6 +268,12 @@
       </div>
     </form>
 
+    <div class="portal-links">
+      <p>Are you a teacher or admin?</p>
+      <a href="teacher-login.html">Teacher Login</a> | 
+      <a href="admin-login.html">Admin Login</a>
+    </div>
+
     <div class="support-info">
       Need help? Email <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
     </div>
@@ -264,7 +284,6 @@
   </div>
 
   <script>
-    // ✅ YOUR CREDENTIALS
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -274,12 +293,10 @@
     function showTab(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       
-      // Hide all forms
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('signupForm').classList.add('hidden');
       document.getElementById('resetForm').classList.add('hidden');
       
-      // Show selected form
       if (tab === 'login') {
         document.getElementById('loginForm').classList.remove('hidden');
         document.querySelectorAll('.tab-btn')[0].classList.add('active');
@@ -295,25 +312,22 @@
     }
 
     function showError(msg) {
-      const el = document.getElementById('errorMsg');
-      el.textContent = msg;
-      el.style.display = 'block';
+      document.getElementById('errorMsg').textContent = msg;
+      document.getElementById('errorMsg').style.display = 'block';
       document.getElementById('successMsg').style.display = 'none';
       document.getElementById('warningMsg').style.display = 'none';
     }
 
     function showSuccess(msg) {
-      const el = document.getElementById('successMsg');
-      el.textContent = msg;
-      el.style.display = 'block';
+      document.getElementById('successMsg').textContent = msg;
+      document.getElementById('successMsg').style.display = 'block';
       document.getElementById('errorMsg').style.display = 'none';
       document.getElementById('warningMsg').style.display = 'none';
     }
 
     function showWarning(msg) {
-      const el = document.getElementById('warningMsg');
-      el.textContent = msg;
-      el.style.display = 'block';
+      document.getElementById('warningMsg').textContent = msg;
+      document.getElementById('warningMsg').style.display = 'block';
       document.getElementById('errorMsg').style.display = 'none';
       document.getElementById('successMsg').style.display = 'none';
     }
@@ -324,7 +338,7 @@
       document.getElementById('warningMsg').style.display = 'none';
     }
 
-    // LOGIN (with optional role-based routing)
+    // SIMPLE LOGIN - Always goes to dashboard.html
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
@@ -343,28 +357,11 @@
         document.getElementById('loginBtn').disabled = false;
       } else {
         showSuccess('Login successful! Redirecting...');
-        
-        // Try to fetch user profile to check role (but don't fail if it doesn't work)
-        const { data: profile } = await supabaseClient
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-
-        // Role-based redirect (default to dashboard.html if role not found)
-        let redirectUrl = 'dashboard.html';
-        
-        if (profile && profile.role === 'admin') {
-          redirectUrl = 'admin.html';
-        } else if (profile && profile.role === 'teacher') {
-          redirectUrl = 'teacher-dashboard.html';
-        }
-
-        setTimeout(() => window.location.href = redirectUrl, 1000);
+        setTimeout(() => window.location.href = 'dashboard.html', 1000);
       }
     });
 
-    // SIGNUP (improved messaging)
+    // SIGNUP
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
@@ -376,7 +373,6 @@
       const ageGroup = document.getElementById('signupAge').value;
       const phone = document.getElementById('signupPhone').value;
 
-      // Create auth user
       const { data: authData, error: authError } = await supabaseClient.auth.signUp({
         email,
         password,
@@ -388,7 +384,6 @@
         return;
       }
 
-      // Create profile
       const { error: profileError } = await supabaseClient
         .from('profiles')
         .insert({
@@ -401,16 +396,11 @@
         });
 
       if (profileError) {
-        // Account created but profile failed - still show success and tell them to login
-        showWarning('✅ Account created successfully! Please click the "Login" tab above and sign in with your credentials.');
-        document.getElementById('signupBtn').disabled = false;
-        // Clear form
-        document.getElementById('signupForm').reset();
-        return;
+        showWarning('✅ Account created successfully! Please click the "Login" tab above and sign in.');
+      } else {
+        showSuccess('✅ Account created successfully! Please click the "Login" tab above to sign in.');
       }
-
-      // Everything worked perfectly
-      showSuccess('✅ Account created successfully! Please click the "Login" tab above to sign in.');
+      
       document.getElementById('signupBtn').disabled = false;
       document.getElementById('signupForm').reset();
     });
@@ -429,34 +419,17 @@
 
       if (error) {
         showError(error.message);
-        document.getElementById('resetBtn').disabled = false;
       } else {
         showSuccess('Password reset link sent! Check your email.');
-        document.getElementById('resetBtn').disabled = false;
         document.getElementById('resetEmail').value = '';
       }
+      document.getElementById('resetBtn').disabled = false;
     });
 
     // Check if already logged in
     supabaseClient.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        // Check role and redirect accordingly
-        supabaseClient
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data: profile }) => {
-            let redirectUrl = 'dashboard.html';
-            
-            if (profile && profile.role === 'admin') {
-              redirectUrl = 'admin.html';
-            } else if (profile && profile.role === 'teacher') {
-              redirectUrl = 'teacher-dashboard.html';
-            }
-            
-            window.location.href = redirectUrl;
-          });
+        window.location.href = 'dashboard.html';
       }
     });
   </script>
