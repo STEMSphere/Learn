@@ -324,7 +324,7 @@
       document.getElementById('warningMsg').style.display = 'none';
     }
 
-    // LOGIN (with role-based routing)
+    // LOGIN (with optional role-based routing)
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
@@ -342,29 +342,24 @@
         showError(error.message);
         document.getElementById('loginBtn').disabled = false;
       } else {
-        // Fetch user profile to check role
-        const { data: profile, error: profileError } = await supabaseClient
+        showSuccess('Login successful! Redirecting...');
+        
+        // Try to fetch user profile to check role (but don't fail if it doesn't work)
+        const { data: profile } = await supabaseClient
           .from('profiles')
           .select('role')
           .eq('id', data.user.id)
           .single();
 
-        if (profileError || !profile) {
-          showError('Could not load profile. Please contact support.');
-          document.getElementById('loginBtn').disabled = false;
-          return;
-        }
-
-        // Role-based redirect
-        let redirectUrl = 'dashboard.html'; // default for students
+        // Role-based redirect (default to dashboard.html if role not found)
+        let redirectUrl = 'dashboard.html';
         
-        if (profile.role === 'admin') {
+        if (profile && profile.role === 'admin') {
           redirectUrl = 'admin.html';
-        } else if (profile.role === 'teacher') {
+        } else if (profile && profile.role === 'teacher') {
           redirectUrl = 'teacher-dashboard.html';
         }
 
-        showSuccess('Login successful! Redirecting...');
         setTimeout(() => window.location.href = redirectUrl, 1000);
       }
     });
@@ -452,17 +447,15 @@
           .eq('id', session.user.id)
           .single()
           .then(({ data: profile }) => {
-            if (profile) {
-              if (profile.role === 'admin') {
-                window.location.href = 'admin.html';
-              } else if (profile.role === 'teacher') {
-                window.location.href = 'teacher-dashboard.html';
-              } else {
-                window.location.href = 'dashboard.html';
-              }
-            } else {
-              window.location.href = 'dashboard.html';
+            let redirectUrl = 'dashboard.html';
+            
+            if (profile && profile.role === 'admin') {
+              redirectUrl = 'admin.html';
+            } else if (profile && profile.role === 'teacher') {
+              redirectUrl = 'teacher-dashboard.html';
             }
+            
+            window.location.href = redirectUrl;
           });
       }
     });
