@@ -283,12 +283,12 @@
         <table>
           <thead>
             <tr>
-              <th>Student</th>
-              <th>Subject</th>
+              <th>Student Details</th>
+              <th>Subject & Style</th>
               <th>Date</th>
               <th>Time</th>
               <th>Instructor</th>
-              <th>Status</th>
+              <th>Status & Notes</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -469,12 +469,22 @@
         
         return `
           <tr>
-            <td><strong>${profile.full_name || 'Unknown'}</strong><br><small>${profile.email || 'N/A'}</small></td>
-            <td>${booking.subject || 'N/A'}</td>
+            <td>
+              <strong>${profile.full_name || 'Unknown Student'}</strong><br>
+              <small>${profile.email || 'No email'}</small><br>
+              <small style="color:#666;">Age: ${booking.age_group || 'N/A'}</small>
+            </td>
+            <td>
+              <strong>${booking.subject || 'N/A'}</strong><br>
+              <small style="color:#666;">Style: ${booking.learning_style || 'N/A'}</small>
+            </td>
             <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
             <td>${booking.session_time || 'TBD'}</td>
             <td>${booking.instructor_name || 'Not assigned'}</td>
-            <td><span class="status-badge status-${booking.status}">${booking.status}</span></td>
+            <td>
+              <span class="status-badge status-${booking.status}">${booking.status}</span><br>
+              ${booking.help_needed ? `<small style="color:#666; display:block; margin-top:0.5rem;"><strong>Notes:</strong> ${booking.help_needed}</small>` : ''}
+            </td>
             <td>
               <button class="btn-small btn-assign" onclick="showAssignTeacherModal('${booking.id}', '${booking.user_id}')">Assign</button>
               ${booking.status === 'scheduled' ? `<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Complete</button>` : ''}
