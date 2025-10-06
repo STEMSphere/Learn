@@ -1,1 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Login | STEMSphere Academy</title>
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffffff;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .auth-container {
+      background: #fff;
+      border: 2px solid #007bff;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .logo img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      text-align: center;
+      color: #000;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+    .teacher-badge {
+      background: #007bff;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      color: #000;
+      font-size: 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #007bff;
+      background: #fff;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(90deg, #007bff, #0056b3);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: all 0.3s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,123,255,0.4);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .message {
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+      font-size: 0.9rem;
+    }
+    .error {
+      background: rgba(255,0,0,0.1);
+      border: 1px solid #ff0000;
+      color: #cc0000;
+    }
+    .success {
+      background: rgba(0,200,0,0.1);
+      border: 1px solid #00cc00;
+      color: #008800;
+    }
+    .back-link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .back-link a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+    .portal-links {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #ddd;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .portal-links a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="logo">
+      <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy Logo">
+      <h2>Teacher Portal</h2>
+      <span class="teacher-badge">TEACHER ACCESS</span>
+    </div>
 
+    <div class="message error" id="errorMsg"></div>
+    <div class="message success" id="successMsg"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label>Teacher Email</label>
+        <input type="email" id="loginEmail" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" required>
+      </div>
+      <button type="submit" class="btn-primary" id="loginBtn">Login</button>
+    </form>
+
+    <div class="portal-links">
+      <p>Not a teacher?</p>
+      <a href="login.html">Student Login</a> | 
+      <a href="admin-login.html">Admin Login</a>
+    </div>
+
+    <div class="back-link">
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+    
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function showError(msg) {
+      document.getElementById('errorMsg').textContent = msg;
+      document.getElementById('errorMsg').style.display = 'block';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      document.getElementById('successMsg').textContent = msg;
+      document.getElementById('successMsg').style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function hideMessages() {
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessages();
+      document.getElementById('loginBtn').disabled = true;
+      
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+
+      if (error) {
+        showError(error.message);
+        document.getElementById('loginBtn').disabled = false;
+        return;
+      }
+
+      // Check if user is actually a teacher
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      if (!profile || profile.role !== 'teacher') {
+        showError('Access denied. This portal is for teachers only.');
+        await supabaseClient.auth.signOut();
+        document.getElementById('loginBtn').disabled = false;
+        return;
+      }
+
+      showSuccess('Login successful! Redirecting...');
+      setTimeout(() => window.location.href = 'teacher-dashboard.html', 1000);
+    });
+
+    // Check if already logged in as teacher
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data: profile }) => {
+            if (profile && profile.role === 'teacher') {
+              window.location.href = 'teacher-dashboard.html';
+            }
+          });
+      }
+    });
+  </script>
+</body>
+</html>
