@@ -279,35 +279,30 @@
     let wizardStep = 0;
 
     async function checkAuth() {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  
-  if (!session) {
-    alert('Session expired. Please login again.');
-    window.location.href = 'login.html';
-    return;
-  }
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
 
-  currentUserId = session.user.id;
+      currentUserId = session.user.id;
 
-  const { data: profile } = await supabaseClient
-    .from('profiles')
-    .select('*')
-    .eq('id', currentUserId)
-    .single();
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUserId)
+        .single();
 
-  if (profile) {
-    document.getElementById('userName').textContent = profile.full_name || 'Student';
-    document.getElementById('userEmail').textContent = profile.email;
-    document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
-  } else {
-    alert('Profile not found. Please contact support.');
-    await supabaseClient.auth.signOut();
-    window.location.href = 'login.html';
-    return;
-  }
+      if (profile) {
+        document.getElementById('userName').textContent = profile.full_name || 'Student';
+        document.getElementById('userEmail').textContent = profile.email;
+        document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
+      }
 
-  loadSessions();
-}
+      loadSessions();
+    }
+
     async function loadSessions() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
@@ -409,126 +404,82 @@
             style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Continue</button>
         `;
       } else if(wizardStep===5){
-  // Calendar step with timezone detection
-  const today = new Date();
-  const minDate = new Date(today.getTime() + (12 * 60 * 60 * 1000)); // 12 hours from now
-  const maxDate = new Date(today.getTime() + (4 * 24 * 60 * 60 * 1000)); // 4 days ahead
-  
-  // Detect user's timezone
-  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
-  c.innerHTML = `
-    <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
-    
-    <div style="padding:0 20px; margin-bottom:1rem;">
-      <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Your Timezone:</label>
-      <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px;">
-        <option value="${userTimezone}">${userTimezone} (Detected)</option>
-        <option value="America/New_York">Eastern Time (ET)</option>
-        <option value="America/Chicago">Central Time (CT)</option>
-        <option value="America/Denver">Mountain Time (MT)</option>
-        <option value="America/Los_Angeles">Pacific Time (PT)</option>
-        <option value="Europe/London">London (GMT)</option>
-        <option value="Europe/Paris">Paris (CET)</option>
-        <option value="Asia/Dubai">Dubai (GST)</option>
-        <option value="Asia/Hong_Kong">Hong Kong (HKT)</option>
-        <option value="Asia/Singapore">Singapore (SGT)</option>
-        <option value="Asia/Tokyo">Tokyo (JST)</option>
-        <option value="Australia/Sydney">Sydney (AEDT)</option>
-      </select>
-    </div>
+        // Calendar step
+        const today = new Date();
+        const minDate = new Date(today.getTime() + (12 * 60 * 60 * 1000)); // 12 hours from now
+        const maxDate = new Date(today.getTime() + (4 * 24 * 60 * 60 * 1000)); // 4 days ahead
+        
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
+          <p style="padding:0 20px; color:#666; margin-bottom:1rem;">Choose a date (must be at least 12 hours from now, max 4 days ahead). Sessions are 25 minutes.</p>
+          
+          <div style="padding:0 20px;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Select Date:</label>
+            <input type="date" id="wizardDate" 
+              min="${minDate.toISOString().split('T')[0]}" 
+              max="${maxDate.toISOString().split('T')[0]}"
+              onchange="generateTimeSlots()"
+              style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
+          </div>
 
-    <div style="padding:0 20px;">
-      <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Select Date:</label>
-      <input type="date" id="wizardDate" 
-        min="${minDate.toISOString().split('T')[0]}" 
-        max="${maxDate.toISOString().split('T')[0]}"
-        onchange="generateTimeSlots()"
-        style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
-    </div>
+          <div id="timeSlotsWizard" style="padding:0 20px; margin-top:1rem;"></div>
 
-    <div id="timeSlotsWizard" style="padding:0 20px; margin-top:1rem;"></div>
-
-    <button id="confirmBtn" onclick="confirmBooking()" 
-      style="margin:20px; background:#ff0000; color:#fff; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600; display:none;">
-      Confirm Booking
-    </button>
-  `;
-}
-
+          <button id="confirmBtn" onclick="confirmBooking()" 
+            style="margin:20px; background:#ff0000; color:#fff; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600; display:none;">
+            Confirm Booking
+          </button>
+        `;
+      }
+    }
 
     function generateTimeSlots() {
-  const selectedDate = document.getElementById('wizardDate').value;
-  if (!selectedDate) return;
+      const selectedDate = document.getElementById('wizardDate').value;
+      if (!selectedDate) return;
 
-  const date = new Date(selectedDate);
-  const dayOfWeek = date.getDay();
+      const date = new Date(selectedDate);
+      const dayOfWeek = date.getDay();
 
-  // Check if Sunday (closed)
-  if (dayOfWeek === 0) {
-    document.getElementById('timeSlotsWizard').innerHTML = 
-      '<p style="color:#ff0000; margin-top:1rem;">❌ Sorry, we are closed on Sundays. Please select another day.</p>';
-    document.getElementById('confirmBtn').style.display = 'none';
-    return;
-  }
+      // Check if Sunday (closed)
+      if (dayOfWeek === 0) {
+        document.getElementById('timeSlotsWizard').innerHTML = 
+          '<p style="color:#ff0000; margin-top:1rem;">❌ Sorry, we are closed on Sundays. Please select another day.</p>';
+        return;
+      }
 
-  // Generate time slots from 9 AM to 8 PM (30-min intervals)
-  const slots = [];
-  for (let hour = 9; hour < 20; hour++) {
-    for (let min = 0; min < 60; min += 30) {
-      // Convert to 12-hour format
-      const period = hour >= 12 ? 'PM' : 'AM';
-      const displayHour = hour > 12 ? hour - 12 : hour;
-      const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-      const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
-      slots.push({ time24: timeStr24, time12: timeStr12 });
+      // Generate time slots from 9 AM to 8 PM (30-min intervals, 25-min sessions)
+      const slots = [];
+      for (let hour = 9; hour < 20; hour++) {
+        for (let min = 0; min < 60; min += 30) {
+          const timeStr = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          slots.push(timeStr);
+        }
+      }
+
+      // Filter out past times if today
+      const now = new Date();
+      const minTime = new Date(now.getTime() + (12 * 60 * 60 * 1000));
+      
+      const availableSlots = slots.filter(timeStr => {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        const slotDateTime = new Date(date);
+        slotDateTime.setHours(hours, minutes, 0, 0);
+        return slotDateTime >= minTime;
+      });
+
+      if (availableSlots.length === 0) {
+        document.getElementById('timeSlotsWizard').innerHTML = 
+          '<p style="color:#ff0000; margin-top:1rem;">❌ No available slots for this date. Please select a later date.</p>';
+        return;
+      }
+
+      wizardData.date = selectedDate;
+      
+      const container = document.getElementById('timeSlotsWizard');
+      container.innerHTML = '<div class="time-slots">' + 
+        availableSlots.map(time => 
+          `<div class="time-slot" onclick="selectTime('${time}')">${time}</div>`
+        ).join('') + '</div>';
     }
-  }
-
-  // Filter out slots that are less than 12 hours from now
-  const now = new Date();
-  const minTime = new Date(now.getTime() + (12 * 60 * 60 * 1000));
-  
-  const availableSlots = slots.filter(slot => {
-    const [hours, minutes] = slot.time24.split(':').map(Number);
-    const slotDateTime = new Date(date);
-    slotDateTime.setHours(hours, minutes, 0, 0);
-    return slotDateTime >= minTime;
-  });
-
-  if (availableSlots.length === 0) {
-    document.getElementById('timeSlotsWizard').innerHTML = 
-      '<p style="color:#ff0000; margin-top:1rem;">❌ No available slots for this date (must be at least 12 hours from now). Please select a later date.</p>';
-    document.getElementById('confirmBtn').style.display = 'none';
-    return;
-  }
-
-  wizardData.date = selectedDate;
-  
-  const container = document.getElementById('timeSlotsWizard');
-  container.innerHTML = '<div class="time-slots">' + 
-    availableSlots.map(slot => 
-      `<div class="time-slot" onclick="selectTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
-    ).join('') + '</div>';
-}
-
-function selectTime(time) {
-  document.querySelectorAll('.time-slot').forEach(slot => {
-    slot.classList.remove('selected');
-  });
-  event.target.classList.add('selected');
-  wizardData.time = time;
-  document.getElementById('confirmBtn').style.display = 'block';
-}
-
-function updateTimezone() {
-  // When user changes timezone, regenerate slots if date is selected
-  const selectedDate = document.getElementById('wizardDate').value;
-  if (selectedDate) {
-    generateTimeSlots();
-  }
-}
-  
 
     function selectTime(time) {
       document.querySelectorAll('.time-slot').forEach(slot => {
