@@ -398,7 +398,7 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
       
       if (!session) {
-        window.location.href = 'login.html';
+        window.location.href = 'admin-login.html';
         return;
       }
 
@@ -410,7 +410,7 @@
 
       if (!profile || profile.role !== 'admin') {
         alert('Access denied. Admin only.');
-        window.location.href = 'dashboard.html';
+        window.location.href = 'admin-login.html';
         return;
       }
 
@@ -488,7 +488,7 @@
         return;
       }
 
-            const { data: bookings } = await supabaseClient
+      const { data: bookings } = await supabaseClient
         .from('bookings')
         .select('user_id');
 
@@ -533,7 +533,7 @@
       tbody.innerHTML = teachers.map(teacher => {
         const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
 
-        return `
+                return `
           <tr>
             <td><strong>${teacher.full_name}</strong></td>
             <td>${teacher.email}</td>
@@ -612,6 +612,7 @@
       closeModal('assignTeacherModal');
       loadBookings();
       loadStudents();
+      loadTeachers();
     }
 
     async function markComplete(bookingId) {
@@ -687,7 +688,7 @@
 
     async function logout() {
       await supabaseClient.auth.signOut();
-      window.location.href = 'login.html';
+      window.location.href = 'admin-login.html';
     }
 
     checkAdminAuth();
