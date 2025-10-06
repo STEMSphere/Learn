@@ -151,6 +151,7 @@
       color: #999;
     }
 
+    /* Booking Wizard Modal */
     .wizard-modal {
       display: none;
       position: fixed;
@@ -247,6 +248,7 @@
     </div>
   </div>
 
+  <!-- Booking Wizard Modal -->
   <div id="bookingWizard" class="wizard-modal">
     <button onclick="closeBookingWizard()"
       style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
@@ -354,8 +356,8 @@
 
     function closeBookingWizard() {
       document.getElementById('bookingWizard').classList.remove('active');
-    }    
-    
+    }
+
     function renderWizardStep() {
       const c = document.getElementById('wizardContent');
 
@@ -374,7 +376,7 @@
                 style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${age}</button>`).join("")}
           </div>
         `;
-      } else if(wizardStep===2){
+            } else if(wizardStep===2){
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📘 Choose your subject:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
@@ -451,8 +453,6 @@
     function updateTimezone() {
       const selectedTimezone = document.getElementById('timezoneSelect').value;
       wizardData.timezone = selectedTimezone;
-      
-      // If date is already selected, regenerate time slots with new timezone
       const selectedDate = document.getElementById('wizardDate').value;
       if (selectedDate) {
         generateTimeSlots();
@@ -466,7 +466,6 @@
       const date = new Date(selectedDate + 'T00:00:00');
       const dayOfWeek = date.getDay();
 
-      // Check if Sunday (closed)
       if (dayOfWeek === 0) {
         document.getElementById('timeSlotsWizard').innerHTML = 
           '<p style="color:#ff0000; margin-top:1rem;">❌ Sorry, we are closed on Sundays. Please select another day.</p>';
@@ -474,23 +473,17 @@
         return;
       }
 
-      // Generate time slots from 9 AM to 8 PM (30-min intervals)
       const slots = [];
       for (let hour = 9; hour < 20; hour++) {
         for (let min = 0; min < 60; min += 30) {
-          // 24-hour format
           const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-          
-          // 12-hour format for display
           const period = hour >= 12 ? 'PM' : 'AM';
           const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
           const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
-          
           slots.push({ time24: timeStr24, time12: timeStr12 });
         }
       }
 
-      // Filter out slots that are less than 12 hours from now
       const now = new Date();
       const minTime = new Date(now.getTime() + (12 * 60 * 60 * 1000));
       
@@ -532,9 +525,8 @@
         return;
       }
 
-      const confirmBtn = document.getElementById('confirmBtn');
-      confirmBtn.disabled = true;
-      confirmBtn.textContent = '⏳ Booking...';
+      document.getElementById('confirmBtn').disabled = true;
+      document.getElementById('confirmBtn').textContent = '⏳ Booking...';
 
       const { data, error } = await supabaseClient
         .from('bookings')
@@ -555,12 +547,11 @@
 
       if (error) {
         alert('Error booking session: ' + error.message);
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = 'Confirm Booking';
+        document.getElementById('confirmBtn').disabled = false;
+        document.getElementById('confirmBtn').textContent = 'Confirm Booking';
         return;
       }
 
-      // Update user's age group
       await supabaseClient
         .from('profiles')
         .update({ age_group: wizardData.age })
