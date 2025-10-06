@@ -18,7 +18,7 @@
       min-height: 100vh;
     }
     
-    /* Header */
+        /* Header */
     header {
       background: #111;
       padding: 1rem 2rem;
@@ -127,20 +127,11 @@
       border-radius: 8px;
       padding: 1.5rem;
       margin-bottom: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
       transition: all 0.3s;
     }
     .session-card:hover {
       border-color: #ff0000;
       transform: translateX(5px);
-    }
-    .session-info {
-      flex: 1;
-      min-width: 250px;
     }
     .session-info h3 {
       margin: 0 0 0.5rem 0;
@@ -152,12 +143,18 @@
       color: #ddd;
       font-size: 0.95rem;
     }
-    .session-status {
+    .waiting-notice {
+      color: #ff9800;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    .status-badge {
+      display: inline-block;
       padding: 0.5rem 1rem;
       border-radius: 20px;
       font-weight: 600;
       font-size: 0.9rem;
-      white-space: nowrap;
+      margin-top: 0.5rem;
     }
     .status-scheduled {
       background: rgba(0,255,0,0.2);
@@ -168,11 +165,6 @@
       background: rgba(128,128,128,0.2);
       color: #ccc;
       border: 1px solid #666;
-    }
-    .status-cancelled {
-      background: rgba(255,0,0,0.2);
-      color: #ff6b6b;
-      border: 1px solid #ff0000;
     }
 
     /* Empty State */
@@ -186,7 +178,7 @@
       margin: 0.5rem 0;
     }
 
-    /* Loading Spinner */
+    /* Loading */
     .loading {
       text-align: center;
       padding: 3rem;
@@ -194,7 +186,6 @@
       font-size: 1.2em;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       header {
         flex-direction: column;
@@ -205,13 +196,6 @@
       }
       .sessions-section h2 {
         font-size: 1.4em;
-      }
-      .session-card {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .session-status {
-        align-self: flex-start;
       }
     }
   </style>
@@ -235,8 +219,8 @@
       <h1>Welcome, <span id="userName">Student</span>! 👋</h1>
       <p id="userEmail"></p>
       <p id="userAge"></p>
-      <button class="book-btn" onclick="window.location.href='index.html#book'">
-        📅 Book a New Session
+      <button class="book-btn" onclick="window.location.href='index.html'">
+        📅 Book a Trial/New Session
       </button>
     </div>
 
@@ -258,14 +242,12 @@
   </div>
 
   <script>
-    // ✅ YOUR CREDENTIALS
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Check authentication
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -274,7 +256,6 @@
         return;
       }
 
-      // Load user profile
       const { data: profile, error } = await supabaseClient
         .from('profiles')
         .select('*')
@@ -287,7 +268,6 @@
         document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
       }
 
-      // Load bookings
       loadBookings(session.user.id);
     }
 
@@ -310,17 +290,17 @@
       const now = new Date();
       now.setHours(0, 0, 0, 0);
       
-      const upcoming = bookings.filter(b => {
+      const upcoming = bookings?.filter(b => {
         if (!b.session_date) return b.status === 'scheduled';
         const sessionDate = new Date(b.session_date);
         return sessionDate >= now && b.status === 'scheduled';
-      });
+      }) || [];
       
-      const past = bookings.filter(b => {
+      const past = bookings?.filter(b => {
         if (!b.session_date) return false;
         const sessionDate = new Date(b.session_date);
-        return sessionDate < now || b.status === 'completed' || b.status === 'cancelled';
-      });
+        return sessionDate < now || b.status === 'completed';
+      }) || [];
 
       renderBookings('upcomingSessions', upcoming);
       renderBookings('pastSessions', past);
@@ -334,7 +314,7 @@
         container.innerHTML = `
           <div class="empty-state">
             <p>📅 No ${isUpcoming ? 'upcoming' : 'past'} sessions yet.</p>
-            ${isUpcoming ? '<p>Book your first session to get started!</p>' : ''}
+            ${isUpcoming ? '<p>Book your first trial session to get started!</p>' : ''}
           </div>
         `;
         return;
@@ -351,21 +331,20 @@
         
         const timeStr = booking.session_time || 'Time TBD';
         const statusClass = `status-${booking.status || 'scheduled'}`;
-        const statusText = booking.status === 'scheduled' ? '✓ Scheduled' : 
-                          booking.status === 'completed' ? '✓ Completed' : 
-                          '✗ Cancelled';
+        const statusText = booking.status === 'scheduled' ? '✓ Scheduled' : '✓ Completed';
 
         return `
           <div class="session-card">
             <div class="session-info">
-              <h3>${booking.subject || 'Tutoring Session'}</h3>
+              <h3>${booking.subject || 'Trial Session'}</h3>
               <p>📅 ${dateStr}</p>
               <p>⏰ ${timeStr}</p>
               <p>👨‍🏫 Instructor: ${booking.instructor_name || 'STEMSphere Enrollment Advisor'}</p>
               <p>👤 ${booking.age_group || 'N/A'} | ${booking.learning_style || 'N/A'}</p>
               ${booking.help_needed ? `<p>📝 ${booking.help_needed}</p>` : ''}
+              ${!booking.session_date ? '<p class="waiting-notice">⏳ Waiting for admin to schedule your trial session</p>' : ''}
+              <span class="status-badge ${statusClass}">${statusText}</span>
             </div>
-            <div class="session-status ${statusClass}">${statusText}</div>
           </div>
         `;
       }).join('');
@@ -376,7 +355,6 @@
       window.location.href = 'login.html';
     }
 
-    // Initialize
     checkAuth();
   </script>
 </body>
