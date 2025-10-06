@@ -128,6 +128,11 @@
       border: 1px solid #00cc00;
       color: #008800;
     }
+    .warning {
+      background: rgba(255,165,0,0.1);
+      border: 1px solid #ff8800;
+      color: #cc6600;
+    }
     .hidden {
       display: none;
     }
@@ -139,6 +144,7 @@
       color: #ff0000;
       text-decoration: none;
       font-weight: 600;
+      cursor: pointer;
     }
     .back-link a:hover {
       text-decoration: underline;
@@ -183,6 +189,7 @@
 
     <div class="message error" id="errorMsg"></div>
     <div class="message success" id="successMsg"></div>
+    <div class="message warning" id="warningMsg"></div>
 
     <!-- LOGIN FORM -->
     <form id="loginForm">
@@ -292,6 +299,7 @@
       el.textContent = msg;
       el.style.display = 'block';
       document.getElementById('successMsg').style.display = 'none';
+      document.getElementById('warningMsg').style.display = 'none';
     }
 
     function showSuccess(msg) {
@@ -299,14 +307,24 @@
       el.textContent = msg;
       el.style.display = 'block';
       document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('warningMsg').style.display = 'none';
+    }
+
+    function showWarning(msg) {
+      const el = document.getElementById('warningMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'none';
     }
 
     function hideMessages() {
       document.getElementById('errorMsg').style.display = 'none';
       document.getElementById('successMsg').style.display = 'none';
+      document.getElementById('warningMsg').style.display = 'none';
     }
 
-    // LOGIN
+    // LOGIN (with role-based routing)
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
@@ -324,12 +342,34 @@
         showError(error.message);
         document.getElementById('loginBtn').disabled = false;
       } else {
+        // Fetch user profile to check role
+        const { data: profile, error: profileError } = await supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileError || !profile) {
+          showError('Could not load profile. Please contact support.');
+          document.getElementById('loginBtn').disabled = false;
+          return;
+        }
+
+        // Role-based redirect
+        let redirectUrl = 'dashboard.html'; // default for students
+        
+        if (profile.role === 'admin') {
+          redirectUrl = 'admin.html';
+        } else if (profile.role === 'teacher') {
+          redirectUrl = 'teacher-dashboard.html';
+        }
+
         showSuccess('Login successful! Redirecting...');
-        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+        setTimeout(() => window.location.href = redirectUrl, 1000);
       }
     });
 
-    // SIGNUP
+    // SIGNUP (improved messaging)
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
@@ -366,13 +406,18 @@
         });
 
       if (profileError) {
-        showError('Account created but profile setup failed. Please contact support@stemsphere.academy for assistance.');
+        // Account created but profile failed - still show success and tell them to login
+        showWarning('✅ Account created successfully! Please click the "Login" tab above and sign in with your credentials.');
         document.getElementById('signupBtn').disabled = false;
+        // Clear form
+        document.getElementById('signupForm').reset();
         return;
       }
 
-      showSuccess('Account created successfully! Redirecting to dashboard...');
-      setTimeout(() => window.location.href = 'dashboard.html', 2000);
+      // Everything worked perfectly
+      showSuccess('✅ Account created successfully! Please click the "Login" tab above to sign in.');
+      document.getElementById('signupBtn').disabled = false;
+      document.getElementById('signupForm').reset();
     });
 
     // PASSWORD RESET
@@ -400,7 +445,25 @@
     // Check if already logged in
     supabaseClient.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        window.location.href = 'dashboard.html';
+        // Check role and redirect accordingly
+        supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data: profile }) => {
+            if (profile) {
+              if (profile.role === 'admin') {
+                window.location.href = 'admin.html';
+              } else if (profile.role === 'teacher') {
+                window.location.href = 'teacher-dashboard.html';
+              } else {
+                window.location.href = 'dashboard.html';
+              }
+            } else {
+              window.location.href = 'dashboard.html';
+            }
+          });
       }
     });
   </script>
