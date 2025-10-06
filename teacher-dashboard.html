@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Dashboard | STEMSphere Academy</title>
   
-  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
-  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -18,14 +17,13 @@
       min-height: 100vh;
     }
     
-    /* Header */
     header {
       background: #fff;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 3px solid #ff0000;
+      border-bottom: 3px solid #007bff;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       flex-wrap: wrap;
       gap: 1rem;
@@ -61,20 +59,14 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
-      transition: all 0.3s;
-    }
-    .logout-btn:hover {
-      background: #cc0000;
     }
 
-    /* Container */
     .teacher-container {
       max-width: 1200px;
       margin: 2rem auto;
       padding: 0 1rem;
     }
 
-    /* Welcome Card */
     .welcome-card {
       background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
       color: #fff;
@@ -87,12 +79,7 @@
       margin: 0 0 0.5rem 0;
       font-size: 2em;
     }
-    .welcome-card p {
-      margin: 0.3rem 0;
-      font-size: 1em;
-    }
 
-    /* Stats Cards */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -117,7 +104,6 @@
       color: #007bff;
     }
 
-    /* Section Title */
     .section-title {
       font-size: 1.8em;
       color: #000;
@@ -126,7 +112,6 @@
       margin-bottom: 1.5rem;
     }
 
-    /* Student Cards */
     .students-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -138,11 +123,6 @@
       border-radius: 8px;
       padding: 1.5rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transition: all 0.3s;
-    }
-    .student-card:hover {
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      transform: translateY(-3px);
     }
     .student-card h3 {
       color: #007bff;
@@ -154,15 +134,12 @@
       margin: 0.3rem 0;
     }
 
-    /* Sessions Table */
-    .sessions-section {
-      margin-bottom: 3rem;
-    }
     .data-table {
       background: #fff;
       border-radius: 8px;
       overflow-x: auto;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 3rem;
     }
     table {
       width: 100%;
@@ -180,20 +157,15 @@
       padding: 1rem;
       border-bottom: 1px solid #eee;
     }
-    tr:hover {
-      background: #f9f9f9;
-    }
 
-    /* Status Badge */
     .status-badge {
       padding: 0.3rem 0.8rem;
       border-radius: 20px;
       font-size: 0.85em;
       font-weight: 600;
-      white-space: nowrap;
     }
     .status-scheduled {
-      background: rgba(0,255,0,0.2);
+      background: rgba(0,200,0,0.2);
       color: #008800;
     }
     .status-completed {
@@ -201,7 +173,6 @@
       color: #666;
     }
 
-    /* Action Button */
     .btn-complete {
       background: #28a745;
       color: #fff;
@@ -211,42 +182,21 @@
       cursor: pointer;
       font-size: 0.85em;
       font-weight: 600;
-      transition: all 0.3s;
-    }
-    .btn-complete:hover {
-      background: #1e7e34;
     }
 
-    /* Loading */
     .loading {
       text-align: center;
       padding: 3rem;
       color: #666;
     }
-
-    /* Empty State */
     .empty-state {
       text-align: center;
       padding: 3rem;
       color: #999;
     }
-
-    @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        text-align: center;
-      }
-      .welcome-card h1 {
-        font-size: 1.5em;
-      }
-      .students-grid {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="brand">
       <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
@@ -256,15 +206,12 @@
     <button class="logout-btn" onclick="logout()">Logout</button>
   </header>
 
-  <!-- Teacher Container -->
   <div class="teacher-container">
-    <!-- Welcome Card -->
     <div class="welcome-card">
       <h1>Welcome, <span id="teacherName">Teacher</span>! 👨‍🏫</h1>
       <p id="teacherEmail"></p>
     </div>
 
-    <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card">
         <h3>My Students</h3>
@@ -280,62 +227,52 @@
       </div>
     </div>
 
-    <!-- My Students -->
     <h2 class="section-title">👥 My Students</h2>
     <div class="students-grid" id="studentsGrid">
       <div class="loading">Loading your students...</div>
     </div>
 
-    <!-- Upcoming Sessions -->
-    <div class="sessions-section">
-      <h2 class="section-title">📚 Upcoming Sessions</h2>
-      <div class="data-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Subject</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Learning Style</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="upcomingSessionsBody">
-            <tr><td colspan="7" class="loading">Loading sessions...</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <h2 class="section-title">📚 Upcoming Sessions</h2>
+    <div class="data-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="upcomingSessionsBody">
+          <tr><td colspan="6" class="loading">Loading sessions...</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Past Sessions -->
-    <div class="sessions-section">
-      <h2 class="section-title">✅ Past Sessions</h2>
-      <div class="data-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Student</th>
-              <th>Subject</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="pastSessionsBody">
-            <tr><td colspan="5" class="loading">Loading...</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <h2 class="section-title">✅ Past Sessions</h2>
+    <div class="data-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="pastSessionsBody">
+          <tr><td colspan="5" class="loading">Loading...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
   <script>
-    // ✅ YOUR CREDENTIALS
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
-    
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
