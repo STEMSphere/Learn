@@ -339,7 +339,6 @@
     </div>
   </div>
 
-  <!-- Assign Teacher Modal -->
   <div id="assignTeacherModal" class="modal">
     <div class="modal-content">
       <h2>Assign Teacher</h2>
@@ -356,7 +355,6 @@
     </div>
   </div>
 
-  <!-- Add Teacher Modal -->
   <div id="addTeacherModal" class="modal">
     <div class="modal-content">
       <h2>Add New Teacher</h2>
@@ -382,8 +380,7 @@
       </div>
     </div>
   </div>
-
-  <script>
+    <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -445,11 +442,8 @@
     async function loadBookings() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
-        .select(`
-          *,
-          profiles!bookings_user_id_fkey(full_name, email)
-        `)
-        .order('booking_date', { ascending: false });
+        .select('*')
+        .order('session_date', { ascending: false });
 
       const tbody = document.getElementById('bookingsBody');
 
@@ -458,20 +452,36 @@
         return;
       }
 
-      tbody.innerHTML = bookings.map(booking => `
-        <tr>
-          <td><strong>${booking.profiles?.full_name || 'Unknown'}</strong><br><small>${booking.profiles?.email}</small></td>
-          <td>${booking.subject || 'N/A'}</td>
-          <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
-          <td>${booking.session_time || 'TBD'}</td>
-          <td>${booking.instructor_name || 'Not assigned'}</td>
-          <td><span class="status-badge status-${booking.status}">${booking.status}</span></td>
-          <td>
-            <button class="btn-small btn-assign" onclick="showAssignTeacherModal('${booking.id}', '${booking.user_id}')">Assign</button>
-            ${booking.status === 'scheduled' ? `<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Complete</button>` : ''}
-          </td>
-        </tr>
-      `).join('');
+      const userIds = [...new Set(bookings.map(b => b.user_id))];
+
+      const { data: profiles } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', userIds);
+
+      const profileMap = {};
+      profiles?.forEach(p => {
+        profileMap[p.id] = p;
+      });
+
+      tbody.innerHTML = bookings.map(booking => {
+        const profile = profileMap[booking.user_id] || {};
+        
+        return `
+          <tr>
+            <td><strong>${profile.full_name || 'Unknown'}</strong><br><small>${profile.email || 'N/A'}</small></td>
+            <td>${booking.subject || 'N/A'}</td>
+            <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
+            <td>${booking.session_time || 'TBD'}</td>
+            <td>${booking.instructor_name || 'Not assigned'}</td>
+            <td><span class="status-badge status-${booking.status}">${booking.status}</span></td>
+            <td>
+              <button class="btn-small btn-assign" onclick="showAssignTeacherModal('${booking.id}', '${booking.user_id}')">Assign</button>
+              ${booking.status === 'scheduled' ? `<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Complete</button>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     async function loadStudents() {
@@ -533,7 +543,7 @@
       tbody.innerHTML = teachers.map(teacher => {
         const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
 
-                return `
+        return `
           <tr>
             <td><strong>${teacher.full_name}</strong></td>
             <td>${teacher.email}</td>
