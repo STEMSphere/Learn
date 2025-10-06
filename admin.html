@@ -380,7 +380,8 @@
       </div>
     </div>
   </div>
-    <script>
+
+  <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -440,10 +441,15 @@
     }
 
     async function loadBookings() {
+      console.log('🔄 Loading bookings...');
+      
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
         .select('*')
         .order('session_date', { ascending: false });
+
+      console.log('📦 Bookings fetched:', bookings);
+      console.log('❌ Bookings error:', error);
 
       const tbody = document.getElementById('bookingsBody');
 
@@ -452,26 +458,38 @@
         return;
       }
 
-      const userIds = [...new Set(bookings.map(b => b.user_id))];
+      // Get unique user IDs
+      const userIds = [...new Set(bookings.map(b => b.user_id).filter(id => id))];
+      console.log('👥 User IDs to fetch:', userIds);
 
-      const { data: profiles } = await supabaseClient
+      // Fetch profiles for all user IDs
+      const { data: profiles, error: profileError } = await supabaseClient
         .from('profiles')
         .select('id, full_name, email')
         .in('id', userIds);
 
+      console.log('👤 Profiles fetched:', profiles);
+      console.log('❌ Profile error:', profileError);
+
+      // Create a map for easy lookup
       const profileMap = {};
       profiles?.forEach(p => {
         profileMap[p.id] = p;
       });
 
+      console.log('🗺️ Profile map:', profileMap);
+
       tbody.innerHTML = bookings.map(booking => {
         const profile = profileMap[booking.user_id] || {};
+        
+        console.log(`Booking ${booking.id}: user_id=${booking.user_id}, profile=`, profile);
         
         return `
           <tr>
             <td>
-              <strong>${profile.full_name || 'Unknown Student'}</strong><br>
-              <small>${profile.email || 'No email'}</small><br>
+              <strong>${profile.full_name || '⚠️ Name not found'}</strong><br>
+              <small>${profile.email || '⚠️ Email not found'}</small><br>
+              <small style="color:#666;">User ID: ${booking.user_id || 'N/A'}</small><br>
               <small style="color:#666;">Age: ${booking.age_group || 'N/A'}</small>
             </td>
             <td>
@@ -572,7 +590,7 @@
       document.getElementById(tabName + 'Tab').classList.add('active');
     }
 
-    function showAssignTeacherModal(bookingId, studentId) {
+        function showAssignTeacherModal(bookingId, studentId) {
       currentBookingId = bookingId;
       currentStudentId = studentId;
 
@@ -630,26 +648,35 @@
 
       alert('✅ Teacher assigned successfully!');
       closeModal('assignTeacherModal');
-      loadBookings();
-      loadStudents();
-      loadTeachers();
+      await loadBookings();
+      await loadStudents();
+      await loadTeachers();
     }
 
     async function markComplete(bookingId) {
       if (!confirm('Mark this session as completed?')) return;
 
-      const { error } = await supabaseClient
+      console.log('🎯 Marking booking as complete:', bookingId);
+
+      const { data, error } = await supabaseClient
         .from('bookings')
         .update({ status: 'completed' })
-        .eq('id', bookingId);
+        .eq('id', bookingId)
+        .select();
+
+      console.log('✅ Update result:', data);
+      console.log('❌ Update error:', error);
 
       if (error) {
         alert('Error: ' + error.message);
-      } else {
-        alert('✅ Session marked as completed!');
-        loadStats();
-        loadBookings();
+        return;
       }
+
+      alert('✅ Session marked as completed!');
+      
+      // Force reload everything
+      await loadStats();
+      await loadBookings();
     }
 
     function showAddTeacherModal() {
@@ -698,8 +725,8 @@
 
       alert('✅ Teacher added successfully!');
       closeModal('addTeacherModal');
-      loadStats();
-      loadTeachers();
+      await loadStats();
+      await loadTeachers();
     }
 
     function closeModal(modalId) {
