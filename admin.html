@@ -514,7 +514,7 @@
     <div id="teachersTab" class="tab-content">
       <div class="section-header">
         <div class="info-box" style="flex:1; margin:0;">
-          <p>👨‍🏫 Manage teacher accounts and their subjects</p>
+          <p>👨‍🏫 Manage teacher accounts</p>
         </div>
         <button class="btn-add" onclick="openAddTeacherModal()">+ Add Teacher</button>
       </div>
@@ -591,7 +591,7 @@
     </div>
   </div>
 
-    <script>
+   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhvcn10Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -852,7 +852,6 @@
       document.getElementById(tabName + 'Tab').classList.add('active');
     }
 
-    // ===== MARK SESSION COMPLETE =====
     async function markComplete(bookingId) {
       if (!confirm('Mark this session as completed?')) return;
 
@@ -871,7 +870,6 @@
       }
     }
 
-    // ===== ASSIGN TEACHER TO SESSION MODAL =====
     async function openAssignModal(bookingId, subject) {
       currentBookingId = bookingId;
       selectedTeacherId = null;
@@ -884,7 +882,7 @@
         .from('profiles')
         .select('*')
         .eq('role', 'teacher')
-        .order('full_name', { ascending: true});
+        .order('full_name', { ascending: true });
 
       allTeachers = teachers || [];
 
@@ -983,7 +981,6 @@
       document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
 
-    // ===== ADD/EDIT TEACHER MODAL =====
     function openAddTeacherModal() {
       editingTeacherId = null;
       document.getElementById('teacherModalTitle').textContent = 'Add New Teacher';
@@ -1044,7 +1041,7 @@
       document.getElementById('saveTeacherBtn').textContent = editingTeacherId ? 'Updating...' : 'Creating...';
 
       if (editingTeacherId) {
-        // UPDATE EXISTING TEACHER (no subjects column)
+        // UPDATE EXISTING TEACHER
         const { error: profileError } = await supabaseClient
           .from('profiles')
           .update({
@@ -1073,7 +1070,6 @@
           return;
         }
 
-        // Step 1: Create auth user
         const { data: authData, error: authError } = await supabaseClient.auth.signUp({
           email: email,
           password: password,
@@ -1086,7 +1082,6 @@
           return;
         }
 
-        // Step 2: Create profile (no subjects column)
         const { error: profileError } = await supabaseClient
           .from('profiles')
           .insert({
@@ -1114,14 +1109,14 @@
       document.getElementById('saveTeacherBtn').textContent = 'Save Teacher';
     });
 
-        async function resetTeacherPassword(teacherId, email) {
+    async function resetTeacherPassword(teacherId, email) {
       if (!confirm('Send password reset email to ' + email + '?')) return;
 
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
         redirectTo: window.location.origin + '/reset-password.html'
       });
 
-      if (error) {
+            if (error) {
         alert('Could not send password reset email: ' + error.message + '\n\nPlease use the Supabase dashboard to manually reset this user\'s password, or have them use "Forgot Password" on the login page.');
       } else {
         alert('✉️ Password reset email sent to ' + email);
