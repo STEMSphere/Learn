@@ -372,7 +372,7 @@
           <p style="padding:0 20px; color:#000;">Secure your future with a private consultation. Let's start:</p>
           <button onclick="wizardStep=1; renderWizardStep()" style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Begin</button>
         `;
-           } else if(wizardStep===1){
+      } else if(wizardStep===1){
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">🧒 Your age group:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
@@ -381,7 +381,7 @@
                 style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${age}</button>`).join("")}
           </div>
         `;
-      } else if(wizardStep===2){
+            } else if(wizardStep===2){
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📘 Choose your subject:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
@@ -532,7 +532,7 @@
       document.getElementById('confirmBtn').disabled = true;
       document.getElementById('confirmBtn').textContent = '⏳ Creating video room...';
 
-      // Create Daily.co room
+      // Create Daily.co room with FORCED PUBLIC setting
       const roomName = `stemsphere-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       try {
@@ -544,26 +544,30 @@
           },
           body: JSON.stringify({
             name: roomName,
-            privacy: 'public',
+            privacy: 'public',  // FORCES public - overrides account settings!
             properties: {
               enable_screenshare: true,
               enable_chat: true,
               start_video_off: false,
               start_audio_off: false,
-              max_participants: 10
+              max_participants: 10,
+              enable_knocking: false,  // No waiting room
+              enable_prejoin_ui: true   // Shows preview before joining
             }
           })
         });
 
         if (!dailyResponse.ok) {
           const errorData = await dailyResponse.json();
-          throw new Error(errorData.error || 'Failed to create video room');
+          console.error('Daily.co error:', errorData);
+          throw new Error(errorData.info || errorData.error || 'Failed to create video room');
         }
 
         const roomData = await dailyResponse.json();
         const videoLink = roomData.url;
 
         console.log('✅ Video room created:', videoLink);
+        console.log('Room privacy:', roomData.privacy);
 
         // Create booking with video link
         const { data, error } = await supabaseClient
@@ -595,12 +599,12 @@
           .update({ age_group: wizardData.age })
           .eq('id', currentUserId);
 
-        alert('✅ Trial session booked successfully! Your private video room has been created.');
+        alert('✅ Trial session booked successfully! Your video room is ready.');
         closeBookingWizard();
         loadSessions();
       } catch (error) {
         console.error('Error:', error);
-        alert('❌ Failed to create video room: ' + error.message);
+        alert('❌ Failed to create video room: ' + error.message + '\n\nPlease contact support.');
         document.getElementById('confirmBtn').disabled = false;
         document.getElementById('confirmBtn').textContent = 'Confirm Booking';
       }
