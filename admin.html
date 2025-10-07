@@ -650,7 +650,7 @@
   </div>
 
 
-  <script>
+   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -680,11 +680,12 @@
 
       if (!profile || profile.role !== 'admin') {
         alert('Access denied. Admins only.');
+        await supabaseClient.auth.signOut();
         window.location.href = 'admin-login.html';
         return;
       }
 
-           loadStats();
+      loadStats();
       loadPendingSessions();
       loadBookings();
       loadStudents();
@@ -732,7 +733,6 @@
       tbody.innerHTML = bookings.map(booking => {
         const profile = profileMap[booking.user_id] || {};
         
-        // Display help_needed notes
         const helpNotes = booking.help_needed ? `
           <div class="help-notes">
             <strong>Areas for Help:</strong>
@@ -794,7 +794,6 @@
         const profile = profileMap[booking.user_id] || {};
         const teacher = profileMap[booking.assigned_teacher_id] || {};
         
-        // Display help_needed notes
         const helpNotes = booking.help_needed ? `
           <div class="help-notes">
             <strong>Areas for Help:</strong>
@@ -1132,9 +1131,8 @@
       await loadTeachers();
     }
 
-    // TEACHER EDITING FUNCTIONS (WITH ENHANCED DEBUG LOGGING)
+    // TEACHER EDITING FUNCTIONS (FIXED VERSION)
     async function openEditTeacherModal(teacherId) {
-      // Fetch fresh data from database
       const { data: teacher, error } = await supabaseClient
         .from('profiles')
         .select('*')
@@ -1178,7 +1176,7 @@
         subjects 
       });
 
-      // First, let's check what's currently in the database
+           // Check current data
       const { data: currentData } = await supabaseClient
         .from('profiles')
         .select('*')
@@ -1187,8 +1185,8 @@
       
       console.log('📊 Current data in database:', currentData);
 
-      // Update profile information
-      const { data, error } = await supabaseClient
+      // Perform the update WITHOUT .select() first
+      const { error: updateError } = await supabaseClient
         .from('profiles')
         .update({
           full_name: name,
@@ -1196,27 +1194,33 @@
           phone: phone || null,
           subjects: subjects || null
         })
-        .eq('id', teacherId)
-        .select();
+        .eq('id', teacherId);
 
-      console.log('✅ Update response data:', data);
-      console.log('❌ Update error:', error);
+      console.log('❌ Update error:', updateError);
 
-      if (error) {
-        alert('Error updating teacher: ' + error.message);
-        console.error('Full error object:', error);
+      if (updateError) {
+        alert('Error updating teacher: ' + updateError.message);
+        console.error('Full error object:', updateError);
         return;
       }
 
-      if (data && data.length > 0) {
-        console.log('✅ Updated successfully! New data:', data[0]);
-        alert('✅ Teacher information updated successfully!');
-        closeModal('editTeacherModal');
-        await loadTeachers();
-      } else {
-        alert('⚠️ Update completed but no data returned. Check console logs.');
-        console.warn('No data returned from update');
+      // Now fetch the updated data to verify
+      const { data: updatedData, error: fetchError } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', teacherId)
+        .single();
+
+      console.log('✅ Updated data fetched:', updatedData);
+
+      if (fetchError) {
+        alert('Update succeeded but could not verify: ' + fetchError.message);
+        return;
       }
+
+      alert('✅ Teacher information updated successfully!');
+      closeModal('editTeacherModal');
+      await loadTeachers();
     }
 
     async function openResetPasswordModal(teacherId) {
@@ -1281,7 +1285,6 @@
     }
 
     async function assignTeacherToStudent(studentId) {
-      // Similar modal for student-teacher assignments
       alert('Student-teacher assignment feature coming soon!');
     }
 
