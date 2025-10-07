@@ -549,6 +549,7 @@
       <div class="form-group">
         <label>Email</label>
         <input type="email" id="editTeacherEmail" required>
+        <div class="help-text">Note: Email changes may require teacher to re-login</div>
       </div>
       
       <div class="form-group">
@@ -559,6 +560,7 @@
       <div class="form-group">
         <label>Subjects (comma separated)</label>
         <input type="text" id="editTeacherSubjects" placeholder="Math, Science, English">
+        <div class="help-text">Example: Mathematics, Physics, Chemistry</div>
       </div>
 
       <div style="display:flex; gap:1rem; margin-top:1.5rem;">
@@ -598,7 +600,7 @@
   </div>
 
 
-  <script>
+    <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -661,7 +663,7 @@
 
       const tbody = document.getElementById('pendingBody');
 
-            if (error || !bookings || bookings.length === 0) {
+      if (error || !bookings || bookings.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">🎉 No pending sessions! All sessions have been assigned.</td></tr>';
         return;
       }
@@ -780,7 +782,7 @@
       }).join('');
     }
 
-    async function loadStudents() {
+        async function loadStudents() {
       const { data: students, error } = await supabaseClient
         .from('profiles')
         .select('*')
@@ -1007,14 +1009,22 @@
       await loadPendingSessions();
     }
 
-    // TEACHER EDITING FUNCTIONS
+    // TEACHER EDITING FUNCTIONS (FIXED VERSION)
     async function openEditTeacherModal(teacherId) {
-      const teacher = allTeachers.find(t => t.id === teacherId);
+      // Fetch fresh data from database
+      const { data: teacher, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', teacherId)
+        .single();
       
-      if (!teacher) {
-        alert('Teacher not found');
+      if (error || !teacher) {
+        alert('Teacher not found: ' + (error?.message || 'Unknown error'));
+        console.error('Error loading teacher:', error);
         return;
       }
+
+      console.log('✅ Teacher data loaded:', teacher); // Debug log
 
       document.getElementById('editTeacherId').value = teacher.id;
       document.getElementById('editTeacherName').value = teacher.full_name || '';
@@ -1027,33 +1037,49 @@
 
     async function updateTeacher() {
       const teacherId = document.getElementById('editTeacherId').value;
-      const name = document.getElementById('editTeacherName').value;
-      const email = document.getElementById('editTeacherEmail').value;
-      const phone = document.getElementById('editTeacherPhone').value;
-      const subjects = document.getElementById('editTeacherSubjects').value;
+      const name = document.getElementById('editTeacherName').value.trim();
+      const email = document.getElementById('editTeacherEmail').value.trim();
+      const phone = document.getElementById('editTeacherPhone').value.trim();
+      const subjects = document.getElementById('editTeacherSubjects').value.trim();
 
       if (!name || !email) {
         alert('Name and email are required');
         return;
       }
 
-      const { error } = await supabaseClient
+      console.log('📝 Updating teacher with data:', { 
+        teacherId, 
+        name, 
+        email, 
+        phone, 
+        subjects 
+      }); // Debug log
+
+      // Update profile information
+      const { data, error } = await supabaseClient
         .from('profiles')
         .update({
           full_name: name,
           email: email,
-          phone: phone,
-          subjects: subjects
+          phone: phone || null,
+          subjects: subjects || null
         })
-        .eq('id', teacherId);
+        .eq('id', teacherId)
+        .select();
+
+      console.log('✅ Update result:', data); // Debug log
+      console.log('❌ Update error:', error); // Debug log
 
       if (error) {
         alert('Error updating teacher: ' + error.message);
+        console.error('Update error details:', error);
         return;
       }
 
       alert('✅ Teacher information updated successfully!');
       closeModal('editTeacherModal');
+      
+      // Reload teachers to reflect changes
       await loadTeachers();
     }
 
@@ -1078,6 +1104,7 @@
       const newPassword = document.getElementById('newPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       const teacherEmail = document.getElementById('resetTeacherEmail').value;
+      const teacherId = document.getElementById('resetTeacherId').value;
 
       if (!newPassword || !confirmPassword) {
         alert('Please fill in both password fields');
@@ -1098,25 +1125,18 @@
         return;
       }
 
-      // Update password using Supabase Admin API
-      const { error } = await supabaseClient.auth.admin.updateUserById(
-        document.getElementById('resetTeacherId').value,
-        { password: newPassword }
-      );
+      // Send password reset email
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(teacherEmail, {
+        redirectTo: window.location.origin + '/reset-password.html'
+      });
 
       if (error) {
-        // If admin API doesn't work, try alternative method
-        alert('Note: Password reset initiated. The teacher will receive a password reset email at: ' + teacherEmail);
-        
-        const { error: resetError } = await supabaseClient.auth.resetPasswordForEmail(teacherEmail);
-        
-        if (resetError) {
-          alert('Error: ' + resetError.message);
-          return;
-        }
+        alert('Error sending reset email: ' + error.message);
+        console.error('Password reset error:', error);
+        return;
       }
 
-      alert('✅ Password has been reset successfully! The teacher can now login with the new password.');
+      alert('✅ Password reset email sent to ' + teacherEmail + '\n\nThe teacher will receive an email with instructions to reset their password.');
       closeModal('resetPasswordModal');
     }
 
@@ -1129,7 +1149,7 @@
       alert('Student-teacher assignment feature coming soon!');
     }
 
-        async function logout() {
+    async function logout() {
       await supabaseClient.auth.signOut();
       window.location.href = 'admin-login.html';
     }
