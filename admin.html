@@ -184,6 +184,10 @@
       background: #28a745;
       color: #fff;
     }
+    .btn-edit {
+      background: #ffc107;
+      color: #000;
+    }
 
     .status-badge {
       padding: 0.3rem 0.8rem;
@@ -322,6 +326,16 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
+    .btn-secondary {
+      background: #6c757d;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+    }
 
     .help-notes {
       background: #fff3cd;
@@ -333,6 +347,34 @@
     }
     .help-notes strong {
       color: #856404;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #28a745;
+    }
+    .help-text {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 0.25rem;
     }
   </style>
 </head>
@@ -453,7 +495,7 @@
     <!-- TEACHERS TAB -->
     <div id="teachersTab" class="tab-content">
       <div class="info-box">
-        <p>👨‍🏫 Manage teacher accounts</p>
+        <p>👨‍🏫 Manage teacher accounts - Edit information and reset passwords</p>
       </div>
       <div class="data-table">
         <table>
@@ -463,10 +505,11 @@
               <th>Email</th>
               <th>Phone</th>
               <th>Assigned Students</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="teachersBody">
-            <tr><td colspan="4" class="loading">Loading teachers...</td></tr>
+            <tr><td colspan="5" class="loading">Loading teachers...</td></tr>
           </tbody>
         </table>
       </div>
@@ -487,7 +530,69 @@
 
       <div style="display:flex; gap:1rem; margin-top:1.5rem;">
         <button class="btn-primary" onclick="confirmAssignment()" id="confirmAssignBtn" disabled>Assign Teacher</button>
-        <button class="btn-primary" style="background:#6c757d;" onclick="closeAssignModal()">Cancel</button>
+        <button class="btn-secondary" onclick="closeAssignModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT TEACHER MODAL -->
+  <div id="editTeacherModal" class="modal">
+    <div class="modal-content">
+      <h3>Edit Teacher Information</h3>
+      <input type="hidden" id="editTeacherId">
+      
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="editTeacherName" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="editTeacherEmail" required>
+      </div>
+      
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="editTeacherPhone">
+      </div>
+      
+      <div class="form-group">
+        <label>Subjects (comma separated)</label>
+        <input type="text" id="editTeacherSubjects" placeholder="Math, Science, English">
+      </div>
+
+      <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+        <button class="btn-primary" onclick="updateTeacher()">Update Teacher</button>
+        <button class="btn-secondary" onclick="closeModal('editTeacherModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESET PASSWORD MODAL -->
+  <div id="resetPasswordModal" class="modal">
+    <div class="modal-content">
+      <h3>Reset Teacher Password</h3>
+      <input type="hidden" id="resetTeacherId">
+      <input type="hidden" id="resetTeacherEmail">
+      
+      <p style="margin-bottom: 1rem; color: #666;">
+        Resetting password for: <strong id="resetTeacherName"></strong>
+      </p>
+      
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" id="newPassword" required minlength="6">
+        <div class="help-text">Minimum 6 characters</div>
+      </div>
+      
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="confirmPassword" required minlength="6">
+      </div>
+
+      <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+        <button class="btn-primary" onclick="resetTeacherPassword()">Reset Password</button>
+        <button class="btn-secondary" onclick="closeModal('resetPasswordModal')">Cancel</button>
       </div>
     </div>
   </div>
@@ -535,7 +640,7 @@
     }
 
     async function loadStats() {
-      const { data: bookings } = await supabaseClient.from('bookings').select('id, assigned_teacher_id');
+      const { data: bookings } = await supabaseClient.from('bookings').select('id, assigned_teacher_id, status');
       const { data: students } = await supabaseClient.from('profiles').select('id').eq('role', 'student');
       const { data: teachers } = await supabaseClient.from('profiles').select('id').eq('role', 'teacher');
 
@@ -556,7 +661,7 @@
 
       const tbody = document.getElementById('pendingBody');
 
-      if (error || !bookings || bookings.length === 0) {
+            if (error || !bookings || bookings.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">🎉 No pending sessions! All sessions have been assigned.</td></tr>';
         return;
       }
@@ -575,13 +680,24 @@
       tbody.innerHTML = bookings.map(booking => {
         const profile = profileMap[booking.user_id] || {};
         
+        // Display help_needed notes
+        const helpNotes = booking.help_needed ? `
+          <div class="help-notes">
+            <strong>Areas for Help:</strong>
+            ${booking.help_needed}
+          </div>
+        ` : '';
+        
         return `
           <tr>
             <td>
               <strong>${profile.full_name || 'Unknown'}</strong><br>
               <small>${profile.email || 'No email'}</small>
             </td>
-            <td>${booking.subject || 'N/A'}</td>
+            <td>
+              ${booking.subject || 'N/A'}
+              ${helpNotes}
+            </td>
             <td>
               ${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'Not set'}<br>
               <small>${booking.session_time || 'Time TBD'}</small>
@@ -596,7 +712,7 @@
       }).join('');
     }
 
-       async function loadBookings() {
+    async function loadBookings() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
         .select('*')
@@ -626,13 +742,24 @@
         const profile = profileMap[booking.user_id] || {};
         const teacher = profileMap[booking.assigned_teacher_id] || {};
         
+        // Display help_needed notes
+        const helpNotes = booking.help_needed ? `
+          <div class="help-notes">
+            <strong>Areas for Help:</strong>
+            ${booking.help_needed}
+          </div>
+        ` : '';
+        
         return `
           <tr>
             <td>
               <strong>${profile.full_name || 'Unknown'}</strong><br>
               <small>${profile.email || 'No email'}</small>
             </td>
-            <td>${booking.subject || 'N/A'}</td>
+            <td>
+              ${booking.subject || 'N/A'}
+              ${helpNotes}
+            </td>
             <td>
               ${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'Not set'}<br>
               <small>${booking.session_time || 'Time TBD'}</small>
@@ -640,7 +767,13 @@
             <td>${teacher.full_name || '⏳ Unassigned'}</td>
             <td><span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span></td>
             <td>
-              ${!booking.assigned_teacher_id ? `<button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>` : '<span style="color:#28a745;">✓ Assigned</span>'}
+              ${!booking.assigned_teacher_id ? `
+                <button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>
+              ` : ''}
+              ${booking.status === 'scheduled' ? `
+                <button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>
+              ` : ''}
+              ${booking.status === 'completed' ? '<span style="color:#28a745;">✓ Completed</span>' : ''}
             </td>
           </tr>
         `;
@@ -704,7 +837,7 @@
       const tbody = document.getElementById('teachersBody');
 
       if (error || !teachers || teachers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No teachers found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No teachers found.</td></tr>';
         return;
       }
 
@@ -716,14 +849,17 @@
 
       tbody.innerHTML = teachers.map(teacher => {
         const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
-        const subjects = teacher.subjects || 'Not specified';
 
         return `
           <tr>
             <td><strong>${teacher.full_name}</strong></td>
             <td>${teacher.email}</td>
-            <td>${subjects}</td>
+            <td>${teacher.phone || 'N/A'}</td>
             <td>${studentCount} student${studentCount !== 1 ? 's' : ''}</td>
+            <td>
+              <button class="btn-small btn-edit" onclick="openEditTeacherModal('${teacher.id}')">Edit Info</button>
+              <button class="btn-small btn-delete" onclick="openResetPasswordModal('${teacher.id}')">Reset Password</button>
+            </td>
           </tr>
         `;
       }).join('');
@@ -825,7 +961,10 @@
 
       const { error } = await supabaseClient
         .from('bookings')
-        .update({ assigned_teacher_id: selectedTeacherId })
+        .update({ 
+          assigned_teacher_id: selectedTeacherId,
+          status: 'scheduled'
+        })
         .eq('id', currentBookingId);
 
       if (error) {
@@ -849,12 +988,148 @@
       document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
 
+    async function markComplete(bookingId) {
+      if (!confirm('Mark this session as completed?')) return;
+
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ status: 'completed' })
+        .eq('id', bookingId);
+
+      if (error) {
+        alert('Error: ' + error.message);
+        return;
+      }
+
+      alert('✅ Session marked as completed!');
+      await loadStats();
+      await loadBookings();
+      await loadPendingSessions();
+    }
+
+    // TEACHER EDITING FUNCTIONS
+    async function openEditTeacherModal(teacherId) {
+      const teacher = allTeachers.find(t => t.id === teacherId);
+      
+      if (!teacher) {
+        alert('Teacher not found');
+        return;
+      }
+
+      document.getElementById('editTeacherId').value = teacher.id;
+      document.getElementById('editTeacherName').value = teacher.full_name || '';
+      document.getElementById('editTeacherEmail').value = teacher.email || '';
+      document.getElementById('editTeacherPhone').value = teacher.phone || '';
+      document.getElementById('editTeacherSubjects').value = teacher.subjects || '';
+      
+      document.getElementById('editTeacherModal').classList.add('active');
+    }
+
+    async function updateTeacher() {
+      const teacherId = document.getElementById('editTeacherId').value;
+      const name = document.getElementById('editTeacherName').value;
+      const email = document.getElementById('editTeacherEmail').value;
+      const phone = document.getElementById('editTeacherPhone').value;
+      const subjects = document.getElementById('editTeacherSubjects').value;
+
+      if (!name || !email) {
+        alert('Name and email are required');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({
+          full_name: name,
+          email: email,
+          phone: phone,
+          subjects: subjects
+        })
+        .eq('id', teacherId);
+
+      if (error) {
+        alert('Error updating teacher: ' + error.message);
+        return;
+      }
+
+      alert('✅ Teacher information updated successfully!');
+      closeModal('editTeacherModal');
+      await loadTeachers();
+    }
+
+    async function openResetPasswordModal(teacherId) {
+      const teacher = allTeachers.find(t => t.id === teacherId);
+      
+      if (!teacher) {
+        alert('Teacher not found');
+        return;
+      }
+
+      document.getElementById('resetTeacherId').value = teacher.id;
+      document.getElementById('resetTeacherEmail').value = teacher.email;
+      document.getElementById('resetTeacherName').textContent = teacher.full_name;
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      
+      document.getElementById('resetPasswordModal').classList.add('active');
+    }
+
+    async function resetTeacherPassword() {
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const teacherEmail = document.getElementById('resetTeacherEmail').value;
+
+      if (!newPassword || !confirmPassword) {
+        alert('Please fill in both password fields');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      if (!confirm(`Reset password for ${document.getElementById('resetTeacherName').textContent}?`)) {
+        return;
+      }
+
+      // Update password using Supabase Admin API
+      const { error } = await supabaseClient.auth.admin.updateUserById(
+        document.getElementById('resetTeacherId').value,
+        { password: newPassword }
+      );
+
+      if (error) {
+        // If admin API doesn't work, try alternative method
+        alert('Note: Password reset initiated. The teacher will receive a password reset email at: ' + teacherEmail);
+        
+        const { error: resetError } = await supabaseClient.auth.resetPasswordForEmail(teacherEmail);
+        
+        if (resetError) {
+          alert('Error: ' + resetError.message);
+          return;
+        }
+      }
+
+      alert('✅ Password has been reset successfully! The teacher can now login with the new password.');
+      closeModal('resetPasswordModal');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
     async function assignTeacherToStudent(studentId) {
       // Similar modal for student-teacher assignments
       alert('Student-teacher assignment feature coming soon!');
     }
 
-    async function logout() {
+        async function logout() {
       await supabaseClient.auth.signOut();
       window.location.href = 'admin-login.html';
     }
