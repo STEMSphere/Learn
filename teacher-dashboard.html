@@ -165,6 +165,8 @@
       font-size: 0.85em;
       font-weight: 600;
       margin: 0.2rem;
+      text-decoration: none;
+      display: inline-block;
     }
     .btn-complete {
       background: #28a745;
@@ -172,6 +174,10 @@
     }
     .btn-view {
       background: #007bff;
+      color: #fff;
+    }
+    .btn-video {
+      background: #17a2b8;
       color: #fff;
     }
 
@@ -256,7 +262,7 @@
 
     <div id="sessionsTab" class="tab-content active">
       <div class="info-box">
-        <p>📅 These are sessions assigned to you. Mark them as complete after each session.</p>
+        <p>📅 These are sessions assigned to you. Click "Join Class" to enter the video room.</p>
       </div>
       <div class="data-table">
         <table>
@@ -299,7 +305,8 @@
       </div>
     </div>
   </div>
-    <script>
+
+  <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -391,6 +398,11 @@
       tbody.innerHTML = bookings.map(booking => {
         const profile = profileMap[booking.user_id] || {};
         
+        // Video link button
+        const videoButton = booking.video_link && booking.status === 'scheduled' 
+          ? `<a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a><br>`
+          : '';
+
         return `
           <tr>
             <td>
@@ -409,6 +421,7 @@
               ${booking.help_needed ? `<small style="color:#666; display:block; margin-top:0.5rem;"><strong>Notes:</strong> ${booking.help_needed}</small>` : ''}
             </td>
             <td>
+              ${videoButton}
               ${booking.status === 'scheduled' ? `<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>` : '<span style="color:#28a745;">✓ Done</span>'}
             </td>
           </tr>
@@ -479,14 +492,15 @@
       const { error } = await supabaseClient
         .from('bookings')
         .update({ status: 'completed' })
-        .eq('id', bookingId);
+        .eq('id', bookingId)
+        .select();
 
       if (error) {
         alert('Error: ' + error.message);
       } else {
         alert('✅ Session marked as completed!');
-        loadStats();
-        loadSessions();
+        await loadStats();
+        await loadSessions();
       }
     }
 
