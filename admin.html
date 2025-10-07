@@ -139,7 +139,6 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-      gap: 1rem;
     }
 
     .data-table {
@@ -173,8 +172,6 @@
       font-size: 0.85em;
       font-weight: 600;
       margin: 0.2rem;
-      text-decoration: none;
-      display: inline-block;
     }
     .btn-assign {
       background: #007bff;
@@ -191,10 +188,6 @@
     .btn-edit {
       background: #ffc107;
       color: #000;
-    }
-    .btn-complete {
-      background: #28a745;
-      color: #fff;
     }
 
     .status-badge {
@@ -271,6 +264,7 @@
       border-color: #28a745;
     }
 
+    /* Teacher Selector Styles */
     .teacher-search {
       width: 100%;
       padding: 0.75rem;
@@ -369,30 +363,6 @@
       cursor: pointer;
       font-weight: 600;
       font-size: 1em;
-      white-space: nowrap;
-    }
-
-    .btn-generate {
-      background: #007bff;
-      color: #fff;
-      padding: 0.75rem 1rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .help-notes {
-      background: #fff3cd;
-      border-left: 3px solid #ffc107;
-      padding: 0.75rem;
-      margin-top: 0.5rem;
-      border-radius: 4px;
-      font-size: 0.9em;
-    }
-    .help-notes strong {
-      color: #856404;
     }
   </style>
 </head>
@@ -448,7 +418,7 @@
           <thead>
             <tr>
               <th>Student</th>
-              <th>Subject & Details</th>
+              <th>Subject</th>
               <th>Date & Time</th>
               <th>Learning Style</th>
               <th>Status</th>
@@ -472,7 +442,7 @@
           <thead>
             <tr>
               <th>Student</th>
-              <th>Subject & Details</th>
+              <th>Subject</th>
               <th>Date & Time</th>
               <th>Teacher</th>
               <th>Status</th>
@@ -514,7 +484,7 @@
     <div id="teachersTab" class="tab-content">
       <div class="section-header">
         <div class="info-box" style="flex:1; margin:0;">
-          <p>👨‍🏫 Manage teacher accounts</p>
+          <p>👨‍🏫 Manage teacher accounts and their subjects</p>
         </div>
         <button class="btn-add" onclick="openAddTeacherModal()">+ Add Teacher</button>
       </div>
@@ -524,7 +494,7 @@
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Phone</th>
+              <th>Subjects</th>
               <th>Assigned Students</th>
               <th>Actions</th>
             </tr>
@@ -543,7 +513,7 @@
       <h3>Assign Teacher to Session</h3>
       <p style="margin-bottom:1rem; color:#666;">Search and select a teacher for this session</p>
       
-      <input type="text" id="teacherSearch" class="teacher-search" placeholder="🔍 Search by name..." onkeyup="filterTeachers()">
+      <input type="text" id="teacherSearch" class="teacher-search" placeholder="🔍 Search by name or subject (e.g., Chemistry, Math)..." onkeyup="filterTeachers()">
       
       <div id="teacherGrid" class="teacher-grid">
         <p class="loading">Loading teachers...</p>
@@ -571,12 +541,12 @@
           <input type="email" id="teacherEmail" required>
         </div>
         <div class="form-group">
-          <label>Password <span id="passwordRequiredLabel">*</span> (min 6 characters)</label>
-          <div style="display:flex; gap:0.5rem;">
-            <input type="text" id="teacherPassword" minlength="6" required style="flex:1;" placeholder="Enter password">
-            <button type="button" class="btn-generate" onclick="generateRandomPassword()">🎲 Generate</button>
-          </div>
-          <small id="passwordHint" style="color:#666; display:none;">Leave blank to keep current password</small>
+          <label>Password * (min 6 characters)</label>
+          <input type="password" id="teacherPassword" minlength="6" required>
+        </div>
+        <div class="form-group">
+          <label>Subjects Taught * (comma-separated)</label>
+          <input type="text" id="teacherSubjects" placeholder="e.g., Math, Chemistry, Physics" required>
         </div>
         <div class="form-group">
           <label>Phone (optional)</label>
@@ -591,9 +561,9 @@
     </div>
   </div>
 
-   <script>
+    <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhvcn10Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -673,7 +643,6 @@
 
       tbody.innerHTML = bookings.map(booking => {
         const profile = profileMap[booking.user_id] || {};
-        const helpNotes = booking.help_needed ? `<div class="help-notes"><strong>📝 Notes:</strong> ${booking.help_needed}</div>` : '';
         
         return `
           <tr>
@@ -681,10 +650,7 @@
               <strong>${profile.full_name || 'Unknown'}</strong><br>
               <small>${profile.email || 'No email'}</small>
             </td>
-            <td>
-              <strong>${booking.subject || 'N/A'}</strong>
-              ${helpNotes}
-            </td>
+            <td>${booking.subject || 'N/A'}</td>
             <td>
               ${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'Not set'}<br>
               <small>${booking.session_time || 'Time TBD'}</small>
@@ -693,7 +659,6 @@
             <td><span class="status-badge status-pending">⏳ Pending</span></td>
             <td>
               <button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign Teacher</button>
-              <button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>
             </td>
           </tr>
         `;
@@ -729,9 +694,6 @@
       tbody.innerHTML = bookings.map(booking => {
         const profile = profileMap[booking.user_id] || {};
         const teacher = profileMap[booking.assigned_teacher_id] || {};
-        const helpNotes = booking.help_needed ? `<div class="help-notes"><strong>📝 Notes:</strong> ${booking.help_needed}</div>` : '';
-        
-        const videoButton = booking.video_link ? `<a href="${booking.video_link}" target="_blank" class="btn-small btn-view">🎥 Video Link</a>` : '';
         
         return `
           <tr>
@@ -739,10 +701,7 @@
               <strong>${profile.full_name || 'Unknown'}</strong><br>
               <small>${profile.email || 'No email'}</small>
             </td>
-            <td>
-              <strong>${booking.subject || 'N/A'}</strong>
-              ${helpNotes}
-            </td>
+            <td>${booking.subject || 'N/A'}</td>
             <td>
               ${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'Not set'}<br>
               <small>${booking.session_time || 'Time TBD'}</small>
@@ -750,9 +709,7 @@
             <td>${teacher.full_name || '⏳ Unassigned'}</td>
             <td><span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span></td>
             <td>
-              ${!booking.assigned_teacher_id ? `<button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>` : ''}
-              ${videoButton}
-              ${booking.status !== 'completed' ? `<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>` : '<span style="color:#28a745;">✓ Done</span>'}
+              ${!booking.assigned_teacher_id ? `<button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>` : '<span style="color:#28a745;">✓ Assigned</span>'}
             </td>
           </tr>
         `;
@@ -828,12 +785,13 @@
 
       tbody.innerHTML = teachers.map(teacher => {
         const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
+        const subjects = teacher.subjects || 'Not specified';
 
         return `
           <tr>
             <td><strong>${teacher.full_name}</strong></td>
             <td>${teacher.email}</td>
-            <td>${teacher.phone || 'N/A'}</td>
+            <td>${subjects}</td>
             <td>${studentCount} student${studentCount !== 1 ? 's' : ''}</td>
             <td>
               <button class="btn-small btn-edit" onclick="openEditTeacherModal('${teacher.id}')">Edit</button>
@@ -852,24 +810,7 @@
       document.getElementById(tabName + 'Tab').classList.add('active');
     }
 
-    async function markComplete(bookingId) {
-      if (!confirm('Mark this session as completed?')) return;
-
-      const { error } = await supabaseClient
-        .from('bookings')
-        .update({ status: 'completed' })
-        .eq('id', bookingId);
-
-      if (error) {
-        alert('Error: ' + error.message);
-      } else {
-        alert('✅ Session marked as completed!');
-        await loadStats();
-        await loadPendingSessions();
-        await loadBookings();
-      }
-    }
-
+    // ===== ASSIGN TEACHER TO SESSION MODAL =====
     async function openAssignModal(bookingId, subject) {
       currentBookingId = bookingId;
       selectedTeacherId = null;
@@ -903,11 +844,12 @@
 
       grid.innerHTML = teachers.map(teacher => {
         const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
+        const subjects = teacher.subjects || 'No subjects listed';
 
         return `
           <div class="teacher-card" onclick="selectTeacher('${teacher.id}')" data-teacher-id="${teacher.id}">
             <h4>${teacher.full_name}</h4>
-            <p class="subjects">📧 ${teacher.email}</p>
+            <p class="subjects">📚 ${subjects}</p>
             <p class="students-count">👥 ${studentCount} student${studentCount !== 1 ? 's' : ''}</p>
           </div>
         `;
@@ -934,8 +876,8 @@
       
       const filtered = allTeachers.filter(teacher => {
         const name = (teacher.full_name || '').toLowerCase();
-        const email = (teacher.email || '').toLowerCase();
-        return name.includes(searchTerm) || email.includes(searchTerm);
+        const subjects = (teacher.subjects || '').toLowerCase();
+        return name.includes(searchTerm) || subjects.includes(searchTerm);
       });
 
       supabaseClient
@@ -981,13 +923,12 @@
       document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
 
+    // ===== ADD/EDIT TEACHER MODAL =====
     function openAddTeacherModal() {
       editingTeacherId = null;
       document.getElementById('teacherModalTitle').textContent = 'Add New Teacher';
       document.getElementById('teacherForm').reset();
       document.getElementById('teacherPassword').required = true;
-      document.getElementById('passwordRequiredLabel').style.display = 'inline';
-      document.getElementById('passwordHint').style.display = 'none';
       document.getElementById('teacherModal').classList.add('active');
     }
 
@@ -1003,11 +944,11 @@
 
       document.getElementById('teacherName').value = teacher.full_name || '';
       document.getElementById('teacherEmail').value = teacher.email || '';
+      document.getElementById('teacherSubjects').value = teacher.subjects || '';
       document.getElementById('teacherPhone').value = teacher.phone || '';
       document.getElementById('teacherPassword').value = '';
       document.getElementById('teacherPassword').required = false;
-      document.getElementById('passwordRequiredLabel').style.display = 'none';
-      document.getElementById('passwordHint').style.display = 'block';
+      document.getElementById('teacherPassword').placeholder = 'Leave blank to keep current password';
 
       document.getElementById('teacherModal').classList.add('active');
     }
@@ -1026,7 +967,7 @@
         password += charset.charAt(Math.floor(Math.random() * charset.length));
       }
       document.getElementById('teacherPassword').value = password;
-      alert('🎲 Generated password: ' + password + '\n\n📋 Make sure to copy this and share with the teacher!');
+      alert('Generated password: ' + password + '\n\nMake sure to copy this and share with the teacher!');
     }
 
     document.getElementById('teacherForm').addEventListener('submit', async (e) => {
@@ -1035,6 +976,7 @@
       const name = document.getElementById('teacherName').value;
       const email = document.getElementById('teacherEmail').value;
       const password = document.getElementById('teacherPassword').value;
+      const subjects = document.getElementById('teacherSubjects').value;
       const phone = document.getElementById('teacherPhone').value;
 
       document.getElementById('saveTeacherBtn').disabled = true;
@@ -1046,6 +988,7 @@
           .from('profiles')
           .update({
             full_name: name,
+            subjects: subjects,
             phone: phone || null
           })
           .eq('id', editingTeacherId);
@@ -1070,6 +1013,7 @@
           return;
         }
 
+        // Step 1: Create auth user
         const { data: authData, error: authError } = await supabaseClient.auth.signUp({
           email: email,
           password: password,
@@ -1082,12 +1026,14 @@
           return;
         }
 
+        // Step 2: Create profile
         const { error: profileError } = await supabaseClient
           .from('profiles')
           .insert({
             id: authData.user.id,
             email: email,
             full_name: name,
+            subjects: subjects,
             phone: phone || null,
             role: 'teacher'
           });
@@ -1099,7 +1045,7 @@
           return;
         }
 
-        alert('✅ Teacher created successfully!\n\n👤 Credentials:\nEmail: ' + email + '\nPassword: ' + password + '\n\n📋 Make sure to save these!');
+        alert('✅ Teacher created successfully!\n\nCredentials:\nEmail: ' + email + '\nPassword: ' + password);
         closeTeacherModal();
         await loadTeachers();
         await loadStats();
@@ -1110,13 +1056,25 @@
     });
 
     async function resetTeacherPassword(teacherId, email) {
-      if (!confirm('Send password reset email to ' + email + '?')) return;
+      const newPassword = prompt('Enter new password for ' + email + ' (min 6 characters):');
+      
+      if (!newPassword) return;
+      
+      if (newPassword.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+      }
 
+      if (!confirm('Reset password for ' + email + ' to: ' + newPassword + '?')) return;
+
+      // Note: Supabase doesn't allow password reset from client for other users
+      // You would need to use Supabase Admin API or send a password reset email
+      
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
         redirectTo: window.location.origin + '/reset-password.html'
       });
 
-            if (error) {
+      if (error) {
         alert('Could not send password reset email: ' + error.message + '\n\nPlease use the Supabase dashboard to manually reset this user\'s password, or have them use "Forgot Password" on the login page.');
       } else {
         alert('✉️ Password reset email sent to ' + email);
