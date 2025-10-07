@@ -166,6 +166,22 @@
       display: block;
     }
 
+    /* Progress Bar */
+    #wizardProgressBar {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      margin: 20px;
+      overflow: hidden;
+    }
+    #wizardProgressFill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #007bff, #00c6ff);
+      border-radius: 5px;
+      transition: width 0.4s ease;
+    }
+
     .time-slots {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -250,7 +266,13 @@
   <div id="bookingWizard" class="wizard-modal">
     <button onclick="closeBookingWizard()"
       style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
-    <div id="wizardContent" style="margin-top:60px;"></div>
+    
+    <!-- Progress Bar -->
+    <div id="wizardProgressBar">
+      <div id="wizardProgressFill"></div>
+    </div>
+    
+    <div id="wizardContent" style="margin-top:20px;"></div>
   </div>
 
   <footer>
@@ -276,6 +298,10 @@
     let currentUserId = null;
     let wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: "" };
     let wizardStep = 0;
+
+    function updateProgress(percent) {
+      document.getElementById('wizardProgressFill').style.width = percent + '%';
+    }
 
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -356,6 +382,7 @@
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: userTimezone };
       document.getElementById('bookingWizard').classList.add('active');
+      updateProgress(0);
       renderWizardStep();
     }
 
@@ -367,12 +394,14 @@
       const c = document.getElementById('wizardContent');
 
       if(wizardStep===0){
+        updateProgress(10);
         c.innerHTML = `
           <h2 style="padding:0 20px; color:#000;">🎯 Book Your Trial Session</h2>
           <p style="padding:0 20px; color:#000;">Secure your future with a private consultation. Let's start:</p>
           <button onclick="wizardStep=1; renderWizardStep()" style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Begin</button>
         `;
       } else if(wizardStep===1){
+        updateProgress(25);
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">🧒 Your age group:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
@@ -382,6 +411,7 @@
           </div>
         `;
             } else if(wizardStep===2){
+        updateProgress(40);
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📘 Choose your subject:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
@@ -391,6 +421,7 @@
           </div>
         `;
       } else if(wizardStep===3){
+        updateProgress(55);
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">🎓 Preferred learning style:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
@@ -400,6 +431,7 @@
           </div>
         `;
       } else if(wizardStep===4){
+        updateProgress(70);
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">🗣️ What do you need help with?</h3>
           <div style="border:1px solid #ccc; border-radius:5px; padding:10px; margin:10px 20px;">
@@ -410,6 +442,7 @@
             style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Continue</button>
         `;
       } else if(wizardStep===5){
+        updateProgress(85);
         const today = new Date();
         const minDate = new Date(today.getTime() + (12 * 60 * 60 * 1000));
         const maxDate = new Date(today.getTime() + (4 * 24 * 60 * 60 * 1000));
@@ -521,6 +554,7 @@
       event.target.classList.add('selected');
       wizardData.time = time;
       document.getElementById('confirmBtn').style.display = 'block';
+      updateProgress(100);
     }
 
     async function confirmBooking() {
