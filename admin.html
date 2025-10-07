@@ -22,7 +22,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 3px solid #ff0000;
+      border-bottom: 3px solid #28a745;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .brand {
@@ -40,7 +40,7 @@
       color: #000;
     }
     .admin-badge {
-      background: #ff0000;
+      background: #28a745;
       color: #fff;
       padding: 0.3rem 0.8rem;
       border-radius: 20px;
@@ -49,7 +49,7 @@
       margin-left: 0.5rem;
     }
     .logout-btn {
-      background: #ff0000;
+      background: #28a745;
       color: #fff;
       border: none;
       padding: 0.6rem 1.2rem;
@@ -64,6 +64,23 @@
       padding: 0 1rem;
     }
 
+    .welcome-section {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(40,167,69,0.3);
+    }
+    .welcome-section h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2em;
+    }
+    .welcome-section p {
+      margin: 0;
+      opacity: 0.9;
+    }
+
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -74,7 +91,7 @@
       background: #fff;
       padding: 1.5rem;
       border-radius: 8px;
-      border-left: 4px solid #ff0000;
+      border-left: 4px solid #28a745;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .stat-card h3 {
@@ -85,7 +102,7 @@
     .stat-card .number {
       font-size: 2em;
       font-weight: 700;
-      color: #ff0000;
+      color: #28a745;
     }
 
     .tabs {
@@ -106,8 +123,8 @@
       color: #666;
     }
     .tab.active {
-      color: #ff0000;
-      border-bottom-color: #ff0000;
+      color: #28a745;
+      border-bottom-color: #28a745;
     }
 
     .tab-content {
@@ -126,7 +143,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 800px;
+      min-width: 900px;
     }
     th {
       background: #f8f8f8;
@@ -153,8 +170,12 @@
       background: #007bff;
       color: #fff;
     }
-    .btn-complete {
-      background: #28a745;
+    .btn-view {
+      background: #17a2b8;
+      color: #fff;
+    }
+    .btn-delete {
+      background: #dc3545;
       color: #fff;
     }
 
@@ -168,6 +189,10 @@
       background: rgba(0,200,0,0.2);
       color: #008800;
     }
+    .status-pending {
+      background: rgba(255,165,0,0.2);
+      color: #ff8800;
+    }
     .status-completed {
       background: rgba(128,128,128,0.2);
       color: #666;
@@ -178,56 +203,81 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       background: rgba(0,0,0,0.5);
       z-index: 1000;
-      justify-content: center;
-      align-items: center;
+      overflow: auto;
     }
     .modal.active {
       display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .modal-content {
       background: #fff;
       padding: 2rem;
-      border-radius: 8px;
-      max-width: 500px;
+      border-radius: 12px;
+      max-width: 600px;
       width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
     }
-    .form-group {
+    .modal-content h3 {
       margin-bottom: 1rem;
+      color: #28a745;
     }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-    .form-group input,
-    .form-group select {
+
+    /* Teacher Selector Styles */
+    .teacher-search {
       width: 100%;
       padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1em;
+      margin-bottom: 1rem;
+    }
+    .teacher-search:focus {
+      outline: none;
+      border-color: #28a745;
+    }
+    .teacher-grid {
+      display: grid;
+      gap: 0.75rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 0.5rem;
       border: 1px solid #ddd;
       border-radius: 6px;
     }
-    .btn-primary {
-      background: #ff0000;
-      color: #fff;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 6px;
+    .teacher-card {
+      padding: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 600;
-      margin-right: 0.5rem;
+      transition: all 0.3s;
     }
-    .btn-secondary {
-      background: #6c757d;
-      color: #fff;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+    .teacher-card:hover {
+      border-color: #28a745;
+      background: #f0fff4;
+    }
+    .teacher-card.selected {
+      border-color: #28a745;
+      background: #d4edda;
+    }
+    .teacher-card h4 {
+      margin: 0 0 0.5rem 0;
+      color: #000;
+    }
+    .teacher-card .subjects {
+      color: #666;
+      font-size: 0.9em;
+    }
+    .teacher-card .students-count {
+      color: #28a745;
+      font-size: 0.85em;
       font-weight: 600;
+      margin-top: 0.5rem;
     }
 
     .loading {
@@ -239,6 +289,33 @@
       text-align: center;
       padding: 3rem;
       color: #999;
+    }
+
+    .info-box {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 2rem;
+    }
+    .info-box p {
+      margin: 0;
+      color: #155724;
+    }
+
+    .btn-primary {
+      background: #28a745;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -253,53 +330,90 @@
   </header>
 
   <div class="admin-container">
+    <div class="welcome-section">
+      <h1>Admin Dashboard 🛠️</h1>
+      <p>Manage sessions, students, and teachers</p>
+    </div>
+
     <div class="stats-grid">
       <div class="stat-card">
-        <h3>Total Students</h3>
-        <div class="number" id="totalStudents">-</div>
+        <h3>Pending Sessions</h3>
+        <div class="number" id="pendingSessions">-</div>
       </div>
       <div class="stat-card">
         <h3>Total Bookings</h3>
         <div class="number" id="totalBookings">-</div>
       </div>
       <div class="stat-card">
-        <h3>Pending Sessions</h3>
-        <div class="number" id="pendingSessions">-</div>
+        <h3>Total Students</h3>
+        <div class="number" id="totalStudents">-</div>
       </div>
       <div class="stat-card">
-        <h3>Teachers</h3>
+        <h3>Total Teachers</h3>
         <div class="number" id="totalTeachers">-</div>
       </div>
     </div>
 
     <div class="tabs">
-      <button class="tab active" onclick="showTab('bookings')">All Bookings</button>
+      <button class="tab active" onclick="showTab('pending')">Pending Sessions</button>
+      <button class="tab" onclick="showTab('bookings')">All Bookings</button>
       <button class="tab" onclick="showTab('students')">Students</button>
       <button class="tab" onclick="showTab('teachers')">Teachers</button>
     </div>
 
-    <div id="bookingsTab" class="tab-content active">
+    <!-- PENDING SESSIONS TAB -->
+    <div id="pendingTab" class="tab-content active">
+      <div class="info-box">
+        <p>⚠️ These sessions need teacher assignments. Click "Assign Teacher" to match students with instructors.</p>
+      </div>
       <div class="data-table">
         <table>
           <thead>
             <tr>
-              <th>Student Details</th>
-              <th>Subject & Style</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Instructor</th>
-              <th>Status & Notes</th>
+              <th>Student</th>
+              <th>Subject</th>
+              <th>Date & Time</th>
+              <th>Learning Style</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="bookingsBody">
-            <tr><td colspan="7" class="loading">Loading bookings...</td></tr>
+          <tbody id="pendingBody">
+            <tr><td colspan="6" class="loading">Loading pending sessions...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
+    <!-- ALL BOOKINGS TAB -->
+    <div id="bookingsTab" class="tab-content">
+      <div class="info-box">
+        <p>📚 View all booking sessions across the platform</p>
+      </div>
+      <div class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Subject</th>
+              <th>Date & Time</th>
+              <th>Teacher</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsBody">
+            <tr><td colspan="6" class="loading">Loading bookings...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STUDENTS TAB -->
     <div id="studentsTab" class="tab-content">
+      <div class="info-box">
+        <p>👥 Manage student accounts and their assigned teachers</p>
+      </div>
       <div class="data-table">
         <table>
           <thead>
@@ -308,7 +422,7 @@
               <th>Email</th>
               <th>Phone</th>
               <th>Age Group</th>
-              <th>Total Sessions</th>
+              <th>Assigned Teacher</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -319,16 +433,19 @@
       </div>
     </div>
 
+    <!-- TEACHERS TAB -->
     <div id="teachersTab" class="tab-content">
-      <button class="btn-primary" onclick="showAddTeacherModal()" style="margin-bottom:1rem;">+ Add Teacher</button>
+      <div class="info-box">
+        <p>👨‍🏫 Manage teacher accounts and their subjects</p>
+      </div>
       <div class="data-table">
         <table>
           <thead>
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Phone</th>
-              <th>Students</th>
+              <th>Subjects</th>
+              <th>Assigned Students</th>
             </tr>
           </thead>
           <tbody id="teachersBody">
@@ -339,44 +456,21 @@
     </div>
   </div>
 
-  <div id="assignTeacherModal" class="modal">
+  <!-- ASSIGN TEACHER MODAL -->
+  <div id="assignModal" class="modal">
     <div class="modal-content">
-      <h2>Assign Teacher</h2>
-      <div class="form-group">
-        <label>Select Teacher</label>
-        <select id="teacherSelect">
-          <option value="">Loading...</option>
-        </select>
+      <h3>Assign Teacher to Session</h3>
+      <p style="margin-bottom:1rem; color:#666;">Search and select a teacher for this session</p>
+      
+      <input type="text" id="teacherSearch" class="teacher-search" placeholder="🔍 Search by name or subject (e.g., Chemistry, Math)..." onkeyup="filterTeachers()">
+      
+      <div id="teacherGrid" class="teacher-grid">
+        <p class="loading">Loading teachers...</p>
       </div>
-      <div>
-        <button class="btn-primary" onclick="assignTeacher()">Assign</button>
-        <button class="btn-secondary" onclick="closeModal('assignTeacherModal')">Cancel</button>
-      </div>
-    </div>
-  </div>
 
-  <div id="addTeacherModal" class="modal">
-    <div class="modal-content">
-      <h2>Add New Teacher</h2>
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="teacherName" required>
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="teacherEmail" required>
-      </div>
-      <div class="form-group">
-        <label>Phone</label>
-        <input type="tel" id="teacherPhone">
-      </div>
-      <div class="form-group">
-        <label>Temporary Password</label>
-        <input type="password" id="teacherPassword" required minlength="6">
-      </div>
-      <div>
-        <button class="btn-primary" onclick="addTeacher()">Add Teacher</button>
-        <button class="btn-secondary" onclick="closeModal('addTeacherModal')">Cancel</button>
+      <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+        <button class="btn-primary" onclick="confirmAssignment()" id="confirmAssignBtn" disabled>Assign Teacher</button>
+        <button class="btn-primary" style="background:#6c757d;" onclick="closeAssignModal()">Cancel</button>
       </div>
     </div>
   </div>
@@ -388,9 +482,10 @@
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let currentBookingId = null;
-    let currentStudentId = null;
+    let currentAdminId = null;
     let allTeachers = [];
+    let selectedTeacherId = null;
+    let currentBookingId = null;
 
     async function checkAdminAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -400,112 +495,134 @@
         return;
       }
 
+      currentAdminId = session.user.id;
+
       const { data: profile } = await supabaseClient
         .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
+        .select('*')
+        .eq('id', currentAdminId)
         .single();
 
       if (!profile || profile.role !== 'admin') {
-        alert('Access denied. Admin only.');
+        alert('Access denied. Admins only.');
         window.location.href = 'admin-login.html';
         return;
       }
 
       loadStats();
+      loadPendingSessions();
       loadBookings();
       loadStudents();
       loadTeachers();
     }
 
     async function loadStats() {
-      const { data: students } = await supabaseClient
-        .from('profiles')
-        .select('id')
-        .eq('role', 'student');
+      const { data: bookings } = await supabaseClient.from('bookings').select('id, assigned_teacher_id');
+      const { data: students } = await supabaseClient.from('profiles').select('id').eq('role', 'student');
+      const { data: teachers } = await supabaseClient.from('profiles').select('id').eq('role', 'teacher');
 
-      const { data: bookings } = await supabaseClient
-        .from('bookings')
-        .select('id, status');
+      const pending = bookings?.filter(b => !b.assigned_teacher_id).length || 0;
 
-      const { data: teachers } = await supabaseClient
-        .from('profiles')
-        .select('id')
-        .eq('role', 'teacher');
-
-      document.getElementById('totalStudents').textContent = students?.length || 0;
+      document.getElementById('pendingSessions').textContent = pending;
       document.getElementById('totalBookings').textContent = bookings?.length || 0;
-      document.getElementById('pendingSessions').textContent = 
-        bookings?.filter(b => b.status === 'scheduled').length || 0;
+      document.getElementById('totalStudents').textContent = students?.length || 0;
       document.getElementById('totalTeachers').textContent = teachers?.length || 0;
     }
 
-    async function loadBookings() {
-      console.log('🔄 Loading bookings...');
-      
+    async function loadPendingSessions() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
         .select('*')
-        .order('session_date', { ascending: false });
+        .is('assigned_teacher_id', null)
+        .order('created_at', { ascending: false });
 
-      console.log('📦 Bookings fetched:', bookings);
-      console.log('❌ Bookings error:', error);
-
-      const tbody = document.getElementById('bookingsBody');
+      const tbody = document.getElementById('pendingBody');
 
       if (error || !bookings || bookings.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No bookings found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">🎉 No pending sessions! All sessions have been assigned.</td></tr>';
         return;
       }
 
-      // Get unique user IDs
-      const userIds = [...new Set(bookings.map(b => b.user_id).filter(id => id))];
-      console.log('👥 User IDs to fetch:', userIds);
-
-      // Fetch profiles for all user IDs
-      const { data: profiles, error: profileError } = await supabaseClient
+      const userIds = [...new Set(bookings.map(b => b.user_id))];
+      const { data: profiles } = await supabaseClient
         .from('profiles')
         .select('id, full_name, email')
         .in('id', userIds);
 
-      console.log('👤 Profiles fetched:', profiles);
-      console.log('❌ Profile error:', profileError);
-
-      // Create a map for easy lookup
       const profileMap = {};
       profiles?.forEach(p => {
         profileMap[p.id] = p;
       });
 
-      console.log('🗺️ Profile map:', profileMap);
-
       tbody.innerHTML = bookings.map(booking => {
         const profile = profileMap[booking.user_id] || {};
-        
-        console.log(`Booking ${booking.id}: user_id=${booking.user_id}, profile=`, profile);
         
         return `
           <tr>
             <td>
-              <strong>${profile.full_name || '⚠️ Name not found'}</strong><br>
-              <small>${profile.email || '⚠️ Email not found'}</small><br>
-              <small style="color:#666;">User ID: ${booking.user_id || 'N/A'}</small><br>
-              <small style="color:#666;">Age: ${booking.age_group || 'N/A'}</small>
+              <strong>${profile.full_name || 'Unknown'}</strong><br>
+              <small>${profile.email || 'No email'}</small>
             </td>
+            <td>${booking.subject || 'N/A'}</td>
             <td>
-              <strong>${booking.subject || 'N/A'}</strong><br>
-              <small style="color:#666;">Style: ${booking.learning_style || 'N/A'}</small>
+              ${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'Not set'}<br>
+              <small>${booking.session_time || 'Time TBD'}</small>
             </td>
-            <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
-            <td>${booking.session_time || 'TBD'}</td>
-            <td>${booking.instructor_name || 'Not assigned'}</td>
+            <td>${booking.learning_style || 'N/A'}</td>
+            <td><span class="status-badge status-pending">⏳ Pending</span></td>
             <td>
-              <span class="status-badge status-${booking.status}">${booking.status}</span><br>
-              ${booking.help_needed ? `<small style="color:#666; display:block; margin-top:0.5rem;"><strong>Notes:</strong> ${booking.help_needed}</small>` : ''}
+              <button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign Teacher</button>
             </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+       async function loadBookings() {
+      const { data: bookings, error } = await supabaseClient
+        .from('bookings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const tbody = document.getElementById('bookingsBody');
+
+      if (error || !bookings || bookings.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No bookings found.</td></tr>';
+        return;
+      }
+
+      const userIds = [...new Set(bookings.map(b => b.user_id))];
+      const teacherIds = [...new Set(bookings.filter(b => b.assigned_teacher_id).map(b => b.assigned_teacher_id))];
+
+      const { data: profiles } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', [...userIds, ...teacherIds]);
+
+      const profileMap = {};
+      profiles?.forEach(p => {
+        profileMap[p.id] = p;
+      });
+
+      tbody.innerHTML = bookings.map(booking => {
+        const profile = profileMap[booking.user_id] || {};
+        const teacher = profileMap[booking.assigned_teacher_id] || {};
+        
+        return `
+          <tr>
             <td>
-              <button class="btn-small btn-assign" onclick="showAssignTeacherModal('${booking.id}', '${booking.user_id}')">Assign</button>
-              ${booking.status === 'scheduled' ? `<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Complete</button>` : ''}
+              <strong>${profile.full_name || 'Unknown'}</strong><br>
+              <small>${profile.email || 'No email'}</small>
+            </td>
+            <td>${booking.subject || 'N/A'}</td>
+            <td>
+              ${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'Not set'}<br>
+              <small>${booking.session_time || 'Time TBD'}</small>
+            </td>
+            <td>${teacher.full_name || '⏳ Unassigned'}</td>
+            <td><span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span></td>
+            <td>
+              ${!booking.assigned_teacher_id ? `<button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>` : '<span style="color:#28a745;">✓ Assigned</span>'}
             </td>
           </tr>
         `;
@@ -522,16 +639,27 @@
       const tbody = document.getElementById('studentsBody');
 
       if (error || !students || students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students found.</td></tr>';
         return;
       }
 
-      const { data: bookings } = await supabaseClient
-        .from('bookings')
-        .select('user_id');
+      const { data: assignments } = await supabaseClient
+        .from('teacher_assignments')
+        .select('student_id, teacher_id');
+
+      const { data: teachers } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'teacher');
+
+      const teacherMap = {};
+      teachers?.forEach(t => {
+        teacherMap[t.id] = t.full_name;
+      });
 
       tbody.innerHTML = students.map(student => {
-        const sessionCount = bookings?.filter(b => b.user_id === student.id).length || 0;
+        const assignment = assignments?.find(a => a.student_id === student.id);
+        const teacherName = assignment ? teacherMap[assignment.teacher_id] || 'Unknown' : 'Not assigned';
 
         return `
           <tr>
@@ -539,9 +667,9 @@
             <td>${student.email}</td>
             <td>${student.phone || 'N/A'}</td>
             <td>${student.age_group || 'N/A'}</td>
-            <td>${sessionCount}</td>
+            <td>${teacherName}</td>
             <td>
-              <button class="btn-small btn-assign" onclick="showAssignTeacherModal(null, '${student.id}')">Assign Teacher</button>
+              <button class="btn-small btn-assign" onclick="assignTeacherToStudent('${student.id}')">Assign Teacher</button>
             </td>
           </tr>
         `;
@@ -553,30 +681,31 @@
         .from('profiles')
         .select('*')
         .eq('role', 'teacher')
-        .order('created_at', { ascending: false });
-
-      allTeachers = teachers || [];
+        .order('full_name', { ascending: true });
 
       const tbody = document.getElementById('teachersBody');
 
       if (error || !teachers || teachers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No teachers found. Add your first teacher!</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No teachers found.</td></tr>';
         return;
       }
 
+      allTeachers = teachers;
+
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
-        .select('teacher_id');
+        .select('teacher_id, student_id');
 
       tbody.innerHTML = teachers.map(teacher => {
         const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
+        const subjects = teacher.subjects || 'Not specified';
 
         return `
           <tr>
             <td><strong>${teacher.full_name}</strong></td>
             <td>${teacher.email}</td>
-            <td>${teacher.phone || 'N/A'}</td>
-            <td>${studentCount}</td>
+            <td>${subjects}</td>
+            <td>${studentCount} student${studentCount !== 1 ? 's' : ''}</td>
           </tr>
         `;
       }).join('');
@@ -590,147 +719,121 @@
       document.getElementById(tabName + 'Tab').classList.add('active');
     }
 
-        function showAssignTeacherModal(bookingId, studentId) {
+    async function openAssignModal(bookingId, subject) {
       currentBookingId = bookingId;
-      currentStudentId = studentId;
-
-      const select = document.getElementById('teacherSelect');
+      selectedTeacherId = null;
       
-      if (allTeachers.length === 0) {
-        select.innerHTML = '<option value="">No teachers available. Add a teacher first.</option>';
-      } else {
-        select.innerHTML = '<option value="">Select a teacher...</option>' +
-          allTeachers.map(t => `<option value="${t.id}">${t.full_name} (${t.email})</option>`).join('');
-      }
+      document.getElementById('assignModal').classList.add('active');
+      document.getElementById('confirmAssignBtn').disabled = true;
+      document.getElementById('teacherSearch').value = '';
 
-      document.getElementById('assignTeacherModal').classList.add('active');
+      const { data: teachers } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('role', 'teacher')
+        .order('full_name', { ascending: true });
+
+      allTeachers = teachers || [];
+
+      const { data: assignments } = await supabaseClient
+        .from('teacher_assignments')
+        .select('teacher_id, student_id');
+
+      renderTeacherGrid(allTeachers, assignments);
     }
 
-    async function assignTeacher() {
-      const teacherId = document.getElementById('teacherSelect').value;
+    function renderTeacherGrid(teachers, assignments) {
+      const grid = document.getElementById('teacherGrid');
+
+      if (!teachers || teachers.length === 0) {
+        grid.innerHTML = '<p class="empty-state">No teachers available</p>';
+        return;
+      }
+
+      grid.innerHTML = teachers.map(teacher => {
+        const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
+        const subjects = teacher.subjects || 'No subjects listed';
+
+        return `
+          <div class="teacher-card" onclick="selectTeacher('${teacher.id}')" data-teacher-id="${teacher.id}">
+            <h4>${teacher.full_name}</h4>
+            <p class="subjects">📚 ${subjects}</p>
+            <p class="students-count">👥 ${studentCount} student${studentCount !== 1 ? 's' : ''}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectTeacher(teacherId) {
+      selectedTeacherId = teacherId;
       
-      if (!teacherId) {
+      document.querySelectorAll('.teacher-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      const selectedCard = document.querySelector(`[data-teacher-id="${teacherId}"]`);
+      if (selectedCard) {
+        selectedCard.classList.add('selected');
+      }
+
+      document.getElementById('confirmAssignBtn').disabled = false;
+    }
+
+    function filterTeachers() {
+      const searchTerm = document.getElementById('teacherSearch').value.toLowerCase();
+      
+      const filtered = allTeachers.filter(teacher => {
+        const name = (teacher.full_name || '').toLowerCase();
+        const subjects = (teacher.subjects || '').toLowerCase();
+        return name.includes(searchTerm) || subjects.includes(searchTerm);
+      });
+
+      supabaseClient
+        .from('teacher_assignments')
+        .select('teacher_id, student_id')
+        .then(({ data }) => {
+          renderTeacherGrid(filtered, data);
+        });
+    }
+
+    async function confirmAssignment() {
+      if (!selectedTeacherId || !currentBookingId) {
         alert('Please select a teacher');
         return;
       }
 
-      const teacher = allTeachers.find(t => t.id === teacherId);
+      document.getElementById('confirmAssignBtn').disabled = true;
+      document.getElementById('confirmAssignBtn').textContent = 'Assigning...';
 
-      if (currentBookingId) {
-        const { error } = await supabaseClient
-          .from('bookings')
-          .update({
-            assigned_teacher_id: teacherId,
-            instructor_name: teacher.full_name
-          })
-          .eq('id', currentBookingId);
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ assigned_teacher_id: selectedTeacherId })
+        .eq('id', currentBookingId);
 
-        if (error) {
-          alert('Error: ' + error.message);
-          return;
-        }
-      }
-
-      const { error: assignError } = await supabaseClient
-        .from('teacher_assignments')
-        .upsert({
-          teacher_id: teacherId,
-          student_id: currentStudentId,
-          assigned_by: (await supabaseClient.auth.getSession()).data.session.user.id
-        }, {
-          onConflict: 'teacher_id,student_id'
-        });
-
-      if (assignError) {
-        alert('Error: ' + assignError.message);
+      if (error) {
+        alert('Error assigning teacher: ' + error.message);
+        document.getElementById('confirmAssignBtn').disabled = false;
+        document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
         return;
       }
 
       alert('✅ Teacher assigned successfully!');
-      closeModal('assignTeacherModal');
-      await loadBookings();
-      await loadStudents();
-      await loadTeachers();
-    }
-
-    async function markComplete(bookingId) {
-      if (!confirm('Mark this session as completed?')) return;
-
-      console.log('🎯 Marking booking as complete:', bookingId);
-
-      const { data, error } = await supabaseClient
-        .from('bookings')
-        .update({ status: 'completed' })
-        .eq('id', bookingId)
-        .select();
-
-      console.log('✅ Update result:', data);
-      console.log('❌ Update error:', error);
-
-      if (error) {
-        alert('Error: ' + error.message);
-        return;
-      }
-
-      alert('✅ Session marked as completed!');
-      
-      // Force reload everything
+      closeAssignModal();
       await loadStats();
+      await loadPendingSessions();
       await loadBookings();
     }
 
-    function showAddTeacherModal() {
-      document.getElementById('teacherName').value = '';
-      document.getElementById('teacherEmail').value = '';
-      document.getElementById('teacherPhone').value = '';
-      document.getElementById('teacherPassword').value = '';
-      document.getElementById('addTeacherModal').classList.add('active');
+    function closeAssignModal() {
+      document.getElementById('assignModal').classList.remove('active');
+      selectedTeacherId = null;
+      currentBookingId = null;
+      document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
 
-    async function addTeacher() {
-      const name = document.getElementById('teacherName').value;
-      const email = document.getElementById('teacherEmail').value;
-      const phone = document.getElementById('teacherPhone').value;
-      const password = document.getElementById('teacherPassword').value;
-
-      if (!name || !email || !password) {
-        alert('Please fill in all required fields');
-        return;
-      }
-
-      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-        email,
-        password,
-      });
-
-      if (authError) {
-        alert('Error: ' + authError.message);
-        return;
-      }
-
-      const { error: profileError } = await supabaseClient
-        .from('profiles')
-        .insert({
-          id: authData.user.id,
-          email,
-          full_name: name,
-          phone: phone || null,
-          role: 'teacher'
-        });
-
-      if (profileError) {
-        alert('Account created but profile failed: ' + profileError.message);
-        return;
-      }
-
-      alert('✅ Teacher added successfully!');
-      closeModal('addTeacherModal');
-      await loadStats();
-      await loadTeachers();
-    }
-
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
+    async function assignTeacherToStudent(studentId) {
+      // Similar modal for student-teacher assignments
+      alert('Student-teacher assignment feature coming soon!');
     }
 
     async function logout() {
