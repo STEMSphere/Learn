@@ -180,6 +180,10 @@
       background: #17a2b8;
       color: #fff;
     }
+    .btn-create-room {
+      background: #ffc107;
+      color: #000;
+    }
 
     .status-badge {
       padding: 0.3rem 0.8rem;
@@ -262,7 +266,7 @@
 
     <div id="sessionsTab" class="tab-content active">
       <div class="info-box">
-        <p>📅 These are sessions assigned to you. Click "Join Class" to enter the video room.</p>
+        <p>📅 These are sessions assigned to you. Click "Join Class" to enter the video room or create one if missing.</p>
       </div>
       <div class="data-table">
         <table>
@@ -309,6 +313,7 @@
   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+    const DAILY_API_KEY = '8c3db949d2ace9fb8237c2db1e711fe4f8b57efcd97943c8ccb705824bf2ab5f';
     
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -398,10 +403,15 @@
       tbody.innerHTML = bookings.map(booking => {
         const profile = profileMap[booking.user_id] || {};
         
-        // Video link button
-        const videoButton = booking.video_link && booking.status === 'scheduled' 
-          ? `<a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a><br>`
-          : '';
+        // Video link button or create button
+        let videoButton = '';
+        if (booking.status === 'scheduled') {
+          if (booking.video_link) {
+            videoButton = `<a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a><br>`;
+          } else {
+            videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
+          }
+        }
 
         return `
           <tr>
@@ -427,6 +437,70 @@
           </tr>
         `;
       }).join('');
+    }
+
+    async function createVideoRoom(bookingId) {
+      if (!confirm('Create a video room for this session?')) return;
+
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = '⏳ Creating...';
+
+      // Create Daily.co room with FORCED PUBLIC setting
+      const roomName = `stemsphere-teacher-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      try {
+        const dailyResponse = await fetch('https://api.daily.co/v1/rooms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${DAILY_API_KEY}`
+          },
+          body: JSON.stringify({
+            name: roomName,
+            privacy: 'public',  // FORCES public - overrides account settings!
+            properties: {
+              enable_screenshare: true,
+              enable_chat: true,
+              start_video_off: false,
+              start_audio_off: false,
+              max_participants: 10,
+              enable_knocking: false,  // No waiting room
+              enable_prejoin_ui: true   // Shows preview before joining
+            }
+          })
+        });
+
+        if (!dailyResponse.ok) {
+          const errorData = await dailyResponse.json();
+          console.error('Daily.co error:', errorData);
+          throw new Error(errorData.info || errorData.error || 'Failed to create video room');
+        }
+
+        const roomData = await dailyResponse.json();
+        const videoLink = roomData.url;
+
+        console.log('✅ Video room created:', videoLink);
+        console.log('Room privacy:', roomData.privacy);
+
+        // Update booking with video link
+        const { error } = await supabaseClient
+          .from('bookings')
+          .update({ video_link: videoLink })
+          .eq('id', bookingId);
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        alert('✅ Video room created successfully!');
+        await loadSessions();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Failed to create video room: ' + error.message + '\n\nPlease contact support.');
+        btn.disabled = false;
+        btn.textContent = '🎬 Create Video Room';
+      }
     }
 
     async function loadStudents() {
