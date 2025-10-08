@@ -121,10 +121,26 @@
       font-weight: 600;
       font-size: 1em;
       color: #666;
+      position: relative;
     }
     .tab.active {
       color: #007bff;
       border-bottom-color: #007bff;
+    }
+    .tab .badge {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: #ff0000;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
     }
 
     .tab-content {
@@ -184,6 +200,20 @@
       background: #ffc107;
       color: #000;
     }
+    .btn-create-session {
+      background: #28a745;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      border: none;
+    }
+    .btn-reply {
+      background: #007bff;
+      color: #fff;
+    }
 
     .status-badge {
       padding: 0.3rem 0.8rem;
@@ -222,6 +252,271 @@
       margin: 0;
       color: #004085;
     }
+
+    /* Inbox Styles */
+    .inbox-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .inbox-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .inbox-header h3 {
+      color: #000;
+      font-size: 1.5em;
+    }
+    .message-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .message-item {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .message-item:hover {
+      border-color: #007bff;
+      box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+    }
+    .message-item.unread {
+      background: #e3f2fd;
+      border-color: #007bff;
+      font-weight: 600;
+    }
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .message-from {
+      font-weight: 600;
+      color: #000;
+    }
+    .message-date {
+      color: #999;
+      font-size: 0.85em;
+    }
+    .message-subject {
+      color: #333;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .message-preview {
+      color: #666;
+      font-size: 0.9em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      overflow: auto;
+    }
+    .modal.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-content h3 {
+      margin-bottom: 1rem;
+      color: #007bff;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+    .btn-primary {
+      background: #007bff;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      margin-left: 0.5rem;
+    }
+
+    .message-thread {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .message-thread .sender {
+      font-weight: 600;
+      color: #007bff;
+      margin-bottom: 0.5rem;
+    }
+    .message-thread .timestamp {
+      color: #999;
+      font-size: 0.85em;
+      margin-bottom: 0.5rem;
+    }
+    .message-thread .body {
+      color: #333;
+      white-space: pre-wrap;
+    }
+
+    .student-select-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    .student-card {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .student-card:hover {
+      border-color: #007bff;
+      background: #e3f2fd;
+    }
+    .student-card.selected {
+      border-color: #007bff;
+      background: #d4edda;
+    }
+    .student-card h4 {
+      margin: 0 0 0.5rem 0;
+      color: #000;
+    }
+    .student-card p {
+      margin: 0.25rem 0;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .time-slots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-top: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+    .time-slot {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .time-slot:hover {
+      background: #e3f2fd;
+      border-color: #007bff;
+    }
+    .time-slot.selected {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+
+    .wizard-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      z-index: 2000;
+      overflow: auto;
+    }
+    .wizard-modal.active {
+      display: block;
+    }
+
+    #wizardProgressBar {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      margin: 20px;
+      overflow: hidden;
+    }
+    #wizardProgressFill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #007bff, #00c6ff);
+      border-radius: 5px;
+      transition: width 0.4s ease;
+    }
+
+    @media (max-width: 768px) {
+      .time-slots {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .student-select-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -254,19 +549,27 @@
         <div class="number" id="completedSessions">-</div>
       </div>
       <div class="stat-card">
-        <h3>Total Sessions</h3>
-        <div class="number" id="totalSessions">-</div>
+        <h3>Unread Messages</h3>
+        <div class="number" id="unreadMessages">-</div>
       </div>
     </div>
 
     <div class="tabs">
       <button class="tab active" onclick="showTab('sessions')">My Sessions</button>
       <button class="tab" onclick="showTab('students')">My Students</button>
+      <button class="tab" onclick="showTab('inbox')">
+        📬 Inbox
+        <span class="badge" id="inboxBadge" style="display:none;">0</span>
+      </button>
     </div>
 
+    <!-- SESSIONS TAB -->
     <div id="sessionsTab" class="tab-content active">
       <div class="info-box">
-        <p>📅 These are sessions assigned to you. Click "Join Class" to enter the video room or create one if missing.</p>
+        <p>📅 Manage your teaching sessions. Create new sessions for your students or view existing ones.</p>
+      </div>
+      <div style="margin-bottom: 1.5rem;">
+        <button class="btn-create-session" onclick="openCreateSessionWizard()">➕ Create New Session</button>
       </div>
       <div class="data-table">
         <table>
@@ -287,6 +590,7 @@
       </div>
     </div>
 
+    <!-- STUDENTS TAB -->
     <div id="studentsTab" class="tab-content">
       <div class="info-box">
         <p>👥 These are the students assigned to you by the admin.</p>
@@ -300,12 +604,68 @@
               <th>Phone</th>
               <th>Age Group</th>
               <th>Total Sessions</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="studentsBody">
-            <tr><td colspan="5" class="loading">Loading students...</td></tr>
+            <tr><td colspan="6" class="loading">Loading students...</td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- INBOX TAB -->
+    <div id="inboxTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>📬 Student Messages</h3>
+        </div>
+        <div id="inboxMessages" class="message-list">
+          <div class="empty-state">Loading messages...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE SESSION WIZARD -->
+  <div id="sessionWizard" class="wizard-modal">
+    <button onclick="closeSessionWizard()"
+      style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
+    
+    <div id="wizardProgressBar">
+      <div id="wizardProgressFill"></div>
+    </div>
+    
+    <div id="wizardContent" style="margin-top:20px;"></div>
+  </div>
+
+  <!-- MESSAGE VIEW MODAL -->
+  <div id="messageViewModal" class="modal">
+    <div class="modal-content" id="messageViewContent">
+      <!-- Content populated dynamically -->
+    </div>
+  </div>
+
+  <!-- REPLY MESSAGE MODAL -->
+  <div id="replyModal" class="modal">
+    <div class="modal-content">
+      <h3>✉️ Reply to Student</h3>
+      <input type="hidden" id="replyToStudentId">
+      <input type="hidden" id="replySubject">
+      
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="replySubjectInput" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label>Your Reply *</label>
+        <textarea id="replyMessage" placeholder="Type your reply here..." required></textarea>
+      </div>
+
+            <div style="display:flex; gap:1rem;">
+        <button class="btn-primary" onclick="sendReply()">Send Reply</button>
+        <button class="btn-secondary" onclick="closeModal('replyModal')">Cancel</button>
       </div>
     </div>
   </div>
@@ -319,7 +679,14 @@
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentTeacherId = null;
+    let myStudents = [];
+    let unreadMessageCount = 0;
+    let wizardData = { studentId: "", subject: "", style: "", notes: "", date: "", time: "" };
+    let wizardStep = 0;
 
+    // ============================================
+    // AUTH & INITIALIZATION
+    // ============================================
     async function checkTeacherAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -347,8 +714,31 @@
       loadStats();
       loadSessions();
       loadStudents();
+      loadInboxMessages();
+
+      // Subscribe to realtime messages
+      supabaseClient
+        .channel('teacher_messages')
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `recipient_id=eq.${currentTeacherId}`
+        }, () => {
+          loadInboxMessages();
+          loadStats();
+        })
+        .subscribe();
     }
 
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'teacher-login.html';
+    }
+
+    // ============================================
+    // STATS
+    // ============================================
     async function loadStats() {
       // Get students assigned to this teacher
       const { data: assignments } = await supabaseClient
@@ -364,14 +754,26 @@
         .select('id, status')
         .eq('assigned_teacher_id', currentTeacherId);
 
+      // Get unread messages
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('id')
+        .eq('recipient_id', currentTeacherId)
+        .eq('is_read', false);
+
       document.getElementById('totalStudents').textContent = studentIds.length || 0;
       document.getElementById('upcomingSessions').textContent = 
         sessions?.filter(s => s.status === 'scheduled').length || 0;
       document.getElementById('completedSessions').textContent = 
         sessions?.filter(s => s.status === 'completed').length || 0;
-      document.getElementById('totalSessions').textContent = sessions?.length || 0;
+      document.getElementById('unreadMessages').textContent = messages?.length || 0;
+      
+      unreadMessageCount = messages?.length || 0;
     }
 
+    // ============================================
+    // SESSIONS MANAGEMENT
+    // ============================================
     async function loadSessions() {
       // Get all bookings assigned to this teacher
       const { data: bookings, error } = await supabaseClient
@@ -383,7 +785,7 @@
       const tbody = document.getElementById('sessionsBody');
 
       if (error || !bookings || bookings.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No sessions assigned yet. Check with your admin.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No sessions yet. Create your first session!</td></tr>';
         return;
       }
 
@@ -446,7 +848,6 @@
       btn.disabled = true;
       btn.textContent = '⏳ Creating...';
 
-      // Create Daily.co room with FORCED PUBLIC setting
       const roomName = `stemsphere-teacher-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       try {
@@ -458,32 +859,27 @@
           },
           body: JSON.stringify({
             name: roomName,
-            privacy: 'public',  // FORCES public - overrides account settings!
+            privacy: 'public',
             properties: {
               enable_screenshare: true,
               enable_chat: true,
               start_video_off: false,
               start_audio_off: false,
               max_participants: 10,
-              enable_knocking: false,  // No waiting room
-              enable_prejoin_ui: true   // Shows preview before joining
+              enable_knocking: false,
+              enable_prejoin_ui: true
             }
           })
         });
 
         if (!dailyResponse.ok) {
           const errorData = await dailyResponse.json();
-          console.error('Daily.co error:', errorData);
           throw new Error(errorData.info || errorData.error || 'Failed to create video room');
         }
 
         const roomData = await dailyResponse.json();
         const videoLink = roomData.url;
 
-        console.log('✅ Video room created:', videoLink);
-        console.log('Room privacy:', roomData.privacy);
-
-        // Update booking with video link
         const { error } = await supabaseClient
           .from('bookings')
           .update({ video_link: videoLink })
@@ -496,13 +892,32 @@
         alert('✅ Video room created successfully!');
         await loadSessions();
       } catch (error) {
-        console.error('Error:', error);
-        alert('❌ Failed to create video room: ' + error.message + '\n\nPlease contact support.');
+        alert('❌ Failed to create video room: ' + error.message);
         btn.disabled = false;
         btn.textContent = '🎬 Create Video Room';
       }
     }
 
+    async function markComplete(bookingId) {
+      if (!confirm('Mark this session as completed?')) return;
+
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ status: 'completed' })
+        .eq('id', bookingId);
+
+      if (error) {
+        alert('Error: ' + error.message);
+      } else {
+        alert('✅ Session marked as completed!');
+        await loadStats();
+        await loadSessions();
+      }
+    }
+
+    // ============================================
+    // STUDENTS MANAGEMENT
+    // ============================================
     async function loadStudents() {
       // Get students assigned to this teacher
       const { data: assignments } = await supabaseClient
@@ -513,7 +928,7 @@
       const tbody = document.getElementById('studentsBody');
 
       if (!assignments || assignments.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No students assigned yet. Contact your admin.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students assigned yet. Contact your admin.</td></tr>';
         return;
       }
 
@@ -527,9 +942,11 @@
         .eq('role', 'student');
 
       if (!students || students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No students found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students found.</td></tr>';
         return;
       }
+
+      myStudents = students; // Store for session creation
 
       // Get session counts for each student
       const { data: bookings } = await supabaseClient
@@ -547,9 +964,201 @@
             <td>${student.phone || 'N/A'}</td>
             <td>${student.age_group || 'N/A'}</td>
             <td>${sessionCount}</td>
+            <td>
+              <button class="btn-small btn-view" onclick="createSessionForStudent('${student.id}')">Create Session</button>
+            </td>
           </tr>
         `;
       }).join('');
+    }
+
+    function createSessionForStudent(studentId) {
+      const student = myStudents.find(s => s.id === studentId);
+      if (!student) return;
+
+      wizardData.studentId = studentId;
+      wizardData.studentName = student.full_name;
+      openCreateSessionWizard();
+    }
+
+    // ============================================
+    // MESSAGING SYSTEM
+    // ============================================
+    async function loadInboxMessages() {
+      // Get students assigned to this teacher
+      const { data: assignments } = await supabaseClient
+        .from('teacher_assignments')
+        .select('student_id')
+        .eq('teacher_id', currentTeacherId);
+
+      if (!assignments || assignments.length === 0) {
+        document.getElementById('inboxMessages').innerHTML = 
+          '<div class="empty-state">No students assigned yet.</div>';
+        return;
+      }
+
+      const studentIds = assignments.map(a => a.student_id);
+
+      // Get messages from these students
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_student')
+        .or(`and(sender_id.in.(${studentIds.join(',')}),recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.in.(${studentIds.join(',')}))`)
+        .order('created_at', { ascending: false });
+
+      const unreadCount = messages?.filter(m => m.recipient_id === currentTeacherId && !m.is_read).length || 0;
+      updateBadge('inboxBadge', unreadCount);
+
+      // Get student names
+      const { data: students } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', studentIds);
+
+      const studentMap = {};
+      students?.forEach(s => {
+        studentMap[s.id] = s.full_name;
+      });
+
+      renderMessages(messages, studentMap);
+    }
+
+    function updateBadge(badgeId, count) {
+      const badge = document.getElementById(badgeId);
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function renderMessages(messages, studentMap) {
+      const container = document.getElementById('inboxMessages');
+
+      if (!messages || messages.length === 0) {
+        container.innerHTML = '<div class="empty-state">No messages yet.</div>';
+        return;
+      }
+
+      container.innerHTML = messages.map(msg => {
+        const date = new Date(msg.created_at).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const isFromMe = msg.sender_id === currentTeacherId;
+        const studentId = isFromMe ? msg.recipient_id : msg.sender_id;
+        const studentName = studentMap[studentId] || 'Unknown Student';
+        const unreadClass = !msg.is_read && msg.recipient_id === currentTeacherId ? 'unread' : '';
+
+        return `
+          <div class="message-item ${unreadClass}" onclick="viewMessage('${msg.id}')">
+            <div class="message-header">
+              <span class="message-from">${isFromMe ? `You → ${studentName}` : studentName}</span>
+              <span class="message-date">${date}</span>
+            </div>
+            <div class="message-subject">${msg.subject || 'No subject'}</div>
+            <div class="message-preview">${msg.message.substring(0, 100)}${msg.message.length > 100 ? '...' : ''}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function viewMessage(messageId) {
+      const { data: message } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('id', messageId)
+        .single();
+
+      if (!message) return;
+
+      // Mark as read if recipient
+      if (message.recipient_id === currentTeacherId && !message.is_read) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .eq('id', messageId);
+
+        loadInboxMessages();
+        loadStats();
+      }
+
+      // Get student name
+      const studentId = message.sender_id === currentTeacherId ? message.recipient_id : message.sender_id;
+      const { data: student } = await supabaseClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', studentId)
+        .single();
+
+      const isFromMe = message.sender_id === currentTeacherId;
+      const date = new Date(message.created_at).toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+            document.getElementById('messageViewContent').innerHTML = `
+        <div class="message-thread">
+          <div class="sender">${isFromMe ? 'You' : (student?.full_name || 'Student')}</div>
+          <div class="timestamp">${date}</div>
+          <h4 style="margin: 1rem 0 0.5rem 0;">${message.subject || 'No subject'}</h4>
+          <div class="body">${message.message}</div>
+        </div>
+        <div style="display:flex; gap:1rem;">
+          ${!isFromMe ? `<button class="btn-primary" onclick="openReplyModal('${studentId}', '${(message.subject || 'No subject').replace(/'/g, "\\'")}')">Reply</button>` : ''}
+          <button class="btn-secondary" onclick="closeModal('messageViewModal')">Close</button>
+        </div>
+      `;
+
+      document.getElementById('messageViewModal').classList.add('active');
+    }
+
+    function openReplyModal(studentId, subject) {
+      document.getElementById('replyToStudentId').value = studentId;
+      document.getElementById('replySubject').value = subject;
+      document.getElementById('replySubjectInput').value = 'Re: ' + subject;
+      document.getElementById('replyMessage').value = '';
+      
+      closeModal('messageViewModal');
+      document.getElementById('replyModal').classList.add('active');
+    }
+
+    async function sendReply() {
+      const studentId = document.getElementById('replyToStudentId').value;
+      const subject = document.getElementById('replySubject').value;
+      const message = document.getElementById('replyMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentTeacherId,
+          recipient_id: studentId,
+          message_type: 'teacher_student',
+          subject: 'Re: ' + subject,
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending reply: ' + error.message);
+        return;
+      }
+
+      alert('✅ Reply sent successfully!');
+      closeModal('replyModal');
+      loadInboxMessages();
     }
 
     function showTab(tabName) {
@@ -558,31 +1167,235 @@
 
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.getElementById(tabName + 'Tab').classList.add('active');
-    }
 
-    async function markComplete(bookingId) {
-      if (!confirm('Mark this session as completed?')) return;
-
-      const { error } = await supabaseClient
-        .from('bookings')
-        .update({ status: 'completed' })
-        .eq('id', bookingId)
-        .select();
-
-      if (error) {
-        alert('Error: ' + error.message);
-      } else {
-        alert('✅ Session marked as completed!');
-        await loadStats();
-        await loadSessions();
+      if (tabName === 'inbox') {
+        loadInboxMessages();
       }
     }
 
-    async function logout() {
-      await supabaseClient.auth.signOut();
-      window.location.href = 'teacher-login.html';
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
     }
 
+    // ============================================
+    // CREATE SESSION WIZARD - FULL OPEN CALENDAR
+    // ============================================
+    function updateProgress(percent) {
+      document.getElementById('wizardProgressFill').style.width = percent + '%';
+    }
+
+    function openCreateSessionWizard() {
+      wizardStep = 0;
+      if (!wizardData.studentId) {
+        wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
+      }
+      document.getElementById('sessionWizard').classList.add('active');
+      updateProgress(0);
+      renderWizardStep();
+    }
+
+    function closeSessionWizard() {
+      document.getElementById('sessionWizard').classList.remove('active');
+      wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
+    }
+
+    function renderWizardStep() {
+      const c = document.getElementById('wizardContent');
+
+      if(wizardStep === 0) {
+        updateProgress(10);
+        c.innerHTML = `
+          <h2 style="padding:0 20px; color:#000;">📅 Create New Session</h2>
+          <p style="padding:0 20px; color:#666; margin-bottom:1rem;">Schedule a session with one of your students</p>
+          <button onclick="wizardStep=1; renderWizardStep()" style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Begin</button>
+        `;
+      } else if(wizardStep === 1) {
+        updateProgress(20);
+        
+        if (wizardData.studentId) {
+          // Student already selected, skip to subject
+          wizardStep = 2;
+          renderWizardStep();
+          return;
+        }
+
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">👥 Select Student:</h3>
+          <p style="padding:0 20px; color:#666;">Choose which student this session is for</p>
+          <div class="student-select-grid" style="margin:0 20px;">
+            ${myStudents.map(student => `
+              <div class="student-card" onclick="selectStudent('${student.id}', '${student.full_name.replace(/'/g, "\\'")}')">
+                <h4>${student.full_name}</h4>
+                <p>${student.email}</p>
+                <p style="color:#007bff; font-weight:600;">${student.age_group || 'N/A'}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if(wizardStep === 2) {
+        updateProgress(40);
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">📘 Choose Subject:</h3>
+          <p style="padding:0 20px; color:#666; margin-bottom:1rem;">Student: <strong>${wizardData.studentName || 'Selected'}</strong></p>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
+            ${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing","Physics","History","Other"].map(s => `
+              <button onclick="wizardData.subject='${s}'; wizardStep=3; renderWizardStep()" 
+                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">${s}</button>`).join("")}
+          </div>
+        `;
+      } else if(wizardStep === 3) {
+        updateProgress(60);
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">🎓 Session Type:</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
+            ${["1-on-1 Tutoring","Group Class","Review Session","Test Prep","Homework Help"].map(style => `
+              <button onclick="wizardData.style='${style}'; wizardStep=4; renderWizardStep()" 
+                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">${style}</button>`).join("")}
+          </div>
+        `;
+      } else if(wizardStep === 4) {
+        updateProgress(80);
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">📝 Session Notes (Optional):</h3>
+          <p style="padding:0 20px; color:#666;">Add any notes about what you'll cover in this session</p>
+          <div style="border:1px solid #ccc; border-radius:5px; padding:10px; margin:10px 20px;">
+            <textarea id="sessionNotes" placeholder="e.g., Review chapter 5, practice problems..."
+              style="width:100%; padding:10px; height:100px; border:none; resize:vertical; font-size:14px;"></textarea>
+          </div>
+          <button onclick="wizardData.notes=document.getElementById('sessionNotes').value; wizardStep=5; renderWizardStep()" 
+            style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Continue</button>
+        `;
+      } else if(wizardStep === 5) {
+        updateProgress(90);
+        
+        // FULLY OPEN CALENDAR - NO RESTRICTIONS FOR TEACHERS
+        const today = new Date();
+        const minDate = today.toISOString().split('T')[0]; // Today
+        const maxDate = new Date(today.getTime() + (90 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]; // 90 days ahead
+        
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
+          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Full calendar access - schedule anytime!</p>
+          
+          <div style="padding:0 20px;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">📆 Select Date:</label>
+            <input type="date" id="sessionDate" 
+              min="${minDate}" 
+              max="${maxDate}"
+              onchange="generateTeacherTimeSlots()"
+              style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
+            <p style="font-size:0.85em; color:#666; margin-top:0.5rem;">Schedule up to 90 days in advance</p>
+          </div>
+
+          <div id="timeSlotsTeacher" style="padding:0 20px; margin-top:1rem;"></div>
+
+          <button id="createSessionBtn" onclick="confirmSessionCreation()" 
+            style="margin:20px; background:#28a745; color:#fff; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600; display:none;">
+            Create Session
+          </button>
+        `;
+      }
+    }
+
+    function selectStudent(studentId, studentName) {
+      wizardData.studentId = studentId;
+      wizardData.studentName = studentName;
+      wizardStep = 2;
+      renderWizardStep();
+    }
+
+    function generateTeacherTimeSlots() {
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (!selectedDate) return;
+
+      const date = new Date(selectedDate + 'T00:00:00');
+      const dayOfWeek = date.getDay();
+
+      // Teachers can schedule even on Sundays (fully open)
+      const slots = [];
+      
+      // Generate time slots from 6 AM to 10 PM (16 hours of availability)
+      for (let hour = 6; hour < 22; hour++) {
+        for (let min = 0; min < 60; min += 30) {
+          const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          const period = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+          const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
+          slots.push({ time24: timeStr24, time12: timeStr12 });
+        }
+      }
+
+      wizardData.date = selectedDate;
+      
+      const container = document.getElementById('timeSlotsTeacher');
+      container.innerHTML = `
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
+        <div class="time-slots">
+          ${slots.map(slot => 
+            `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
+          ).join('')}
+        </div>
+      `;
+    }
+
+    function selectSessionTime(time) {
+      document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+      wizardData.time = time;
+      document.getElementById('createSessionBtn').style.display = 'block';
+      updateProgress(100);
+    }
+
+    async function confirmSessionCreation() {
+      if (!wizardData.studentId || !wizardData.date || !wizardData.time) {
+        alert('Please complete all required fields');
+        return;
+      }
+
+      const btn = document.getElementById('createSessionBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Creating session...';
+
+      try {
+        // Get student info for age group
+        const student = myStudents.find(s => s.id === wizardData.studentId);
+
+        // Create session
+        const { data, error } = await supabaseClient
+          .from('bookings')
+          .insert({
+            user_id: wizardData.studentId,
+            assigned_teacher_id: currentTeacherId,
+            subject: wizardData.subject,
+            learning_style: wizardData.style,
+            help_needed: wizardData.notes || 'Teacher-created session',
+            session_date: wizardData.date,
+            session_time: wizardData.time,
+            status: 'scheduled',
+            age_group: student?.age_group || 'N/A',
+            instructor_name: document.getElementById('teacherName').textContent
+          })
+          .select()
+          .single();
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        alert('✅ Session created successfully!');
+        closeSessionWizard();
+        await loadSessions();
+        await loadStats();
+      } catch (error) {
+        alert('❌ Error creating session: ' + error.message);
+        btn.disabled = false;
+        btn.textContent = 'Create Session';
+      }
+    }
+
+    // Initialize on page load
     checkTeacherAuth();
   </script>
 </body>
