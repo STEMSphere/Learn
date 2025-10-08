@@ -121,10 +121,26 @@
       font-weight: 600;
       font-size: 1em;
       color: #666;
+      position: relative;
     }
     .tab.active {
       color: #28a745;
       border-bottom-color: #28a745;
+    }
+    .tab .badge {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: #ff0000;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
     }
 
     .tab-content {
@@ -187,6 +203,10 @@
     .btn-edit {
       background: #ffc107;
       color: #000;
+    }
+    .btn-reply {
+      background: #007bff;
+      color: #fff;
     }
 
     .status-badge {
@@ -360,16 +380,23 @@
       font-weight: 600;
       color: #333;
     }
-    .form-group input {
+    .form-group input,
+    .form-group textarea {
       width: 100%;
       padding: 0.75rem;
       border: 2px solid #ddd;
       border-radius: 6px;
       font-size: 1em;
+      font-family: inherit;
     }
-    .form-group input:focus {
+    .form-group input:focus,
+    .form-group textarea:focus {
       outline: none;
       border-color: #28a745;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 150px;
     }
     .help-text {
       font-size: 0.85em;
@@ -382,6 +409,94 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
+    }
+
+    /* Inbox Styles */
+    .inbox-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .inbox-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .inbox-header h3 {
+      color: #000;
+      font-size: 1.5em;
+    }
+    .message-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .message-item {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .message-item:hover {
+      border-color: #28a745;
+      box-shadow: 0 2px 8px rgba(40,167,69,0.2);
+    }
+    .message-item.unread {
+      background: #d4edda;
+      border-color: #28a745;
+      font-weight: 600;
+    }
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .message-from {
+      font-weight: 600;
+      color: #000;
+    }
+    .message-date {
+      color: #999;
+      font-size: 0.85em;
+    }
+    .message-subject {
+      color: #333;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .message-preview {
+      color: #666;
+      font-size: 0.9em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .message-thread {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .message-thread .sender {
+      font-weight: 600;
+      color: #28a745;
+      margin-bottom: 0.5rem;
+    }
+    .message-thread .timestamp {
+      color: #999;
+      font-size: 0.85em;
+      margin-bottom: 0.5rem;
+    }
+    .message-thread .body {
+      color: #333;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -398,7 +513,7 @@
   <div class="admin-container">
     <div class="welcome-section">
       <h1>Admin Dashboard 🛠️</h1>
-      <p>Manage sessions, students, and teachers</p>
+      <p>Manage sessions, students, teachers, and support</p>
     </div>
 
     <div class="stats-grid">
@@ -418,6 +533,10 @@
         <h3>Total Teachers</h3>
         <div class="number" id="totalTeachers">-</div>
       </div>
+      <div class="stat-card">
+        <h3>Support Messages</h3>
+        <div class="number" id="supportCount">-</div>
+      </div>
     </div>
 
     <div class="tabs">
@@ -425,6 +544,10 @@
       <button class="tab" onclick="showTab('bookings')">All Bookings</button>
       <button class="tab" onclick="showTab('students')">Students</button>
       <button class="tab" onclick="showTab('teachers')">Teachers</button>
+      <button class="tab" onclick="showTab('support')">
+        💬 Support Inbox
+        <span class="badge" id="supportBadge" style="display:none;">0</span>
+      </button>
     </div>
 
     <!-- PENDING SESSIONS TAB -->
@@ -475,7 +598,7 @@
       </div>
     </div>
 
-    <!-- STUDENTS TAB -->
+        <!-- STUDENTS TAB -->
     <div id="studentsTab" class="tab-content">
       <div class="info-box">
         <p>👥 Manage student accounts and their assigned teachers</p>
@@ -524,6 +647,18 @@
         </table>
       </div>
     </div>
+
+    <!-- SUPPORT INBOX TAB -->
+    <div id="supportTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>💬 Support Messages</h3>
+        </div>
+        <div id="supportMessages" class="message-list">
+          <div class="empty-state">Loading messages...</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ASSIGN TEACHER MODAL -->
@@ -541,6 +676,26 @@
       <div style="display:flex; gap:1rem; margin-top:1.5rem;">
         <button class="btn-primary" onclick="confirmAssignment()" id="confirmAssignBtn" disabled>Assign Teacher</button>
         <button class="btn-secondary" onclick="closeAssignModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSIGN TEACHER TO STUDENT MODAL -->
+  <div id="assignStudentTeacherModal" class="modal">
+    <div class="modal-content">
+      <h3>Assign Teacher to Student</h3>
+      <input type="hidden" id="assignStudentId">
+      <p style="margin-bottom:1rem; color:#666;">Select a teacher for: <strong id="assignStudentName"></strong></p>
+      
+      <input type="text" id="studentTeacherSearch" class="teacher-search" placeholder="🔍 Search by name..." onkeyup="filterStudentTeachers()">
+      
+      <div id="studentTeacherGrid" class="teacher-grid">
+        <p class="loading">Loading teachers...</p>
+      </div>
+
+      <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+        <button class="btn-primary" onclick="confirmStudentTeacherAssignment()" id="confirmStudentTeacherBtn" disabled>Assign Teacher</button>
+        <button class="btn-secondary" onclick="closeModal('assignStudentTeacherModal')">Cancel</button>
       </div>
     </div>
   </div>
@@ -649,8 +804,38 @@
     </div>
   </div>
 
+  <!-- MESSAGE VIEW MODAL -->
+  <div id="messageViewModal" class="modal">
+    <div class="modal-content" id="messageViewContent">
+      <!-- Content populated dynamically -->
+    </div>
+  </div>
 
-   <script>
+  <!-- REPLY MESSAGE MODAL -->
+  <div id="replyModal" class="modal">
+    <div class="modal-content">
+      <h3>✉️ Reply to Student</h3>
+      <input type="hidden" id="replyToStudentId">
+      <input type="hidden" id="replySubject">
+      
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="replySubjectInput" readonly>
+      </div>
+      
+      <div class="form-group">
+        <label>Your Reply *</label>
+        <textarea id="replyMessage" placeholder="Type your reply here..." required></textarea>
+      </div>
+
+      <div style="display:flex; gap:1rem;">
+        <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
+        <button class="btn-secondary" onclick="closeModal('replyModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
@@ -661,7 +846,12 @@
     let allTeachers = [];
     let selectedTeacherId = null;
     let currentBookingId = null;
+    let selectedStudentTeacherId = null;
+    let unreadSupportCount = 0;
 
+    // ============================================
+    // AUTH & INITIALIZATION
+    // ============================================
     async function checkAdminAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -690,12 +880,43 @@
       loadBookings();
       loadStudents();
       loadTeachers();
+      loadSupportMessages();
+
+      // Subscribe to realtime messages
+      supabaseClient
+        .channel('admin_messages')
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `recipient_id=eq.${currentAdminId}`
+        }, () => {
+          loadSupportMessages();
+          loadStats();
+        })
+        .subscribe();
     }
 
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'admin-login.html';
+    }
+
+    // ============================================
+    // STATS
+    // ============================================
     async function loadStats() {
       const { data: bookings } = await supabaseClient.from('bookings').select('id, assigned_teacher_id, status');
       const { data: students } = await supabaseClient.from('profiles').select('id').eq('role', 'student');
       const { data: teachers } = await supabaseClient.from('profiles').select('id').eq('role', 'teacher');
+      
+      // Get unread support messages
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('id')
+        .eq('message_type', 'support')
+        .eq('recipient_id', currentAdminId)
+        .eq('is_read', false);
 
       const pending = bookings?.filter(b => !b.assigned_teacher_id).length || 0;
 
@@ -703,8 +924,29 @@
       document.getElementById('totalBookings').textContent = bookings?.length || 0;
       document.getElementById('totalStudents').textContent = students?.length || 0;
       document.getElementById('totalTeachers').textContent = teachers?.length || 0;
+      document.getElementById('supportCount').textContent = messages?.length || 0;
+      
+      unreadSupportCount = messages?.length || 0;
     }
 
+    // ============================================
+    // TABS
+    // ============================================
+    function showTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(tabName + 'Tab').classList.add('active');
+
+      if (tabName === 'support') {
+        loadSupportMessages();
+      }
+    }
+
+    // ============================================
+    // PENDING SESSIONS
+    // ============================================
     async function loadPendingSessions() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
@@ -764,6 +1006,9 @@
       }).join('');
     }
 
+    // ============================================
+    // ALL BOOKINGS
+    // ============================================
     async function loadBookings() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
@@ -780,7 +1025,7 @@
       const userIds = [...new Set(bookings.map(b => b.user_id))];
       const teacherIds = [...new Set(bookings.filter(b => b.assigned_teacher_id).map(b => b.assigned_teacher_id))];
 
-      const { data: profiles } = await supabaseClient
+           const { data: profiles } = await supabaseClient
         .from('profiles')
         .select('id, full_name, email')
         .in('id', [...userIds, ...teacherIds]);
@@ -831,6 +1076,28 @@
       }).join('');
     }
 
+    async function markComplete(bookingId) {
+      if (!confirm('Mark this session as completed?')) return;
+
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ status: 'completed' })
+        .eq('id', bookingId);
+
+      if (error) {
+        alert('Error: ' + error.message);
+        return;
+      }
+
+      alert('✅ Session marked as completed!');
+      await loadStats();
+      await loadBookings();
+      await loadPendingSessions();
+    }
+
+    // ============================================
+    // STUDENTS
+    // ============================================
     async function loadStudents() {
       const { data: students, error } = await supabaseClient
         .from('profiles')
@@ -871,13 +1138,147 @@
             <td>${student.age_group || 'N/A'}</td>
             <td>${teacherName}</td>
             <td>
-              <button class="btn-small btn-assign" onclick="assignTeacherToStudent('${student.id}')">Assign Teacher</button>
+              <button class="btn-small btn-assign" onclick="assignTeacherToStudent('${student.id}', '${student.full_name.replace(/'/g, "\\'")}')">Assign Teacher</button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
+    async function assignTeacherToStudent(studentId, studentName) {
+      selectedStudentTeacherId = null;
+      document.getElementById('assignStudentId').value = studentId;
+      document.getElementById('assignStudentName').textContent = studentName;
+      document.getElementById('confirmStudentTeacherBtn').disabled = true;
+      document.getElementById('studentTeacherSearch').value = '';
+
+      const { data: teachers } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('role', 'teacher')
+        .order('full_name', { ascending: true });
+
+      allTeachers = teachers || [];
+
+      const { data: assignments } = await supabaseClient
+        .from('teacher_assignments')
+        .select('teacher_id, student_id');
+
+      renderStudentTeacherGrid(allTeachers, assignments);
+      document.getElementById('assignStudentTeacherModal').classList.add('active');
+    }
+
+    function renderStudentTeacherGrid(teachers, assignments) {
+      const grid = document.getElementById('studentTeacherGrid');
+
+      if (!teachers || teachers.length === 0) {
+        grid.innerHTML = '<p class="empty-state">No teachers available</p>';
+        return;
+      }
+
+      grid.innerHTML = teachers.map(teacher => {
+        const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
+        const subjects = teacher.subjects || 'No subjects listed';
+
+        return `
+          <div class="teacher-card" onclick="selectStudentTeacher('${teacher.id}')" data-teacher-id="${teacher.id}">
+            <h4>${teacher.full_name}</h4>
+            <p class="subjects">📚 ${subjects}</p>
+            <p class="students-count">👥 ${studentCount} student${studentCount !== 1 ? 's' : ''}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectStudentTeacher(teacherId) {
+      selectedStudentTeacherId = teacherId;
+      
+      document.querySelectorAll('#studentTeacherGrid .teacher-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      const selectedCard = document.querySelector(`#studentTeacherGrid [data-teacher-id="${teacherId}"]`);
+      if (selectedCard) {
+        selectedCard.classList.add('selected');
+      }
+
+      document.getElementById('confirmStudentTeacherBtn').disabled = false;
+    }
+
+    function filterStudentTeachers() {
+      const searchTerm = document.getElementById('studentTeacherSearch').value.toLowerCase();
+      
+      const filtered = allTeachers.filter(teacher => {
+        const name = (teacher.full_name || '').toLowerCase();
+        const subjects = (teacher.subjects || '').toLowerCase();
+        return name.includes(searchTerm) || subjects.includes(searchTerm);
+      });
+
+      supabaseClient
+        .from('teacher_assignments')
+        .select('teacher_id, student_id')
+        .then(({ data }) => {
+          renderStudentTeacherGrid(filtered, data);
+        });
+    }
+
+    async function confirmStudentTeacherAssignment() {
+      if (!selectedStudentTeacherId) {
+        alert('Please select a teacher');
+        return;
+      }
+
+      const studentId = document.getElementById('assignStudentId').value;
+
+      document.getElementById('confirmStudentTeacherBtn').disabled = true;
+      document.getElementById('confirmStudentTeacherBtn').textContent = 'Assigning...';
+
+      // Check if already assigned
+      const { data: existing } = await supabaseClient
+        .from('teacher_assignments')
+        .select('id')
+        .eq('student_id', studentId)
+        .single();
+
+      if (existing) {
+        // Update existing assignment
+        const { error } = await supabaseClient
+          .from('teacher_assignments')
+          .update({ teacher_id: selectedStudentTeacherId })
+          .eq('student_id', studentId);
+
+        if (error) {
+          alert('Error updating assignment: ' + error.message);
+          document.getElementById('confirmStudentTeacherBtn').disabled = false;
+          document.getElementById('confirmStudentTeacherBtn').textContent = 'Assign Teacher';
+          return;
+        }
+      } else {
+        // Create new assignment
+        const { error } = await supabaseClient
+          .from('teacher_assignments')
+          .insert({
+            student_id: studentId,
+            teacher_id: selectedStudentTeacherId
+          });
+
+        if (error) {
+          alert('Error assigning teacher: ' + error.message);
+          document.getElementById('confirmStudentTeacherBtn').disabled = false;
+          document.getElementById('confirmStudentTeacherBtn').textContent = 'Assign Teacher';
+          return;
+        }
+      }
+
+      alert('✅ Teacher assigned successfully!');
+      closeModal('assignStudentTeacherModal');
+      await loadStudents();
+      document.getElementById('confirmStudentTeacherBtn').textContent = 'Assign Teacher';
+    }
+
+    // ============================================
+    // TEACHERS
+    // ============================================
     async function loadTeachers() {
       const { data: teachers, error } = await supabaseClient
         .from('profiles')
@@ -916,14 +1317,181 @@
       }).join('');
     }
 
-    function showTab(tabName) {
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-      event.target.classList.add('active');
-
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      document.getElementById(tabName + 'Tab').classList.add('active');
+    function openAddTeacherModal() {
+      document.getElementById('addTeacherName').value = '';
+      document.getElementById('addTeacherEmail').value = '';
+      document.getElementById('addTeacherPhone').value = '';
+      document.getElementById('addTeacherSubjects').value = '';
+      document.getElementById('addTeacherPassword').value = '';
+      document.getElementById('addTeacherModal').classList.add('active');
     }
 
+    async function addTeacher() {
+      const name = document.getElementById('addTeacherName').value.trim();
+      const email = document.getElementById('addTeacherEmail').value.trim();
+      const phone = document.getElementById('addTeacherPhone').value.trim();
+      const subjects = document.getElementById('addTeacherSubjects').value.trim();
+      const password = document.getElementById('addTeacherPassword').value;
+
+      if (!name || !email || !password) {
+        alert('Please fill in all required fields (Name, Email, Password)');
+        return;
+      }
+
+      if (password.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+      }
+
+      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            full_name: name,
+            role: 'teacher'
+          }
+        }
+      });
+
+      if (authError) {
+        alert('Error creating teacher account: ' + authError.message);
+        return;
+      }
+
+      const { error: profileError } = await supabaseClient
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          email: email,
+          full_name: name,
+          phone: phone || null,
+          subjects: subjects || null,
+          role: 'teacher'
+              });
+
+      if (profileError) {
+        alert('Teacher account created but profile failed: ' + profileError.message);
+        console.error('Profile error:', profileError);
+        return;
+      }
+
+      alert('✅ Teacher added successfully!');
+      closeModal('addTeacherModal');
+      await loadStats();
+      await loadTeachers();
+    }
+
+    async function openEditTeacherModal(teacherId) {
+      const { data: teacher, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', teacherId)
+        .single();
+      
+      if (error || !teacher) {
+        alert('Teacher not found: ' + (error?.message || 'Unknown error'));
+        return;
+      }
+
+      document.getElementById('editTeacherId').value = teacher.id;
+      document.getElementById('editTeacherName').value = teacher.full_name || '';
+      document.getElementById('editTeacherEmail').value = teacher.email || '';
+      document.getElementById('editTeacherPhone').value = teacher.phone || '';
+      document.getElementById('editTeacherSubjects').value = teacher.subjects || '';
+      
+      document.getElementById('editTeacherModal').classList.add('active');
+    }
+
+    async function updateTeacher() {
+      const teacherId = document.getElementById('editTeacherId').value;
+      const name = document.getElementById('editTeacherName').value.trim();
+      const email = document.getElementById('editTeacherEmail').value.trim();
+      const phone = document.getElementById('editTeacherPhone').value.trim();
+      const subjects = document.getElementById('editTeacherSubjects').value.trim();
+
+      if (!name || !email) {
+        alert('Name and email are required');
+        return;
+      }
+
+      const { error: updateError } = await supabaseClient
+        .from('profiles')
+        .update({
+          full_name: name,
+          email: email,
+          phone: phone || null,
+          subjects: subjects || null
+        })
+        .eq('id', teacherId);
+
+      if (updateError) {
+        alert('Error updating teacher: ' + updateError.message);
+        return;
+      }
+
+      alert('✅ Teacher information updated successfully!');
+      closeModal('editTeacherModal');
+      await loadTeachers();
+    }
+
+    async function openResetPasswordModal(teacherId) {
+      const teacher = allTeachers.find(t => t.id === teacherId);
+      
+      if (!teacher) {
+        alert('Teacher not found');
+        return;
+      }
+
+      document.getElementById('resetTeacherId').value = teacher.id;
+      document.getElementById('resetTeacherEmail').value = teacher.email;
+      document.getElementById('resetTeacherName').textContent = teacher.full_name;
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      
+      document.getElementById('resetPasswordModal').classList.add('active');
+    }
+
+    async function resetTeacherPassword() {
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const teacherEmail = document.getElementById('resetTeacherEmail').value;
+
+      if (!newPassword || !confirmPassword) {
+        alert('Please fill in both password fields');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      if (!confirm(`Reset password for ${document.getElementById('resetTeacherName').textContent}?`)) {
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(teacherEmail, {
+        redirectTo: window.location.origin + '/reset-password.html'
+      });
+
+      if (error) {
+        alert('Error sending reset email: ' + error.message);
+        return;
+      }
+
+      alert('✅ Password reset email sent to ' + teacherEmail + '\n\nThe teacher will receive an email with instructions to reset their password.');
+      closeModal('resetPasswordModal');
+    }
+
+    // ============================================
+    // ASSIGN TEACHER TO SESSION
+    // ============================================
     async function openAssignModal(bookingId, subject) {
       currentBookingId = bookingId;
       selectedTeacherId = null;
@@ -972,11 +1540,11 @@
     function selectTeacher(teacherId) {
       selectedTeacherId = teacherId;
       
-      document.querySelectorAll('.teacher-card').forEach(card => {
+      document.querySelectorAll('#teacherGrid .teacher-card').forEach(card => {
         card.classList.remove('selected');
       });
       
-      const selectedCard = document.querySelector(`[data-teacher-id="${teacherId}"]`);
+      const selectedCard = document.querySelector(`#teacherGrid [data-teacher-id="${teacherId}"]`);
       if (selectedCard) {
         selectedCard.classList.add('selected');
       }
@@ -1039,260 +1607,182 @@
       document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
 
-    async function markComplete(bookingId) {
-      if (!confirm('Mark this session as completed?')) return;
+    // ============================================
+    // SUPPORT INBOX
+    // ============================================
+    async function loadSupportMessages() {
+      // Get all support messages where admin is recipient or sender
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'support')
+        .or(`sender_id.eq.${currentAdminId},recipient_id.eq.${currentAdminId}`)
+        .order('created_at', { ascending: false });
 
-      const { error } = await supabaseClient
-        .from('bookings')
-        .update({ status: 'completed' })
-        .eq('id', bookingId);
+      const unreadCount = messages?.filter(m => m.recipient_id === currentAdminId && !m.is_read).length || 0;
+      updateBadge('supportBadge', unreadCount);
 
-      if (error) {
-        alert('Error: ' + error.message);
-        return;
-      }
+      // Get student names
+      const studentIds = [...new Set(messages?.map(m => m.sender_id === currentAdminId ? m.recipient_id : m.sender_id) || [])];
+      
+      const { data: students } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', studentIds);
 
-      alert('✅ Session marked as completed!');
-      await loadStats();
-      await loadBookings();
-      await loadPendingSessions();
-    }
-
-    // ADD TEACHER FUNCTION
-    function openAddTeacherModal() {
-      document.getElementById('addTeacherName').value = '';
-      document.getElementById('addTeacherEmail').value = '';
-      document.getElementById('addTeacherPhone').value = '';
-      document.getElementById('addTeacherSubjects').value = '';
-      document.getElementById('addTeacherPassword').value = '';
-      document.getElementById('addTeacherModal').classList.add('active');
-    }
-
-    async function addTeacher() {
-      const name = document.getElementById('addTeacherName').value.trim();
-      const email = document.getElementById('addTeacherEmail').value.trim();
-      const phone = document.getElementById('addTeacherPhone').value.trim();
-      const subjects = document.getElementById('addTeacherSubjects').value.trim();
-      const password = document.getElementById('addTeacherPassword').value;
-
-      if (!name || !email || !password) {
-        alert('Please fill in all required fields (Name, Email, Password)');
-        return;
-      }
-
-      if (password.length < 6) {
-        alert('Password must be at least 6 characters');
-        return;
-      }
-
-      console.log('➕ Adding teacher:', { name, email, phone, subjects });
-
-      // Create auth user
-      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {
-            full_name: name,
-            role: 'teacher'
-          }
-        }
+      const studentMap = {};
+      students?.forEach(s => {
+        studentMap[s.id] = s.full_name;
       });
 
-      if (authError) {
-        alert('Error creating teacher account: ' + authError.message);
-        console.error('Auth error:', authError);
+      renderSupportMessages(messages, studentMap);
+    }
+
+    function updateBadge(badgeId, count) {
+      const badge = document.getElementById(badgeId);
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function renderSupportMessages(messages, studentMap) {
+      const container = document.getElementById('supportMessages');
+
+      if (!messages || messages.length === 0) {
+        container.innerHTML = '<div class="empty-state">No support messages yet.</div>';
         return;
       }
 
-      console.log('✅ Auth user created:', authData);
-
-      // Create profile
-      const { error: profileError } = await supabaseClient
-        .from('profiles')
-        .insert({
-          id: authData.user.id,
-          email: email,
-          full_name: name,
-          phone: phone || null,
-          subjects: subjects || null,
-          role: 'teacher'
+      container.innerHTML = messages.map(msg => {
+        const date = new Date(msg.created_at).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
         });
 
-      if (profileError) {
-        alert('Teacher account created but profile failed: ' + profileError.message);
-        console.error('Profile error:', profileError);
-        return;
-      }
+        const isFromMe = msg.sender_id === currentAdminId;
+        const studentId = isFromMe ? msg.recipient_id : msg.sender_id;
+        const studentName = studentMap[studentId] || 'Unknown Student';
+        const unreadClass = !msg.is_read && msg.recipient_id === currentAdminId ? 'unread' : '';
 
-      alert('✅ Teacher added successfully!');
-      closeModal('addTeacherModal');
-      await loadStats();
-      await loadTeachers();
+        return `
+          <div class="message-item ${unreadClass}" onclick="viewSupportMessage('${msg.id}')">
+            <div class="message-header">
+              <span class="message-from">${isFromMe ? `You → ${studentName}` : studentName}</span>
+              <span class="message-date">${date}</span>
+            </div>
+            <div class="message-subject">${msg.subject || 'No subject'}</div>
+            <div class="message-preview">${msg.message.substring(0, 100)}${msg.message.length > 100 ? '...' : ''}</div>
+          </div>
+        `;
+      }).join('');
     }
 
-    // TEACHER EDITING FUNCTIONS (FIXED VERSION)
-    async function openEditTeacherModal(teacherId) {
-      const { data: teacher, error } = await supabaseClient
-        .from('profiles')
+    async function viewSupportMessage(messageId) {
+      const { data: message } = await supabaseClient
+        .from('messages')
         .select('*')
-        .eq('id', teacherId)
+        .eq('id', messageId)
         .single();
-      
-      if (error || !teacher) {
-        alert('Teacher not found: ' + (error?.message || 'Unknown error'));
-        console.error('Error loading teacher:', error);
-        return;
+
+      if (!message) return;
+
+      // Mark as read if recipient
+      if (message.recipient_id === currentAdminId && !message.is_read) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .eq('id', messageId);
+
+        loadSupportMessages();
+        loadStats();
       }
 
-      console.log('✅ Teacher data loaded:', teacher);
+      // Get student name
+      const studentId = message.sender_id === currentAdminId ? message.recipient_id : message.sender_id;
+      const { data: student } = await supabaseClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', studentId)
+        .single();
 
-      document.getElementById('editTeacherId').value = teacher.id;
-      document.getElementById('editTeacherName').value = teacher.full_name || '';
-      document.getElementById('editTeacherEmail').value = teacher.email || '';
-      document.getElementById('editTeacherPhone').value = teacher.phone || '';
-      document.getElementById('editTeacherSubjects').value = teacher.subjects || '';
-      
-      document.getElementById('editTeacherModal').classList.add('active');
-    }
-
-    async function updateTeacher() {
-      const teacherId = document.getElementById('editTeacherId').value;
-      const name = document.getElementById('editTeacherName').value.trim();
-      const email = document.getElementById('editTeacherEmail').value.trim();
-      const phone = document.getElementById('editTeacherPhone').value.trim();
-      const subjects = document.getElementById('editTeacherSubjects').value.trim();
-
-      if (!name || !email) {
-        alert('Name and email are required');
-        return;
-      }
-
-      console.log('📝 Updating teacher with data:', { 
-        teacherId, 
-        name, 
-        email, 
-        phone, 
-        subjects 
+      const isFromMe = message.sender_id === currentAdminId;
+      const date = new Date(message.created_at).toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
       });
 
-           // Check current data
-      const { data: currentData } = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('id', teacherId)
-        .single();
-      
-      console.log('📊 Current data in database:', currentData);
+      document.getElementById('messageViewContent').innerHTML = `
+        <div class="message-thread">
+          <div class="sender">${isFromMe ? 'You (Admin)' : (student?.full_name || 'Student')}</div>
+          <div class="timestamp">${date}</div>
+          <h4 style="margin: 1rem 0 0.5rem 0;">${message.subject || 'No subject'}</h4>
+          <div class="body">${message.message}</div>
+        </div>
+        <div style="display:flex; gap:1rem;">
+          ${!isFromMe ? `<button class="btn-primary" onclick="openSupportReplyModal('${studentId}', '${(message.subject || 'No subject').replace(/'/g, "\\'")}')">Reply</button>` : ''}
+          <button class="btn-secondary" onclick="closeModal('messageViewModal')">Close</button>
+        </div>
+      `;
 
-      // Perform the update WITHOUT .select() first
-      const { error: updateError } = await supabaseClient
-        .from('profiles')
-        .update({
-          full_name: name,
-          email: email,
-          phone: phone || null,
-          subjects: subjects || null
-        })
-        .eq('id', teacherId);
-
-      console.log('❌ Update error:', updateError);
-
-      if (updateError) {
-        alert('Error updating teacher: ' + updateError.message);
-        console.error('Full error object:', updateError);
-        return;
-      }
-
-      // Now fetch the updated data to verify
-      const { data: updatedData, error: fetchError } = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('id', teacherId)
-        .single();
-
-      console.log('✅ Updated data fetched:', updatedData);
-
-      if (fetchError) {
-        alert('Update succeeded but could not verify: ' + fetchError.message);
-        return;
-      }
-
-      alert('✅ Teacher information updated successfully!');
-      closeModal('editTeacherModal');
-      await loadTeachers();
+      document.getElementById('messageViewModal').classList.add('active');
     }
 
-    async function openResetPasswordModal(teacherId) {
-      const teacher = allTeachers.find(t => t.id === teacherId);
+    function openSupportReplyModal(studentId, subject) {
+      document.getElementById('replyToStudentId').value = studentId;
+      document.getElementById('replySubject').value = subject;
+      document.getElementById('replySubjectInput').value = 'Re: ' + subject;
+      document.getElementById('replyMessage').value = '';
       
-      if (!teacher) {
-        alert('Teacher not found');
-        return;
-      }
-
-      document.getElementById('resetTeacherId').value = teacher.id;
-      document.getElementById('resetTeacherEmail').value = teacher.email;
-      document.getElementById('resetTeacherName').textContent = teacher.full_name;
-      document.getElementById('newPassword').value = '';
-      document.getElementById('confirmPassword').value = '';
-      
-      document.getElementById('resetPasswordModal').classList.add('active');
+      closeModal('messageViewModal');
+      document.getElementById('replyModal').classList.add('active');
     }
 
-    async function resetTeacherPassword() {
-      const newPassword = document.getElementById('newPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      const teacherEmail = document.getElementById('resetTeacherEmail').value;
-      const teacherId = document.getElementById('resetTeacherId').value;
+    async function sendSupportReply() {
+      const studentId = document.getElementById('replyToStudentId').value;
+      const subject = document.getElementById('replySubject').value;
+      const message = document.getElementById('replyMessage').value.trim();
 
-      if (!newPassword || !confirmPassword) {
-        alert('Please fill in both password fields');
+      if (!message) {
+        alert('Please enter a message');
         return;
       }
 
-      if (newPassword.length < 6) {
-        alert('Password must be at least 6 characters');
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
-      }
-
-      if (!confirm(`Reset password for ${document.getElementById('resetTeacherName').textContent}?`)) {
-        return;
-      }
-
-      // Send password reset email
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(teacherEmail, {
-        redirectTo: window.location.origin + '/reset-password.html'
-      });
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentAdminId,
+          recipient_id: studentId,
+          message_type: 'support',
+          subject: 'Re: ' + subject,
+          message: message
+        });
 
       if (error) {
-        alert('Error sending reset email: ' + error.message);
-        console.error('Password reset error:', error);
+        alert('Error sending reply: ' + error.message);
         return;
       }
 
-      alert('✅ Password reset email sent to ' + teacherEmail + '\n\nThe teacher will receive an email with instructions to reset their password.');
-      closeModal('resetPasswordModal');
+      alert('✅ Reply sent successfully!');
+      closeModal('replyModal');
+      loadSupportMessages();
     }
 
+    // ============================================
+    // UTILITIES
+    // ============================================
     function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
     }
 
-    async function assignTeacherToStudent(studentId) {
-      alert('Student-teacher assignment feature coming soon!');
-    }
-
-    async function logout() {
-      await supabaseClient.auth.signOut();
-      window.location.href = 'admin-login.html';
-    }
-
+    // Initialize on page load
     checkAdminAuth();
   </script>
 </body>
