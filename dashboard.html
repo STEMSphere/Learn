@@ -97,9 +97,51 @@
       100% { box-shadow:0 0 10px rgba(0,123,255,0.5); }
     }
 
-    .sessions-section {
-      margin-bottom: 3rem;
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #ddd;
+      flex-wrap: wrap;
     }
+    .tab {
+      padding: 1rem 2rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      color: #666;
+      position: relative;
+    }
+    .tab.active {
+      color: #ff0000;
+      border-bottom-color: #ff0000;
+    }
+    .tab .badge {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: #ff0000;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
     .sessions-section h2 {
       color: #000;
       border-bottom: 2px solid #ff0000;
@@ -145,6 +187,182 @@
       border: 1px solid #999;
     }
 
+    /* Inbox Styles */
+    .inbox-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .inbox-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .inbox-header h3 {
+      color: #000;
+      font-size: 1.5em;
+    }
+    .compose-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .compose-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .message-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .message-item {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .message-item:hover {
+      border-color: #007bff;
+      box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+    }
+    .message-item.unread {
+      background: #e3f2fd;
+      border-color: #007bff;
+      font-weight: 600;
+    }
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .message-from {
+      font-weight: 600;
+      color: #000;
+    }
+    .message-date {
+      color: #999;
+      font-size: 0.85em;
+    }
+    .message-subject {
+      color: #333;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .message-preview {
+      color: #666;
+      font-size: 0.9em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Message Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      overflow: auto;
+    }
+    .modal.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-content h3 {
+      margin-bottom: 1rem;
+      color: #007bff;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+    .btn-primary {
+      background: #007bff;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      margin-left: 0.5rem;
+    }
+
+    .message-thread {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .message-thread .sender {
+      font-weight: 600;
+      color: #007bff;
+      margin-bottom: 0.5rem;
+    }
+    .message-thread .timestamp {
+      color: #999;
+      font-size: 0.85em;
+      margin-bottom: 0.5rem;
+    }
+    .message-thread .body {
+      color: #333;
+      white-space: pre-wrap;
+    }
+
     .empty-state {
       text-align: center;
       padding: 3rem 1rem;
@@ -166,7 +384,6 @@
       display: block;
     }
 
-    /* Progress Bar */
     #wizardProgressBar {
       height: 10px;
       background: #e0e0e0;
@@ -228,6 +445,13 @@
       .time-slots {
         grid-template-columns: 1fr;
       }
+      .tabs {
+        overflow-x: auto;
+      }
+      .tab {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9em;
+      }
     }
   </style>
 </head>
@@ -250,29 +474,95 @@
       </button>
     </div>
 
-    <div class="sessions-section">
-      <h2>📚 My Sessions</h2>
-      <div id="allSessions">
-        <div style="text-align:center; padding:3rem; color:#007bff;">Loading your sessions...</div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('sessions')">📚 My Sessions</button>
+      <button class="tab" onclick="showTab('support')">
+        💬 Support
+        <span class="badge" id="supportBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab" onclick="showTab('teacher')">
+        👨‍🏫 My Teacher
+        <span class="badge" id="teacherBadge" style="display:none;">0</span>
+      </button>
+    </div>
+
+    <!-- SESSIONS TAB -->
+    <div id="sessionsTab" class="tab-content active">
+      <div class="sessions-section">
+        <h2>📚 My Sessions</h2>
+        <div id="allSessions">
+          <div style="text-align:center; padding:3rem; color:#007bff;">Loading your sessions...</div>
+        </div>
       </div>
     </div>
 
-    <div style="background:#fff; border-radius:8px; padding:2rem; margin-top:2rem; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-      <h3 style="color:#000; margin-bottom:1rem;">Need Help?</h3>
-      <p style="color:#666;">Contact our support team at <a href="mailto:support@stemsphere.academy" style="color:#ff0000; text-decoration:none; font-weight:600;">support@stemsphere.academy</a></p>
+    <!-- SUPPORT INBOX TAB -->
+    <div id="supportTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>💬 Support Messages</h3>
+          <button class="compose-btn" onclick="openComposeModal('support')">✉️ New Message</button>
+        </div>
+        <div id="supportMessages" class="message-list">
+          <div class="empty-state">Loading messages...</div>
+        </div>
+      </div>
+    </div>
+
+        <!-- TEACHER INBOX TAB -->
+    <div id="teacherTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>👨‍🏫 Teacher Messages</h3>
+          <button class="compose-btn" onclick="openComposeModal('teacher')" id="composeTeacherBtn">✉️ New Message</button>
+        </div>
+        <div id="teacherMessages" class="message-list">
+          <div class="empty-state">Loading messages...</div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- BOOKING WIZARD MODAL -->
   <div id="bookingWizard" class="wizard-modal">
     <button onclick="closeBookingWizard()"
       style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
     
-    <!-- Progress Bar -->
     <div id="wizardProgressBar">
       <div id="wizardProgressFill"></div>
     </div>
     
     <div id="wizardContent" style="margin-top:20px;"></div>
+  </div>
+
+  <!-- COMPOSE MESSAGE MODAL -->
+  <div id="composeModal" class="modal">
+    <div class="modal-content">
+      <h3>✉️ New Message</h3>
+      <input type="hidden" id="composeType">
+      
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="composeSubject" placeholder="Enter subject...">
+      </div>
+      
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea id="composeMessage" placeholder="Type your message here..." required></textarea>
+      </div>
+
+      <div style="display:flex; gap:1rem;">
+        <button class="btn-primary" onclick="sendMessage()">Send Message</button>
+        <button class="btn-secondary" onclick="closeModal('composeModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW MESSAGE MODAL -->
+  <div id="messageViewModal" class="modal">
+    <div class="modal-content" id="messageViewContent">
+      <!-- Content populated dynamically -->
+    </div>
   </div>
 
   <footer>
@@ -296,13 +586,15 @@
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentUserId = null;
+    let myTeacherId = null;
+    let unreadSupportCount = 0;
+    let unreadTeacherCount = 0;
     let wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: "" };
     let wizardStep = 0;
 
-    function updateProgress(percent) {
-      document.getElementById('wizardProgressFill').style.width = percent + '%';
-    }
-
+    // ============================================
+    // AUTH & INITIALIZATION
+    // ============================================
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -325,9 +617,34 @@
         document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
       }
 
+      // Load all data
       loadSessions();
+      loadMyTeacher();
+      loadSupportMessages();
+      
+      // Subscribe to realtime messages
+      supabaseClient
+        .channel('student_messages')
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `recipient_id=eq.${currentUserId}`
+        }, () => {
+          loadSupportMessages();
+          loadTeacherMessages();
+        })
+        .subscribe();
     }
 
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
+    }
+
+    // ============================================
+    // SESSIONS MANAGEMENT
+    // ============================================
     async function loadSessions() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
@@ -340,6 +657,23 @@
       if (error || !bookings || bookings.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>📅 No sessions yet. Book your first trial session!</p></div>';
         return;
+      }
+
+      // Get teacher names for assigned sessions
+      const teacherIds = bookings
+        .filter(b => b.assigned_teacher_id)
+        .map(b => b.assigned_teacher_id);
+
+      let teacherMap = {};
+      if (teacherIds.length > 0) {
+        const { data: teachers } = await supabaseClient
+          .from('profiles')
+          .select('id, full_name')
+          .in('id', teacherIds);
+        
+        teachers?.forEach(t => {
+          teacherMap[t.id] = t.full_name;
+        });
       }
 
       container.innerHTML = bookings.map(booking => {
@@ -355,6 +689,14 @@
         const statusClass = `status-${booking.status || 'scheduled'}`;
         const statusText = booking.status === 'scheduled' ? '✓ Scheduled' : '✓ Completed';
 
+        // Get teacher name
+        let teacherName = 'STEMSphere Enrollment Advisor';
+        if (booking.assigned_teacher_id && teacherMap[booking.assigned_teacher_id]) {
+          teacherName = teacherMap[booking.assigned_teacher_id];
+        } else if (booking.instructor_name) {
+          teacherName = booking.instructor_name;
+        }
+
         // Video call button
         const videoButton = booking.video_link && booking.status === 'scheduled' 
           ? `<a href="${booking.video_link}" target="_blank" style="display:inline-block; margin-top:0.5rem; background:#28a745; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; box-shadow:0 2px 5px rgba(0,0,0,0.2);">🎥 Join Video Call</a>`
@@ -366,7 +708,7 @@
               <h3>${booking.subject || 'Trial Session'}</h3>
               <p>📅 ${dateStr}</p>
               <p>⏰ ${timeStr}</p>
-              <p>👨‍🏫 Instructor: ${booking.instructor_name || 'STEMSphere Enrollment Advisor'}</p>
+              <p>👨‍🏫 Instructor: ${teacherName}</p>
               <p>👤 ${booking.age_group || 'N/A'} | ${booking.learning_style || 'N/A'}</p>
               ${booking.help_needed ? `<p>📝 ${booking.help_needed}</p>` : ''}
               <span class="status-badge ${statusClass}">${statusText}</span>
@@ -375,6 +717,261 @@
           </div>
         `;
       }).join('');
+    }
+
+    // ============================================
+    // MESSAGING SYSTEM
+    // ============================================
+    async function loadMyTeacher() {
+      const { data: assignments } = await supabaseClient
+        .from('teacher_assignments')
+        .select('teacher_id')
+        .eq('student_id', currentUserId)
+        .single();
+
+      if (assignments && assignments.teacher_id) {
+        myTeacherId = assignments.teacher_id;
+        document.getElementById('composeTeacherBtn').disabled = false;
+        loadTeacherMessages();
+      } else {
+        myTeacherId = null;
+        document.getElementById('composeTeacherBtn').disabled = true;
+        document.getElementById('teacherMessages').innerHTML = 
+          '<div class="empty-state">No teacher assigned yet. Contact support for assistance.</div>';
+      }
+    }
+
+    async function loadSupportMessages() {
+      const { data: admins } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('role', 'admin');
+
+      if (!admins || admins.length === 0) {
+        document.getElementById('supportMessages').innerHTML = 
+          '<div class="empty-state">No support available at the moment.</div>';
+        return;
+      }
+
+      const adminIds = admins.map(a => a.id);
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'support')
+        .or(`sender_id.eq.${currentUserId},recipient_id.eq.${currentUserId}`)
+        .order('created_at', { ascending: false });
+
+      unreadSupportCount = messages?.filter(m => m.recipient_id === currentUserId && !m.is_read).length || 0;
+      updateBadge('supportBadge', unreadSupportCount);
+
+      renderMessages('supportMessages', messages, 'support');
+    }
+
+    async function loadTeacherMessages() {
+      if (!myTeacherId) {
+        document.getElementById('teacherMessages').innerHTML = 
+          '<div class="empty-state">No teacher assigned yet.</div>';
+        return;
+      }
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_student')
+        .or(`and(sender_id.eq.${currentUserId},recipient_id.eq.${myTeacherId}),and(sender_id.eq.${myTeacherId},recipient_id.eq.${currentUserId})`)
+        .order('created_at', { ascending: false });
+
+      unreadTeacherCount = messages?.filter(m => m.recipient_id === currentUserId && !m.is_read).length || 0;
+      updateBadge('teacherBadge', unreadTeacherCount);
+
+      renderMessages('teacherMessages', messages, 'teacher');
+    }
+
+    function updateBadge(badgeId, count) {
+      const badge = document.getElementById(badgeId);
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function renderMessages(containerId, messages, type) {
+      const container = document.getElementById(containerId);
+
+      if (!messages || messages.length === 0) {
+        container.innerHTML = '<div class="empty-state">No messages yet. Start a conversation!</div>';
+        return;
+      }
+
+      container.innerHTML = messages.map(msg => {
+        const date = new Date(msg.created_at).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const isFromMe = msg.sender_id === currentUserId;
+        const unreadClass = !msg.is_read && msg.recipient_id === currentUserId ? 'unread' : '';
+
+        return `
+          <div class="message-item ${unreadClass}" onclick="viewMessage('${msg.id}')">
+            <div class="message-header">
+              <span class="message-from">${isFromMe ? 'You' : (type === 'support' ? 'Support Team' : 'Your Teacher')}</span>
+              <span class="message-date">${date}</span>
+            </div>
+            <div class="message-subject">${msg.subject || 'No subject'}</div>
+            <div class="message-preview">${msg.message.substring(0, 100)}${msg.message.length > 100 ? '...' : ''}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function viewMessage(messageId) {
+      const { data: message } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('id', messageId)
+        .single();
+
+      if (!message) return;
+
+      // Mark as read if recipient
+      if (message.recipient_id === currentUserId && !message.is_read) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .eq('id', messageId);
+
+        // Reload messages to update unread count
+        if (message.message_type === 'support') {
+          loadSupportMessages();
+        } else {
+          loadTeacherMessages();
+        }
+      }
+
+      const isFromMe = message.sender_id === currentUserId;
+      const date = new Date(message.created_at).toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      document.getElementById('messageViewContent').innerHTML = `
+        <div class="message-thread">
+          <div class="sender">${isFromMe ? 'You' : (message.message_type === 'support' ? 'Support Team' : 'Your Teacher')}</div>
+          <div class="timestamp">${date}</div>
+          <h4 style="margin: 1rem 0 0.5rem 0;">${message.subject || 'No subject'}</h4>
+          <div class="body">${message.message}</div>
+        </div>
+        <button class="btn-primary" onclick="closeModal('messageViewModal')">Close</button>
+      `;
+
+      document.getElementById('messageViewModal').classList.add('active');
+    }
+
+    function openComposeModal(type) {
+      document.getElementById('composeType').value = type;
+      document.getElementById('composeSubject').value = '';
+      document.getElementById('composeMessage').value = '';
+      
+      document.querySelector('#composeModal h3').textContent = 
+        type === 'support' ? '✉️ New Support Message' : '✉️ Message Your Teacher';
+      
+      document.getElementById('composeModal').classList.add('active');
+    }
+
+    async function sendMessage() {
+      const type = document.getElementById('composeType').value;
+      const subject = document.getElementById('composeSubject').value.trim();
+      const message = document.getElementById('composeMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      let recipientId;
+      
+      if (type === 'support') {
+        // Get first admin as recipient
+        const { data: admins } = await supabaseClient
+          .from('profiles')
+          .select('id')
+          .eq('role', 'admin')
+          .limit(1)
+          .single();
+
+        if (!admins) {
+          alert('No admin available. Please try again later.');
+          return;
+        }
+
+        recipientId = admins.id;
+      } else {
+        if (!myTeacherId) {
+          alert('No teacher assigned yet');
+          return;
+        }
+        recipientId = myTeacherId;
+      }
+
+            const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          recipient_id: recipientId,
+          message_type: type,
+          subject: subject || 'No subject',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      alert('✅ Message sent successfully!');
+      closeModal('composeModal');
+
+      // Reload messages
+      if (type === 'support') {
+        loadSupportMessages();
+      } else {
+        loadTeacherMessages();
+      }
+    }
+
+    function showTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(tabName + 'Tab').classList.add('active');
+
+      // Load messages when switching to inbox tabs
+      if (tabName === 'support') {
+        loadSupportMessages();
+      } else if (tabName === 'teacher') {
+        loadTeacherMessages();
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // ============================================
+    // BOOKING WIZARD
+    // ============================================
+    function updateProgress(percent) {
+      document.getElementById('wizardProgressFill').style.width = percent + '%';
     }
 
     function openBookingWizard() {
@@ -410,7 +1007,7 @@
                 style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${age}</button>`).join("")}
           </div>
         `;
-            } else if(wizardStep===2){
+      } else if(wizardStep===2){
         updateProgress(40);
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📘 Choose your subject:</h3>
@@ -578,15 +1175,15 @@
           },
           body: JSON.stringify({
             name: roomName,
-            privacy: 'public',  // FORCES public - overrides account settings!
+            privacy: 'public',
             properties: {
               enable_screenshare: true,
               enable_chat: true,
               start_video_off: false,
               start_audio_off: false,
               max_participants: 10,
-              enable_knocking: false,  // No waiting room
-              enable_prejoin_ui: true   // Shows preview before joining
+              enable_knocking: false,
+              enable_prejoin_ui: true
             }
           })
         });
@@ -644,11 +1241,7 @@
       }
     }
 
-    async function logout() {
-      await supabaseClient.auth.signOut();
-      window.location.href = 'login.html';
-    }
-
+    // Initialize on page load
     checkAuth();
   </script>
 </body>
