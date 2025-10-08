@@ -381,7 +381,8 @@
       color: #333;
     }
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
       width: 100%;
       padding: 0.75rem;
       border: 2px solid #ddd;
@@ -390,7 +391,8 @@
       font-family: inherit;
     }
     .form-group input:focus,
-    .form-group textarea:focus {
+    .form-group textarea:focus,
+    .form-group select:focus {
       outline: none;
       border-color: #28a745;
     }
@@ -409,9 +411,10 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
-    /* Inbox Styles */
     .inbox-container {
       background: #fff;
       border-radius: 12px;
@@ -545,7 +548,7 @@
       <button class="tab" onclick="showTab('students')">Students</button>
       <button class="tab" onclick="showTab('teachers')">Teachers</button>
       <button class="tab" onclick="showTab('support')">
-        💬 Support Inbox
+              💬 Support Inbox
         <span class="badge" id="supportBadge" style="display:none;">0</span>
       </button>
     </div>
@@ -598,7 +601,7 @@
       </div>
     </div>
 
-        <!-- STUDENTS TAB -->
+    <!-- STUDENTS TAB -->
     <div id="studentsTab" class="tab-content">
       <div class="info-box">
         <p>👥 Manage student accounts and their assigned teachers</p>
@@ -661,7 +664,7 @@
     </div>
   </div>
 
-  <!-- ASSIGN TEACHER MODAL -->
+  <!-- ASSIGN TEACHER TO SESSION MODAL -->
   <div id="assignModal" class="modal">
     <div class="modal-content">
       <h3>Assign Teacher to Session</h3>
@@ -828,7 +831,7 @@
         <textarea id="replyMessage" placeholder="Type your reply here..." required></textarea>
       </div>
 
-      <div style="display:flex; gap:1rem;">
+            <div style="display:flex; gap:1rem;">
         <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
         <button class="btn-secondary" onclick="closeModal('replyModal')">Cancel</button>
       </div>
@@ -910,7 +913,6 @@
       const { data: students } = await supabaseClient.from('profiles').select('id').eq('role', 'student');
       const { data: teachers } = await supabaseClient.from('profiles').select('id').eq('role', 'teacher');
       
-      // Get unread support messages
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('id')
@@ -1025,7 +1027,7 @@
       const userIds = [...new Set(bookings.map(b => b.user_id))];
       const teacherIds = [...new Set(bookings.filter(b => b.assigned_teacher_id).map(b => b.assigned_teacher_id))];
 
-           const { data: profiles } = await supabaseClient
+      const { data: profiles } = await supabaseClient
         .from('profiles')
         .select('id, full_name, email')
         .in('id', [...userIds, ...teacherIds]);
@@ -1096,7 +1098,7 @@
     }
 
     // ============================================
-    // STUDENTS
+    // STUDENTS - FIXED VERSION
     // ============================================
     async function loadStudents() {
       const { data: students, error } = await supabaseClient
@@ -1112,14 +1114,18 @@
         return;
       }
 
-      const { data: assignments } = await supabaseClient
+      const { data: assignments, error: assignError } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id, teacher_id');
 
-      const { data: teachers } = await supabaseClient
+      console.log('All assignments:', assignments);
+
+      const { data: teachers, error: teacherError } = await supabaseClient
         .from('profiles')
         .select('id, full_name')
         .eq('role', 'teacher');
+
+      console.log('All teachers:', teachers);
 
       const teacherMap = {};
       teachers?.forEach(t => {
@@ -1128,7 +1134,11 @@
 
       tbody.innerHTML = students.map(student => {
         const assignment = assignments?.find(a => a.student_id === student.id);
-        const teacherName = assignment ? teacherMap[assignment.teacher_id] || 'Unknown' : 'Not assigned';
+        const teacherName = assignment && teacherMap[assignment.teacher_id] 
+          ? teacherMap[assignment.teacher_id] 
+          : 'Not assigned';
+
+        console.log(`Student ${student.full_name}: assignment=`, assignment, 'teacher=', teacherName);
 
         return `
           <tr>
@@ -1136,9 +1146,11 @@
             <td>${student.email}</td>
             <td>${student.phone || 'N/A'}</td>
             <td>${student.age_group || 'N/A'}</td>
-            <td>${teacherName}</td>
+            <td><strong style="color: ${assignment ? '#28a745' : '#dc3545'};">${teacherName}</strong></td>
             <td>
-              <button class="btn-small btn-assign" onclick="assignTeacherToStudent('${student.id}', '${student.full_name.replace(/'/g, "\\'")}')">Assign Teacher</button>
+              <button class="btn-small btn-assign" onclick="assignTeacherToStudent('${student.id}', '${student.full_name.replace(/'/g, "\\'")}')">
+                ${assignment ? 'Reassign' : 'Assign'} Teacher
+              </button>
             </td>
           </tr>
         `;
@@ -1156,7 +1168,7 @@
         .from('profiles')
         .select('*')
         .eq('role', 'teacher')
-        .order('full_name', { ascending: true });
+        .order('full_name', { ascending: true});
 
       allTeachers = teachers || [];
 
@@ -1233,7 +1245,6 @@
       document.getElementById('confirmStudentTeacherBtn').disabled = true;
       document.getElementById('confirmStudentTeacherBtn').textContent = 'Assigning...';
 
-      // Check if already assigned
       const { data: existing } = await supabaseClient
         .from('teacher_assignments')
         .select('id')
@@ -1241,7 +1252,6 @@
         .single();
 
       if (existing) {
-        // Update existing assignment
         const { error } = await supabaseClient
           .from('teacher_assignments')
           .update({ teacher_id: selectedStudentTeacherId })
@@ -1254,7 +1264,6 @@
           return;
         }
       } else {
-        // Create new assignment
         const { error } = await supabaseClient
           .from('teacher_assignments')
           .insert({
@@ -1270,14 +1279,20 @@
         }
       }
 
+      console.log('✅ Assignment saved, reloading all data...');
+
       alert('✅ Teacher assigned successfully!');
       closeModal('assignStudentTeacherModal');
+      
       await loadStudents();
+      await loadStats();
+      await loadTeachers();
+      
       document.getElementById('confirmStudentTeacherBtn').textContent = 'Assign Teacher';
     }
 
     // ============================================
-    // TEACHERS
+    // TEACHERS - FIXED VERSION
     // ============================================
     async function loadTeachers() {
       const { data: teachers, error } = await supabaseClient
@@ -1295,19 +1310,27 @@
 
       allTeachers = teachers;
 
-      const { data: assignments } = await supabaseClient
+      const { data: assignments, error: assignError } = await supabaseClient
         .from('teacher_assignments')
         .select('teacher_id, student_id');
 
+      console.log('Fresh assignments loaded:', assignments);
+
+      if (assignError) {
+        console.error('Error loading assignments:', assignError);
+      }
+
       tbody.innerHTML = teachers.map(teacher => {
         const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
+        
+        console.log(`Teacher ${teacher.full_name}: ${studentCount} students`);
 
-        return `
+                 return `
           <tr>
             <td><strong>${teacher.full_name}</strong></td>
             <td>${teacher.email}</td>
             <td>${teacher.phone || 'N/A'}</td>
-            <td>${studentCount} student${studentCount !== 1 ? 's' : ''}</td>
+            <td><strong style="color:#007bff;">${studentCount}</strong> student${studentCount !== 1 ? 's' : ''}</td>
             <td>
               <button class="btn-small btn-edit" onclick="openEditTeacherModal('${teacher.id}')">Edit Info</button>
               <button class="btn-small btn-delete" onclick="openResetPasswordModal('${teacher.id}')">Reset Password</button>
@@ -1368,7 +1391,7 @@
           phone: phone || null,
           subjects: subjects || null,
           role: 'teacher'
-              });
+        });
 
       if (profileError) {
         alert('Teacher account created but profile failed: ' + profileError.message);
@@ -1611,7 +1634,6 @@
     // SUPPORT INBOX
     // ============================================
     async function loadSupportMessages() {
-      // Get all support messages where admin is recipient or sender
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1622,7 +1644,6 @@
       const unreadCount = messages?.filter(m => m.recipient_id === currentAdminId && !m.is_read).length || 0;
       updateBadge('supportBadge', unreadCount);
 
-      // Get student names
       const studentIds = [...new Set(messages?.map(m => m.sender_id === currentAdminId ? m.recipient_id : m.sender_id) || [])];
       
       const { data: students } = await supabaseClient
@@ -1656,7 +1677,17 @@
         return;
       }
 
-      container.innerHTML = messages.map(msg => {
+      const sortedMessages = messages.sort((a, b) => {
+        const aUnread = a.recipient_id === currentAdminId && !a.is_read;
+        const bUnread = b.recipient_id === currentAdminId && !b.is_read;
+        
+        if (aUnread && !bUnread) return -1;
+        if (!aUnread && bUnread) return 1;
+        
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      container.innerHTML = sortedMessages.map(msg => {
         const date = new Date(msg.created_at).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
@@ -1672,7 +1703,9 @@
         return `
           <div class="message-item ${unreadClass}" onclick="viewSupportMessage('${msg.id}')">
             <div class="message-header">
-              <span class="message-from">${isFromMe ? `You → ${studentName}` : studentName}</span>
+              <span class="message-from">
+                ${unreadClass ? '🔴 ' : ''}${isFromMe ? `You → ${studentName}` : studentName}
+              </span>
               <span class="message-date">${date}</span>
             </div>
             <div class="message-subject">${msg.subject || 'No subject'}</div>
@@ -1691,7 +1724,6 @@
 
       if (!message) return;
 
-      // Mark as read if recipient
       if (message.recipient_id === currentAdminId && !message.is_read) {
         await supabaseClient
           .from('messages')
@@ -1702,7 +1734,6 @@
         loadStats();
       }
 
-      // Get student name
       const studentId = message.sender_id === currentAdminId ? message.recipient_id : message.sender_id;
       const { data: student } = await supabaseClient
         .from('profiles')
