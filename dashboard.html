@@ -475,7 +475,8 @@
     </div>
 
     <div class="tabs">
-      <button class="tab active" onclick="showTab('sessions')">📚 My Sessions</button>
+      <button class="tab active" onclick="showTab('upcoming')">📅 Upcoming Sessions</button>
+      <button class="tab" onclick="showTab('allSessions')">📚 All Sessions</button>
       <button class="tab" onclick="showTab('support')">
         💬 Support
         <span class="badge" id="supportBadge" style="display:none;">0</span>
@@ -486,10 +487,20 @@
       </button>
     </div>
 
-    <!-- SESSIONS TAB -->
-    <div id="sessionsTab" class="tab-content active">
+    <!-- UPCOMING SESSIONS TAB -->
+    <div id="upcomingTab" class="tab-content active">
       <div class="sessions-section">
-        <h2>📚 My Sessions</h2>
+        <h2>📅 Upcoming Sessions</h2>
+        <div id="upcomingSessions">
+          <div style="text-align:center; padding:3rem; color:#007bff;">Loading your sessions...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL SESSIONS TAB -->
+    <div id="allSessionsTab" class="tab-content">
+      <div class="sessions-section">
+        <h2>📚 All Sessions</h2>
         <div id="allSessions">
           <div style="text-align:center; padding:3rem; color:#007bff;">Loading your sessions...</div>
         </div>
@@ -546,7 +557,7 @@
         <input type="text" id="composeSubject" placeholder="Enter subject...">
       </div>
       
-      <div class="form-group">
+            <div class="form-group">
         <label>Message *</label>
         <textarea id="composeMessage" placeholder="Type your message here..." required></textarea>
       </div>
@@ -565,7 +576,7 @@
     </div>
   </div>
 
-   <footer>
+  <footer>
     © 2025 STEMSphere Academy. All rights reserved.
     <nav class="footer-links">
       <a href="#faq">FAQs</a> |
@@ -643,19 +654,18 @@
     }
 
     // ============================================
-    // SESSIONS MANAGEMENT
+    // SESSIONS MANAGEMENT - SPLIT INTO UPCOMING & ALL
     // ============================================
     async function loadSessions() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
         .select('*')
         .eq('user_id', currentUserId)
-        .order('booking_date', { ascending: false });
-
-      const container = document.getElementById('allSessions');
+        .order('session_date', { ascending: false });
 
       if (error || !bookings || bookings.length === 0) {
-        container.innerHTML = '<div class="empty-state"><p>📅 No sessions yet. Book your first trial session!</p></div>';
+        document.getElementById('upcomingSessions').innerHTML = '<div class="empty-state"><p>📅 No upcoming sessions. Book your first session!</p></div>';
+        document.getElementById('allSessions').innerHTML = '<div class="empty-state"><p>📅 No sessions yet. Book your first trial session!</p></div>';
         return;
       }
 
@@ -676,7 +686,30 @@
         });
       }
 
-      container.innerHTML = bookings.map(booking => {
+      // Split bookings into upcoming and all
+      const now = new Date();
+      const upcomingBookings = bookings.filter(b => {
+        if (b.status !== 'scheduled') return false;
+        if (!b.session_date) return true; // Include sessions without dates
+        const sessionDate = new Date(b.session_date);
+        return sessionDate >= now;
+      });
+
+      // Render upcoming sessions
+      const upcomingContainer = document.getElementById('upcomingSessions');
+      if (upcomingBookings.length === 0) {
+        upcomingContainer.innerHTML = '<div class="empty-state"><p>📅 No upcoming sessions. Book a new session!</p></div>';
+      } else {
+        upcomingContainer.innerHTML = renderSessionCards(upcomingBookings, teacherMap);
+      }
+
+      // Render all sessions
+      const allContainer = document.getElementById('allSessions');
+      allContainer.innerHTML = renderSessionCards(bookings, teacherMap);
+    }
+
+    function renderSessionCards(bookings, teacherMap) {
+      return bookings.map(booking => {
         const date = booking.session_date ? new Date(booking.session_date) : null;
         const dateStr = date ? date.toLocaleDateString('en-US', { 
           weekday: 'long', 
@@ -720,7 +753,7 @@
     }
 
     // ============================================
-    // MESSAGING SYSTEM - ✅ FIXED
+    // MESSAGING SYSTEM - ✅ FIXED WITH AUTO TEACHER SELECTION
     // ============================================
     async function loadMyTeacher() {
       const { data: assignments } = await supabaseClient
@@ -887,7 +920,7 @@
       document.getElementById('composeModal').classList.add('active');
     }
 
-    // ✅ FIXED: sendMessage() function
+    // ✅ FIXED: sendMessage() function - AUTOMATIC RECIPIENT SELECTION
     async function sendMessage() {
       const type = document.getElementById('composeType').value;
       const subject = document.getElementById('composeSubject').value.trim();
@@ -917,7 +950,7 @@
         recipientId = admins.id;
       } else if (type === 'teacher') {
         if (!myTeacherId) {
-          alert('No teacher assigned yet');
+          alert('No teacher assigned yet. Please contact support.');
           return;
         }
         recipientId = myTeacherId;
@@ -976,7 +1009,7 @@
       }
     }
 
-    function closeModal(modalId) {
+       function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
     }
 
@@ -1010,7 +1043,7 @@
           <p style="padding:0 20px; color:#000;">Secure your future with a private consultation. Let's start:</p>
           <button onclick="wizardStep=1; renderWizardStep()" style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Begin</button>
         `;
-            } else if(wizardStep===1){
+      } else if(wizardStep===1){
         updateProgress(25);
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">🧒 Your age group:</h3>
