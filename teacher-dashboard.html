@@ -210,10 +210,6 @@
       font-size: 1em;
       border: none;
     }
-    .btn-reply {
-      background: #007bff;
-      color: #fff;
-    }
 
     .status-badge {
       padding: 0.3rem 0.8rem;
@@ -253,6 +249,7 @@
       color: #004085;
     }
 
+    /* THREADED INBOX STYLES */
     .inbox-container {
       background: #fff;
       border-radius: 12px;
@@ -280,51 +277,144 @@
       cursor: pointer;
       font-weight: 600;
     }
-    .message-list {
+    
+    /* Thread list styles */
+    .thread-list {
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
-    .message-item {
-      border: 1px solid #ddd;
+    .thread-item {
+      border: 2px solid #ddd;
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.5rem;
       cursor: pointer;
       transition: all 0.3s;
+      background: #fff;
     }
-    .message-item:hover {
+    .thread-item:hover {
       border-color: #007bff;
       box-shadow: 0 2px 8px rgba(0,123,255,0.2);
     }
-    .message-item.unread {
+    .thread-item.unread {
       background: #e3f2fd;
       border-color: #007bff;
-      font-weight: 600;
+      border-width: 3px;
     }
-    .message-header {
+    .thread-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
     }
-    .message-from {
-      font-weight: 600;
+    .student-name {
+      font-weight: 700;
       color: #000;
+      font-size: 1.1em;
     }
-    .message-date {
-      color: #999;
+    .thread-meta {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .message-count {
+      background: #007bff;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
       font-size: 0.85em;
-    }
-    .message-subject {
-      color: #333;
-      margin-bottom: 0.25rem;
       font-weight: 600;
     }
-    .message-preview {
-      color: #666;
+    .unread-count {
+      background: #ff0000;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      animation: pulse-badge 1.5s infinite;
+    }
+    @keyframes pulse-badge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .last-message-date {
+      color: #999;
       font-size: 0.9em;
+    }
+    .last-message-preview {
+      color: #666;
+      font-size: 0.95em;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      margin-top: 0.5rem;
+    }
+
+    /* Conversation view */
+    .conversation-header {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: #fff;
+      padding: 1.5rem;
+      border-radius: 8px 8px 0 0;
+      margin: -2rem -2rem 1.5rem -2rem;
+    }
+    .conversation-header h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3em;
+    }
+    .conversation-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.9em;
+    }
+
+    .message-bubble {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .message-bubble.from-me {
+      background: #e3f2fd;
+      border-color: #007bff;
+      margin-left: 2rem;
+    }
+    .message-bubble.from-student {
+      margin-right: 2rem;
+    }
+    .message-bubble .sender {
+      font-weight: 600;
+      color: #007bff;
+      margin-bottom: 0.5rem;
+    }
+    .message-bubble .timestamp {
+      color: #999;
+      font-size: 0.85em;
+      margin-bottom: 0.5rem;
+    }
+    .message-bubble .subject {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    .message-bubble .body {
+      color: #333;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .reply-box {
+      background: #f8f9fa;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .reply-box h5 {
+      margin: 0 0 1rem 0;
+      color: #007bff;
     }
 
     .modal {
@@ -342,14 +432,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 1rem;
     }
     .modal-content {
       background: #fff;
       padding: 2rem;
       border-radius: 12px;
-      max-width: 600px;
+      max-width: 900px;
       width: 90%;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
     }
     .modal-content h3 {
@@ -399,28 +490,6 @@
       font-weight: 600;
       font-size: 1em;
       margin-left: 0.5rem;
-    }
-
-    .message-thread {
-      background: #f8f9fa;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-    .message-thread .sender {
-      font-weight: 600;
-      color: #007bff;
-      margin-bottom: 0.5rem;
-    }
-    .message-thread .timestamp {
-      color: #999;
-      font-size: 0.85em;
-      margin-bottom: 0.5rem;
-    }
-    .message-thread .body {
-      color: #333;
-      white-space: pre-wrap;
     }
 
     .student-select-grid {
@@ -516,12 +585,18 @@
       transition: width 0.4s ease;
     }
 
-    @media (max-width: 768px) {
+        @media (max-width: 768px) {
       .time-slots {
         grid-template-columns: repeat(2, 1fr);
       }
       .student-select-grid {
         grid-template-columns: 1fr;
+      }
+      .message-bubble.from-me {
+        margin-left: 0.5rem;
+      }
+      .message-bubble.from-student {
+        margin-right: 0.5rem;
       }
     }
   </style>
@@ -561,19 +636,21 @@
       </div>
     </div>
 
-        <div class="tabs">
-      <button class="tab active" onclick="showTab('sessions')">My Sessions</button>
-      <button class="tab" onclick="showTab('students')">My Students</button>
+    <!-- TABS - UPCOMING SESSIONS FIRST -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('upcoming')">📅 Upcoming Sessions</button>
+      <button class="tab" onclick="showTab('completed')">✅ Completed Sessions</button>
+      <button class="tab" onclick="showTab('students')">👥 My Students</button>
       <button class="tab" onclick="showTab('inbox')">
         📬 Inbox
         <span class="badge" id="inboxBadge" style="display:none;">0</span>
       </button>
     </div>
 
-    <!-- SESSIONS TAB -->
-    <div id="sessionsTab" class="tab-content active">
+    <!-- UPCOMING SESSIONS TAB -->
+    <div id="upcomingTab" class="tab-content active">
       <div class="info-box">
-        <p>📅 Manage your teaching sessions. Create new sessions for your students or view existing ones.</p>
+        <p>📅 Your scheduled upcoming sessions with students.</p>
       </div>
       <div style="margin-bottom: 1.5rem;">
         <button class="btn-create-session" onclick="openCreateSessionWizard()">➕ Create New Session</button>
@@ -586,12 +663,36 @@
               <th>Subject & Style</th>
               <th>Date</th>
               <th>Time</th>
-              <th>Status & Notes</th>
+              <th>Notes</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="sessionsBody">
+          <tbody id="upcomingSessionsBody">
             <tr><td colspan="6" class="loading">Loading sessions...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COMPLETED SESSIONS TAB -->
+    <div id="completedTab" class="tab-content">
+      <div class="info-box">
+        <p>✅ Sessions you've already completed with your students.</p>
+      </div>
+      <div class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Student Details</th>
+              <th>Subject & Style</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Notes</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="completedSessionsBody">
+            <tr><td colspan="6" class="loading">Loading completed sessions...</td></tr>
           </tbody>
         </table>
       </div>
@@ -621,14 +722,14 @@
       </div>
     </div>
 
-    <!-- INBOX TAB -->
+    <!-- INBOX TAB WITH THREADED MESSAGES -->
     <div id="inboxTab" class="tab-content">
       <div class="inbox-container">
         <div class="inbox-header">
           <h3>📬 Student Messages</h3>
           <button class="compose-btn" onclick="openComposeToStudentModal()">✉️ Message a Student</button>
         </div>
-        <div id="inboxMessages" class="message-list">
+        <div id="inboxThreads" class="thread-list">
           <div class="empty-state">Loading messages...</div>
         </div>
       </div>
@@ -647,34 +748,10 @@
     <div id="wizardContent" style="margin-top:20px;"></div>
   </div>
 
-  <!-- MESSAGE VIEW MODAL -->
-  <div id="messageViewModal" class="modal">
-    <div class="modal-content" id="messageViewContent">
+  <!-- CONVERSATION VIEW MODAL -->
+  <div id="conversationModal" class="modal">
+    <div class="modal-content" id="conversationContent">
       <!-- Content populated dynamically -->
-    </div>
-  </div>
-
-  <!-- REPLY MESSAGE MODAL -->
-  <div id="replyModal" class="modal">
-    <div class="modal-content">
-      <h3>✉️ Reply to Student</h3>
-      <input type="hidden" id="replyToStudentId">
-      <input type="hidden" id="replySubject">
-      
-      <div class="form-group">
-        <label>Subject</label>
-        <input type="text" id="replySubjectInput" readonly>
-      </div>
-      
-      <div class="form-group">
-        <label>Your Reply *</label>
-        <textarea id="replyMessage" placeholder="Type your reply here..." required></textarea>
-      </div>
-
-      <div style="display:flex; gap:1rem;">
-        <button class="btn-primary" onclick="sendReply()">Send Reply</button>
-        <button class="btn-secondary" onclick="closeModal('replyModal')">Cancel</button>
-      </div>
     </div>
   </div>
 
@@ -751,7 +828,7 @@
       loadStats();
       loadSessions();
       loadStudents();
-      loadInboxMessages();
+      loadInboxThreads();
 
       // Subscribe to realtime messages
       supabaseClient
@@ -762,7 +839,7 @@
           table: 'messages',
           filter: `recipient_id=eq.${currentTeacherId}`
         }, () => {
-          loadInboxMessages();
+          loadInboxThreads();
           loadStats();
         })
         .subscribe();
@@ -777,7 +854,6 @@
     // STATS
     // ============================================
     async function loadStats() {
-      // Get students assigned to this teacher
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id')
@@ -785,20 +861,18 @@
 
       const studentIds = assignments?.map(a => a.student_id) || [];
 
-      // Get sessions assigned to this teacher
       const { data: sessions } = await supabaseClient
         .from('bookings')
         .select('id, status')
         .eq('assigned_teacher_id', currentTeacherId);
 
-      // Get unread messages
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('id')
         .eq('recipient_id', currentTeacherId)
         .eq('is_read', false);
 
-      document.getElementById('totalStudents').textContent = studentIds.length || 0;
+            document.getElementById('totalStudents').textContent = studentIds.length || 0;
       document.getElementById('upcomingSessions').textContent = 
         sessions?.filter(s => s.status === 'scheduled').length || 0;
       document.getElementById('completedSessions').textContent = 
@@ -809,26 +883,30 @@
     }
 
     // ============================================
-    // SESSIONS MANAGEMENT
+    // SESSIONS MANAGEMENT - SPLIT INTO UPCOMING & COMPLETED
     // ============================================
     async function loadSessions() {
-      // Get all bookings assigned to this teacher
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
         .select('*')
         .eq('assigned_teacher_id', currentTeacherId)
         .order('session_date', { ascending: false });
 
-      const tbody = document.getElementById('sessionsBody');
+      if (error) {
+        console.error('Error loading sessions:', error);
+        document.getElementById('upcomingSessionsBody').innerHTML = '<tr><td colspan="6" class="empty-state">Error loading sessions</td></tr>';
+        document.getElementById('completedSessionsBody').innerHTML = '<tr><td colspan="6" class="empty-state">Error loading sessions</td></tr>';
+        return;
+      }
 
-      if (error || !bookings || bookings.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No sessions yet. Create your first session!</td></tr>';
+      if (!bookings || bookings.length === 0) {
+        document.getElementById('upcomingSessionsBody').innerHTML = '<tr><td colspan="6" class="empty-state">No sessions yet. Create your first session!</td></tr>';
+        document.getElementById('completedSessionsBody').innerHTML = '<tr><td colspan="6" class="empty-state">No completed sessions yet.</td></tr>';
         return;
       }
 
       // Get student profiles
       const userIds = [...new Set(bookings.map(b => b.user_id))];
-
       const { data: profiles } = await supabaseClient
         .from('profiles')
         .select('id, full_name, email')
@@ -839,43 +917,63 @@
         profileMap[p.id] = p;
       });
 
-      tbody.innerHTML = bookings.map(booking => {
-        const profile = profileMap[booking.user_id] || {};
-        
-        // Video link button or create button
-        let videoButton = '';
-        if (booking.status === 'scheduled') {
-          if (booking.video_link) {
-            videoButton = `<a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a><br>`;
-          } else {
-            videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
-          }
-        }
+      // Split into upcoming and completed
+      const upcomingBookings = bookings.filter(b => b.status === 'scheduled');
+      const completedBookings = bookings.filter(b => b.status === 'completed');
 
-        return `
-          <tr>
-            <td>
-              <strong>${profile.full_name || 'Unknown Student'}</strong><br>
-              <small>${profile.email || 'No email'}</small><br>
-              <small style="color:#666;">Age: ${booking.age_group || 'N/A'}</small>
-            </td>
-            <td>
-              <strong>${booking.subject || 'N/A'}</strong><br>
-              <small style="color:#666;">Style: ${booking.learning_style || 'N/A'}</small>
-            </td>
-            <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
-            <td>${booking.session_time || 'TBD'}</td>
-            <td>
-              <span class="status-badge status-${booking.status}">${booking.status}</span><br>
-              ${booking.help_needed ? `<small style="color:#666; display:block; margin-top:0.5rem;"><strong>Notes:</strong> ${booking.help_needed}</small>` : ''}
-            </td>
-            <td>
-              ${videoButton}
-              ${booking.status === 'scheduled' ? `<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>` : '<span style="color:#28a745;">✓ Done</span>'}
-            </td>
-          </tr>
-        `;
-      }).join('');
+      // Render upcoming sessions
+      const upcomingBody = document.getElementById('upcomingSessionsBody');
+      if (upcomingBookings.length === 0) {
+        upcomingBody.innerHTML = '<tr><td colspan="6" class="empty-state">No upcoming sessions. Create a new session!</td></tr>';
+      } else {
+        upcomingBody.innerHTML = upcomingBookings.map(booking => renderSessionRow(booking, profileMap, true)).join('');
+      }
+
+      // Render completed sessions
+      const completedBody = document.getElementById('completedSessionsBody');
+      if (completedBookings.length === 0) {
+        completedBody.innerHTML = '<tr><td colspan="6" class="empty-state">No completed sessions yet.</td></tr>';
+      } else {
+        completedBody.innerHTML = completedBookings.map(booking => renderSessionRow(booking, profileMap, false)).join('');
+      }
+    }
+
+    function renderSessionRow(booking, profileMap, isUpcoming) {
+      const profile = profileMap[booking.user_id] || {};
+      
+      // Video link button or create button
+      let videoButton = '';
+      if (isUpcoming) {
+        if (booking.video_link) {
+          videoButton = `<a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a><br>`;
+        } else {
+          videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
+        }
+      }
+
+      const actionButtons = isUpcoming 
+        ? `${videoButton}<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>`
+        : '<span style="color:#28a745; font-weight:600;">✓ Completed</span>';
+
+      return `
+        <tr>
+          <td>
+            <strong>${profile.full_name || 'Unknown Student'}</strong><br>
+            <small>${profile.email || 'No email'}</small><br>
+            <small style="color:#666;">Age: ${booking.age_group || 'N/A'}</small>
+          </td>
+          <td>
+            <strong>${booking.subject || 'N/A'}</strong><br>
+            <small style="color:#666;">Style: ${booking.learning_style || 'N/A'}</small>
+          </td>
+          <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
+          <td>${booking.session_time || 'TBD'}</td>
+          <td>
+            ${booking.help_needed ? `<small style="color:#666;">${booking.help_needed}</small>` : '<em style="color:#999;">No notes</em>'}
+          </td>
+          <td>${actionButtons}</td>
+        </tr>
+      `;
     }
 
     async function createVideoRoom(bookingId) {
@@ -922,9 +1020,7 @@
           .update({ video_link: videoLink })
           .eq('id', bookingId);
 
-        if (error) {
-          throw new Error(error.message);
-        }
+        if (error) throw new Error(error.message);
 
         alert('✅ Video room created successfully!');
         await loadSessions();
@@ -953,10 +1049,9 @@
     }
 
     // ============================================
-    // STUDENTS MANAGEMENT - FIXED VERSION
+    // STUDENTS MANAGEMENT
     // ============================================
     async function loadStudents() {
-      // Get students assigned to this teacher
       const { data: assignments, error: assignError } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id')
@@ -964,11 +1059,9 @@
 
       const tbody = document.getElementById('studentsBody');
 
-      console.log('Teacher assignments:', assignments);
-
       if (assignError) {
         console.error('Assignment error:', assignError);
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading assignments: ' + assignError.message + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading assignments</td></tr>';
         return;
       }
 
@@ -979,19 +1072,14 @@
 
       const studentIds = assignments.map(a => a.student_id);
 
-      console.log('Student IDs:', studentIds);
-
-      // Get student profiles
       const { data: students, error: studentsError } = await supabaseClient
         .from('profiles')
         .select('*')
         .in('id', studentIds);
 
-      console.log('Students loaded:', students);
-
       if (studentsError) {
         console.error('Students error:', studentsError);
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading students: ' + studentsError.message + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading students</td></tr>';
         return;
       }
 
@@ -1000,9 +1088,8 @@
         return;
       }
 
-           myStudents = students; // Store for session creation
+      myStudents = students;
 
-      // Get session counts for each student
       const { data: bookings } = await supabaseClient
         .from('bookings')
         .select('user_id')
@@ -1030,39 +1117,35 @@
       const student = myStudents.find(s => s.id === studentId);
       if (!student) return;
 
-      wizardData.studentId = studentId;
+            wizardData.studentId = studentId;
       wizardData.studentName = student.full_name;
       openCreateSessionWizard();
     }
 
     // ============================================
-    // MESSAGING SYSTEM
+    // THREADED MESSAGING SYSTEM - GROUP BY STUDENT
     // ============================================
-    async function loadInboxMessages() {
-      // Get students assigned to this teacher
+    async function loadInboxThreads() {
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id')
         .eq('teacher_id', currentTeacherId);
 
       if (!assignments || assignments.length === 0) {
-        document.getElementById('inboxMessages').innerHTML = 
+        document.getElementById('inboxThreads').innerHTML = 
           '<div class="empty-state">No students assigned yet.</div>';
         return;
       }
 
       const studentIds = assignments.map(a => a.student_id);
 
-      // Get messages from these students
+      // Get all messages with these students
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
         .eq('message_type', 'teacher_student')
         .or(`and(sender_id.in.(${studentIds.join(',')}),recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.in.(${studentIds.join(',')}))`)
         .order('created_at', { ascending: false });
-
-      const unreadCount = messages?.filter(m => m.recipient_id === currentTeacherId && !m.is_read).length || 0;
-      updateBadge('inboxBadge', unreadCount);
 
       // Get student names
       const { data: students } = await supabaseClient
@@ -1075,7 +1158,48 @@
         studentMap[s.id] = s.full_name;
       });
 
-      renderMessages(messages, studentMap);
+      // Group messages by student (create threads)
+      const threads = {};
+      
+      messages?.forEach(msg => {
+        const studentId = msg.sender_id === currentTeacherId ? msg.recipient_id : msg.sender_id;
+        
+        if (!threads[studentId]) {
+          threads[studentId] = {
+            studentId: studentId,
+            studentName: studentMap[studentId] || 'Unknown Student',
+            messages: [],
+            lastMessageDate: new Date(msg.created_at),
+            unreadCount: 0,
+            totalCount: 0
+          };
+        }
+        
+        threads[studentId].messages.push(msg);
+        threads[studentId].totalCount++;
+        
+        // Count unread messages from student
+        if (msg.recipient_id === currentTeacherId && !msg.is_read) {
+          threads[studentId].unreadCount++;
+        }
+        
+        // Update last message date
+        const msgDate = new Date(msg.created_at);
+        if (msgDate > threads[studentId].lastMessageDate) {
+          threads[studentId].lastMessageDate = msgDate;
+        }
+      });
+
+      // Convert to array and sort by last message date
+      const threadArray = Object.values(threads).sort((a, b) => 
+        b.lastMessageDate - a.lastMessageDate
+      );
+
+      // Update badge
+      const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      updateBadge('inboxBadge', totalUnread);
+
+      renderThreads(threadArray);
     }
 
     function updateBadge(badgeId, count) {
@@ -1088,106 +1212,127 @@
       }
     }
 
-    function renderMessages(messages, studentMap) {
-      const container = document.getElementById('inboxMessages');
+    function renderThreads(threads) {
+      const container = document.getElementById('inboxThreads');
 
-      if (!messages || messages.length === 0) {
-        container.innerHTML = '<div class="empty-state">No messages yet.</div>';
+      if (!threads || threads.length === 0) {
+        container.innerHTML = '<div class="empty-state">No messages yet. Click "Message a Student" to start a conversation!</div>';
         return;
       }
 
-      container.innerHTML = messages.map(msg => {
-        const date = new Date(msg.created_at).toLocaleDateString('en-US', {
+      container.innerHTML = threads.map(thread => {
+        const lastMessage = thread.messages[0]; // Most recent message
+        const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+        const lastMessageFrom = lastMessage.sender_id === currentTeacherId ? 'You: ' : '';
+        const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
+        
+        const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
         });
 
-        const isFromMe = msg.sender_id === currentTeacherId;
-        const studentId = isFromMe ? msg.recipient_id : msg.sender_id;
-        const studentName = studentMap[studentId] || 'Unknown Student';
-        const unreadClass = !msg.is_read && msg.recipient_id === currentTeacherId ? 'unread' : '';
-
         return `
-          <div class="message-item ${unreadClass}" onclick="viewMessage('${msg.id}')">
-            <div class="message-header">
-              <span class="message-from">${isFromMe ? `You → ${studentName}` : studentName}</span>
-              <span class="message-date">${date}</span>
+          <div class="thread-item ${unreadClass}" onclick="openConversation('${thread.studentId}')">
+            <div class="thread-header">
+              <div class="student-name">${thread.studentName}</div>
+              <div class="thread-meta">
+                ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
+                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
+                <span class="last-message-date">${dateStr}</span>
+              </div>
             </div>
-            <div class="message-subject">${msg.subject || 'No subject'}</div>
-            <div class="message-preview">${msg.message.substring(0, 100)}${msg.message.length > 100 ? '...' : ''}</div>
+            <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
           </div>
         `;
       }).join('');
     }
 
-    async function viewMessage(messageId) {
-      const { data: message } = await supabaseClient
+    async function openConversation(studentId) {
+      const student = myStudents.find(s => s.id === studentId);
+      const studentName = student ? student.full_name : 'Student';
+
+      // Get all messages with this student
+      const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
-        .eq('id', messageId)
-        .single();
+        .eq('message_type', 'teacher_student')
+        .or(`and(sender_id.eq.${studentId},recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.eq.${studentId})`)
+        .order('created_at', { ascending: true });
 
-      if (!message) return;
+      if (!messages) {
+        alert('Error loading conversation');
+        return;
+      }
 
-      // Mark as read if recipient
-      if (message.recipient_id === currentTeacherId && !message.is_read) {
+      // Mark all unread messages from this student as read
+      const unreadMessageIds = messages
+        .filter(m => m.recipient_id === currentTeacherId && !m.is_read)
+        .map(m => m.id);
+
+      if (unreadMessageIds.length > 0) {
         await supabaseClient
           .from('messages')
           .update({ is_read: true })
-          .eq('id', messageId);
-
-        loadInboxMessages();
-        loadStats();
+          .in('id', unreadMessageIds);
       }
 
-      // Get student name
-      const studentId = message.sender_id === currentTeacherId ? message.recipient_id : message.sender_id;
-      const { data: student } = await supabaseClient
-        .from('profiles')
-        .select('full_name')
-        .eq('id', studentId)
-        .single();
-
-      const isFromMe = message.sender_id === currentTeacherId;
-      const date = new Date(message.created_at).toLocaleString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-
-      document.getElementById('messageViewContent').innerHTML = `
-        <div class="message-thread">
-          <div class="sender">${isFromMe ? 'You' : (student?.full_name || 'Student')}</div>
-          <div class="timestamp">${date}</div>
-          <h4 style="margin: 1rem 0 0.5rem 0;">${message.subject || 'No subject'}</h4>
-          <div class="body">${message.message}</div>
+      // Render conversation
+      const conversationHTML = `
+        <div class="conversation-header">
+          <h4>💬 Conversation with ${studentName}</h4>
+          <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
         </div>
-        <div style="display:flex; gap:1rem;">
-          ${!isFromMe ? `<button class="btn-primary" onclick="openReplyModal('${studentId}', '${(message.subject || 'No subject').replace(/'/g, "\\'")}')">Reply</button>` : ''}
-          <button class="btn-secondary" onclick="closeModal('messageViewModal')">Close</button>
+
+        ${messages.map(msg => {
+          const isFromMe = msg.sender_id === currentTeacherId;
+          const bubbleClass = isFromMe ? 'from-me' : 'from-student';
+          const date = new Date(msg.created_at).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          return `
+            <div class="message-bubble ${bubbleClass}">
+              <div class="sender">${isFromMe ? 'You' : studentName}</div>
+              <div class="timestamp">${date}</div>
+              ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
+              <div class="body">${msg.message}</div>
+            </div>
+          `;
+        }).join('')}
+
+        <div class="reply-box">
+          <h5>💬 Reply to ${studentName}</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="replySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="replyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn-primary" onclick="sendReplyInConversation('${studentId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
         </div>
       `;
 
-      document.getElementById('messageViewModal').classList.add('active');
+      document.getElementById('conversationContent').innerHTML = conversationHTML;
+      document.getElementById('conversationModal').classList.add('active');
+
+      // Reload threads to update unread counts
+      loadInboxThreads();
+      loadStats();
     }
 
-    function openReplyModal(studentId, subject) {
-      document.getElementById('replyToStudentId').value = studentId;
-      document.getElementById('replySubject').value = subject;
-      document.getElementById('replySubjectInput').value = 'Re: ' + subject;
-      document.getElementById('replyMessage').value = '';
-      
-      closeModal('messageViewModal');
-      document.getElementById('replyModal').classList.add('active');
-    }
-
-    async function sendReply() {
-      const studentId = document.getElementById('replyToStudentId').value;
-      const subject = document.getElementById('replySubject').value;
+    async function sendReplyInConversation(studentId) {
+      const subject = document.getElementById('replySubject').value.trim();
       const message = document.getElementById('replyMessage').value.trim();
 
       if (!message) {
@@ -1201,24 +1346,24 @@
           sender_id: currentTeacherId,
           recipient_id: studentId,
           message_type: 'teacher_student',
-          subject: 'Re: ' + subject,
+          subject: subject || 'Reply from your teacher',
           message: message
         });
 
       if (error) {
-        alert('Error sending reply: ' + error.message);
+        alert('Error sending message: ' + error.message);
         return;
       }
 
+      // Reload conversation
+      closeModal('conversationModal');
       alert('✅ Reply sent successfully!');
-      closeModal('replyModal');
-      loadInboxMessages();
+      openConversation(studentId);
     }
 
     function openComposeToStudentModal() {
       const select = document.getElementById('composeStudentSelect');
       
-      // Populate with assigned students
       select.innerHTML = '<option value="">-- Choose a student --</option>' + 
         myStudents.map(student => 
           `<option value="${student.id}">${student.full_name}</option>`
@@ -1261,7 +1406,7 @@
 
       alert('✅ Message sent successfully!');
       closeModal('composeToStudentModal');
-      loadInboxMessages();
+      loadInboxThreads();
     }
 
     function showTab(tabName) {
@@ -1272,11 +1417,11 @@
       document.getElementById(tabName + 'Tab').classList.add('active');
 
       if (tabName === 'inbox') {
-        loadInboxMessages();
+        loadInboxThreads();
       }
     }
 
-    function closeModal(modalId) {
+       function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
     }
 
@@ -1429,7 +1574,7 @@
       
       const container = document.getElementById('timeSlotsTeacher');
       container.innerHTML = `
-         <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
         <div class="time-slots">
           ${slots.map(slot => 
             `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
