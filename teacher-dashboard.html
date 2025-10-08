@@ -253,7 +253,6 @@
       color: #004085;
     }
 
-    /* Inbox Styles */
     .inbox-container {
       background: #fff;
       border-radius: 12px;
@@ -271,6 +270,15 @@
     .inbox-header h3 {
       color: #000;
       font-size: 1.5em;
+    }
+    .compose-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
     }
     .message-list {
       display: flex;
@@ -319,7 +327,6 @@
       white-space: nowrap;
     }
 
-    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -554,7 +561,7 @@
       </div>
     </div>
 
-    <div class="tabs">
+        <div class="tabs">
       <button class="tab active" onclick="showTab('sessions')">My Sessions</button>
       <button class="tab" onclick="showTab('students')">My Students</button>
       <button class="tab" onclick="showTab('inbox')">
@@ -619,6 +626,7 @@
       <div class="inbox-container">
         <div class="inbox-header">
           <h3>📬 Student Messages</h3>
+          <button class="compose-btn" onclick="openComposeToStudentModal()">✉️ Message a Student</button>
         </div>
         <div id="inboxMessages" class="message-list">
           <div class="empty-state">Loading messages...</div>
@@ -663,9 +671,38 @@
         <textarea id="replyMessage" placeholder="Type your reply here..." required></textarea>
       </div>
 
-            <div style="display:flex; gap:1rem;">
+      <div style="display:flex; gap:1rem;">
         <button class="btn-primary" onclick="sendReply()">Send Reply</button>
         <button class="btn-secondary" onclick="closeModal('replyModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPOSE TO STUDENT MODAL -->
+  <div id="composeToStudentModal" class="modal">
+    <div class="modal-content">
+      <h3>✉️ Message a Student</h3>
+      
+      <div class="form-group">
+        <label>Select Student *</label>
+        <select id="composeStudentSelect" style="width:100%; padding:0.75rem; border:2px solid #ddd; border-radius:6px; font-size:1em;">
+          <option value="">-- Choose a student --</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="composeStudentSubject" placeholder="Enter subject...">
+      </div>
+      
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea id="composeStudentMessage" placeholder="Type your message here..." required></textarea>
+      </div>
+
+      <div style="display:flex; gap:1rem;">
+        <button class="btn-primary" onclick="sendMessageToStudent()">Send Message</button>
+        <button class="btn-secondary" onclick="closeModal('composeToStudentModal')">Cancel</button>
       </div>
     </div>
   </div>
@@ -681,7 +718,7 @@
     let currentTeacherId = null;
     let myStudents = [];
     let unreadMessageCount = 0;
-    let wizardData = { studentId: "", subject: "", style: "", notes: "", date: "", time: "" };
+    let wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
     let wizardStep = 0;
 
     // ============================================
@@ -916,16 +953,24 @@
     }
 
     // ============================================
-    // STUDENTS MANAGEMENT
+    // STUDENTS MANAGEMENT - FIXED VERSION
     // ============================================
     async function loadStudents() {
       // Get students assigned to this teacher
-      const { data: assignments } = await supabaseClient
+      const { data: assignments, error: assignError } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id')
         .eq('teacher_id', currentTeacherId);
 
       const tbody = document.getElementById('studentsBody');
+
+      console.log('Teacher assignments:', assignments);
+
+      if (assignError) {
+        console.error('Assignment error:', assignError);
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading assignments: ' + assignError.message + '</td></tr>';
+        return;
+      }
 
       if (!assignments || assignments.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students assigned yet. Contact your admin.</td></tr>';
@@ -934,19 +979,28 @@
 
       const studentIds = assignments.map(a => a.student_id);
 
+      console.log('Student IDs:', studentIds);
+
       // Get student profiles
-      const { data: students } = await supabaseClient
+      const { data: students, error: studentsError } = await supabaseClient
         .from('profiles')
         .select('*')
-        .in('id', studentIds)
-        .eq('role', 'student');
+        .in('id', studentIds);
 
-      if (!students || students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students found.</td></tr>';
+      console.log('Students loaded:', students);
+
+      if (studentsError) {
+        console.error('Students error:', studentsError);
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading students: ' + studentsError.message + '</td></tr>';
         return;
       }
 
-      myStudents = students; // Store for session creation
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No student profiles found.</td></tr>';
+        return;
+      }
+
+           myStudents = students; // Store for session creation
 
       // Get session counts for each student
       const { data: bookings } = await supabaseClient
@@ -1105,7 +1159,7 @@
         minute: '2-digit'
       });
 
-            document.getElementById('messageViewContent').innerHTML = `
+      document.getElementById('messageViewContent').innerHTML = `
         <div class="message-thread">
           <div class="sender">${isFromMe ? 'You' : (student?.full_name || 'Student')}</div>
           <div class="timestamp">${date}</div>
@@ -1158,6 +1212,55 @@
 
       alert('✅ Reply sent successfully!');
       closeModal('replyModal');
+      loadInboxMessages();
+    }
+
+    function openComposeToStudentModal() {
+      const select = document.getElementById('composeStudentSelect');
+      
+      // Populate with assigned students
+      select.innerHTML = '<option value="">-- Choose a student --</option>' + 
+        myStudents.map(student => 
+          `<option value="${student.id}">${student.full_name}</option>`
+        ).join('');
+      
+      document.getElementById('composeStudentSubject').value = '';
+      document.getElementById('composeStudentMessage').value = '';
+      document.getElementById('composeToStudentModal').classList.add('active');
+    }
+
+    async function sendMessageToStudent() {
+      const studentId = document.getElementById('composeStudentSelect').value;
+      const subject = document.getElementById('composeStudentSubject').value.trim();
+      const message = document.getElementById('composeStudentMessage').value.trim();
+
+      if (!studentId) {
+        alert('Please select a student');
+        return;
+      }
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentTeacherId,
+          recipient_id: studentId,
+          message_type: 'teacher_student',
+          subject: subject || 'Message from your teacher',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      alert('✅ Message sent successfully!');
+      closeModal('composeToStudentModal');
       loadInboxMessages();
     }
 
@@ -1309,9 +1412,6 @@
       if (!selectedDate) return;
 
       const date = new Date(selectedDate + 'T00:00:00');
-      const dayOfWeek = date.getDay();
-
-      // Teachers can schedule even on Sundays (fully open)
       const slots = [];
       
       // Generate time slots from 6 AM to 10 PM (16 hours of availability)
@@ -1329,7 +1429,7 @@
       
       const container = document.getElementById('timeSlotsTeacher');
       container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
+         <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
         <div class="time-slots">
           ${slots.map(slot => 
             `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
