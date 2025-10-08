@@ -228,6 +228,47 @@
       color: #666;
     }
 
+    /* 🆕 Teacher Tag Styles */
+    .teacher-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .teacher-tag {
+      background: #28a745;
+      color: #fff;
+      padding: 0.4rem 0.7rem;
+      border-radius: 15px;
+      font-size: 0.85em;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .teacher-tag .remove-btn {
+      background: rgba(255,255,255,0.3);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1em;
+      padding: 0;
+      line-height: 1;
+    }
+    .teacher-tag .remove-btn:hover {
+      background: rgba(255,255,255,0.5);
+    }
+    .no-teachers {
+      color: #dc3545;
+      font-weight: 600;
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -294,6 +335,15 @@
       border-color: #28a745;
       background: #d4edda;
     }
+    .teacher-card.already-assigned {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #f8f9fa;
+    }
+    .teacher-card.already-assigned:hover {
+      border-color: #ddd;
+      background: #f8f9fa;
+    }
     .teacher-card h4 {
       margin: 0 0 0.5rem 0;
       color: #000;
@@ -306,6 +356,12 @@
       color: #28a745;
       font-size: 0.85em;
       font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    .teacher-card .already-label {
+      color: #28a745;
+      font-size: 0.8em;
+      font-weight: 700;
       margin-top: 0.5rem;
     }
 
@@ -548,12 +604,12 @@
       <button class="tab" onclick="showTab('students')">Students</button>
       <button class="tab" onclick="showTab('teachers')">Teachers</button>
       <button class="tab" onclick="showTab('support')">
-              💬 Support Inbox
+        💬 Support Inbox
         <span class="badge" id="supportBadge" style="display:none;">0</span>
       </button>
     </div>
 
-    <!-- PENDING SESSIONS TAB -->
+        <!-- PENDING SESSIONS TAB -->
     <div id="pendingTab" class="tab-content active">
       <div class="info-box">
         <p>⚠️ These sessions need teacher assignments. Click "Assign Teacher" to match students with instructors.</p>
@@ -604,7 +660,7 @@
     <!-- STUDENTS TAB -->
     <div id="studentsTab" class="tab-content">
       <div class="info-box">
-        <p>👥 Manage student accounts and their assigned teachers</p>
+        <p>👥 Manage student accounts and their assigned teachers (Students can have MULTIPLE teachers)</p>
       </div>
       <div class="data-table">
         <table>
@@ -614,7 +670,7 @@
               <th>Email</th>
               <th>Phone</th>
               <th>Age Group</th>
-              <th>Assigned Teacher</th>
+              <th>Assigned Teachers</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -688,7 +744,10 @@
     <div class="modal-content">
       <h3>Assign Teacher to Student</h3>
       <input type="hidden" id="assignStudentId">
-      <p style="margin-bottom:1rem; color:#666;">Select a teacher for: <strong id="assignStudentName"></strong></p>
+      <p style="margin-bottom:1rem; color:#666;">
+        Add a teacher for: <strong id="assignStudentName"></strong><br>
+        <small style="color:#28a745;">✨ You can assign multiple teachers to one student!</small>
+      </p>
       
       <input type="text" id="studentTeacherSearch" class="teacher-search" placeholder="🔍 Search by name..." onkeyup="filterStudentTeachers()">
       
@@ -697,7 +756,7 @@
       </div>
 
       <div style="display:flex; gap:1rem; margin-top:1.5rem;">
-        <button class="btn-primary" onclick="confirmStudentTeacherAssignment()" id="confirmStudentTeacherBtn" disabled>Assign Teacher</button>
+        <button class="btn-primary" onclick="confirmStudentTeacherAssignment()" id="confirmStudentTeacherBtn" disabled>Add Teacher</button>
         <button class="btn-secondary" onclick="closeModal('assignStudentTeacherModal')">Cancel</button>
       </div>
     </div>
@@ -820,6 +879,7 @@
       <h3>✉️ Reply to Student</h3>
       <input type="hidden" id="replyToStudentId">
       <input type="hidden" id="replySubject">
+      <input type="hidden" id="replyThreadId">
       
       <div class="form-group">
         <label>Subject</label>
@@ -831,7 +891,7 @@
         <textarea id="replyMessage" placeholder="Type your reply here..." required></textarea>
       </div>
 
-            <div style="display:flex; gap:1rem;">
+      <div style="display:flex; gap:1rem;">
         <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
         <button class="btn-secondary" onclick="closeModal('replyModal')">Cancel</button>
       </div>
@@ -850,6 +910,7 @@
     let selectedTeacherId = null;
     let currentBookingId = null;
     let selectedStudentTeacherId = null;
+    let currentStudentAssignments = [];
     let unreadSupportCount = 0;
 
     // ============================================
@@ -1098,7 +1159,7 @@
     }
 
     // ============================================
-    // STUDENTS - FIXED VERSION
+    // STUDENTS - MULTI-TEACHER SUPPORT ✨
     // ============================================
     async function loadStudents() {
       const { data: students, error } = await supabaseClient
@@ -1114,18 +1175,17 @@
         return;
       }
 
-      const { data: assignments, error: assignError } = await supabaseClient
+      // Get ALL assignments (not just one per student)
+      const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id, teacher_id');
 
-      console.log('All assignments:', assignments);
+      console.log('📋 All assignments:', assignments);
 
-      const { data: teachers, error: teacherError } = await supabaseClient
+      const { data: teachers } = await supabaseClient
         .from('profiles')
         .select('id, full_name')
         .eq('role', 'teacher');
-
-      console.log('All teachers:', teachers);
 
       const teacherMap = {};
       teachers?.forEach(t => {
@@ -1133,12 +1193,28 @@
       });
 
       tbody.innerHTML = students.map(student => {
-        const assignment = assignments?.find(a => a.student_id === student.id);
-        const teacherName = assignment && teacherMap[assignment.teacher_id] 
-          ? teacherMap[assignment.teacher_id] 
-          : 'Not assigned';
+        // Get ALL teachers for this student (not just one)
+        const studentAssignments = assignments?.filter(a => a.student_id === student.id) || [];
+        
+        console.log(`👨‍🎓 Student ${student.full_name}: ${studentAssignments.length} teachers`);
 
-        console.log(`Student ${student.full_name}: assignment=`, assignment, 'teacher=', teacherName);
+        let teachersHtml = '';
+        
+        if (studentAssignments.length === 0) {
+          teachersHtml = '<span class="no-teachers">No teachers assigned</span>';
+        } else {
+          teachersHtml = '<div class="teacher-list">';
+          studentAssignments.forEach(assignment => {
+            const teacherName = teacherMap[assignment.teacher_id] || 'Unknown';
+            teachersHtml += `
+              <span class="teacher-tag">
+                ${teacherName}
+                <button class="remove-btn" onclick="removeTeacherAssignment('${student.id}', '${assignment.teacher_id}', '${student.full_name}', '${teacherName}')" title="Remove ${teacherName}">×</button>
+              </span>
+            `;
+          });
+          teachersHtml += '</div>';
+        }
 
         return `
           <tr>
@@ -1146,15 +1222,38 @@
             <td>${student.email}</td>
             <td>${student.phone || 'N/A'}</td>
             <td>${student.age_group || 'N/A'}</td>
-            <td><strong style="color: ${assignment ? '#28a745' : '#dc3545'};">${teacherName}</strong></td>
+            <td>${teachersHtml}</td>
             <td>
               <button class="btn-small btn-assign" onclick="assignTeacherToStudent('${student.id}', '${student.full_name.replace(/'/g, "\\'")}')">
-                ${assignment ? 'Reassign' : 'Assign'} Teacher
+                + Add Teacher
               </button>
             </td>
           </tr>
         `;
       }).join('');
+    }
+
+    // 🆕 REMOVE TEACHER ASSIGNMENT
+    async function removeTeacherAssignment(studentId, teacherId, studentName, teacherName) {
+      if (!confirm(`Remove ${teacherName} from ${studentName}?`)) return;
+
+      const { error } = await supabaseClient
+        .from('teacher_assignments')
+        .delete()
+        .eq('student_id', studentId)
+        .eq('teacher_id', teacherId);
+
+      if (error) {
+        alert('Error removing teacher: ' + error.message);
+        return;
+      }
+
+      console.log('✅ Teacher removed, reloading...');
+      alert('✅ Teacher removed successfully!');
+      
+      await loadStudents();
+      await loadTeachers();
+      await loadStats();
     }
 
     async function assignTeacherToStudent(studentId, studentName) {
@@ -1172,15 +1271,20 @@
 
       allTeachers = teachers || [];
 
+      // Get current assignments for THIS student
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('teacher_id, student_id');
 
-      renderStudentTeacherGrid(allTeachers, assignments);
+      currentStudentAssignments = assignments?.filter(a => a.student_id === studentId) || [];
+
+      console.log('Current student assignments:', currentStudentAssignments);
+
+      renderStudentTeacherGrid(allTeachers, assignments, studentId);
       document.getElementById('assignStudentTeacherModal').classList.add('active');
     }
 
-    function renderStudentTeacherGrid(teachers, assignments) {
+    function renderStudentTeacherGrid(teachers, allAssignments, currentStudentId) {
       const grid = document.getElementById('studentTeacherGrid');
 
       if (!teachers || teachers.length === 0) {
@@ -1188,15 +1292,22 @@
         return;
       }
 
+      // Get teachers already assigned to THIS student
+      const assignedTeacherIds = currentStudentAssignments.map(a => a.teacher_id);
+
       grid.innerHTML = teachers.map(teacher => {
-        const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
+        const studentCount = allAssignments?.filter(a => a.teacher_id === teacher.id).length || 0;
         const subjects = teacher.subjects || 'No subjects listed';
+        const alreadyAssigned = assignedTeacherIds.includes(teacher.id);
 
         return `
-          <div class="teacher-card" onclick="selectStudentTeacher('${teacher.id}')" data-teacher-id="${teacher.id}">
+          <div class="teacher-card ${alreadyAssigned ? 'already-assigned' : ''}" 
+               onclick="${alreadyAssigned ? '' : `selectStudentTeacher('${teacher.id}')`}" 
+               data-teacher-id="${teacher.id}">
             <h4>${teacher.full_name}</h4>
             <p class="subjects">📚 ${subjects}</p>
             <p class="students-count">👥 ${studentCount} student${studentCount !== 1 ? 's' : ''}</p>
+            ${alreadyAssigned ? '<p class="already-label">✅ Already Assigned</p>' : ''}
           </div>
         `;
       }).join('');
@@ -1205,12 +1316,12 @@
     function selectStudentTeacher(teacherId) {
       selectedStudentTeacherId = teacherId;
       
-      document.querySelectorAll('#studentTeacherGrid .teacher-card').forEach(card => {
+      document.querySelectorAll('#studentTeacherGrid .teacher-card:not(.already-assigned)').forEach(card => {
         card.classList.remove('selected');
       });
       
       const selectedCard = document.querySelector(`#studentTeacherGrid [data-teacher-id="${teacherId}"]`);
-      if (selectedCard) {
+      if (selectedCard && !selectedCard.classList.contains('already-assigned')) {
         selectedCard.classList.add('selected');
       }
 
@@ -1226,14 +1337,17 @@
         return name.includes(searchTerm) || subjects.includes(searchTerm);
       });
 
+      const studentId = document.getElementById('assignStudentId').value;
+
       supabaseClient
         .from('teacher_assignments')
         .select('teacher_id, student_id')
         .then(({ data }) => {
-          renderStudentTeacherGrid(filtered, data);
+          renderStudentTeacherGrid(filtered, data, studentId);
         });
     }
 
+    // 🆕 FIXED: ADD TEACHER (NOT REPLACE) ✨
     async function confirmStudentTeacherAssignment() {
       if (!selectedStudentTeacherId) {
         alert('Please select a teacher');
@@ -1243,56 +1357,54 @@
       const studentId = document.getElementById('assignStudentId').value;
 
       document.getElementById('confirmStudentTeacherBtn').disabled = true;
-      document.getElementById('confirmStudentTeacherBtn').textContent = 'Assigning...';
+      document.getElementById('confirmStudentTeacherBtn').textContent = 'Adding...';
 
+      // Check if this exact combination already exists
       const { data: existing } = await supabaseClient
         .from('teacher_assignments')
         .select('id')
         .eq('student_id', studentId)
-        .single();
+        .eq('teacher_id', selectedStudentTeacherId)
+        .maybeSingle();
 
       if (existing) {
-        const { error } = await supabaseClient
-          .from('teacher_assignments')
-          .update({ teacher_id: selectedStudentTeacherId })
-          .eq('student_id', studentId);
-
-        if (error) {
-          alert('Error updating assignment: ' + error.message);
-          document.getElementById('confirmStudentTeacherBtn').disabled = false;
-          document.getElementById('confirmStudentTeacherBtn').textContent = 'Assign Teacher';
-          return;
-        }
-      } else {
-        const { error } = await supabaseClient
-          .from('teacher_assignments')
-          .insert({
-            student_id: studentId,
-            teacher_id: selectedStudentTeacherId
-          });
-
-        if (error) {
-          alert('Error assigning teacher: ' + error.message);
-          document.getElementById('confirmStudentTeacherBtn').disabled = false;
-          document.getElementById('confirmStudentTeacherBtn').textContent = 'Assign Teacher';
-          return;
-        }
+        alert('⚠️ This teacher is already assigned to this student!');
+        document.getElementById('confirmStudentTeacherBtn').disabled = false;
+        document.getElementById('confirmStudentTeacherBtn').textContent = 'Add Teacher';
+        return;
       }
 
-      console.log('✅ Assignment saved, reloading all data...');
+      // 🎯 INSERT NEW ASSIGNMENT (NOT UPDATE)
+      const { error } = await supabaseClient
+        .from('teacher_assignments')
+        .insert({
+          student_id: studentId,
+          teacher_id: selectedStudentTeacherId
+        });
 
-      alert('✅ Teacher assigned successfully!');
+      if (error) {
+        alert('Error assigning teacher: ' + error.message);
+        console.error('Assignment error:', error);
+        document.getElementById('confirmStudentTeacherBtn').disabled = false;
+        document.getElementById('confirmStudentTeacherBtn').textContent = 'Add Teacher';
+        return;
+      }
+
+      console.log('✅ Teacher ADDED (not replaced), reloading...');
+
+      alert('✅ Teacher added successfully!');
       closeModal('assignStudentTeacherModal');
       
+      // Reload all data
       await loadStudents();
-      await loadStats();
       await loadTeachers();
+      await loadStats();
       
-      document.getElementById('confirmStudentTeacherBtn').textContent = 'Assign Teacher';
+      document.getElementById('confirmStudentTeacherBtn').textContent = 'Add Teacher';
     }
 
     // ============================================
-    // TEACHERS - FIXED VERSION
+    // TEACHERS
     // ============================================
     async function loadTeachers() {
       const { data: teachers, error } = await supabaseClient
@@ -1310,22 +1422,14 @@
 
       allTeachers = teachers;
 
-      const { data: assignments, error: assignError } = await supabaseClient
+      const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('teacher_id, student_id');
 
-      console.log('Fresh assignments loaded:', assignments);
-
-      if (assignError) {
-        console.error('Error loading assignments:', assignError);
-      }
-
       tbody.innerHTML = teachers.map(teacher => {
         const studentCount = assignments?.filter(a => a.teacher_id === teacher.id).length || 0;
-        
-        console.log(`Teacher ${teacher.full_name}: ${studentCount} students`);
 
-                 return `
+        return `
           <tr>
             <td><strong>${teacher.full_name}</strong></td>
             <td>${teacher.email}</td>
@@ -1631,7 +1735,7 @@
     }
 
     // ============================================
-    // SUPPORT INBOX
+    // SUPPORT INBOX - CONTINUOUS THREADS ✨
     // ============================================
     async function loadSupportMessages() {
       const { data: messages } = await supabaseClient
@@ -1724,6 +1828,7 @@
 
       if (!message) return;
 
+      // Mark as read if it's sent to admin
       if (message.recipient_id === currentAdminId && !message.is_read) {
         await supabaseClient
           .from('messages')
@@ -1735,56 +1840,89 @@
       }
 
       const studentId = message.sender_id === currentAdminId ? message.recipient_id : message.sender_id;
+      
+      // 🆕 GET ENTIRE THREAD (all messages between admin and this student)
+      const { data: threadMessages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'support')
+        .or(`and(sender_id.eq.${currentAdminId},recipient_id.eq.${studentId}),and(sender_id.eq.${studentId},recipient_id.eq.${currentAdminId})`)
+        .order('created_at', { ascending: true });
+
       const { data: student } = await supabaseClient
         .from('profiles')
         .select('full_name')
         .eq('id', studentId)
         .single();
 
-      const isFromMe = message.sender_id === currentAdminId;
-      const date = new Date(message.created_at).toLocaleString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+      const studentName = student?.full_name || 'Student';
+
+      // Render entire thread
+      let threadHtml = `<h3>💬 Conversation with ${studentName}</h3>`;
+      
+      threadMessages?.forEach(msg => {
+        const isFromMe = msg.sender_id === currentAdminId;
+        const date = new Date(msg.created_at).toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        threadHtml += `
+          <div class="message-thread">
+            <div class="sender">${isFromMe ? 'You (Admin)' : studentName}</div>
+            <div class="timestamp">${date}</div>
+            <div class="body">${msg.message}</div>
+          </div>
+        `;
       });
 
-      document.getElementById('messageViewContent').innerHTML = `
-        <div class="message-thread">
-          <div class="sender">${isFromMe ? 'You (Admin)' : (student?.full_name || 'Student')}</div>
-          <div class="timestamp">${date}</div>
-          <h4 style="margin: 1rem 0 0.5rem 0;">${message.subject || 'No subject'}</h4>
-          <div class="body">${message.message}</div>
-        </div>
+      threadHtml += `
         <div style="display:flex; gap:1rem;">
-          ${!isFromMe ? `<button class="btn-primary" onclick="openSupportReplyModal('${studentId}', '${(message.subject || 'No subject').replace(/'/g, "\\'")}')">Reply</button>` : ''}
+          <button class="btn-primary" onclick="openSupportReplyModal('${studentId}', 'Re: Support', '${message.thread_id || message.id}')">Reply</button>
           <button class="btn-secondary" onclick="closeModal('messageViewModal')">Close</button>
         </div>
       `;
 
+      document.getElementById('messageViewContent').innerHTML = threadHtml;
       document.getElementById('messageViewModal').classList.add('active');
     }
 
-    function openSupportReplyModal(studentId, subject) {
+    function openSupportReplyModal(studentId, subject, threadId) {
       document.getElementById('replyToStudentId').value = studentId;
       document.getElementById('replySubject').value = subject;
-      document.getElementById('replySubjectInput').value = 'Re: ' + subject;
+      document.getElementById('replyThreadId').value = threadId || '';
+      document.getElementById('replySubjectInput').value = subject;
       document.getElementById('replyMessage').value = '';
       
       closeModal('messageViewModal');
       document.getElementById('replyModal').classList.add('active');
     }
 
+    // 🆕 SEND REPLY WITH THREAD CONTINUITY
     async function sendSupportReply() {
       const studentId = document.getElementById('replyToStudentId').value;
       const subject = document.getElementById('replySubject').value;
       const message = document.getElementById('replyMessage').value.trim();
+      const threadId = document.getElementById('replyThreadId').value;
 
       if (!message) {
         alert('Please enter a message');
         return;
       }
+
+      // Check if a thread exists between admin and this student
+      const { data: existingThread } = await supabaseClient
+        .from('messages')
+        .select('thread_id, id')
+        .eq('message_type', 'support')
+        .or(`and(sender_id.eq.${currentAdminId},recipient_id.eq.${studentId}),and(sender_id.eq.${studentId},recipient_id.eq.${currentAdminId})`)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      const useThreadId = existingThread?.thread_id || existingThread?.id || threadId;
 
       const { error } = await supabaseClient
         .from('messages')
@@ -1792,8 +1930,9 @@
           sender_id: currentAdminId,
           recipient_id: studentId,
           message_type: 'support',
-          subject: 'Re: ' + subject,
-          message: message
+          subject: subject,
+          message: message,
+          thread_id: useThreadId // Keep thread continuous
         });
 
       if (error) {
