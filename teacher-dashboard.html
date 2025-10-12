@@ -394,7 +394,7 @@
       font-size: 0.85em;
       margin-bottom: 0.5rem;
     }
-    .message-bubble .subject {
+        .message-bubble .subject {
       font-weight: 600;
       color: #333;
       margin-bottom: 0.5rem;
@@ -402,7 +402,6 @@
     .message-bubble .body {
       color: #333;
       white-space: pre-wrap;
-      line-height: 1.6;
     }
 
     .reply-box {
@@ -585,7 +584,7 @@
       transition: width 0.4s ease;
     }
 
-        @media (max-width: 768px) {
+    @media (max-width: 768px) {
       .time-slots {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -736,7 +735,7 @@
     </div>
   </div>
 
-  <!-- CREATE SESSION WIZARD -->
+    <!-- CREATE SESSION WIZARD -->
   <div id="sessionWizard" class="wizard-modal">
     <button onclick="closeSessionWizard()"
       style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
@@ -851,13 +850,17 @@
     }
 
     // ============================================
-    // STATS
+    // STATS - WITH DEBUG LOGS
     // ============================================
     async function loadStats() {
+      console.log('📊 loadStats() called for teacher:', currentTeacherId);
+      
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id')
         .eq('teacher_id', currentTeacherId);
+
+      console.log('📊 Stats - assignments found:', assignments?.length || 0);
 
       const studentIds = assignments?.map(a => a.student_id) || [];
 
@@ -872,12 +875,14 @@
         .eq('recipient_id', currentTeacherId)
         .eq('is_read', false);
 
-            document.getElementById('totalStudents').textContent = studentIds.length || 0;
+      document.getElementById('totalStudents').textContent = studentIds.length || 0;
       document.getElementById('upcomingSessions').textContent = 
         sessions?.filter(s => s.status === 'scheduled').length || 0;
       document.getElementById('completedSessions').textContent = 
         sessions?.filter(s => s.status === 'completed').length || 0;
       document.getElementById('unreadMessages').textContent = messages?.length || 0;
+      
+      console.log('📊 Stats updated - Total students:', studentIds.length);
       
       unreadMessageCount = messages?.length || 0;
     }
@@ -1049,51 +1054,67 @@
     }
 
     // ============================================
-    // STUDENTS MANAGEMENT
+    // STUDENTS MANAGEMENT - WITH DEBUG LOGS
     // ============================================
     async function loadStudents() {
+      console.log('🔍 loadStudents() called for teacher:', currentTeacherId);
+      
       const { data: assignments, error: assignError } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id')
         .eq('teacher_id', currentTeacherId);
 
+      console.log('📋 Raw assignments from database:', assignments);
+      console.log('❌ Assignment query error:', assignError);
+
       const tbody = document.getElementById('studentsBody');
 
       if (assignError) {
-        console.error('Assignment error:', assignError);
+        console.error('❌ Assignment error:', assignError);
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading assignments</td></tr>';
         return;
       }
 
       if (!assignments || assignments.length === 0) {
+        console.warn('⚠️ No assignments found for this teacher');
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students assigned yet. Contact your admin.</td></tr>';
+        myStudents = []; // Clear the array
         return;
       }
 
       const studentIds = assignments.map(a => a.student_id);
+      console.log('👥 Student IDs extracted:', studentIds);
 
       const { data: students, error: studentsError } = await supabaseClient
         .from('profiles')
         .select('*')
         .in('id', studentIds);
 
+      console.log('👨‍🎓 Student profiles loaded:', students);
+      console.log('❌ Student query error:', studentsError);
+
       if (studentsError) {
-        console.error('Students error:', studentsError);
+        console.error('❌ Students error:', studentsError);
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading students</td></tr>';
         return;
       }
 
       if (!students || students.length === 0) {
+        console.warn('⚠️ No student profiles found for IDs:', studentIds);
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No student profiles found.</td></tr>';
+        myStudents = []; // Clear the array
         return;
       }
 
       myStudents = students;
+      console.log('✅ myStudents array updated:', myStudents.length, 'students');
 
       const { data: bookings } = await supabaseClient
         .from('bookings')
         .select('user_id')
         .eq('assigned_teacher_id', currentTeacherId);
+
+      console.log('📚 Bookings for this teacher:', bookings?.length || 0);
 
       tbody.innerHTML = students.map(student => {
         const sessionCount = bookings?.filter(b => b.user_id === student.id).length || 0;
@@ -1111,18 +1132,20 @@
           </tr>
         `;
       }).join('');
+      
+      console.log('✅ Student table rendered with', students.length, 'rows');
     }
 
     function createSessionForStudent(studentId) {
       const student = myStudents.find(s => s.id === studentId);
       if (!student) return;
 
-            wizardData.studentId = studentId;
+      wizardData.studentId = studentId;
       wizardData.studentName = student.full_name;
       openCreateSessionWizard();
     }
 
-    // ============================================
+        // ============================================
     // THREADED MESSAGING SYSTEM - GROUP BY STUDENT
     // ============================================
     async function loadInboxThreads() {
@@ -1421,7 +1444,7 @@
       }
     }
 
-       function closeModal(modalId) {
+    function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
     }
 
@@ -1525,7 +1548,7 @@
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
           <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Full calendar access - schedule anytime!</p>
           
-          <div style="padding:0 20px;">
+                    <div style="padding:0 20px;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600;">📆 Select Date:</label>
             <input type="date" id="sessionDate" 
               min="${minDate}" 
