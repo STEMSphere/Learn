@@ -228,7 +228,6 @@
       color: #666;
     }
 
-    /* 🆕 Teacher Tag Styles */
     .teacher-list {
       display: flex;
       flex-wrap: wrap;
@@ -284,14 +283,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 1rem;
     }
     .modal-content {
       background: #fff;
       padding: 2rem;
       border-radius: 12px;
-      max-width: 600px;
+      max-width: 800px;
       width: 90%;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
     }
     .modal-content h3 {
@@ -311,7 +311,7 @@
       outline: none;
       border-color: #28a745;
     }
-    .teacher-grid {
+    .teacher-grid, .admin-grid {
       display: grid;
       gap: 0.75rem;
       max-height: 400px;
@@ -320,18 +320,18 @@
       border: 1px solid #ddd;
       border-radius: 6px;
     }
-    .teacher-card {
+    .teacher-card, .admin-card {
       padding: 1rem;
       border: 2px solid #ddd;
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s;
     }
-    .teacher-card:hover {
+    .teacher-card:hover, .admin-card:hover {
       border-color: #28a745;
       background: #f0fff4;
     }
-    .teacher-card.selected {
+    .teacher-card.selected, .admin-card.selected {
       border-color: #28a745;
       background: #d4edda;
     }
@@ -344,7 +344,7 @@
       border-color: #ddd;
       background: #f8f9fa;
     }
-    .teacher-card h4 {
+    .teacher-card h4, .admin-card h4 {
       margin: 0 0 0.5rem 0;
       color: #000;
     }
@@ -489,73 +489,168 @@
       color: #000;
       font-size: 1.5em;
     }
-    .message-list {
+    .compose-btn {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    /* 🆕 THREADED MESSAGE STYLES */
+    .thread-list {
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
-    .message-item {
-      border: 1px solid #ddd;
+    .thread-item {
+      border: 2px solid #ddd;
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.5rem;
       cursor: pointer;
       transition: all 0.3s;
+      background: #fff;
     }
-    .message-item:hover {
+    .thread-item:hover {
       border-color: #28a745;
       box-shadow: 0 2px 8px rgba(40,167,69,0.2);
     }
-    .message-item.unread {
+    .thread-item.unread {
       background: #d4edda;
       border-color: #28a745;
-      font-weight: 600;
+      border-width: 3px;
     }
-    .message-header {
+    .thread-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
     }
-    .message-from {
-      font-weight: 600;
+    .sender-name {
+      font-weight: 700;
       color: #000;
+      font-size: 1.1em;
     }
-    .message-date {
-      color: #999;
+    .thread-meta {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .message-count {
+      background: #28a745;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
       font-size: 0.85em;
-    }
-    .message-subject {
-      color: #333;
-      margin-bottom: 0.25rem;
       font-weight: 600;
     }
-    .message-preview {
-      color: #666;
+    .unread-count {
+      background: #ff0000;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      animation: pulse-badge 1.5s infinite;
+    }
+    @keyframes pulse-badge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .last-message-date {
+      color: #999;
       font-size: 0.9em;
+    }
+    .last-message-preview {
+      color: #666;
+      font-size: 0.95em;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      margin-top: 0.5rem;
     }
 
-    .message-thread {
+    /* Message bubbles for conversation view */
+    .message-bubble {
       background: #f8f9fa;
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 1rem;
       margin-bottom: 1rem;
     }
-    .message-thread .sender {
+    .message-bubble.from-me {
+      background: #d4edda;
+      border-color: #28a745;
+      margin-left: 2rem;
+    }
+    .message-bubble.from-them {
+      margin-right: 2rem;
+    }
+    .message-bubble .sender {
       font-weight: 600;
       color: #28a745;
       margin-bottom: 0.5rem;
     }
-    .message-thread .timestamp {
+    .message-bubble .timestamp {
       color: #999;
       font-size: 0.85em;
       margin-bottom: 0.5rem;
     }
-    .message-thread .body {
+        .message-bubble .subject {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    .message-bubble .body {
       color: #333;
       white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    .reply-box {
+      background: #f8f9fa;
+      border: 2px solid #28a745;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .reply-box h5 {
+      margin: 0 0 1rem 0;
+      color: #28a745;
+    }
+
+    .conversation-header {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: #fff;
+      padding: 1.5rem;
+      border-radius: 8px 8px 0 0;
+      margin: -2rem -2rem 1.5rem -2rem;
+    }
+    .conversation-header h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3em;
+    }
+    .conversation-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 768px) {
+      .message-bubble.from-me {
+        margin-left: 0.5rem;
+      }
+      .message-bubble.from-them {
+        margin-right: 0.5rem;
+      }
+      .tabs {
+        font-size: 0.9em;
+      }
+      .tab {
+        padding: 0.75rem 1rem;
+      }
     }
   </style>
 </head>
@@ -593,8 +688,12 @@
         <div class="number" id="totalTeachers">-</div>
       </div>
       <div class="stat-card">
-        <h3>Support Messages</h3>
-        <div class="number" id="supportCount">-</div>
+        <h3>Student Messages</h3>
+        <div class="number" id="studentSupportCount">-</div>
+      </div>
+      <div class="stat-card">
+        <h3>Teacher Messages</h3>
+        <div class="number" id="teacherSupportCount">-</div>
       </div>
     </div>
 
@@ -604,12 +703,20 @@
       <button class="tab" onclick="showTab('students')">Students</button>
       <button class="tab" onclick="showTab('teachers')">Teachers</button>
       <button class="tab" onclick="showTab('support')">
-        💬 Support Inbox
+        💬 Student Support
         <span class="badge" id="supportBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab" onclick="showTab('teacherSupport')">
+        👨‍🏫 Teacher Support
+        <span class="badge" id="teacherSupportBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab" onclick="showTab('adminChat')">
+        🔒 Admin Chat
+        <span class="badge" id="adminChatBadge" style="display:none;">0</span>
       </button>
     </div>
 
-        <!-- PENDING SESSIONS TAB -->
+    <!-- PENDING SESSIONS TAB -->
     <div id="pendingTab" class="tab-content active">
       <div class="info-box">
         <p>⚠️ These sessions need teacher assignments. Click "Assign Teacher" to match students with instructors.</p>
@@ -707,13 +814,39 @@
       </div>
     </div>
 
-    <!-- SUPPORT INBOX TAB -->
+    <!-- STUDENT SUPPORT INBOX TAB -->
     <div id="supportTab" class="tab-content">
       <div class="inbox-container">
         <div class="inbox-header">
-          <h3>💬 Support Messages</h3>
+          <h3>💬 Student Support Messages</h3>
         </div>
-        <div id="supportMessages" class="message-list">
+        <div id="supportThreads" class="thread-list">
+          <div class="empty-state">Loading messages...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🆕 TEACHER SUPPORT INBOX TAB -->
+    <div id="teacherSupportTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>👨‍🏫 Teacher Support Messages</h3>
+          <button class="compose-btn" onclick="openComposeToTeacherModal()">✉️ Message a Teacher</button>
+        </div>
+        <div id="teacherSupportThreads" class="thread-list">
+          <div class="empty-state">Loading messages...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🆕 ADMIN CHAT TAB -->
+    <div id="adminChatTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>🔒 Admin Private Chat</h3>
+          <button class="compose-btn" onclick="openComposeToAdminModal()">✉️ Message an Admin</button>
+        </div>
+        <div id="adminChatThreads" class="thread-list">
           <div class="empty-state">Loading messages...</div>
         </div>
       </div>
@@ -866,34 +999,67 @@
     </div>
   </div>
 
-  <!-- MESSAGE VIEW MODAL -->
-  <div id="messageViewModal" class="modal">
-    <div class="modal-content" id="messageViewContent">
+  <!-- CONVERSATION VIEW MODAL -->
+  <div id="conversationModal" class="modal">
+    <div class="modal-content" id="conversationContent">
       <!-- Content populated dynamically -->
     </div>
   </div>
 
-  <!-- REPLY MESSAGE MODAL -->
-  <div id="replyModal" class="modal">
+  <!-- 🆕 COMPOSE TO TEACHER MODAL -->
+  <div id="composeToTeacherModal" class="modal">
     <div class="modal-content">
-      <h3>✉️ Reply to Student</h3>
-      <input type="hidden" id="replyToStudentId">
-      <input type="hidden" id="replySubject">
-      <input type="hidden" id="replyThreadId">
+      <h3>✉️ Message a Teacher</h3>
+      
+      <div class="form-group">
+        <label>Select Teacher *</label>
+        <select id="composeTeacherSelect" required>
+          <option value="">-- Choose a teacher --</option>
+        </select>
+      </div>
       
       <div class="form-group">
         <label>Subject</label>
-        <input type="text" id="replySubjectInput" readonly>
+        <input type="text" id="composeTeacherSubject" placeholder="Enter subject...">
       </div>
       
       <div class="form-group">
-        <label>Your Reply *</label>
-        <textarea id="replyMessage" placeholder="Type your reply here..." required></textarea>
+        <label>Message *</label>
+        <textarea id="composeTeacherMessage" placeholder="Type your message here..." required></textarea>
       </div>
 
       <div style="display:flex; gap:1rem;">
-        <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
-        <button class="btn-secondary" onclick="closeModal('replyModal')">Cancel</button>
+        <button class="btn-primary" onclick="sendMessageToTeacher()">Send Message</button>
+        <button class="btn-secondary" onclick="closeModal('composeToTeacherModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🆕 COMPOSE TO ADMIN MODAL -->
+  <div id="composeToAdminModal" class="modal">
+    <div class="modal-content">
+      <h3>🔒 Message Another Admin</h3>
+      
+      <div class="form-group">
+        <label>Select Admin *</label>
+        <select id="composeAdminSelect" required>
+          <option value="">-- Choose an admin --</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="composeAdminSubject" placeholder="Enter subject...">
+      </div>
+      
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea id="composeAdminMessage" placeholder="Type your message here..." required></textarea>
+      </div>
+
+      <div style="display:flex; gap:1rem;">
+        <button class="btn-primary" onclick="sendMessageToAdmin()">Send Message</button>
+        <button class="btn-secondary" onclick="closeModal('composeToAdminModal')">Cancel</button>
       </div>
     </div>
   </div>
@@ -907,11 +1073,14 @@
 
     let currentAdminId = null;
     let allTeachers = [];
+    let allAdmins = [];
     let selectedTeacherId = null;
     let currentBookingId = null;
     let selectedStudentTeacherId = null;
     let currentStudentAssignments = [];
-    let unreadSupportCount = 0;
+    let unreadStudentSupportCount = 0;
+    let unreadTeacherSupportCount = 0;
+    let unreadAdminChatCount = 0;
 
     // ============================================
     // AUTH & INITIALIZATION
@@ -926,7 +1095,7 @@
 
       currentAdminId = session.user.id;
 
-      const { data: profile } = await supabaseClient
+            const { data: profile } = await supabaseClient
         .from('profiles')
         .select('*')
         .eq('id', currentAdminId)
@@ -944,7 +1113,9 @@
       loadBookings();
       loadStudents();
       loadTeachers();
-      loadSupportMessages();
+      loadSupportThreads();
+      loadTeacherSupportThreads();
+      loadAdminChatThreads();
 
       // Subscribe to realtime messages
       supabaseClient
@@ -952,10 +1123,12 @@
         .on('postgres_changes', { 
           event: '*', 
           schema: 'public', 
-          table: 'messages',
-          filter: `recipient_id=eq.${currentAdminId}`
-        }, () => {
-          loadSupportMessages();
+          table: 'messages'
+        }, (payload) => {
+          // Reload when any message changes
+          loadSupportThreads();
+          loadTeacherSupportThreads();
+          loadAdminChatThreads();
           loadStats();
         })
         .subscribe();
@@ -974,12 +1147,21 @@
       const { data: students } = await supabaseClient.from('profiles').select('id').eq('role', 'student');
       const { data: teachers } = await supabaseClient.from('profiles').select('id').eq('role', 'teacher');
       
-      const { data: messages } = await supabaseClient
+      // Student support messages
+      const { data: studentMessages } = await supabaseClient
         .from('messages')
         .select('id')
         .eq('message_type', 'support')
-        .eq('recipient_id', currentAdminId)
-        .eq('is_read', false);
+        .eq('is_read', false)
+        .in('sender_id', students?.map(s => s.id) || []);
+
+      // Teacher support messages
+      const { data: teacherMessages } = await supabaseClient
+        .from('messages')
+        .select('id')
+        .eq('message_type', 'teacher_support')
+        .eq('is_read', false)
+        .in('sender_id', teachers?.map(t => t.id) || []);
 
       const pending = bookings?.filter(b => !b.assigned_teacher_id).length || 0;
 
@@ -987,9 +1169,11 @@
       document.getElementById('totalBookings').textContent = bookings?.length || 0;
       document.getElementById('totalStudents').textContent = students?.length || 0;
       document.getElementById('totalTeachers').textContent = teachers?.length || 0;
-      document.getElementById('supportCount').textContent = messages?.length || 0;
+      document.getElementById('studentSupportCount').textContent = studentMessages?.length || 0;
+      document.getElementById('teacherSupportCount').textContent = teacherMessages?.length || 0;
       
-      unreadSupportCount = messages?.length || 0;
+      unreadStudentSupportCount = studentMessages?.length || 0;
+      unreadTeacherSupportCount = teacherMessages?.length || 0;
     }
 
     // ============================================
@@ -1003,7 +1187,11 @@
       document.getElementById(tabName + 'Tab').classList.add('active');
 
       if (tabName === 'support') {
-        loadSupportMessages();
+        loadSupportThreads();
+      } else if (tabName === 'teacherSupport') {
+        loadTeacherSupportThreads();
+      } else if (tabName === 'adminChat') {
+        loadAdminChatThreads();
       }
     }
 
@@ -1175,12 +1363,9 @@
         return;
       }
 
-      // Get ALL assignments (not just one per student)
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id, teacher_id');
-
-      console.log('📋 All assignments:', assignments);
 
       const { data: teachers } = await supabaseClient
         .from('profiles')
@@ -1193,10 +1378,7 @@
       });
 
       tbody.innerHTML = students.map(student => {
-        // Get ALL teachers for this student (not just one)
         const studentAssignments = assignments?.filter(a => a.student_id === student.id) || [];
-        
-        console.log(`👨‍🎓 Student ${student.full_name}: ${studentAssignments.length} teachers`);
 
         let teachersHtml = '';
         
@@ -1209,7 +1391,7 @@
             teachersHtml += `
               <span class="teacher-tag">
                 ${teacherName}
-                <button class="remove-btn" onclick="removeTeacherAssignment('${student.id}', '${assignment.teacher_id}', '${student.full_name}', '${teacherName}')" title="Remove ${teacherName}">×</button>
+                <button class="remove-btn" onclick="removeTeacherAssignment('${student.id}', '${assignment.teacher_id}', '${student.full_name.replace(/'/g, "\\'")}', '${teacherName.replace(/'/g, "\\'")}')" title="Remove ${teacherName}">×</button>
               </span>
             `;
           });
@@ -1233,7 +1415,6 @@
       }).join('');
     }
 
-    // 🆕 REMOVE TEACHER ASSIGNMENT
     async function removeTeacherAssignment(studentId, teacherId, studentName, teacherName) {
       if (!confirm(`Remove ${teacherName} from ${studentName}?`)) return;
 
@@ -1248,7 +1429,6 @@
         return;
       }
 
-      console.log('✅ Teacher removed, reloading...');
       alert('✅ Teacher removed successfully!');
       
       await loadStudents();
@@ -1271,14 +1451,11 @@
 
       allTeachers = teachers || [];
 
-      // Get current assignments for THIS student
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('teacher_id, student_id');
 
       currentStudentAssignments = assignments?.filter(a => a.student_id === studentId) || [];
-
-      console.log('Current student assignments:', currentStudentAssignments);
 
       renderStudentTeacherGrid(allTeachers, assignments, studentId);
       document.getElementById('assignStudentTeacherModal').classList.add('active');
@@ -1292,7 +1469,6 @@
         return;
       }
 
-      // Get teachers already assigned to THIS student
       const assignedTeacherIds = currentStudentAssignments.map(a => a.teacher_id);
 
       grid.innerHTML = teachers.map(teacher => {
@@ -1347,7 +1523,6 @@
         });
     }
 
-    // 🆕 FIXED: ADD TEACHER (NOT REPLACE) ✨
     async function confirmStudentTeacherAssignment() {
       if (!selectedStudentTeacherId) {
         alert('Please select a teacher');
@@ -1359,7 +1534,6 @@
       document.getElementById('confirmStudentTeacherBtn').disabled = true;
       document.getElementById('confirmStudentTeacherBtn').textContent = 'Adding...';
 
-      // Check if this exact combination already exists
       const { data: existing } = await supabaseClient
         .from('teacher_assignments')
         .select('id')
@@ -1374,7 +1548,6 @@
         return;
       }
 
-      // 🎯 INSERT NEW ASSIGNMENT (NOT UPDATE)
       const { error } = await supabaseClient
         .from('teacher_assignments')
         .insert({
@@ -1384,18 +1557,14 @@
 
       if (error) {
         alert('Error assigning teacher: ' + error.message);
-        console.error('Assignment error:', error);
         document.getElementById('confirmStudentTeacherBtn').disabled = false;
         document.getElementById('confirmStudentTeacherBtn').textContent = 'Add Teacher';
         return;
       }
 
-      console.log('✅ Teacher ADDED (not replaced), reloading...');
-
       alert('✅ Teacher added successfully!');
       closeModal('assignStudentTeacherModal');
       
-      // Reload all data
       await loadStudents();
       await loadTeachers();
       await loadStats();
@@ -1481,7 +1650,7 @@
         }
       });
 
-      if (authError) {
+            if (authError) {
         alert('Error creating teacher account: ' + authError.message);
         return;
       }
@@ -1735,34 +1904,756 @@
     }
 
     // ============================================
-    // SUPPORT INBOX - CONTINUOUS THREADS ✨
+    // 🆕 STUDENT SUPPORT INBOX - THREADED
     // ============================================
-    async function loadSupportMessages() {
+    async function loadSupportThreads() {
+      const { data: students } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'student');
+
+      if (!students || students.length === 0) {
+        document.getElementById('supportThreads').innerHTML = 
+          '<div class="empty-state">No students found.</div>';
+        return;
+      }
+
+      const studentIds = students.map(s => s.id);
+
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
         .eq('message_type', 'support')
-        .or(`sender_id.eq.${currentAdminId},recipient_id.eq.${currentAdminId}`)
+        .or(`sender_id.in.(${studentIds.join(',')}),recipient_id.in.(${studentIds.join(',')})`)
         .order('created_at', { ascending: false });
 
-      const unreadCount = messages?.filter(m => m.recipient_id === currentAdminId && !m.is_read).length || 0;
-      updateBadge('supportBadge', unreadCount);
-
-      const studentIds = [...new Set(messages?.map(m => m.sender_id === currentAdminId ? m.recipient_id : m.sender_id) || [])];
-      
-      const { data: students } = await supabaseClient
-        .from('profiles')
-        .select('id, full_name')
-        .in('id', studentIds);
-
       const studentMap = {};
-      students?.forEach(s => {
+      students.forEach(s => {
         studentMap[s.id] = s.full_name;
       });
 
-      renderSupportMessages(messages, studentMap);
+      const threads = {};
+      
+      messages?.forEach(msg => {
+        const studentId = msg.sender_id === currentAdminId ? msg.recipient_id : msg.sender_id;
+        
+        if (!threads[studentId]) {
+          threads[studentId] = {
+            studentId: studentId,
+            studentName: studentMap[studentId] || 'Unknown Student',
+            messages: [],
+            lastMessageDate: new Date(msg.created_at),
+            unreadCount: 0,
+            totalCount: 0
+          };
+        }
+        
+        threads[studentId].messages.push(msg);
+        threads[studentId].totalCount++;
+        
+        if (msg.sender_id === studentId && !msg.is_read) {
+          threads[studentId].unreadCount++;
+        }
+        
+        const msgDate = new Date(msg.created_at);
+        if (msgDate > threads[studentId].lastMessageDate) {
+          threads[studentId].lastMessageDate = msgDate;
+        }
+      });
+
+      const threadArray = Object.values(threads).sort((a, b) => 
+        b.lastMessageDate - a.lastMessageDate
+      );
+
+      const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      updateBadge('supportBadge', totalUnread);
+
+      renderSupportThreads(threadArray);
     }
 
+    function renderSupportThreads(threads) {
+      const container = document.getElementById('supportThreads');
+
+      if (!threads || threads.length === 0) {
+        container.innerHTML = '<div class="empty-state">No student messages yet.</div>';
+        return;
+      }
+
+      container.innerHTML = threads.map(thread => {
+        const lastMessage = thread.messages[0];
+        const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+        const lastMessageFrom = lastMessage.sender_id === currentAdminId ? 'You: ' : '';
+        const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
+        
+        const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="thread-item ${unreadClass}" onclick="openStudentConversation('${thread.studentId}')">
+            <div class="thread-header">
+              <div class="sender-name">${thread.studentName}</div>
+              <div class="thread-meta">
+                ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
+                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
+                <span class="last-message-date">${dateStr}</span>
+              </div>
+            </div>
+            <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openStudentConversation(studentId) {
+      const { data: student } = await supabaseClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', studentId)
+        .single();
+
+      const studentName = student?.full_name || 'Student';
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'support')
+        .or(`and(sender_id.eq.${studentId},recipient_id.eq.${currentAdminId}),and(sender_id.eq.${currentAdminId},recipient_id.eq.${studentId})`)
+        .order('created_at', { ascending: true });
+
+      if (!messages) {
+        alert('Error loading conversation');
+        return;
+      }
+
+      const unreadMessageIds = messages
+        .filter(m => m.sender_id === studentId && !m.is_read)
+        .map(m => m.id);
+
+      if (unreadMessageIds.length > 0) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadMessageIds);
+      }
+
+      const conversationHTML = `
+        <div class="conversation-header">
+          <h4>💬 Conversation with ${studentName}</h4>
+          <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+        </div>
+
+        ${messages.map(msg => {
+          const isFromMe = msg.sender_id === currentAdminId;
+          const bubbleClass = isFromMe ? 'from-me' : 'from-them';
+          const date = new Date(msg.created_at).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          return `
+            <div class="message-bubble ${bubbleClass}">
+              <div class="sender">${isFromMe ? 'You (Admin)' : studentName}</div>
+              <div class="timestamp">${date}</div>
+              ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
+              <div class="body">${msg.message}</div>
+            </div>
+          `;
+        }).join('')}
+
+        <div class="reply-box">
+          <h5>💬 Reply to ${studentName}</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="studentReplySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="studentReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn-primary" onclick="sendStudentReply('${studentId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('conversationContent').innerHTML = conversationHTML;
+      document.getElementById('conversationModal').classList.add('active');
+
+      loadSupportThreads();
+      loadStats();
+    }
+
+    async function sendStudentReply(studentId) {
+      const subject = document.getElementById('studentReplySubject').value.trim();
+      const message = document.getElementById('studentReplyMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentAdminId,
+          recipient_id: studentId,
+          message_type: 'support',
+          subject: subject || 'Reply from Admin',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      closeModal('conversationModal');
+      alert('✅ Reply sent successfully!');
+      openStudentConversation(studentId);
+    }
+
+    // ============================================
+    // 🆕 TEACHER SUPPORT INBOX - THREADED
+    // ============================================
+    async function loadTeacherSupportThreads() {
+      const { data: teachers } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'teacher');
+
+      if (!teachers || teachers.length === 0) {
+        document.getElementById('teacherSupportThreads').innerHTML = 
+          '<div class="empty-state">No teachers found.</div>';
+        return;
+      }
+
+      const teacherIds = teachers.map(t => t.id);
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_support')
+        .or(`sender_id.in.(${teacherIds.join(',')}),recipient_id.in.(${teacherIds.join(',')})`)
+        .order('created_at', { ascending: false });
+
+      const teacherMap = {};
+      teachers.forEach(t => {
+        teacherMap[t.id] = t.full_name;
+      });
+
+      const threads = {};
+      
+      messages?.forEach(msg => {
+        const teacherId = msg.sender_id === currentAdminId ? msg.recipient_id : msg.sender_id;
+        
+        if (!threads[teacherId]) {
+          threads[teacherId] = {
+            teacherId: teacherId,
+            teacherName: teacherMap[teacherId] || 'Unknown Teacher',
+            messages: [],
+            lastMessageDate: new Date(msg.created_at),
+            unreadCount: 0,
+            totalCount: 0
+          };
+        }
+        
+        threads[teacherId].messages.push(msg);
+        threads[teacherId].totalCount++;
+        
+        if (msg.sender_id === teacherId && !msg.is_read) {
+          threads[teacherId].unreadCount++;
+        }
+        
+        const msgDate = new Date(msg.created_at);
+        if (msgDate > threads[teacherId].lastMessageDate) {
+          threads[teacherId].lastMessageDate = msgDate;
+        }
+      });
+
+      const threadArray = Object.values(threads).sort((a, b) => 
+        b.lastMessageDate - a.lastMessageDate
+      );
+
+      const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      updateBadge('teacherSupportBadge', totalUnread);
+
+      renderTeacherSupportThreads(threadArray);
+    }
+
+    function renderTeacherSupportThreads(threads) {
+      const container = document.getElementById('teacherSupportThreads');
+
+      if (!threads || threads.length === 0) {
+        container.innerHTML = '<div class="empty-state">No teacher messages yet. Click "Message a Teacher" to start!</div>';
+        return;
+      }
+
+      container.innerHTML = threads.map(thread => {
+        const lastMessage = thread.messages[0];
+        const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+        const lastMessageFrom = lastMessage.sender_id === currentAdminId ? 'You: ' : '';
+        const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
+        
+        const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="thread-item ${unreadClass}" onclick="openTeacherConversation('${thread.teacherId}')">
+            <div class="thread-header">
+              <div class="sender-name">${thread.teacherName}</div>
+              <div class="thread-meta">
+                ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
+                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
+                <span class="last-message-date">${dateStr}</span>
+              </div>
+            </div>
+            <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openTeacherConversation(teacherId) {
+      const { data: teacher } = await supabaseClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', teacherId)
+        .single();
+
+      const teacherName = teacher?.full_name || 'Teacher';
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_support')
+        .or(`and(sender_id.eq.${teacherId},recipient_id.eq.${currentAdminId}),and(sender_id.eq.${currentAdminId},recipient_id.eq.${teacherId})`)
+        .order('created_at', { ascending: true });
+
+      if (!messages) {
+        alert('Error loading conversation');
+        return;
+      }
+
+      const unreadMessageIds = messages
+        .filter(m => m.sender_id === teacherId && !m.is_read)
+        .map(m => m.id);
+
+      if (unreadMessageIds.length > 0) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadMessageIds);
+      }
+
+      const conversationHTML = `
+        <div class="conversation-header">
+          <h4>💬 Conversation with ${teacherName}</h4>
+          <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+        </div>
+
+        ${messages.map(msg => {
+          const isFromMe = msg.sender_id === currentAdminId;
+          const bubbleClass = isFromMe ? 'from-me' : 'from-them';
+          const date = new Date(msg.created_at).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          return `
+                        <div class="message-bubble ${bubbleClass}">
+              <div class="sender">${isFromMe ? 'You (Admin)' : teacherName}</div>
+              <div class="timestamp">${date}</div>
+              ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
+              <div class="body">${msg.message}</div>
+            </div>
+          `;
+        }).join('')}
+
+        <div class="reply-box">
+          <h5>💬 Reply to ${teacherName}</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="teacherReplySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="teacherReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn-primary" onclick="sendTeacherReply('${teacherId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('conversationContent').innerHTML = conversationHTML;
+      document.getElementById('conversationModal').classList.add('active');
+
+      loadTeacherSupportThreads();
+      loadStats();
+    }
+
+    async function sendTeacherReply(teacherId) {
+      const subject = document.getElementById('teacherReplySubject').value.trim();
+      const message = document.getElementById('teacherReplyMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentAdminId,
+          recipient_id: teacherId,
+          message_type: 'teacher_support',
+          subject: subject || 'Reply from Admin',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      closeModal('conversationModal');
+      alert('✅ Reply sent successfully!');
+      openTeacherConversation(teacherId);
+    }
+
+    function openComposeToTeacherModal() {
+      const select = document.getElementById('composeTeacherSelect');
+      
+      select.innerHTML = '<option value="">-- Choose a teacher --</option>' + 
+        allTeachers.map(teacher => 
+          `<option value="${teacher.id}">${teacher.full_name}</option>`
+        ).join('');
+      
+      document.getElementById('composeTeacherSubject').value = '';
+      document.getElementById('composeTeacherMessage').value = '';
+      document.getElementById('composeToTeacherModal').classList.add('active');
+    }
+
+    async function sendMessageToTeacher() {
+      const teacherId = document.getElementById('composeTeacherSelect').value;
+      const subject = document.getElementById('composeTeacherSubject').value.trim();
+      const message = document.getElementById('composeTeacherMessage').value.trim();
+
+      if (!teacherId) {
+        alert('Please select a teacher');
+        return;
+      }
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentAdminId,
+          recipient_id: teacherId,
+          message_type: 'teacher_support',
+          subject: subject || 'Message from Admin',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      alert('✅ Message sent successfully!');
+      closeModal('composeToTeacherModal');
+      loadTeacherSupportThreads();
+    }
+
+    // ============================================
+    // 🆕 ADMIN CHAT (Admin to Admin) - PRIVATE
+    // ============================================
+    async function loadAdminChatThreads() {
+      const { data: admins } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'admin')
+        .neq('id', currentAdminId);
+
+      if (!admins || admins.length === 0) {
+        document.getElementById('adminChatThreads').innerHTML = 
+          '<div class="empty-state">You are the only admin. No other admins to chat with.</div>';
+        return;
+      }
+
+      allAdmins = admins;
+      const adminIds = admins.map(a => a.id);
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'admin_chat')
+        .or(`and(sender_id.eq.${currentAdminId},recipient_id.in.(${adminIds.join(',')})),and(sender_id.in.(${adminIds.join(',')}),recipient_id.eq.${currentAdminId})`)
+        .order('created_at', { ascending: false });
+
+      const adminMap = {};
+      admins.forEach(a => {
+        adminMap[a.id] = a.full_name;
+      });
+
+      const threads = {};
+      
+      messages?.forEach(msg => {
+        const adminId = msg.sender_id === currentAdminId ? msg.recipient_id : msg.sender_id;
+        
+        if (!threads[adminId]) {
+          threads[adminId] = {
+            adminId: adminId,
+            adminName: adminMap[adminId] || 'Unknown Admin',
+            messages: [],
+            lastMessageDate: new Date(msg.created_at),
+            unreadCount: 0,
+            totalCount: 0
+          };
+        }
+        
+        threads[adminId].messages.push(msg);
+        threads[adminId].totalCount++;
+        
+        if (msg.sender_id === adminId && !msg.is_read) {
+          threads[adminId].unreadCount++;
+        }
+        
+        const msgDate = new Date(msg.created_at);
+        if (msgDate > threads[adminId].lastMessageDate) {
+          threads[adminId].lastMessageDate = msgDate;
+        }
+      });
+
+      const threadArray = Object.values(threads).sort((a, b) => 
+        b.lastMessageDate - a.lastMessageDate
+      );
+
+      const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      updateBadge('adminChatBadge', totalUnread);
+
+      renderAdminChatThreads(threadArray);
+    }
+
+    function renderAdminChatThreads(threads) {
+      const container = document.getElementById('adminChatThreads');
+
+      if (!threads || threads.length === 0) {
+        container.innerHTML = '<div class="empty-state">No admin conversations yet. Click "Message an Admin" to start!</div>';
+        return;
+      }
+
+      container.innerHTML = threads.map(thread => {
+        const lastMessage = thread.messages[0];
+        const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+        const lastMessageFrom = lastMessage.sender_id === currentAdminId ? 'You: ' : '';
+        const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
+        
+        const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="thread-item ${unreadClass}" onclick="openAdminConversation('${thread.adminId}')">
+            <div class="thread-header">
+              <div class="sender-name">🔒 ${thread.adminName}</div>
+              <div class="thread-meta">
+                ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
+                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
+                <span class="last-message-date">${dateStr}</span>
+              </div>
+            </div>
+            <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openAdminConversation(adminId) {
+      const { data: admin } = await supabaseClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', adminId)
+        .single();
+
+      const adminName = admin?.full_name || 'Admin';
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'admin_chat')
+        .or(`and(sender_id.eq.${adminId},recipient_id.eq.${currentAdminId}),and(sender_id.eq.${currentAdminId},recipient_id.eq.${adminId})`)
+        .order('created_at', { ascending: true });
+
+      if (!messages) {
+        alert('Error loading conversation');
+        return;
+      }
+
+      const unreadMessageIds = messages
+        .filter(m => m.sender_id === adminId && !m.is_read)
+        .map(m => m.id);
+
+      if (unreadMessageIds.length > 0) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadMessageIds);
+      }
+
+      const conversationHTML = `
+        <div class="conversation-header">
+          <h4>🔒 Private Chat with ${adminName}</h4>
+          <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+        </div>
+
+        ${messages.map(msg => {
+          const isFromMe = msg.sender_id === currentAdminId;
+          const bubbleClass = isFromMe ? 'from-me' : 'from-them';
+          const date = new Date(msg.created_at).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          return `
+            <div class="message-bubble ${bubbleClass}">
+              <div class="sender">${isFromMe ? 'You' : adminName}</div>
+              <div class="timestamp">${date}</div>
+              ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
+              <div class="body">${msg.message}</div>
+            </div>
+          `;
+        }).join('')}
+
+        <div class="reply-box">
+          <h5>💬 Reply to ${adminName}</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="adminReplySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="adminReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn-primary" onclick="sendAdminReply('${adminId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('conversationContent').innerHTML = conversationHTML;
+      document.getElementById('conversationModal').classList.add('active');
+
+      loadAdminChatThreads();
+    }
+
+    async function sendAdminReply(adminId) {
+      const subject = document.getElementById('adminReplySubject').value.trim();
+      const message = document.getElementById('adminReplyMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentAdminId,
+          recipient_id: adminId,
+          message_type: 'admin_chat',
+          subject: subject || 'Reply from Admin',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      closeModal('conversationModal');
+      alert('✅ Reply sent successfully!');
+      openAdminConversation(adminId);
+    }
+
+    function openComposeToAdminModal() {
+      const select = document.getElementById('composeAdminSelect');
+      
+      select.innerHTML = '<option value="">-- Choose an admin --</option>' + 
+        allAdmins.map(admin => 
+          `<option value="${admin.id}">${admin.full_name}</option>`
+        ).join('');
+      
+      document.getElementById('composeAdminSubject').value = '';
+      document.getElementById('composeAdminMessage').value = '';
+      document.getElementById('composeToAdminModal').classList.add('active');
+    }
+
+    async function sendMessageToAdmin() {
+      const adminId = document.getElementById('composeAdminSelect').value;
+      const subject = document.getElementById('composeAdminSubject').value.trim();
+      const message = document.getElementById('composeAdminMessage').value.trim();
+
+      if (!adminId) {
+        alert('Please select an admin');
+        return;
+      }
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentAdminId,
+          recipient_id: adminId,
+          message_type: 'admin_chat',
+          subject: subject || 'Message from Admin',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      alert('✅ Message sent successfully!');
+      closeModal('composeToAdminModal');
+      loadAdminChatThreads();
+    }
+
+    // ============================================
+    // UTILITIES
+    // ============================================
     function updateBadge(badgeId, count) {
       const badge = document.getElementById(badgeId);
       if (count > 0) {
@@ -1773,181 +2664,6 @@
       }
     }
 
-    function renderSupportMessages(messages, studentMap) {
-      const container = document.getElementById('supportMessages');
-
-      if (!messages || messages.length === 0) {
-        container.innerHTML = '<div class="empty-state">No support messages yet.</div>';
-        return;
-      }
-
-      const sortedMessages = messages.sort((a, b) => {
-        const aUnread = a.recipient_id === currentAdminId && !a.is_read;
-        const bUnread = b.recipient_id === currentAdminId && !b.is_read;
-        
-        if (aUnread && !bUnread) return -1;
-        if (!aUnread && bUnread) return 1;
-        
-        return new Date(b.created_at) - new Date(a.created_at);
-      });
-
-      container.innerHTML = sortedMessages.map(msg => {
-        const date = new Date(msg.created_at).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-
-        const isFromMe = msg.sender_id === currentAdminId;
-        const studentId = isFromMe ? msg.recipient_id : msg.sender_id;
-        const studentName = studentMap[studentId] || 'Unknown Student';
-        const unreadClass = !msg.is_read && msg.recipient_id === currentAdminId ? 'unread' : '';
-
-        return `
-          <div class="message-item ${unreadClass}" onclick="viewSupportMessage('${msg.id}')">
-            <div class="message-header">
-              <span class="message-from">
-                ${unreadClass ? '🔴 ' : ''}${isFromMe ? `You → ${studentName}` : studentName}
-              </span>
-              <span class="message-date">${date}</span>
-            </div>
-            <div class="message-subject">${msg.subject || 'No subject'}</div>
-            <div class="message-preview">${msg.message.substring(0, 100)}${msg.message.length > 100 ? '...' : ''}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    async function viewSupportMessage(messageId) {
-      const { data: message } = await supabaseClient
-        .from('messages')
-        .select('*')
-        .eq('id', messageId)
-        .single();
-
-      if (!message) return;
-
-      // Mark as read if it's sent to admin
-      if (message.recipient_id === currentAdminId && !message.is_read) {
-        await supabaseClient
-          .from('messages')
-          .update({ is_read: true })
-          .eq('id', messageId);
-
-        loadSupportMessages();
-        loadStats();
-      }
-
-      const studentId = message.sender_id === currentAdminId ? message.recipient_id : message.sender_id;
-      
-      // 🆕 GET ENTIRE THREAD (all messages between admin and this student)
-      const { data: threadMessages } = await supabaseClient
-        .from('messages')
-        .select('*')
-        .eq('message_type', 'support')
-        .or(`and(sender_id.eq.${currentAdminId},recipient_id.eq.${studentId}),and(sender_id.eq.${studentId},recipient_id.eq.${currentAdminId})`)
-        .order('created_at', { ascending: true });
-
-      const { data: student } = await supabaseClient
-        .from('profiles')
-        .select('full_name')
-        .eq('id', studentId)
-        .single();
-
-      const studentName = student?.full_name || 'Student';
-
-      // Render entire thread
-      let threadHtml = `<h3>💬 Conversation with ${studentName}</h3>`;
-      
-      threadMessages?.forEach(msg => {
-        const isFromMe = msg.sender_id === currentAdminId;
-        const date = new Date(msg.created_at).toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-
-        threadHtml += `
-          <div class="message-thread">
-            <div class="sender">${isFromMe ? 'You (Admin)' : studentName}</div>
-            <div class="timestamp">${date}</div>
-            <div class="body">${msg.message}</div>
-          </div>
-        `;
-      });
-
-      threadHtml += `
-        <div style="display:flex; gap:1rem;">
-          <button class="btn-primary" onclick="openSupportReplyModal('${studentId}', 'Re: Support', '${message.thread_id || message.id}')">Reply</button>
-          <button class="btn-secondary" onclick="closeModal('messageViewModal')">Close</button>
-        </div>
-      `;
-
-      document.getElementById('messageViewContent').innerHTML = threadHtml;
-      document.getElementById('messageViewModal').classList.add('active');
-    }
-
-    function openSupportReplyModal(studentId, subject, threadId) {
-      document.getElementById('replyToStudentId').value = studentId;
-      document.getElementById('replySubject').value = subject;
-      document.getElementById('replyThreadId').value = threadId || '';
-      document.getElementById('replySubjectInput').value = subject;
-      document.getElementById('replyMessage').value = '';
-      
-      closeModal('messageViewModal');
-      document.getElementById('replyModal').classList.add('active');
-    }
-
-    // 🆕 SEND REPLY WITH THREAD CONTINUITY
-    async function sendSupportReply() {
-      const studentId = document.getElementById('replyToStudentId').value;
-      const subject = document.getElementById('replySubject').value;
-      const message = document.getElementById('replyMessage').value.trim();
-      const threadId = document.getElementById('replyThreadId').value;
-
-      if (!message) {
-        alert('Please enter a message');
-        return;
-      }
-
-      // Check if a thread exists between admin and this student
-      const { data: existingThread } = await supabaseClient
-        .from('messages')
-        .select('thread_id, id')
-        .eq('message_type', 'support')
-        .or(`and(sender_id.eq.${currentAdminId},recipient_id.eq.${studentId}),and(sender_id.eq.${studentId},recipient_id.eq.${currentAdminId})`)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      const useThreadId = existingThread?.thread_id || existingThread?.id || threadId;
-
-      const { error } = await supabaseClient
-        .from('messages')
-        .insert({
-          sender_id: currentAdminId,
-          recipient_id: studentId,
-          message_type: 'support',
-          subject: subject,
-          message: message,
-          thread_id: useThreadId // Keep thread continuous
-        });
-
-      if (error) {
-        alert('Error sending reply: ' + error.message);
-        return;
-      }
-
-      alert('✅ Reply sent successfully!');
-      closeModal('replyModal');
-      loadSupportMessages();
-    }
-
-    // ============================================
-    // UTILITIES
-    // ============================================
     function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
     }
