@@ -1147,21 +1147,58 @@
       const { data: students } = await supabaseClient.from('profiles').select('id').eq('role', 'student');
       const { data: teachers } = await supabaseClient.from('profiles').select('id').eq('role', 'teacher');
       
-      // Student support messages
+     // Student support messages
       const { data: studentMessages } = await supabaseClient
         .from('messages')
-        .select('id')
+        .select('id, sender_id, created_at')
         .eq('message_type', 'support')
         .eq('is_read', false)
-        .in('sender_id', students?.map(s => s.id) || []);
+        .in('sender_id', students?.map(s => s.id) || [])
+        .order('created_at', { ascending: false });
 
-      // Teacher support messages
+      // 🆕 Filter out threads where any admin has already replied
+      let unrepliedStudentMessages = [];
+      if (studentMessages && studentMessages.length > 0) {
+        for (const msg of studentMessages) {
+          // Check if any admin has replied to this student
+          const { data: adminReplies } = await supabaseClient
+            .from('messages')
+            .select('id')
+            .eq('message_type', 'support')
+            .eq('recipient_id', msg.sender_id)
+            .limit(1);
+          
+          if (!adminReplies || adminReplies.length === 0) {
+            unrepliedStudentMessages.push(msg);
+          }
+        }
+      }
+
+      // Teacher support messages  
       const { data: teacherMessages } = await supabaseClient
         .from('messages')
-        .select('id')
+        .select('id, sender_id, created_at')
         .eq('message_type', 'teacher_support')
         .eq('is_read', false)
-        .in('sender_id', teachers?.map(t => t.id) || []);
+        .in('sender_id', teachers?.map(t => t.id) || [])
+        .order('created_at', { ascending: false });
+
+      // 🆕 Filter out threads where any admin has already replied
+      let unrepliedTeacherMessages = [];
+      if (teacherMessages && teacherMessages.length > 0) {
+        for (const msg of teacherMessages) {
+          const { data: adminReplies } = await supabaseClient
+            .from('messages')
+            .select('id')
+            .eq('message_type', 'teacher_support')
+            .eq('recipient_id', msg.sender_id)
+            .limit(1);
+          
+          if (!adminReplies || adminReplies.length === 0) {
+            unrepliedTeacherMessages.push(msg);
+          }
+        }
+      }
 
       const pending = bookings?.filter(b => !b.assigned_teacher_id).length || 0;
 
@@ -1169,11 +1206,11 @@
       document.getElementById('totalBookings').textContent = bookings?.length || 0;
       document.getElementById('totalStudents').textContent = students?.length || 0;
       document.getElementById('totalTeachers').textContent = teachers?.length || 0;
-      document.getElementById('studentSupportCount').textContent = studentMessages?.length || 0;
-      document.getElementById('teacherSupportCount').textContent = teacherMessages?.length || 0;
+      document.getElementById('studentSupportCount').textContent = unrepliedStudentMessages.length;
+      document.getElementById('teacherSupportCount').textContent = unrepliedTeacherMessages.length;
       
-      unreadStudentSupportCount = studentMessages?.length || 0;
-      unreadTeacherSupportCount = teacherMessages?.length || 0;
+      unreadStudentSupportCount = unrepliedStudentMessages.length;
+      unreadTeacherSupportCount = unrepliedTeacherMessages.length;
     }
 
     // ============================================
