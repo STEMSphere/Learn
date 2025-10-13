@@ -1957,11 +1957,11 @@
 
       const studentIds = students.map(s => s.id);
 
+      // 🆕 Get ALL support messages (all admins can see all threads)
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
         .eq('message_type', 'support')
-        .or(`sender_id.in.(${studentIds.join(',')}),recipient_id.in.(${studentIds.join(',')})`)
         .order('created_at', { ascending: false });
 
       const studentMap = {};
@@ -2174,11 +2174,11 @@
 
       const teacherIds = teachers.map(t => t.id);
 
+      // 🆕 Get ALL teacher support messages (all admins can see all threads)
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
         .eq('message_type', 'teacher_support')
-        .or(`sender_id.in.(${teacherIds.join(',')}),recipient_id.in.(${teacherIds.join(',')})`)
         .order('created_at', { ascending: false });
 
       const teacherMap = {};
