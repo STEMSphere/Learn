@@ -2664,7 +2664,7 @@
         .eq('role', 'admin')
         .neq('id', currentAdminId);
 
-            if (!admins || admins.length<span class="ml-2" /><span class="inline-block w-3 h-3 rounded-full bg-neutral-a12 align-middle mb-[0.1rem]" /> === 0) {
+            if (!admins || admins.length === 0) {
         document.getElementById('adminChatThreads').innerHTML = 
           '<div class="empty-state">You are the only admin. No other admins to chat with.</div>';
         return;
