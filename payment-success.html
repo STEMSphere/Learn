@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Success | STEMSphere Academy</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .success-container {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .checkmark {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #28a745;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      animation: scaleIn 0.5s ease-out;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+    .checkmark::after {
+      content: "✓";
+      color: white;
+      font-size: 3rem;
+      font-weight: bold;
+    }
+    h1 {
+      color: #28a745;
+      margin-bottom: 1rem;
+      font-size: 2em;
+    }
+    p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .btn {
+      background: #28a745;
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #218838;
+    }
+    .loading {
+      color: #666;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="success-container" id="content">
+    <div class="loading">Processing your payment...</div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+    
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function processPayment() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get('session_id');
+      const invoiceId = urlParams.get('invoice_id');
+
+      if (!sessionId || !invoiceId) {
+        showError();
+        return;
+      }
+
+      try {
+        // Mark invoice as paid
+        const { error } = await supabaseClient
+          .from('invoices')
+          .update({ 
+            status: 'paid', 
+            paid_at: new Date().toISOString(),
+            stripe_payment_intent_id: sessionId
+          })
+          .eq('id', invoiceId);
+
+        if (error) throw error;
+
+        showSuccess();
+      } catch (error) {
+        console.error('Payment processing error:', error);
+        showError();
+      }
+    }
+
+    function showSuccess() {
+      document.getElementById('content').innerHTML = `
+        <div class="checkmark"></div>
+        <h1>Payment Successful! 🎉</h1>
+        <p>Thank you for your payment! Your invoice has been marked as paid.</p>
+        <p>A confirmation email has been sent to your email address.</p>
+        <a href="student-dashboard.html" class="btn">Return to Dashboard</a>
+      `;
+    }
+
+    function showError() {
+      document.getElementById('content').innerHTML = `
+        <h1 style="color: #dc3545;">Payment Processing Issue</h1>
+        <p>We encountered an issue processing your payment confirmation.</p>
+        <p>Don't worry - if your payment went through, we'll update your account shortly.</p>
+        <a href="student-dashboard.html" class="btn">Return to Dashboard</a>
+      `;
+    }
+
+    processPayment();
+  </script>
+</body>
+</html>
