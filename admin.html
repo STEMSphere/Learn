@@ -2680,7 +2680,7 @@
       await loadInvoices();
     }
 
-    async function createStripePaymentLink(invoiceId) {
+        async function createStripePaymentLink(invoiceId) {
       try {
         const { data: invoice } = await supabaseClient.from('invoices')
           .select(`*, student:profiles!invoices_student_id_fkey(full_name, email), line_items:invoice_line_items(*)`)
@@ -2691,47 +2691,94 @@
         const currencySymbol = getCurrencySymbol(invoice.currency || 'USD');
         const paymentMethods = invoice.allowed_payment_methods || ['card'];
 
-        if (invoice.payment_schedule === 'installment' && invoice.installment_count > 1) {
-          const installmentAmount = invoice.installment_amount || (invoice.amount / invoice.installment_count);
-          if (!confirm(`Creating ${invoice.installment_count} payments of ${currencySymbol}${parseFloat(installmentAmount).toFixed(2)}`)) return;
+        console.log('Creating payment link with methods:', paymentMethods);
 
-          let interval = 'month', intervalCount = 1;
-          if (invoice.payment_frequency === 'weekly') { interval = 'week'; }
-          else if (invoice.payment_frequency === 'biweekly') { interval = 'week'; intervalCount = 2; }
+        // Build form data properly
+        const formData = new URLSearchParams();
+        formData.append('mode', 'payment');
+        formData.append('customer_email', invoice.student.email);
+        formData.append('success_url', `${window.location.origin}/payment-success.html?session_id={CHECKOUT_SESSION_ID}&invoice_id=${invoice.id}`);
+        formData.append('cancel_url', `${window.location.origin}/dashboard.html`);
+        formData.append('metadata[invoice_id]', invoice.id);
+        formData.append('metadata[invoice_number]', invoice.invoice_number);
 
-                    const priceParams = new URLSearchParams({ 'currency': currency, 'unit_amount': Math.round(installmentAmount * 100), 'recurring[interval]': interval, 'recurring[interval_count]': intervalCount, 'product_data[name]': `${invoice.title} - ${invoice.installment_count}x ${currencySymbol}${parseFloat(installmentAmount).toFixed(2)}` });
-          const priceResponse = await fetch('https://api.stripe.com/v1/prices', { method: 'POST', headers: { 'Authorization': `Bearer ${STRIPE_PUBLISHABLE_KEY.replace('pk_', 'sk_')}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: priceParams });
-          const price = await priceResponse.json();
-          if (price.error) throw new Error(price.error.message);
-
-          const sessionParams = new URLSearchParams({ 'mode': 'subscription', 'customer_email': invoice.student.email, 'success_url': `${window.location.origin}/payment-success.html?session_id={CHECKOUT_SESSION_ID}&invoice_id=${invoice.id}`, 'cancel_url': `${window.location.origin}/dashboard.html`, 'metadata[invoice_id]': invoice.id, 'metadata[invoice_number]': invoice.invoice_number, 'line_items[0][price]': price.id, 'line_items[0][quantity]': 1 });
-          paymentMethods.forEach((method, index) => { sessionParams.append(`payment_method_types[${index}]`, method); });
-
-          const sessionResponse = await fetch('https://api.stripe.com/v1/checkout/sessions', { method: 'POST', headers: { 'Authorization': `Bearer ${STRIPE_PUBLISHABLE_KEY.replace('pk_', 'sk_')}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: sessionParams });
-          const session = await sessionResponse.json();
-          if (session.error) throw new Error(session.error.message);
-
-          await navigator.clipboard.writeText(session.url);
-          alert(`✅ Installment link copied!\n\n${invoice.installment_count} payments of ${currencySymbol}${parseFloat(installmentAmount).toFixed(2)}\n\n${session.url}`);
-          return;
-        }
-
-        const sessionParams = new URLSearchParams({ 'mode': 'payment', 'customer_email': invoice.student.email, 'success_url': `${window.location.origin}/payment-success.html?session_id={CHECKOUT_SESSION_ID}&invoice_id=${invoice.id}`, 'cancel_url': `${window.location.origin}/dashboard.html`, 'metadata[invoice_id]': invoice.id, 'metadata[invoice_number]': invoice.invoice_number });
-        paymentMethods.forEach((method, index) => { sessionParams.append(`payment_method_types[${index}]`, method); });
-
-        invoice.line_items.forEach((item, index) => {
-          sessionParams.append(`line_items[${index}][price_data][currency]`, currency);
-          sessionParams.append(`line_items[${index}][price_data][product_data][name]`, item.description);
-          sessionParams.append(`line_items[${index}][price_data][unit_amount]`, Math.round(item.unit_price * 100));
-          sessionParams.append(`line_items[${index}][quantity]`, item.quantity);
+        // Add payment methods - THIS IS THE KEY FIX
+        paymentMethods.forEach((method, index) => {
+          formData.append(`payment_method_types[${index}]`, method);
         });
 
-        const response = await fetch('https://api.stripe.com/v1/checkout/sessions', { method: 'POST', headers: { 'Authorization': `Bearer ${STRIPE_PUBLISHABLE_KEY.replace('pk_', 'sk_')}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: sessionParams });
+        // For installments - charge first installment only
+        if (invoice.payment_schedule === 'installment' && invoice.installment_count > 1) {
+          const installmentAmount = invoice.installment_amount || (invoice.amount / invoice.installment_count);
+          
+          formData.append('line_items[0][price_data][currency]', currency);
+          formData.append('line_items[0][price_data][product_data][name]', `${invoice.title} - Installment 1 of ${invoice.installment_count}`);
+          formData.append('line_items[0][price_data][unit_amount]', Math.round(installmentAmount * 100).toString());
+          formData.append('line_items[0][quantity]', '1');
+          
+          formData.append('metadata[payment_type]', 'installment');
+          formData.append('metadata[installment_number]', '1');
+        } else {
+          // One-time payment - add all line items
+          invoice.line_items.forEach((item, index) => {
+            formData.append(`line_items[${index}][price_data][currency]`, currency);
+            formData.append(`line_items[${index}][price_data][product_data][name]`, item.description);
+            formData.append(`line_items[${index}][price_data][unit_amount]`, Math.round(item.unit_price * 100).toString());
+            formData.append(`line_items[${index}][quantity]`, item.quantity.toString());
+          });
+        }
+
+        console.log('Stripe request body:', formData.toString());
+
+        const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${STRIPE_PUBLISHABLE_KEY.replace('pk_', 'sk_')}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: formData.toString()
+        });
+
         const session = await response.json();
-        if (session.error) throw new Error(session.error.message);
+        
+        console.log('Stripe response:', session);
+
+        if (session.error) {
+          throw new Error(session.error.message);
+        }
 
         await navigator.clipboard.writeText(session.url);
-        alert(`✅ Payment link copied!\n\n${currencySymbol}${parseFloat(invoice.amount).toFixed(2)} ${currency.toUpperCase()}\n\n${session.url}`);
+        
+        const methodNames = paymentMethods.map(m => {
+          const names = { 
+            'card': '💳 Card', 
+            'us_bank_account': '🏦 ACH', 
+            'paypal': '💰 PayPal', 
+            'alipay': '🇨🇳 Alipay', 
+            'wechat_pay': '💬 WeChat' 
+          };
+          return names[m] || m;
+        }).join(', ');
+
+        if (invoice.payment_schedule === 'installment') {
+          const installmentAmount = invoice.installment_amount || (invoice.amount / invoice.installment_count);
+          alert(`✅ Installment payment link copied!
+
+📋 Installment 1 of ${invoice.installment_count}
+💰 Amount: ${currencySymbol}${parseFloat(installmentAmount).toFixed(2)}
+💳 Methods: ${methodNames}
+
+⚠️ After student pays, generate next installment link!
+
+${session.url}`);
+        } else {
+          alert(`✅ Payment link copied!
+
+💰 ${currencySymbol}${parseFloat(invoice.amount).toFixed(2)} ${currency.toUpperCase()}
+💳 Methods: ${methodNames}
+
+${session.url}`);
+        }
 
       } catch (error) {
         console.error('Stripe error:', error);
