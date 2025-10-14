@@ -2212,16 +2212,21 @@
     }
 
     function calculateInvoiceTotal() {
-      const lineItems = document.querySelectorAll('.line-item');
-      let total = 0;
-      
-      lineItems.forEach(item => {
-        const itemTotal = parseFloat(item.querySelector('.item-total').value) || 0;
-        total += itemTotal;
-      });
-      
-      document.getElementById('invoiceTotal').textContent = `Total: $${total.toFixed(2)}`;
+  const lineItems = document.querySelectorAll('.line-item');
+  let total = 0;
+  
+  lineItems.forEach(item => {
+    const totalInput = item.querySelector('.item-total');
+    if (totalInput && totalInput.value) {
+      total += parseFloat(totalInput.value) || 0;
     }
+  });
+  
+  const totalElement = document.getElementById('invoiceTotal');
+  if (totalElement) {
+    totalElement.textContent = `Total: $${total.toFixed(2)}`;
+  }
+}
 
     async function createInvoice(status = 'draft') {
       const studentId = document.getElementById('invoiceStudentSelect').value;
