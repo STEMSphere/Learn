@@ -1959,46 +1959,64 @@ if (isUpcoming) {
         btn.textContent = 'Create Session';
       }
     }
+
     // ============================================
     // BLACKBOARD FUNCTIONALITY
     // ============================================
     async function openBlackboard(bookingId) {
-      // Generate a unique blackboard room ID
-      const blackboardRoomId = `stemsphere-${bookingId}-${Date.now()}`;
+      // Generate a unique blackboard room ID (shorter for better URL compatibility)
+      const timestamp = Date.now().toString(36);
+      const random = Math.random().toString(36).substring(2, 8);
+      const blackboardRoomId = `stem-${timestamp}-${random}`;
       
-      // Create Excalidraw link with dark theme and full screen
-      const blackboardLink = `https://excalidraw.com/#room=${blackboardRoomId},${generateRandomKey()}`;
+      // Generate exactly 22-character encryption key
+      const encryptionKey = generateRandomKey();
+      
+      console.log('🔍 Room ID:', blackboardRoomId);
+      console.log('🔍 Key length:', encryptionKey.length);
+      console.log('🔍 Key:', encryptionKey);
+      
+      // Create Excalidraw link with proper format
+      const blackboardLink = `https://excalidraw.com/#room=${blackboardRoomId},${encryptionKey}`;
+      
+      console.log('🔗 Full link:', blackboardLink);
       
       // Save to database
       const { error } = await supabaseClient
         .from('bookings')
         .update({ 
-          whiteboard_link: blackboardLink,
-          whiteboard_settings: JSON.stringify({
-            theme: 'dark',
-            gridMode: true,
-            zenMode: false
-          })
+          whiteboard_link: blackboardLink
         })
         .eq('id', bookingId);
       
       if (error) {
-        console.error('Error saving blackboard:', error);
+        console.error('❌ Error saving blackboard:', error);
+        alert('Error saving blackboard link. Check console.');
+        return;
       }
       
-      // Open in new tab
-      window.open(blackboardLink, '_blank', 'width=1920,height=1080');
+      console.log('✅ Blackboard link saved to database');
       
-      alert('🖍️ Blackboard opened!\n\n✅ Set to dark theme\n✅ Link saved for students\n\nTip: Press "Z" in Excalidraw to enter Zen Mode (fullscreen)');
+      // Open in new tab
+      window.open(blackboardLink, '_blank');
+      
+      alert('🖍️ Blackboard opened!\n\n✅ Link saved for students\n✅ Students can now join\n\nTip: Change theme to dark in Excalidraw settings (top-right menu)');
       
       // Reload to show the button
       await loadSessions();
     }
     
     function generateRandomKey() {
-      return Array.from(crypto.getRandomValues(new Uint8Array(16)))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
+      // Generate exactly 22 characters for Excalidraw encryption
+      const array = new Uint8Array(16);
+      crypto.getRandomValues(array);
+      const key = Array.from(array)
+        .map(b => b.toString(36))
+        .join('')
+        .substring(0, 22);
+      
+      // Pad with random characters if needed
+      return key.padEnd(22, Math.random().toString(36).substring(2));
     }
 
     // Initialize on page load
