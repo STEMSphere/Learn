@@ -990,13 +990,16 @@
       const profile = profileMap[booking.user_id] || {};
       
       let videoButton = '';
-      if (isUpcoming) {
-        if (booking.video_link) {
-          videoButton = `<a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a><br>`;
-        } else {
-          videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
-        }
-      }
+if (isUpcoming) {
+  if (booking.video_link) {
+    videoButton = `
+      <a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a>
+      <button class="btn-small" style="background:#2c2c2c; color:#fff; border: 2px solid #4CAF50;" onclick="openBlackboard('${booking.id}')">🖍️ Blackboard</button><br>
+    `;
+  } else {
+    videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
+  }
+}
 
       const actionButtons = isUpcoming 
         ? `${videoButton}<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>`
@@ -1955,6 +1958,47 @@
         btn.disabled = false;
         btn.textContent = 'Create Session';
       }
+    }
+    // ============================================
+    // BLACKBOARD FUNCTIONALITY
+    // ============================================
+    async function openBlackboard(bookingId) {
+      // Generate a unique blackboard room ID
+      const blackboardRoomId = `stemsphere-${bookingId}-${Date.now()}`;
+      
+      // Create Excalidraw link with dark theme and full screen
+      const blackboardLink = `https://excalidraw.com/#room=${blackboardRoomId},${generateRandomKey()}`;
+      
+      // Save to database
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ 
+          whiteboard_link: blackboardLink,
+          whiteboard_settings: JSON.stringify({
+            theme: 'dark',
+            gridMode: true,
+            zenMode: false
+          })
+        })
+        .eq('id', bookingId);
+      
+      if (error) {
+        console.error('Error saving blackboard:', error);
+      }
+      
+      // Open in new tab
+      window.open(blackboardLink, '_blank', 'width=1920,height=1080');
+      
+      alert('🖍️ Blackboard opened!\n\n✅ Set to dark theme\n✅ Link saved for students\n\nTip: Press "Z" in Excalidraw to enter Zen Mode (fullscreen)');
+      
+      // Reload to show the button
+      await loadSessions();
+    }
+    
+    function generateRandomKey() {
+      return Array.from(crypto.getRandomValues(new Uint8Array(16)))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
     }
 
     // Initialize on page load
