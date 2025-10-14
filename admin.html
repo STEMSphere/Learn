@@ -1876,7 +1876,7 @@
       document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
 
-    // 🔥 FIXED: Multi-admin support - Show ALL threads + Individual badges
+       // 🔥 FIXED: Multi-admin support - Show ALL threads + Individual badges
     async function loadSupportThreads() {
       const { data: students } = await supabaseClient
         .from('profiles')
@@ -1889,7 +1889,9 @@
         return;
       }
 
-      // 🔥 Get ALL support messages (all admins see all threads)
+      const studentIds = students.map(s => s.id);
+
+      // 🔥 Get ALL support messages (from students and to students)
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1904,9 +1906,15 @@
       const threads = {};
       
       messages?.forEach(msg => {
-        const studentId = msg.sender_id !== currentAdminId && studentMap[msg.sender_id] ? msg.sender_id : msg.recipient_id;
+        // Find the student ID (either sender or recipient)
+        let studentId = null;
+        if (studentIds.includes(msg.sender_id)) {
+          studentId = msg.sender_id;
+        } else if (studentIds.includes(msg.recipient_id)) {
+          studentId = msg.recipient_id;
+        }
         
-        if (studentMap[studentId]) {
+        if (studentId && studentMap[studentId]) {
           if (!threads[studentId]) {
             threads[studentId] = {
               studentId: studentId,
@@ -1921,8 +1929,8 @@
           threads[studentId].messages.push(msg);
           threads[studentId].totalCount++;
           
-          // 🔥 Count unread messages for THIS admin only
-          if (msg.recipient_id === currentAdminId && !msg.is_read) {
+          // 🔥 Count unread messages FROM STUDENT to THIS admin
+          if (msg.sender_id === studentId && !msg.is_read) {
             threads[studentId].unreadCount++;
           }
           
@@ -1937,7 +1945,7 @@
         b.lastMessageDate - a.lastMessageDate
       );
 
-      // 🔥 Total unread for THIS admin across all threads
+      // 🔥 Total unread across all student threads for THIS admin
       const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
       updateBadge('supportBadge', totalUnread);
 
@@ -1992,7 +2000,7 @@
 
       const studentName = student?.full_name || 'Student';
 
-      // 🔥 Get ALL messages in this thread (all admins and student)
+      // 🔥 Get ALL messages in this student thread (from ALL admins and student)
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
@@ -2005,17 +2013,29 @@
         return;
       }
 
-      // 🔥 Mark as read only for THIS admin
-      const unreadMessageIds = messages
-        .filter(m => m.recipient_id === currentAdminId && !m.is_read)
-        .map(m => m.id);
+      // 🔥 Mark unread messages FROM THIS STUDENT as read for THIS admin
+      const unreadFromStudent = messages.filter(m => 
+        m.sender_id === studentId && !m.is_read
+      );
 
-      if (unreadMessageIds.length > 0) {
+      if (unreadFromStudent.length > 0) {
         await supabaseClient
           .from('messages')
           .update({ is_read: true })
-          .in('id', unreadMessageIds);
+          .in('id', unreadFromStudent.map(m => m.id));
       }
+
+      // 🔥 Get admin names for display
+      const adminIds = [...new Set(messages.filter(m => m.sender_id !== studentId).map(m => m.sender_id))];
+      const { data: adminProfiles } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', adminIds);
+
+      const adminMap = {};
+      adminProfiles?.forEach(a => {
+        adminMap[a.id] = a.full_name;
+      });
 
       const conversationHTML = `
         <div class="conversation-header">
@@ -2024,8 +2044,19 @@
         </div>
 
         ${messages.map(msg => {
+          const isFromStudent = msg.sender_id === studentId;
           const isFromMe = msg.sender_id === currentAdminId;
-          const bubbleClass = isFromMe ? 'from-me' : 'from-them';
+          const bubbleClass = isFromStudent ? 'from-them' : 'from-me';
+          
+          let senderName = '';
+          if (isFromStudent) {
+            senderName = studentName;
+          } else if (isFromMe) {
+            senderName = 'You (Admin)';
+          } else {
+            senderName = adminMap[msg.sender_id] || 'Admin';
+          }
+          
           const date = new Date(msg.created_at).toLocaleString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -2036,7 +2067,7 @@
 
           return `
             <div class="message-bubble ${bubbleClass}">
-              <div class="sender">${isFromMe ? 'You (Admin)' : studentName}</div>
+              <div class="sender">${senderName}</div>
               <div class="timestamp">${date}</div>
               ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
               <div class="body">${msg.message}</div>
@@ -2110,6 +2141,8 @@
         return;
       }
 
+      const teacherIds = teachers.map(t => t.id);
+
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
@@ -2124,9 +2157,14 @@
       const threads = {};
       
       messages?.forEach(msg => {
-        const teacherId = msg.sender_id !== currentAdminId && teacherMap[msg.sender_id] ? msg.sender_id : msg.recipient_id;
+        let teacherId = null;
+        if (teacherIds.includes(msg.sender_id)) {
+          teacherId = msg.sender_id;
+        } else if (teacherIds.includes(msg.recipient_id)) {
+          teacherId = msg.recipient_id;
+        }
         
-        if (teacherMap[teacherId]) {
+        if (teacherId && teacherMap[teacherId]) {
           if (!threads[teacherId]) {
             threads[teacherId] = {
               teacherId: teacherId,
@@ -2141,7 +2179,7 @@
           threads[teacherId].messages.push(msg);
           threads[teacherId].totalCount++;
           
-          if (msg.recipient_id === currentAdminId && !msg.is_read) {
+          if (msg.sender_id === teacherId && !msg.is_read) {
             threads[teacherId].unreadCount++;
           }
           
@@ -2220,16 +2258,27 @@
         return;
       }
 
-      const unreadMessageIds = messages
-        .filter(m => m.recipient_id === currentAdminId && !m.is_read)
-        .map(m => m.id);
+      const unreadFromTeacher = messages.filter(m => 
+        m.sender_id === teacherId && !m.is_read
+      );
 
-      if (unreadMessageIds.length > 0) {
+      if (unreadFromTeacher.length > 0) {
         await supabaseClient
           .from('messages')
           .update({ is_read: true })
-          .in('id', unreadMessageIds);
+          .in('id', unreadFromTeacher.map(m => m.id));
       }
+
+      const adminIds = [...new Set(messages.filter(m => m.sender_id !== teacherId).map(m => m.sender_id))];
+      const { data: adminProfiles } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', adminIds);
+
+      const adminMap = {};
+      adminProfiles?.forEach(a => {
+        adminMap[a.id] = a.full_name;
+      });
 
       const conversationHTML = `
         <div class="conversation-header">
@@ -2238,8 +2287,19 @@
         </div>
 
         ${messages.map(msg => {
+          const isFromTeacher = msg.sender_id === teacherId;
           const isFromMe = msg.sender_id === currentAdminId;
-          const bubbleClass = isFromMe ? 'from-me' : 'from-them';
+          const bubbleClass = isFromTeacher ? 'from-them' : 'from-me';
+          
+          let senderName = '';
+          if (isFromTeacher) {
+            senderName = teacherName;
+          } else if (isFromMe) {
+            senderName = 'You (Admin)';
+          } else {
+            senderName = adminMap[msg.sender_id] || 'Admin';
+          }
+          
           const date = new Date(msg.created_at).toLocaleString('en-US', {
             month: 'short',
             day: 'numeric',
@@ -2250,7 +2310,7 @@
 
           return `
             <div class="message-bubble ${bubbleClass}">
-              <div class="sender">${isFromMe ? 'You (Admin)' : teacherName}</div>
+              <div class="sender">${senderName}</div>
               <div class="timestamp">${date}</div>
               ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
               <div class="body">${msg.message}</div>
@@ -2282,7 +2342,7 @@
       loadStats();
     }
 
-       async function sendTeacherReply(teacherId) {
+    async function sendTeacherReply(teacherId) {
       const subject = document.getElementById('teacherReplySubject').value.trim();
       const message = document.getElementById('teacherReplyMessage').value.trim();
 
@@ -2501,7 +2561,7 @@
           <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
         </div>
 
-        ${messages.map(msg => {
+                ${messages.map(msg => {
           const isFromMe = msg.sender_id === currentAdminId;
           const bubbleClass = isFromMe ? 'from-me' : 'from-them';
           const date = new Date(msg.created_at).toLocaleString('en-US', {
@@ -2640,5 +2700,3 @@
   </script>
 </body>
 </html>
-
-      
