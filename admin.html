@@ -2904,7 +2904,7 @@
           threads[teacherId].messages.push(msg);
           threads[teacherId].totalCount++;
           
-          if (msg.sender_id === teacherId && msg.recipient_id === currentAdminId && !msg.is_read) {
+          if (msg.sender_id === teacherId && !msg.is_read) {
             threads[teacherId].unreadCount++;
           }
           
