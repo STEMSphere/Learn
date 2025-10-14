@@ -2229,87 +2229,92 @@
 }
 
     async function createInvoice(status = 'draft') {
-      const studentId = document.getElementById('invoiceStudentSelect').value;
-      const title = document.getElementById('invoiceTitle').value.trim();
-      const description = document.getElementById('invoiceDescription').value.trim();
-      const dueDate = document.getElementById('invoiceDueDate').value;
+  const studentId = document.getElementById('invoiceStudentSelect').value;
+  const title = document.getElementById('invoiceTitle').value.trim();
+  const description = document.getElementById('invoiceDescription').value.trim();
+  const dueDate = document.getElementById('invoiceDueDate').value;
 
-      if (!studentId || !title) {
-        alert('Please select a student and enter an invoice title');
-        return;
-      }
+  if (!studentId || !title) {
+    alert('Please select a student and enter an invoice title');
+    return;
+  }
 
-      const lineItems = [];
-      const lineItemElements = document.querySelectorAll('.line-item');
-      let totalAmount = 0;
+  const lineItems = [];
+  const lineItemElements = document.querySelectorAll('#lineItemsContainer .line-item');
+  let totalAmount = 0;
 
-      for (const item of lineItemElements) {
-        const desc = item.querySelector('.item-description').value.trim();
-        const qty = parseInt(item.querySelector('.item-quantity').value) || 1;
-        const price = parseFloat(item.querySelector('.item-price').value) || 0;
-        const total = qty * price;
+  for (const item of lineItemElements) {
+    const descInput = item.querySelector('.item-description');
+    const qtyInput = item.querySelector('.item-quantity');
+    const priceInput = item.querySelector('.item-price');
+    
+    if (!descInput || !qtyInput || !priceInput) continue;
+    
+    const desc = descInput.value.trim();
+    const qty = parseInt(qtyInput.value) || 1;
+    const price = parseFloat(priceInput.value) || 0;
+    const total = qty * price;
 
-        if (desc && price > 0) {
-          lineItems.push({
-            description: desc,
-            quantity: qty,
-            unit_price: price,
-            total_price: total
-          });
-          totalAmount += total;
-        }
-      }
-
-      if (lineItems.length === 0) {
-        alert('Please add at least one valid line item');
-        return;
-      }
-
-      try {
-        const invoiceData = {
-          invoice_number: generateInvoiceNumber(),
-          student_id: studentId,
-          admin_id: currentAdminId,
-          title: title,
-          description: description || null,
-          amount: totalAmount,
-          status: status,
-          due_date: dueDate || null,
-          sent_at: status === 'sent' ? new Date().toISOString() : null
-        };
-
-        const { data: invoice, error: invoiceError } = await supabaseClient
-          .from('invoices')
-          .insert(invoiceData)
-          .select()
-          .single();
-
-        if (invoiceError) throw invoiceError;
-
-        const lineItemsData = lineItems.map(item => ({
-          invoice_id: invoice.id,
-          ...item
-        }));
-
-        const { error: lineItemsError } = await supabaseClient
-          .from('invoice_line_items')
-          .insert(lineItemsData);
-
-                if (lineItemsError) throw lineItemsError;
-
-        const statusText = status === 'sent' ? 'created and sent' : 'saved as draft';
-        alert(`✅ Invoice ${invoice.invoice_number} ${statusText} successfully!`);
-        
-        closeModal('createInvoiceModal');
-        await loadInvoices();
-        await loadStats();
-
-      } catch (error) {
-        console.error('Invoice creation error:', error);
-        alert('Error creating invoice: ' + error.message);
-      }
+    if (desc && price > 0) {
+      lineItems.push({
+        description: desc,
+        quantity: qty,
+        unit_price: price,
+        total_price: total
+      });
+      totalAmount += total;
     }
+  }
 
+  if (lineItems.length === 0) {
+    alert('Please add at least one valid line item with a price');
+    return;
+  }
+
+  try {
+    const invoiceData = {
+      invoice_number: generateInvoiceNumber(),
+      student_id: studentId,
+      admin_id: currentAdminId,
+      title: title,
+      description: description || null,
+      amount: totalAmount,
+      status: status,
+      due_date: dueDate || null,
+      sent_at: status === 'sent' ? new Date().toISOString() : null
+    };
+
+    const { data: invoice, error: invoiceError } = await supabaseClient
+      .from('invoices')
+      .insert(invoiceData)
+      .select()
+      .single();
+
+    if (invoiceError) throw invoiceError;
+
+    const lineItemsData = lineItems.map(item => ({
+      invoice_id: invoice.id,
+      ...item
+    }));
+
+    const { error: lineItemsError } = await supabaseClient
+      .from('invoice_line_items')
+      .insert(lineItemsData);
+
+    if (lineItemsError) throw lineItemsError;
+
+    const statusText = status === 'sent' ? 'created and sent' : 'saved as draft';
+    alert(`✅ Invoice ${invoice.invoice_number} ${statusText} successfully!`);
+    
+    closeModal('createInvoiceModal');
+    await loadInvoices();
+    await loadStats();
+
+  } catch (error) {
+    console.error('Invoice creation error:', error);
+    alert('Error creating invoice: ' + error.message);
+  }
+}
     async function loadInvoices() {
       const { data: invoices, error } = await supabaseClient
         .from('invoices')
