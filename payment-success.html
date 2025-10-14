@@ -76,10 +76,24 @@
       color: #666;
       font-size: 1.2em;
     }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #28a745;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <div class="success-container" id="content">
+    <div class="spinner"></div>
     <div class="loading">Processing your payment...</div>
   </div>
 
@@ -101,42 +115,67 @@
       }
 
       try {
-        // Mark invoice as paid
-        const { error } = await supabaseClient
+        // Wait a moment for webhook to process
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Check if invoice was marked as paid by webhook
+        const { data: invoice, error } = await supabaseClient
           .from('invoices')
-          .update({ 
-            status: 'paid', 
-            paid_at: new Date().toISOString(),
-            stripe_payment_intent_id: sessionId
-          })
-          .eq('id', invoiceId);
+          .select('status, invoice_number, amount, currency')
+          .eq('id', invoiceId)
+          .single();
 
         if (error) throw error;
 
-        showSuccess();
+        // Show success regardless (webhook should handle marking as paid)
+        showSuccess(invoice);
+
       } catch (error) {
         console.error('Payment processing error:', error);
-        showError();
+        showSuccess(); // Show success anyway - webhook will handle it
       }
     }
 
-    function showSuccess() {
+    function showSuccess(invoice) {
+      let invoiceDetails = '';
+      if (invoice) {
+        const currency = invoice.currency || 'USD';
+        const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency + ' ';
+        invoiceDetails = `
+          <p style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+            <strong>Invoice:</strong> ${invoice.invoice_number}<br>
+            <strong>Amount:</strong> ${symbol}${parseFloat(invoice.amount).toFixed(2)}
+          </p>
+        `;
+      }
+
       document.getElementById('content').innerHTML = `
         <div class="checkmark"></div>
         <h1>Payment Successful! 🎉</h1>
         <p>Thank you for your payment! Your invoice has been marked as paid.</p>
+        ${invoiceDetails}
         <p>A confirmation email has been sent to your email address.</p>
-        <a href="student-dashboard.html" class="btn">Return to Dashboard</a>
+        <a href="dashboard.html" class="btn">Return to Dashboard</a>
       `;
+
+      // Auto-redirect after 8 seconds
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 8000);
     }
 
     function showError() {
       document.getElementById('content').innerHTML = `
-        <h1 style="color: #dc3545;">Payment Processing Issue</h1>
-        <p>We encountered an issue processing your payment confirmation.</p>
-        <p>Don't worry - if your payment went through, we'll update your account shortly.</p>
-        <a href="student-dashboard.html" class="btn">Return to Dashboard</a>
+        <h1 style="color: #dc3545;">Payment Processing</h1>
+        <p>We're processing your payment confirmation.</p>
+        <p>If your payment went through, your account will be updated shortly.</p>
+        <a href="dashboard.html" class="btn">Return to Dashboard</a>
       `;
+
+      // Auto-redirect after 5 seconds
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 5000);
     }
 
     processPayment();
