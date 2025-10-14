@@ -2695,7 +2695,419 @@
     function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
     }
+    // ==================== BEGIN INVOICE SECTION ====================
+    
+    let invoiceStudents = [];
+    let currentInvoiceData = null;
 
+    // Load invoice statistics
+    async function loadInvoiceStats() {
+      const { data: invoices } = await supabaseClient
+        .from('invoices')
+        .select('status, amount, due_date');
+
+      if (!invoices) return;
+
+      const total = invoices.length;
+      const pending = invoices.filter(inv => inv.status === 'sent').length;
+      const overdue = invoices.filter(inv => 
+        inv.status === 'sent' && new Date(inv.due_date) < new Date()
+      ).length;
+      const outstanding = invoices
+        .filter(inv => inv.status === 'sent' || inv.status === 'overdue')
+        .reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
+
+      document.getElementById('totalInvoicesCount').textContent = total;
+      document.getElementById('pendingInvoicesCount').textContent = pending;
+      document.getElementById('overdueInvoicesCount').textContent = overdue;
+      document.getElementById('outstandingAmount').textContent = `$${outstanding.toFixed(2)}`;
+
+      // Update main dashboard badge
+      updateBadge('invoicesBadge', pending + overdue);
+    }
+
+    // Load all invoices
+    async function loadInvoices() {
+      const { data: invoices, error } = await supabaseClient
+        .from('invoices')
+        .select(`
+          *,
+          student:profiles!invoices_student_id_fkey(full_name, email),
+          admin:profiles!invoices_admin_id_fkey(full_name)
+        `)
+        .order('created_at', { ascending: false });
+
+      const tbody = document.getElementById('invoicesBody');
+
+      if (error || !invoices || invoices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No invoices created yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = invoices.map(invoice => {
+        const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
+        const isOverdue = invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'sent';
+        const status = isOverdue ? 'overdue' : invoice.status;
+
+        return `
+          <tr>
+            <td><strong>${invoice.invoice_number}</strong></td>
+            <td>
+              <strong>${invoice.student?.full_name || 'Unknown'}</strong><br>
+              <small>${invoice.student?.email || ''}</small>
+            </td>
+            <td>${invoice.title}</td>
+            <td><strong>$${parseFloat(invoice.amount).toFixed(2)}</strong></td>
+            <td>${dueDate}</td>
+            <td><span class="invoice-status status-${status}">${status}</span></td>
+            <td>
+              <button class="btn-small btn-view-invoice" onclick="viewInvoice('${invoice.id}')">View</button>
+              ${invoice.status === 'draft' ? `
+                <button class="btn-small btn-edit" onclick="editInvoice('${invoice.id}')">Edit</button>
+                <button class="btn-small btn-send" onclick="sendInvoice('${invoice.id}')">Send</button>
+              ` : ''}
+              ${invoice.status !== 'paid' ? `
+                <button class="btn-small btn-delete" onclick="cancelInvoice('${invoice.id}')">Cancel</button>
+              ` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      loadInvoiceStats();
+    }
+
+    // Open create invoice modal
+    async function openCreateInvoiceModal() {
+      // Load students for dropdown
+      const { data: students } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email')
+        .eq('role', 'student')
+        .order('full_name');
+
+      invoiceStudents = students || [];
+
+      const select = document.getElementById('invoiceStudentSelect');
+      select.innerHTML = '<option value="">-- Choose a student --</option>' +
+        invoiceStudents.map(student => 
+          `<option value="${student.id}">${student.full_name} (${student.email})</option>`
+        ).join('');
+
+      // Reset form
+      document.getElementById('invoiceTitle').value = '';
+      document.getElementById('invoiceDescription').value = '';
+      document.getElementById('invoiceDueDate').value = '';
+      
+      // Reset line items to single item
+      const container = document.getElementById('lineItemsContainer');
+      container.innerHTML = `
+        <div class="line-item">
+          <input type="text" placeholder="Session description" class="item-description">
+          <input type="number" value="1" min="1" class="item-quantity" onchange="calculateLineTotal(this)">
+          <input type="number" step="0.01" min="0" placeholder="0.00" class="item-price" onchange="calculateLineTotal(this)">
+          <input type="number" step="0.01" readonly class="item-total">
+          <button type="button" class="remove-line-item" onclick="removeLineItem(this)">×</button>
+        </div>
+      `;
+      
+      calculateInvoiceTotal();
+      document.getElementById('createInvoiceModal').classList.add('active');
+    }
+
+    // Add line item
+    function addLineItem() {
+      const container = document.getElementById('lineItemsContainer');
+      const newItem = document.createElement('div');
+      newItem.className = 'line-item';
+      newItem.innerHTML = `
+        <input type="text" placeholder="Session description" class="item-description">
+        <input type="number" value="1" min="1" class="item-quantity" onchange="calculateLineTotal(this)">
+        <input type="number" step="0.01" min="0" placeholder="0.00" class="item-price" onchange="calculateLineTotal(this)">
+        <input type="number" step="0.01" readonly class="item-total">
+        <button type="button" class="remove-line-item" onclick="removeLineItem(this)">×</button>
+      `;
+      container.appendChild(newItem);
+    }
+
+    // Remove line item
+    function removeLineItem(button) {
+      const container = document.getElementById('lineItemsContainer');
+      if (container.children.length > 1) {
+        button.parentElement.remove();
+        calculateInvoiceTotal();
+      } else {
+        alert('Invoice must have at least one item');
+      }
+    }
+
+    // Calculate line total
+    function calculateLineTotal(input) {
+      const lineItem = input.parentElement;
+      const quantity = parseFloat(lineItem.querySelector('.item-quantity').value) || 0;
+      const price = parseFloat(lineItem.querySelector('.item-price').value) || 0;
+      const total = quantity * price;
+      
+      lineItem.querySelector('.item-total').value = total.toFixed(2);
+      calculateInvoiceTotal();
+    }
+
+    // Calculate invoice total
+    function calculateInvoiceTotal() {
+      const lineItems = document.querySelectorAll('.line-item');
+      let total = 0;
+      
+      lineItems.forEach(item => {
+        const itemTotal = parseFloat(item.querySelector('.item-total').value) || 0;
+        total += itemTotal;
+      });
+      
+      document.getElementById('invoiceTotal').textContent = `Total: $${total.toFixed(2)}`;
+    }
+
+    // Create invoice
+    async function createInvoice(status = 'draft') {
+      const studentId = document.getElementById('invoiceStudentSelect').value;
+      const title = document.getElementById('invoiceTitle').value.trim();
+      const description = document.getElementById('invoiceDescription').value.trim();
+      const dueDate = document.getElementById('invoiceDueDate').value;
+
+      if (!studentId || !title) {
+        alert('Please select a student and enter an invoice title');
+        return;
+      }
+
+      // Get line items
+      const lineItems = [];
+      const lineItemElements = document.querySelectorAll('.line-item');
+      let totalAmount = 0;
+
+      for (const item of lineItemElements) {
+        const desc = item.querySelector('.item-description').value.trim();
+        const qty = parseInt(item.querySelector('.item-quantity').value) || 1;
+        const price = parseFloat(item.querySelector('.item-price').value) || 0;
+        const total = qty * price;
+
+        if (desc && price > 0) {
+          lineItems.push({
+            description: desc,
+            quantity: qty,
+            unit_price: price,
+            total_price: total
+          });
+          totalAmount += total;
+        }
+      }
+
+      if (lineItems.length === 0) {
+        alert('Please add at least one valid line item');
+        return;
+      }
+
+      // Create invoice
+      const invoiceData = {
+        student_id: studentId,
+        admin_id: currentAdminId,
+        title: title,
+        description: description,
+        amount: totalAmount,
+        status: status,
+        due_date: dueDate || null,
+        sent_at: status === 'sent' ? new Date().toISOString() : null
+      };
+
+      const { data: invoice, error: invoiceError } = await supabaseClient
+        .from('invoices')
+        .insert(invoiceData)
+        .select()
+        .single();
+
+      if (invoiceError) {
+        alert('Error creating invoice: ' + invoiceError.message);
+        return;
+      }
+
+      // Create line items
+      const lineItemsData = lineItems.map(item => ({
+        invoice_id: invoice.id,
+        ...item
+      }));
+
+      const { error: lineItemsError } = await supabaseClient
+        .from('invoice_line_items')
+        .insert(lineItemsData);
+
+      if (lineItemsError) {
+        alert('Error creating line items: ' + lineItemsError.message);
+        return;
+      }
+
+      const statusText = status === 'sent' ? 'created and sent' : 'saved as draft';
+      alert(`✅ Invoice ${invoice.invoice_number} ${statusText} successfully!`);
+      
+      closeModal('createInvoiceModal');
+      loadInvoices();
+      loadStats(); // Refresh main dashboard stats
+    }
+
+    // View invoice
+    async function viewInvoice(invoiceId) {
+      const { data: invoice, error } = await supabaseClient
+        .from('invoices')
+        .select(`
+          *,
+          student:profiles!invoices_student_id_fkey(full_name, email),
+          admin:profiles!invoices_admin_id_fkey(full_name),
+          line_items:invoice_line_items(*)
+        `)
+        .eq('id', invoiceId)
+        .single();
+
+      if (error || !invoice) {
+        alert('Error loading invoice');
+        return;
+      }
+
+      const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
+      const createdDate = new Date(invoice.created_at).toLocaleDateString();
+      const sentDate = invoice.sent_at ? new Date(invoice.sent_at).toLocaleDateString() : null;
+      const paidDate = invoice.paid_at ? new Date(invoice.paid_at).toLocaleDateString() : null;
+
+      const lineItemsHtml = invoice.line_items.map(item => `
+        <tr>
+          <td>${item.description}</td>
+          <td style="text-align: center;">${item.quantity}</td>
+          <td style="text-align: right;">$${parseFloat(item.unit_price).toFixed(2)}</td>
+          <td style="text-align: right;"><strong>$${parseFloat(item.total_price).toFixed(2)}</strong></td>
+        </tr>
+      `).join('');
+
+      const content = `
+        <div style="background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 1.5rem; border-radius: 8px 8px 0 0; margin: -2rem -2rem 1.5rem -2rem;">
+          <h3>Invoice ${invoice.invoice_number}</h3>
+          <p>Created by ${invoice.admin.full_name} on ${createdDate}</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+          <div>
+            <h4>Bill To:</h4>
+            <p><strong>${invoice.student.full_name}</strong><br>
+            ${invoice.student.email}</p>
+          </div>
+          <div style="text-align: right;">
+            <h4>Invoice Details</h4>
+            <p><strong>Status:</strong> <span class="invoice-status status-${invoice.status}">${invoice.status}</span></p>
+            <p><strong>Due Date:</strong> ${dueDate}</p>
+            ${sentDate ? `<p><strong>Sent:</strong> ${sentDate}</p>` : ''}
+            ${paidDate ? `<p><strong>Paid:</strong> ${paidDate}</p>` : ''}
+          </div>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+          <h4>${invoice.title}</h4>
+          ${invoice.description ? `<p style="color: #666; margin-top: 0.5rem;">${invoice.description}</p>` : ''}
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
+          <thead>
+            <tr style="background: #f8f9fa;">
+              <th style="text-align: left; padding: 1rem; border-bottom: 2px solid #ddd;">Description</th>
+              <th style="text-align: center; padding: 1rem; border-bottom: 2px solid #ddd;">Qty</th>
+              <th style="text-align: right; padding: 1rem; border-bottom: 2px solid #ddd;">Unit Price</th>
+              <th style="text-align: right; padding: 1rem; border-bottom: 2px solid #ddd;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lineItemsHtml}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" style="text-align: right; padding: 1rem; border-top: 2px solid #28a745; font-weight: bold;">
+                <strong>Total Amount:</strong>
+              </td>
+              <td style="text-align: right; padding: 1rem; border-top: 2px solid #28a745; font-weight: bold; font-size: 1.2em; color: #28a745;">
+                <strong>$${parseFloat(invoice.amount).toFixed(2)}</strong>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          ${invoice.status === 'draft' ? `
+            <button class="btn-primary" onclick="sendInvoice('${invoice.id}'); closeModal('viewInvoiceModal');">Send Invoice</button>
+          ` : ''}
+          ${invoice.status === 'sent' ? `
+            <button class="btn-primary" onclick="markInvoicePaid('${invoice.id}'); closeModal('viewInvoiceModal');">Mark as Paid</button>
+          ` : ''}
+          <button class="btn-secondary" onclick="closeModal('viewInvoiceModal')">Close</button>
+        </div>
+      `;
+
+      document.getElementById('invoiceViewContent').innerHTML = content;
+      document.getElementById('viewInvoiceModal').classList.add('active');
+    }
+
+    // Send invoice
+    async function sendInvoice(invoiceId) {
+      if (!confirm('Send this invoice to the student?')) return;
+
+      const { error } = await supabaseClient
+        .from('invoices')
+        .update({ 
+          status: 'sent', 
+          sent_at: new Date().toISOString() 
+        })
+        .eq('id', invoiceId);
+
+      if (error) {
+        alert('Error sending invoice: ' + error.message);
+        return;
+      }
+
+      alert('✅ Invoice sent successfully!');
+      loadInvoices();
+    }
+
+    // Mark invoice as paid
+    async function markInvoicePaid(invoiceId) {
+      if (!confirm('Mark this invoice as paid?')) return;
+
+      const { error } = await supabaseClient
+        .from('invoices')
+        .update({ 
+          status: 'paid', 
+          paid_at: new Date().toISOString() 
+        })
+        .eq('id', invoiceId);
+
+      if (error) {
+        alert('Error updating invoice: ' + error.message);
+        return;
+      }
+
+      alert('✅ Invoice marked as paid!');
+      loadInvoices();
+    }
+
+    // Cancel invoice
+    async function cancelInvoice(invoiceId) {
+      if (!confirm('Cancel this invoice? This action cannot be undone.')) return;
+
+      const { error } = await supabaseClient
+        .from('invoices')
+        .update({ status: 'cancelled' })
+        .eq('id', invoiceId);
+
+      if (error) {
+        alert('Error cancelling invoice: ' + error.message);
+        return;
+      }
+
+      alert('✅ Invoice cancelled successfully!');
+      loadInvoices();
+    }
+
+    // ==================== END INVOICE SECTION ====================
     checkAdminAuth();
   </script>
 </body>
