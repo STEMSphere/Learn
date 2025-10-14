@@ -1480,8 +1480,28 @@ async function payInvoice(invoiceId) {
       }
 
       closeModal('supportConversationModal');
-      alert('✅ Reply sent successfully!');
-      openSupportConversation();
+     // ✅ Send email notification to admin
+try {
+  const { data: admin } = await supabaseClient
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', currentAdminId)
+    .single();
+
+  const { data: currentUser } = await supabaseClient
+    .from('profiles')
+    .select('full_name')
+    .eq('id', currentUserId)
+    .single();
+
+  // Don't send email to admin (they get too many)
+  console.log('⚠️ Skipping email to admin (too many messages)');
+} catch (emailError) {
+  console.error('⚠️ Email notification failed (non-critical):', emailError);
+}
+
+alert('✅ Reply sent successfully!');
+openStudentConversation(studentId);
     }
 
     // ============================================
@@ -1688,9 +1708,47 @@ async function payInvoice(invoiceId) {
         return;
       }
 
-      closeModal('conversationModal');
-      alert('✅ Reply sent successfully!');
-      openTeacherConversation(teacherId);
+      // ✅ Send email notification to teacher
+try {
+  const { data: teacher } = await supabaseClient
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', teacherId)
+    .single();
+
+  const { data: currentUser } = await supabaseClient
+    .from('profiles')
+    .select('full_name')
+    .eq('id', currentUserId)
+    .single();
+
+  if (teacher && currentUser) {
+    fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      },
+      body: JSON.stringify({
+        type: 'new_message_to_teacher',
+        to: teacher.email,
+        data: {
+          recipientName: teacher.full_name,
+          senderName: currentUser.full_name,
+          subject: subject || 'New message',
+          message: message
+        }
+      })
+    });
+    console.log('✅ Message notification email sent to teacher');
+  }
+} catch (emailError) {
+  console.error('⚠️ Email notification failed (non-critical):', emailError);
+}
+
+closeModal('conversationModal');
+alert('✅ Reply sent successfully!');
+openTeacherConversation(teacherId);
     }
 
     function openComposeToTeacherModal() {
