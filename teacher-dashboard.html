@@ -827,7 +827,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     const DAILY_API_KEY = '8c3db949d2ace9fb8237c2db1e711fe4f8b57efcd97943c8ccb705824bf2ab5f';
@@ -1069,7 +1069,7 @@
 
         if (error) throw new Error(error.message);
 
-                alert('✅ Video room created successfully!');
+        alert('✅ Video room created successfully!');
         await loadSessions();
       } catch (error) {
         alert('❌ Failed to create video room: ' + error.message);
@@ -1374,118 +1374,79 @@
       loadInboxThreads();
       loadStats();
     }
+    
+    // ============================================
+    // THIS IS THE CORRECTED FUNCTION
+    // ============================================
+    async function sendReplyInConversation(studentId) {
+        const subject = document.getElementById('replySubject').value.trim();
+        const message = document.getElementById('replyMessage').value.trim();
 
-   async function sendReplyInConversation(studentId) {
-  const subject = document.getElementById('replySubject').value.trim();
-  const message = document.getElementById('replyMessage').value.trim();
-
-  if (!message) {
-    alert('Please enter a message');
-    return;
-  }
-
-  const { error } = await supabaseClient
-    .from('messages')
-    .insert({
-      sender_id: currentTeacherId,
-      recipient_id: studentId,
-      message_type: 'teacher_student',
-      subject: subject || 'Reply from your teacher',
-      message: message
-    });
-
-  if (error) {
-    alert('Error sending message: ' + error.message);
-    return;
-  }
-
-  // ✅ Send email notification to student
-  try {
-    const { data: student } = await supabaseClient
-      .from('profiles')
-      .select('email, full_name')
-      .eq('id', studentId)
-      .single();
-
-    const { data: currentUser } = await supabaseClient
-      .from('profiles')
-      .select('full_name')
-      .eq('id', currentTeacherId)
-      .single();
-
-    if (student && currentUser) {
-      fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_KEY}`
-        },
-        body: JSON.stringify({
-          type: 'new_message_to_student',
-          to: student.email,
-          data: {
-            recipientName: student.full_name,
-            senderName: currentUser.full_name,
-            subject: subject || 'New message',
-            message: message
-          }
-        })
-      });
-      console.log('✅ Message notification email sent to student');
-    }
-  } catch (emailError) {
-    console.error('⚠️ Email notification failed (non-critical):', emailError);
-  }
-
-  closeModal('conversationModal');
-  alert('✅ Reply sent successfully!');
-  openConversation(studentId);
-}
-
-     // ✅ Send session confirmation email
-try {
-  const { data: currentUser } = await supabaseClient
-    .from('profiles')
-    .select('email, full_name')
-    .eq('id', currentUserId)
-    .single();
-
-  if (currentUser) {
-    const sessionDate = new Date(wizardData.date).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-
-    fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_KEY}`
-      },
-      body: JSON.stringify({
-        type: 'session_booked',
-        to: currentUser.email,
-        data: {
-          studentName: currentUser.full_name,
-          subject: wizardData.subject || 'Enrollment Session',
-          sessionDate: sessionDate,
-          sessionTime: wizardData.time,
-          timezone: wizardData.timezone || 'Your timezone',
-          instructor: 'STEMSphere Enrollment Advisor'
+        if (!message) {
+            alert('Please enter a message');
+            return;
         }
-      })
-    });
-    console.log('✅ Session confirmation email sent');
-  }
-} catch (emailError) {
-  console.error('⚠️ Email notification failed (non-critical):', emailError);
-}
 
-alert('✅ Trial session booked successfully!');
-closeBookingWizard();
-loadSessions();
+        const { error } = await supabaseClient
+            .from('messages')
+            .insert({
+                sender_id: currentTeacherId,
+                recipient_id: studentId,
+                message_type: 'teacher_student',
+                subject: subject || 'Reply from your teacher',
+                message: message
+            });
+
+        if (error) {
+            alert('Error sending message: ' + error.message);
+            return;
+        }
+
+        // ✅ Send email notification to student
+        try {
+            const { data: student } = await supabaseClient
+                .from('profiles')
+                .select('email, full_name')
+                .eq('id', studentId)
+                .single();
+
+            const { data: currentUser } = await supabaseClient
+                .from('profiles')
+                .select('full_name')
+                .eq('id', currentTeacherId)
+                .single();
+
+            if (student && currentUser) {
+                fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify({
+                        type: 'new_message_to_student',
+                        to: student.email,
+                        data: {
+                            recipientName: student.full_name,
+                            senderName: currentUser.full_name,
+                            subject: subject || 'New message',
+                            message: message
+                        }
+                    })
+                });
+                console.log('✅ Message notification email sent to student');
+            }
+        } catch (emailError) {
+            console.error('⚠️ Email notification failed (non-critical):', emailError);
+        }
+
+        alert('✅ Reply sent successfully!');
+        closeModal('conversationModal');
+        // We reopen the conversation to show the new message
+        await openConversation(studentId);
+        // And refresh the main inbox view as well
+        await loadInboxThreads();
+        await loadStats();
     }
 
     function openComposeToStudentModal() {
@@ -1596,7 +1557,7 @@ loadSessions();
       `;
     }
 
-    async function openSupportConversation() {
+       async function openSupportConversation() {
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1758,7 +1719,7 @@ loadSessions();
       loadSupportThreads();
     }
 
-        function updateBadge(badgeId, count) {
+    function updateBadge(badgeId, count) {
       const badge = document.getElementById(badgeId);
       if (count > 0) {
         badge.textContent = count;
