@@ -1180,7 +1180,7 @@ async function payInvoice(invoiceId) {
     
     // ==================== END STUDENT INVOICE SECTION ====================
 
-    // ============================================
+       // ============================================
     // SESSIONS MANAGEMENT - SPLIT INTO UPCOMING & ALL
     // ============================================
     async function loadSessions() {
@@ -1252,9 +1252,20 @@ async function payInvoice(invoiceId) {
           teacherName = booking.instructor_name;
         }
 
-        const videoButton = booking.video_link && booking.status === 'scheduled' 
-          ? `<a href="${booking.video_link}" target="_blank" style="display:inline-block; margin-top:0.5rem; background:#28a745; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; box-shadow:0 2px 5px rgba(0,0,0,0.2);">🎥 Join Video Call</a>`
-          : '';
+        // ✅ NEW: Build video and blackboard buttons
+        let videoButton = '';
+        if (booking.status === 'scheduled') {
+          if (booking.video_link) {
+            videoButton = `
+              <a href="${booking.video_link}" target="_blank" style="display:inline-block; margin-top:0.5rem; background:#28a745; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; box-shadow:0 2px 5px rgba(0,0,0,0.2);">🎥 Join Video Call</a>
+            `;
+          }
+          if (booking.whiteboard_link) {
+            videoButton += `
+              <a href="${booking.whiteboard_link}" target="_blank" style="display:inline-block; margin-top:0.5rem; margin-left:0.5rem; background:#2c2c2c; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; box-shadow:0 2px 5px rgba(0,0,0,0.2); border: 2px solid #4CAF50;">🖍️ Open Blackboard</a>
+            `;
+          }
+        }
 
         return `
           <div class="session-card">
