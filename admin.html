@@ -1988,11 +1988,69 @@
       }
 
       alert('✅ Teacher added successfully!');
-      closeModal('assignStudentTeacherModal');
-      
-      await loadStudents();
-      await loadTeachers();
-      await loadStats();
+
+// ✅ Send email notifications
+try {
+  // Get student and teacher details
+  const student = await supabaseClient
+    .from('profiles')
+    .select('email, full_name, age_group')
+    .eq('id', studentId)
+    .single();
+  
+  const teacher = await supabaseClient
+    .from('profiles')
+    .select('email, full_name')
+    .eq('id', selectedStudentTeacherId)
+    .single();
+
+  if (student.data && teacher.data) {
+    // Email to student
+    fetch('https://horqtcwnhwgodwlyqhli.supabase.co/functions/v1/send-notification-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      },
+      body: JSON.stringify({
+        type: 'teacher_assigned_to_student',
+        to: student.data.email,
+        data: {
+          studentName: student.data.full_name,
+          teacherName: teacher.data.full_name
+        }
+      })
+    });
+
+    // Email to teacher
+    fetch('https://horqtcwnhwgodwlyqhli.supabase.co/functions/v1/send-notification-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      },
+      body: JSON.stringify({
+        type: 'student_assigned_to_teacher',
+        to: teacher.data.email,
+        data: {
+          teacherName: teacher.data.full_name,
+          studentName: student.data.full_name,
+          ageGroup: student.data.age_group
+        }
+      })
+    });
+
+    console.log('✅ Assignment notification emails sent');
+  }
+} catch (emailError) {
+  console.error('⚠️ Email notification failed (non-critical):', emailError);
+}
+
+closeModal('assignStudentTeacherModal');
+
+await loadStudents();
+await loadTeachers();
+await loadStats();
       
       document.getElementById('confirmStudentTeacherBtn').textContent = 'Add Teacher';
     }
