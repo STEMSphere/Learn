@@ -2680,7 +2680,7 @@
       await loadInvoices();
     }
 
-        async function createStripePaymentLink(invoiceId) {
+            async function createStripePaymentLink(invoiceId) {
       try {
         const { data: invoice } = await supabaseClient.from('invoices')
           .select(`*, student:profiles!invoices_student_id_fkey(full_name, email), line_items:invoice_line_items(*)`)
@@ -2691,101 +2691,85 @@
         const currencySymbol = getCurrencySymbol(invoice.currency || 'USD');
         const paymentMethods = invoice.allowed_payment_methods || ['card'];
 
-        console.log('Creating payment link with methods:', paymentMethods);
+        console.log('Creating payment link with currency:', currency, 'methods:', paymentMethods);
 
-        // Build form data properly
-        const formData = new URLSearchParams();
-        formData.append('mode', 'payment');
-        formData.append('customer_email', invoice.student.email);
-        formData.append('success_url', `${window.location.origin}/payment-success.html?session_id={CHECKOUT_SESSION_ID}&invoice_id=${invoice.id}`);
-        formData.append('cancel_url', `${window.location.origin}/dashboard.html`);
-        formData.append('metadata[invoice_id]', invoice.id);
-        formData.append('metadata[invoice_number]', invoice.invoice_number);
-
-        // Add payment methods - THIS IS THE KEY FIX
-        paymentMethods.forEach((method, index) => {
-          formData.append(`payment_method_types[${index}]`, method);
-        });
-
-        // For installments - charge first installment only
+        let lineItems = [];
+        
         if (invoice.payment_schedule === 'installment' && invoice.installment_count > 1) {
           const installmentAmount = invoice.installment_amount || (invoice.amount / invoice.installment_count);
-          
-          formData.append('line_items[0][price_data][currency]', currency);
-          formData.append('line_items[0][price_data][product_data][name]', `${invoice.title} - Installment 1 of ${invoice.installment_count}`);
-          formData.append('line_items[0][price_data][unit_amount]', Math.round(installmentAmount * 100).toString());
-          formData.append('line_items[0][quantity]', '1');
-          
-          formData.append('metadata[payment_type]', 'installment');
-          formData.append('metadata[installment_number]', '1');
+          lineItems = [{
+            name: `${invoice.title} - Installment 1 of ${invoice.installment_count}`,
+            unit_amount: Math.round(installmentAmount * 100),
+            quantity: 1
+          }];
         } else {
-          // One-time payment - add all line items
-          invoice.line_items.forEach((item, index) => {
-            formData.append(`line_items[${index}][price_data][currency]`, currency);
-            formData.append(`line_items[${index}][price_data][product_data][name]`, item.description);
-            formData.append(`line_items[${index}][price_data][unit_amount]`, Math.round(item.unit_price * 100).toString());
-            formData.append(`line_items[${index}][quantity]`, item.quantity.toString());
-          });
+          lineItems = invoice.line_items.map(item => ({
+            name: item.description,
+            unit_amount: Math.round(item.unit_price * 100),
+            quantity: item.quantity
+          }));
         }
 
-        console.log('Stripe request body:', formData.toString());
-
-        const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+        // Call edge function to create checkout session
+        const response = await fetch('https://horqtcwnhwgodwlyqhli.supabase.co/functions/v1/create-checkout', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${STRIPE_PUBLISHABLE_KEY.replace('pk_', 'sk_')}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_KEY}`
           },
-          body: formData.toString()
+          body: JSON.stringify({
+            invoiceId: invoice.id,
+            studentEmail: invoice.student.email,
+            currency: currency,
+            amount: invoice.amount,
+            lineItems: lineItems,
+            paymentMethods: paymentMethods,
+            metadata: {
+              invoice_id: invoice.id,
+              invoice_number: invoice.invoice_number,
+              payment_schedule: invoice.payment_schedule
+            }
+          })
         });
 
-        const session = await response.json();
+        const result = await response.json();
         
-        console.log('Stripe response:', session);
+        console.log('Edge function response:', result);
 
-        if (session.error) {
-          throw new Error(session.error.message);
+        if (result.error) {
+          throw new Error(result.error);
         }
 
-        await navigator.clipboard.writeText(session.url);
+        await navigator.clipboard.writeText(result.url);
         
         const methodNames = paymentMethods.map(m => {
-          const names = { 
-            'card': '💳 Card', 
-            'us_bank_account': '🏦 ACH', 
-            'paypal': '💰 PayPal', 
-            'alipay': '🇨🇳 Alipay', 
-            'wechat_pay': '💬 WeChat' 
-          };
+          const names = { 'card': '💳 Card', 'us_bank_account': '🏦 Bank', 'paypal': '💰 PayPal', 'alipay': '🇨🇳 Alipay', 'wechat_pay': '💬 WeChat' };
           return names[m] || m;
         }).join(', ');
 
         if (invoice.payment_schedule === 'installment') {
           const installmentAmount = invoice.installment_amount || (invoice.amount / invoice.installment_count);
-          alert(`✅ Installment payment link copied!
+          alert(`✅ Payment link copied!
 
 📋 Installment 1 of ${invoice.installment_count}
-💰 Amount: ${currencySymbol}${parseFloat(installmentAmount).toFixed(2)}
-💳 Methods: ${methodNames}
+💰 ${currencySymbol}${parseFloat(installmentAmount).toFixed(2)} ${currency.toUpperCase()}
+💳 ${methodNames}
 
-⚠️ After student pays, generate next installment link!
-
-${session.url}`);
+${result.url}`);
         } else {
           alert(`✅ Payment link copied!
 
 💰 ${currencySymbol}${parseFloat(invoice.amount).toFixed(2)} ${currency.toUpperCase()}
-💳 Methods: ${methodNames}
+💳 ${methodNames}
 
-${session.url}`);
+${result.url}`);
         }
 
       } catch (error) {
-        console.error('Stripe error:', error);
+        console.error('Error:', error);
         alert('Error creating payment link: ' + error.message);
       }
     }
-
     // ==================== MESSAGING FUNCTIONS ====================
 
     async function loadSupportThreads() {
