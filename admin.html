@@ -1185,8 +1185,214 @@
         <label>Description</label>
         <textarea id="invoiceDescription" placeholder="Additional details about this invoice..."></textarea>
       </div>
+
+      <!-- Currency Selection - ALL STRIPE CURRENCIES -->
+      <div class="form-group">
+        <label>Currency *</label>
+        <select id="invoiceCurrency" required>
+          <option value="USD">🇺🇸 USD - US Dollar</option>
+          <option value="EUR">🇪🇺 EUR - Euro</option>
+          <option value="GBP">🇬🇧 GBP - British Pound</option>
+          <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+          <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+          <option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+          <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+          <option value="INR">🇮🇳 INR - Indian Rupee</option>
+          <option value="SGD">🇸🇬 SGD - Singapore Dollar</option>
+          <option value="AED">🇦🇪 AED - UAE Dirham</option>
+          <option value="AFN">🇦🇫 AFN - Afghan Afghani</option>
+          <option value="ALL">🇦🇱 ALL - Albanian Lek</option>
+          <option value="AMD">🇦🇲 AMD - Armenian Dram</option>
+          <option value="ANG">🇳🇱 ANG - Netherlands Antillean Guilder</option>
+          <option value="AOA">🇦🇴 AOA - Angolan Kwanza</option>
+          <option value="ARS">🇦🇷 ARS - Argentine Peso</option>
+          <option value="AWG">🇦🇼 AWG - Aruban Florin</option>
+          <option value="AZN">🇦🇿 AZN - Azerbaijani Manat</option>
+          <option value="BAM">🇧🇦 BAM - Bosnia-Herzegovina Convertible Mark</option>
+          <option value="BBD">🇧🇧 BBD - Barbadian Dollar</option>
+          <option value="BDT">🇧🇩 BDT - Bangladeshi Taka</option>
+          <option value="BGN">🇧🇬 BGN - Bulgarian Lev</option>
+          <option value="BHD">🇧🇭 BHD - Bahraini Dinar</option>
+          <option value="BIF">🇧🇮 BIF - Burundian Franc</option>
+          <option value="BMD">🇧🇲 BMD - Bermudan Dollar</option>
+          <option value="BND">🇧🇳 BND - Brunei Dollar</option>
+          <option value="BOB">🇧🇴 BOB - Bolivian Boliviano</option>
+          <option value="BRL">🇧🇷 BRL - Brazilian Real</option>
+          <option value="BSD">🇧🇸 BSD - Bahamian Dollar</option>
+          <option value="BWP">🇧🇼 BWP - Botswanan Pula</option>
+          <option value="BYN">🇧🇾 BYN - Belarusian Ruble</option>
+          <option value="BZD">🇧🇿 BZD - Belize Dollar</option>
+          <option value="CDF">🇨🇩 CDF - Congolese Franc</option>
+          <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+          <option value="CLP">🇨🇱 CLP - Chilean Peso</option>
+          <option value="COP">🇨🇴 COP - Colombian Peso</option>
+          <option value="CRC">🇨🇷 CRC - Costa Rican Colón</option>
+          <option value="CVE">🇨🇻 CVE - Cape Verdean Escudo</option>
+          <option value="CZK">🇨🇿 CZK - Czech Koruna</option>
+          <option value="DJF">🇩🇯 DJF - Djiboutian Franc</option>
+          <option value="DKK">🇩🇰 DKK - Danish Krone</option>
+          <option value="DOP">🇩🇴 DOP - Dominican Peso</option>
+          <option value="DZD">🇩🇿 DZD - Algerian Dinar</option>
+          <option value="EGP">🇪🇬 EGP - Egyptian Pound</option>
+          <option value="ETB">🇪🇹 ETB - Ethiopian Birr</option>
+          <option value="FJD">🇫🇯 FJD - Fijian Dollar</option>
+          <option value="FKP">🇫🇰 FKP - Falkland Islands Pound</option>
+          <option value="GEL">🇬🇪 GEL - Georgian Lari</option>
+          <option value="GIP">🇬🇮 GIP - Gibraltar Pound</option>
+          <option value="GMD">🇬🇲 GMD - Gambian Dalasi</option>
+          <option value="GNF">🇬🇳 GNF - Guinean Franc</option>
+          <option value="GTQ">🇬🇹 GTQ - Guatemalan Quetzal</option>
+          <option value="GYD">🇬🇾 GYD - Guyanaese Dollar</option>
+          <option value="HKD">🇭🇰 HKD - Hong Kong Dollar</option>
+          <option value="HNL">🇭🇳 HNL - Honduran Lempira</option>
+          <option value="HRK">🇭🇷 HRK - Croatian Kuna</option>
+          <option value="HTG">🇭🇹 HTG - Haitian Gourde</option>
+          <option value="HUF">🇭🇺 HUF - Hungarian Forint</option>
+          <option value="IDR">🇮🇩 IDR - Indonesian Rupiah</option>
+          <option value="ILS">🇮🇱 ILS - Israeli New Shekel</option>
+          <option value="IQD">🇮🇶 IQD - Iraqi Dinar</option>
+          <option value="ISK">🇮🇸 ISK - Icelandic Króna</option>
+          <option value="JMD">🇯🇲 JMD - Jamaican Dollar</option>
+          <option value="JOD">🇯🇴 JOD - Jordanian Dinar</option>
+          <option value="KES">🇰🇪 KES - Kenyan Shilling</option>
+          <option value="KGS">🇰🇬 KGS - Kyrgystani Som</option>
+          <option value="KHR">🇰🇭 KHR - Cambodian Riel</option>
+          <option value="KMF">🇰🇲 KMF - Comorian Franc</option>
+          <option value="KRW">🇰🇷 KRW - South Korean Won</option>
+          <option value="KWD">🇰🇼 KWD - Kuwaiti Dinar</option>
+          <option value="KYD">🇰🇾 KYD - Cayman Islands Dollar</option>
+          <option value="KZT">🇰🇿 KZT - Kazakhstani Tenge</option>
+          <option value="LAK">🇱🇦 LAK - Laotian Kip</option>
+          <option value="LBP">🇱🇧 LBP - Lebanese Pound</option>
+          <option value="LKR">🇱🇰 LKR - Sri Lankan Rupee</option>
+          <option value="LRD">🇱🇷 LRD - Liberian Dollar</option>
+          <option value="LSL">🇱🇸 LSL - Lesotho Loti</option>
+          <option value="MAD">🇲🇦 MAD - Moroccan Dirham</option>
+          <option value="MDL">🇲🇩 MDL - Moldovan Leu</option>
+          <option value="MGA">🇲🇬 MGA - Malagasy Ariary</option>
+          <option value="MKD">🇲🇰 MKD - Macedonian Denar</option>
+          <option value="MMK">🇲🇲 MMK - Myanma Kyat</option>
+          <option value="MNT">🇲🇳 MNT - Mongolian Tugrik</option>
+          <option value="MOP">🇲🇴 MOP - Macanese Pataca</option>
+          <option value="MRO">🇲🇷 MRO - Mauritanian Ouguiya</option>
+          <option value="MUR">🇲🇺 MUR - Mauritian Rupee</option>
+          <option value="MVR">🇲🇻 MVR - Maldivian Rufiyaa</option>
+          <option value="MWK">🇲🇼 MWK - Malawian Kwacha</option>
+          <option value="MXN">🇲🇽 MXN - Mexican Peso</option>
+          <option value="MYR">🇲🇾 MYR - Malaysian Ringgit</option>
+          <option value="MZN">🇲🇿 MZN - Mozambican Metical</option>
+          <option value="NAD">🇳🇦 NAD - Namibian Dollar</option>
+          <option value="NGN">🇳🇬 NGN - Nigerian Naira</option>
+          <option value="NIO">🇳🇮 NIO - Nicaraguan Córdoba</option>
+          <option value="NOK">🇳🇴 NOK - Norwegian Krone</option>
+          <option value="NPR">🇳🇵 NPR - Nepalese Rupee</option>
+          <option value="NZD">🇳🇿 NZD - New Zealand Dollar</option>
+          <option value="OMR">🇴🇲 OMR - Omani Rial</option>
+          <option value="PAB">🇵🇦 PAB - Panamanian Balboa</option>
+          <option value="PEN">🇵🇪 PEN - Peruvian Nuevo Sol</option>
+          <option value="PGK">🇵🇬 PGK - Papua New Guinean Kina</option>
+          <option value="PHP">🇵🇭 PHP - Philippine Peso</option>
+          <option value="PKR">🇵🇰 PKR - Pakistani Rupee</option>
+          <option value="PLN">🇵🇱 PLN - Polish Zloty</option>
+          <option value="PYG">🇵🇾 PYG - Paraguayan Guarani</option>
+          <option value="QAR">🇶🇦 QAR - Qatari Rial</option>
+          <option value="RON">🇷🇴 RON - Romanian Leu</option>
+          <option value="RSD">🇷🇸 RSD - Serbian Dinar</option>
+          <option value="RUB">🇷🇺 RUB - Russian Ruble</option>
+          <option value="RWF">🇷🇼 RWF - Rwandan Franc</option>
+          <option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
+          <option value="SBD">🇸🇧 SBD - Solomon Islands Dollar</option>
+          <option value="SCR">🇸🇨 SCR - Seychellois Rupee</option>
+          <option value="SEK">🇸🇪 SEK - Swedish Krona</option>
+          <option value="SHP">🇸🇭 SHP - Saint Helena Pound</option>
+          <option value="SLL">🇸🇱 SLL - Sierra Leonean Leone</option>
+          <option value="SOS">🇸🇴 SOS - Somali Shilling</option>
+          <option value="SRD">🇸🇷 SRD - Surinamese Dollar</option>
+          <option value="STD">🇸🇹 STD - São Tomé and Príncipe Dobra</option>
+          <option value="SZL">🇸🇿 SZL - Swazi Lilangeni</option>
+          <option value="THB">🇹🇭 THB - Thai Baht</option>
+          <option value="TJS">🇹🇯 TJS - Tajikistani Somoni</option>
+          <option value="TOP">🇹🇴 TOP - Tongan Paʻanga</option>
+          <option value="TRY">🇹🇷 TRY - Turkish Lira</option>
+          <option value="TTD">🇹🇹 TTD - Trinidad and Tobago Dollar</option>
+          <option value="TWD">🇹🇼 TWD - New Taiwan Dollar</option>
+          <option value="TZS">🇹🇿 TZS - Tanzanian Shilling</option>
+          <option value="UAH">🇺🇦 UAH - Ukrainian Hryvnia</option>
+          <option value="UGX">🇺🇬 UGX - Ugandan Shilling</option>
+          <option value="UYU">🇺🇾 UYU - Uruguayan Peso</option>
+          <option value="UZS">🇺🇿 UZS - Uzbekistan Som</option>
+          <option value="VND">🇻🇳 VND - Vietnamese Dong</option>
+          <option value="VUV">🇻🇺 VUV - Vanuatu Vatu</option>
+          <option value="WST">🇼🇸 WST - Samoan Tala</option>
+          <option value="XAF">🇨🇲 XAF - CFA Franc BEAC</option>
+          <option value="XCD">🇦🇬 XCD - East Caribbean Dollar</option>
+          <option value="XOF">🇸🇳 XOF - CFA Franc BCEAO</option>
+          <option value="XPF">🇵🇫 XPF - CFP Franc</option>
+          <option value="YER">🇾🇪 YER - Yemeni Rial</option>
+          <option value="ZAR">🇿🇦 ZAR - South African Rand</option>
+          <option value="ZMW">🇿🇲 ZMW - Zambian Kwacha</option>
+        </select>
+      </div>
+
+      <!-- Payment Schedule -->
+      <div class="form-group">
+        <label>Payment Schedule *</label>
+        <select id="paymentSchedule" onchange="toggleInstallmentOptions()">
+          <option value="one_time">One-Time Payment</option>
+          <option value="installment">Installment Plan</option>
+          <option value="recurring">Recurring Subscription</option>
+        </select>
+      </div>
+
+      <!-- Installment Options (hidden by default) -->
+      <div id="installmentOptions" style="display:none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Payment Frequency</label>
+            <select id="paymentFrequency">
+              <option value="weekly">Weekly</option>
+              <option value="biweekly">Bi-weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Number of Installments</label>
+            <input type="number" id="installmentCount" min="2" max="12" value="2" placeholder="e.g., 4">
+            <small style="color:#666;">Total amount will be divided equally</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="form-group">
+        <label>Allowed Payment Methods *</label>
+        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            <input type="checkbox" name="paymentMethod" value="card" id="paymentMethodCard" checked>
+            💳 Credit/Debit Card
+          </label>
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            <input type="checkbox" name="paymentMethod" value="us_bank_account">
+            🏦 US Bank Account (ACH)
+          </label>
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            <input type="checkbox" name="paymentMethod" value="paypal">
+            💰 PayPal
+          </label>
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            <input type="checkbox" name="paymentMethod" value="alipay">
+            🇨🇳 Alipay (China)
+          </label>
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            <input type="checkbox" name="paymentMethod" value="wechat_pay">
+            💬 WeChat Pay (China)
+          </label>
+        </div>
+      </div>
       
-            <div class="line-items-container">
+      <div class="line-items-container">
         <h4>Invoice Items</h4>
         <div class="line-item" style="font-weight: bold; border-bottom: 2px solid #ddd;">
           <div>Description</div>
@@ -1261,7 +1467,7 @@
     </div>
   </div>
 
-  <!-- COMPOSE TO ADMIN MODAL -->
+   <!-- COMPOSE TO ADMIN MODAL -->
   <div id="composeToAdminModal" class="modal">
     <div class="modal-content">
       <h3>🔒 Message Another Admin</h3>
@@ -1648,7 +1854,7 @@
         return;
       }
 
-          alert('✅ Teacher removed successfully!');
+      alert('✅ Teacher removed successfully!');
       
       await loadStudents();
       await loadTeachers();
@@ -1695,7 +1901,7 @@
         const subjects = teacher.subjects || 'No subjects listed';
         const alreadyAssigned = assignedTeacherIds.includes(teacher.id);
 
-        return `
+               return `
           <div class="teacher-card ${alreadyAssigned ? 'already-assigned' : ''}" 
                onclick="${alreadyAssigned ? '' : `selectStudentTeacher('${teacher.id}')`}" 
                data-teacher-id="${teacher.id}">
@@ -2116,7 +2322,7 @@
       document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
 
-    // ==================== INVOICE FUNCTIONS ====================
+    // ==================== INVOICE FUNCTIONS WITH MULTI-CURRENCY ====================
 
     function generateInvoiceNumber() {
       const now = new Date();
@@ -2126,57 +2332,82 @@
       return `INV-${year}${month}-${random}`;
     }
 
+    // 🔥 NEW: Toggle installment options based on payment schedule
+    function toggleInstallmentOptions() {
+      const schedule = document.getElementById('paymentSchedule').value;
+      const installmentOptions = document.getElementById('installmentOptions');
+      
+      if (schedule === 'installment' || schedule === 'recurring') {
+        installmentOptions.style.display = 'block';
+      } else {
+        installmentOptions.style.display = 'none';
+      }
+    }
+
     async function openCreateInvoiceModal() {
-  // Load students for dropdown
-  const { data: students } = await supabaseClient
-    .from('profiles')
-    .select('id, full_name, email')
-    .eq('role', 'student')
-    .order('full_name');
+      const { data: students } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email')
+        .eq('role', 'student')
+        .order('full_name');
 
-  invoiceStudents = students || [];
+      invoiceStudents = students || [];
 
-  const select = document.getElementById('invoiceStudentSelect');
-  if (!select) {
-    alert('Invoice form not found. Please refresh the page.');
-    return;
-  }
+      const select = document.getElementById('invoiceStudentSelect');
+      if (!select) {
+        alert('Invoice form not found. Please refresh the page.');
+        return;
+      }
 
-  select.innerHTML = '<option value="">-- Choose a student --</option>' +
-    invoiceStudents.map(student => 
-      `<option value="${student.id}">${student.full_name} (${student.email})</option>`
-    ).join('');
+      select.innerHTML = '<option value="">-- Choose a student --</option>' +
+        invoiceStudents.map(student => 
+          `<option value="${student.id}">${student.full_name} (${student.email})</option>`
+        ).join('');
 
-  // Clear form fields
-  const titleInput = document.getElementById('invoiceTitle');
-  const descInput = document.getElementById('invoiceDescription');
-  const dateInput = document.getElementById('invoiceDueDate');
-  
-  if (titleInput) titleInput.value = '';
-  if (descInput) descInput.value = '';
-  if (dateInput) dateInput.value = '';
-  
-  // Reset line items to single item
-  const container = document.getElementById('lineItemsContainer');
-  if (container) {
-    container.innerHTML = `
-      <div class="line-item">
-        <input type="text" placeholder="Session description" class="item-description">
-        <input type="number" value="1" min="1" class="item-quantity" onchange="calculateLineTotal(this)">
-        <input type="number" step="0.01" min="0" placeholder="0.00" class="item-price" onchange="calculateLineTotal(this)">
-        <input type="number" step="0.01" readonly class="item-total" value="0.00">
-        <button type="button" class="remove-line-item" onclick="removeLineItem(this)">×</button>
-      </div>
-    `;
-  }
-  
-  calculateInvoiceTotal();
-  
-  const modal = document.getElementById('createInvoiceModal');
-  if (modal) {
-    modal.classList.add('active');
-  }
-}
+      // Clear form fields
+      const titleInput = document.getElementById('invoiceTitle');
+      const descInput = document.getElementById('invoiceDescription');
+      const dateInput = document.getElementById('invoiceDueDate');
+      const currencySelect = document.getElementById('invoiceCurrency');
+      const scheduleSelect = document.getElementById('paymentSchedule');
+      
+      if (titleInput) titleInput.value = '';
+      if (descInput) descInput.value = '';
+      if (dateInput) dateInput.value = '';
+      if (currencySelect) currencySelect.value = 'USD';
+      if (scheduleSelect) scheduleSelect.value = 'one_time';
+      
+      // Hide installment options
+      const installmentOptions = document.getElementById('installmentOptions');
+      if (installmentOptions) installmentOptions.style.display = 'none';
+      
+      // Reset payment methods (card checked by default)
+      document.querySelectorAll('input[name="paymentMethod"]').forEach(cb => {
+        cb.checked = cb.value === 'card';
+      });
+      
+      // Reset line items to single item
+      const container = document.getElementById('lineItemsContainer');
+      if (container) {
+        container.innerHTML = `
+          <div class="line-item">
+            <input type="text" placeholder="Session description" class="item-description">
+            <input type="number" value="1" min="1" class="item-quantity" onchange="calculateLineTotal(this)">
+            <input type="number" step="0.01" min="0" placeholder="0.00" class="item-price" onchange="calculateLineTotal(this)">
+            <input type="number" step="0.01" readonly class="item-total" value="0.00">
+            <button type="button" class="remove-line-item" onclick="removeLineItem(this)">×</button>
+          </div>
+        `;
+      }
+      
+      calculateInvoiceTotal();
+      
+      const modal = document.getElementById('createInvoiceModal');
+      if (modal) {
+        modal.classList.add('active');
+      }
+    }
+
     function addLineItem() {
       const container = document.getElementById('lineItemsContainer');
       const newItem = document.createElement('div');
@@ -2212,109 +2443,153 @@
     }
 
     function calculateInvoiceTotal() {
-  const lineItems = document.querySelectorAll('.line-item');
-  let total = 0;
-  
-  lineItems.forEach(item => {
-    const totalInput = item.querySelector('.item-total');
-    if (totalInput && totalInput.value) {
-      total += parseFloat(totalInput.value) || 0;
-    }
-  });
-  
-  const totalElement = document.getElementById('invoiceTotal');
-  if (totalElement) {
-    totalElement.textContent = `Total: $${total.toFixed(2)}`;
-  }
-}
-
-    async function createInvoice(status = 'draft') {
-  const studentId = document.getElementById('invoiceStudentSelect').value;
-  const title = document.getElementById('invoiceTitle').value.trim();
-  const description = document.getElementById('invoiceDescription').value.trim();
-  const dueDate = document.getElementById('invoiceDueDate').value;
-
-  if (!studentId || !title) {
-    alert('Please select a student and enter an invoice title');
-    return;
-  }
-
-  const lineItems = [];
-  const lineItemElements = document.querySelectorAll('#lineItemsContainer .line-item');
-  let totalAmount = 0;
-
-  for (const item of lineItemElements) {
-    const descInput = item.querySelector('.item-description');
-    const qtyInput = item.querySelector('.item-quantity');
-    const priceInput = item.querySelector('.item-price');
-    
-    if (!descInput || !qtyInput || !priceInput) continue;
-    
-    const desc = descInput.value.trim();
-    const qty = parseInt(qtyInput.value) || 1;
-    const price = parseFloat(priceInput.value) || 0;
-    const total = qty * price;
-
-    if (desc && price > 0) {
-      lineItems.push({
-        description: desc,
-        quantity: qty,
-        unit_price: price,
-        total_price: total
+      const lineItems = document.querySelectorAll('.line-item');
+      let total = 0;
+      
+      lineItems.forEach(item => {
+        const totalInput = item.querySelector('.item-total');
+        if (totalInput && totalInput.value) {
+          total += parseFloat(totalInput.value) || 0;
+        }
       });
-      totalAmount += total;
+      
+      const totalElement = document.getElementById('invoiceTotal');
+      if (totalElement) {
+        const currency = document.getElementById('invoiceCurrency')?.value || 'USD';
+        const currencySymbol = getCurrencySymbol(currency);
+        totalElement.textContent = `Total: ${currencySymbol}${total.toFixed(2)}`;
+      }
     }
-  }
 
-  if (lineItems.length === 0) {
-    alert('Please add at least one valid line item with a price');
-    return;
-  }
+    // 🔥 NEW: Get currency symbol helper function
+    function getCurrencySymbol(currency) {
+      const symbols = {
+        'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'CNY': '¥',
+        'INR': '₹', 'AUD': 'A$', 'CAD': 'C$', 'CHF': 'CHF', 'SEK': 'kr',
+        'NOK': 'kr', 'DKK': 'kr', 'PLN': 'zł', 'THB': '฿', 'SGD': 'S$',
+        'HKD': 'HK$', 'KRW': '₩', 'MXN': '$', 'BRL': 'R$', 'ZAR': 'R',
+        'RUB': '₽', 'TRY': '₺', 'AED': 'د.إ', 'SAR': 'ر.س'
+      };
+      return symbols[currency] || currency + ' ';
+    }
 
-  try {
-    const invoiceData = {
-      invoice_number: generateInvoiceNumber(),
-      student_id: studentId,
-      admin_id: currentAdminId,
-      title: title,
-      description: description || null,
-      amount: totalAmount,
-      status: status,
-      due_date: dueDate || null,
-      sent_at: status === 'sent' ? new Date().toISOString() : null
-    };
+    // 🔥 UPDATED: Create invoice with multi-currency & payment options
+    async function createInvoice(status = 'draft') {
+      const studentId = document.getElementById('invoiceStudentSelect').value;
+      const title = document.getElementById('invoiceTitle').value.trim();
+      const description = document.getElementById('invoiceDescription').value.trim();
+      const dueDate = document.getElementById('invoiceDueDate').value;
+      
+      // NEW FIELDS
+      const currency = document.getElementById('invoiceCurrency').value || 'USD';
+      const paymentSchedule = document.getElementById('paymentSchedule').value;
+      const paymentFrequency = document.getElementById('paymentFrequency').value;
+      const installmentCount = parseInt(document.getElementById('installmentCount').value) || 1;
+      
+      // Get selected payment methods
+      const paymentMethods = Array.from(document.querySelectorAll('input[name="paymentMethod"]:checked'))
+        .map(cb => cb.value);
 
-    const { data: invoice, error: invoiceError } = await supabaseClient
-      .from('invoices')
-      .insert(invoiceData)
-      .select()
-      .single();
+      if (!studentId || !title) {
+        alert('Please select a student and enter an invoice title');
+        return;
+      }
 
-    if (invoiceError) throw invoiceError;
+      if (paymentMethods.length === 0) {
+        alert('Please select at least one payment method');
+        return;
+      }
 
-    const lineItemsData = lineItems.map(item => ({
-      invoice_id: invoice.id,
-      ...item
-    }));
+      const lineItems = [];
+      const lineItemElements = document.querySelectorAll('#lineItemsContainer .line-item');
+      let totalAmount = 0;
 
-    const { error: lineItemsError } = await supabaseClient
-      .from('invoice_line_items')
-      .insert(lineItemsData);
+      for (const item of lineItemElements) {
+        const descInput = item.querySelector('.item-description');
+        const qtyInput = item.querySelector('.item-quantity');
+        const priceInput = item.querySelector('.item-price');
+        
+        if (!descInput || !qtyInput || !priceInput) continue;
+        
+        const desc = descInput.value.trim();
+        const qty = parseInt(qtyInput.value) || 1;
+        const price = parseFloat(priceInput.value) || 0;
+        const total = qty * price;
 
-    if (lineItemsError) throw lineItemsError;
+        if (desc && price > 0) {
+          lineItems.push({
+            description: desc,
+            quantity: qty,
+            unit_price: price,
+            total_price: total
+          });
+          totalAmount += total;
+        }
+      }
 
-    const statusText = status === 'sent' ? 'created and sent' : 'saved as draft';
-    alert(`✅ Invoice ${invoice.invoice_number} ${statusText} successfully!`);
-    
-    closeModal('createInvoiceModal');
-    await loadInvoices();
-    await loadStats();
+      if (lineItems.length === 0) {
+        alert('Please add at least one valid line item with a price');
+        return;
+      }
 
-  } catch (error) {
-    console.error('Invoice creation error:', error);
-    alert('Error creating invoice: ' + error.message);
-  }
-}
+      try {
+        // Calculate installment amount if applicable
+        let installmentAmount = totalAmount;
+        if (paymentSchedule === 'installment' && installmentCount > 1) {
+          installmentAmount = totalAmount / installmentCount;
+        }
+
+        const invoiceData = {
+          invoice_number: generateInvoiceNumber(),
+          student_id: studentId,
+          admin_id: currentAdminId,
+          title: title,
+          description: description || null,
+          amount: totalAmount,
+          currency: currency,
+          status: status,
+          due_date: dueDate || null,
+          sent_at: status === 'sent' ? new Date().toISOString() : null,
+          payment_schedule: paymentSchedule,
+          payment_frequency: paymentFrequency || null,
+          installment_count: installmentCount,
+          installment_amount: installmentAmount,
+          allowed_payment_methods: paymentMethods,
+          paid_installments: 0
+               };
+
+        const { data: invoice, error: invoiceError } = await supabaseClient
+          .from('invoices')
+          .insert(invoiceData)
+          .select()
+          .single();
+
+        if (invoiceError) throw invoiceError;
+
+        const lineItemsData = lineItems.map(item => ({
+          invoice_id: invoice.id,
+          ...item
+        }));
+
+        const { error: lineItemsError } = await supabaseClient
+          .from('invoice_line_items')
+          .insert(lineItemsData);
+
+        if (lineItemsError) throw lineItemsError;
+
+        const statusText = status === 'sent' ? 'created and sent' : 'saved as draft';
+        alert(`✅ Invoice ${invoice.invoice_number} ${statusText} successfully!`);
+        
+        closeModal('createInvoiceModal');
+        await loadInvoices();
+        await loadStats();
+
+      } catch (error) {
+        console.error('Invoice creation error:', error);
+        alert('Error creating invoice: ' + error.message);
+      }
+    }
+
     async function loadInvoices() {
       const { data: invoices, error } = await supabaseClient
         .from('invoices')
@@ -2336,6 +2611,7 @@
         const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
         const isOverdue = invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'sent';
         const status = isOverdue ? 'overdue' : invoice.status;
+        const currencySymbol = getCurrencySymbol(invoice.currency || 'USD');
 
         return `
           <tr>
@@ -2345,7 +2621,7 @@
               <small>${invoice.student?.email || ''}</small>
             </td>
             <td>${invoice.title}</td>
-            <td><strong>$${parseFloat(invoice.amount).toFixed(2)}</strong></td>
+            <td><strong>${currencySymbol}${parseFloat(invoice.amount).toFixed(2)}</strong></td>
             <td>${dueDate}</td>
             <td><span class="invoice-status status-${status}">${status}</span></td>
             <td>
@@ -2418,13 +2694,40 @@
       const createdDate = new Date(invoice.created_at).toLocaleDateString();
       const sentDate = invoice.sent_at ? new Date(invoice.sent_at).toLocaleDateString() : null;
       const paidDate = invoice.paid_at ? new Date(invoice.paid_at).toLocaleDateString() : null;
+      const currencySymbol = getCurrencySymbol(invoice.currency || 'USD');
+
+      // Payment schedule info
+      let scheduleInfo = '';
+      if (invoice.payment_schedule === 'installment') {
+        scheduleInfo = `
+          <p><strong>Payment Plan:</strong> ${invoice.installment_count} installments of ${currencySymbol}${parseFloat(invoice.installment_amount).toFixed(2)}</p>
+          <p><strong>Frequency:</strong> ${invoice.payment_frequency || 'Monthly'}</p>
+          <p><strong>Paid:</strong> ${invoice.paid_installments} of ${invoice.installment_count}</p>
+        `;
+      } else if (invoice.payment_schedule === 'recurring') {
+        scheduleInfo = `
+          <p><strong>Recurring:</strong> ${invoice.payment_frequency || 'Monthly'} subscription</p>
+        `;
+      }
+
+      // Payment methods
+      const paymentMethodsDisplay = (invoice.allowed_payment_methods || ['card']).map(method => {
+        const icons = {
+          'card': '💳 Card',
+          'us_bank_account': '🏦 ACH',
+          'paypal': '💰 PayPal',
+          'alipay': '🇨🇳 Alipay',
+          'wechat_pay': '💬 WeChat Pay'
+        };
+        return icons[method] || method;
+      }).join(', ');
 
       const lineItemsHtml = invoice.line_items.map(item => `
         <tr>
           <td style="padding: 0.75rem; border-bottom: 1px solid #eee;">${item.description}</td>
           <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #eee;">${item.quantity}</td>
-          <td style="padding: 0.75rem; text-align: right; border-bottom: 1px solid #eee;">$${parseFloat(item.unit_price).toFixed(2)}</td>
-          <td style="padding: 0.75rem; text-align: right; border-bottom: 1px solid #eee;"><strong>$${parseFloat(item.total_price).toFixed(2)}</strong></td>
+          <td style="padding: 0.75rem; text-align: right; border-bottom: 1px solid #eee;">${currencySymbol}${parseFloat(item.unit_price).toFixed(2)}</td>
+          <td style="padding: 0.75rem; text-align: right; border-bottom: 1px solid #eee;"><strong>${currencySymbol}${parseFloat(item.total_price).toFixed(2)}</strong></td>
         </tr>
       `).join('');
 
@@ -2444,10 +2747,16 @@
           <div style="text-align: right;">
             <h4>Invoice Details</h4>
             <p><strong>Status:</strong> <span class="invoice-status status-${invoice.status}">${invoice.status}</span></p>
+            <p><strong>Currency:</strong> ${invoice.currency || 'USD'}</p>
             <p><strong>Due Date:</strong> ${dueDate}</p>
             ${sentDate ? `<p><strong>Sent:</strong> ${sentDate}</p>` : ''}
             ${paidDate ? `<p><strong>Paid:</strong> ${paidDate}</p>` : ''}
+            ${scheduleInfo}
           </div>
+        </div>
+
+        <div style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+          <p><strong>Payment Methods:</strong> ${paymentMethodsDisplay}</p>
         </div>
 
         <div style="margin-bottom: 2rem;">
@@ -2473,7 +2782,7 @@
                 <strong>Total Amount:</strong>
               </td>
               <td style="text-align: right; padding: 1rem; border-top: 2px solid #28a745; font-weight: bold; font-size: 1.2em; color: #28a745;">
-                <strong>$${parseFloat(invoice.amount).toFixed(2)}</strong>
+                <strong>${currencySymbol}${parseFloat(invoice.amount).toFixed(2)}</strong>
               </td>
             </tr>
           </tfoot>
@@ -2575,34 +2884,66 @@
           return;
         }
 
-        // Create Stripe Checkout Session
-        const session = await stripe.checkout.sessions.create({
-          payment_method_types: ['card'],
-          customer_email: invoice.student.email,
-          line_items: invoice.line_items.map(item => ({
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: item.description,
-              },
-              unit_amount: Math.round(item.unit_price * 100), // Convert to cents
+        const currency = invoice.currency?.toLowerCase() || 'usd';
+        
+        // Create Stripe Checkout Session with multi-currency support
+        const lineItems = invoice.line_items.map(item => ({
+          price_data: {
+            currency: currency,
+            product_data: {
+              name: item.description,
             },
-            quantity: item.quantity,
-          })),
-          mode: 'payment',
+            unit_amount: Math.round(item.unit_price * 100), // Convert to smallest currency unit
+          },
+          quantity: item.quantity,
+        }));
+
+        // Build payment method types based on allowed methods
+        const paymentMethodTypes = invoice.allowed_payment_methods || ['card'];
+
+        const sessionData = {
+          payment_method_types: paymentMethodTypes,
+          customer_email: invoice.student.email,
+          line_items: lineItems,
+          mode: invoice.payment_schedule === 'recurring' ? 'subscription' : 'payment',
           success_url: `${window.location.origin}/payment-success.html?session_id={CHECKOUT_SESSION_ID}&invoice_id=${invoice.id}`,
           cancel_url: `${window.location.origin}/student-dashboard.html`,
           metadata: {
             invoice_id: invoice.id,
             invoice_number: invoice.invoice_number,
+            payment_schedule: invoice.payment_schedule
           },
+        };
+
+        // For installment plans, add subscription details
+        if (invoice.payment_schedule === 'installment') {
+          sessionData.subscription_data = {
+            metadata: {
+              installment_count: invoice.installment_count,
+              installment_amount: invoice.installment_amount
+            }
+          };
+        }
+
+        const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${STRIPE_PUBLISHABLE_KEY.replace('pk_', 'sk_')}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams(sessionData)
         });
 
-        // Copy link to clipboard
+        const session = await response.json();
+        
+        if (session.error) {
+          throw new Error(session.error.message);
+        }
+
         const paymentLink = session.url;
         await navigator.clipboard.writeText(paymentLink);
         
-        alert(`✅ Payment link generated and copied to clipboard!\n\nSend this link to the student:\n${paymentLink}`);
+        alert(`✅ Payment link generated and copied to clipboard!\n\n${currencySymbol}${parseFloat(invoice.amount).toFixed(2)} ${currency.toUpperCase()}\n\nSend this link to the student:\n${paymentLink}`);
 
       } catch (error) {
         console.error('Stripe error:', error);
@@ -2613,113 +2954,113 @@
     // ==================== MESSAGING FUNCTIONS ====================
 
     async function loadSupportThreads() {
-  const { data: students } = await supabaseClient
-    .from('profiles')
-    .select('id, full_name')
-    .eq('role', 'student');
+      const { data: students } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'student');
 
-  if (!students || students.length === 0) {
-    document.getElementById('supportThreads').innerHTML = 
-      '<div class="empty-state">No students found.</div>';
-    return;
-  }
+      if (!students || students.length === 0) {
+        document.getElementById('supportThreads').innerHTML = 
+          '<div class="empty-state">No students found.</div>';
+        return;
+      }
 
-  const studentIds = students.map(s => s.id);
+      const studentIds = students.map(s => s.id);
 
-  const { data: messages } = await supabaseClient
-    .from('messages')
-    .select('*')
-    .eq('message_type', 'support')
-    .order('created_at', { ascending: false });
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'support')
+        .order('created_at', { ascending: false });
 
-  const studentMap = {};
-  students.forEach(s => {
-    studentMap[s.id] = s.full_name;
-  });
+      const studentMap = {};
+      students.forEach(s => {
+        studentMap[s.id] = s.full_name;
+      });
 
-  const threads = {};
-  
-  messages?.forEach(msg => {
-    let studentId = null;
-    if (studentIds.includes(msg.sender_id)) {
-      studentId = msg.sender_id;
-    } else if (studentIds.includes(msg.recipient_id)) {
-      studentId = msg.recipient_id;
+      const threads = {};
+      
+      messages?.forEach(msg => {
+        let studentId = null;
+        if (studentIds.includes(msg.sender_id)) {
+          studentId = msg.sender_id;
+        } else if (studentIds.includes(msg.recipient_id)) {
+          studentId = msg.recipient_id;
+        }
+        
+        if (studentId && studentMap[studentId]) {
+          if (!threads[studentId]) {
+            threads[studentId] = {
+              studentId: studentId,
+              studentName: studentMap[studentId],
+              messages: [],
+              lastMessageDate: new Date(msg.created_at),
+              unreadCount: 0,
+              totalCount: 0
+            };
+          }
+          
+          threads[studentId].messages.push(msg);
+          threads[studentId].totalCount++;
+          
+          // Count unread messages from student
+          if (msg.sender_id === studentId && !msg.is_read) {
+            threads[studentId].unreadCount++;
+          }
+          
+          const msgDate = new Date(msg.created_at);
+          if (msgDate > threads[studentId].lastMessageDate) {
+            threads[studentId].lastMessageDate = msgDate;
+          }
+        }
+      });
+
+      const threadArray = Object.values(threads).sort((a, b) => 
+        b.lastMessageDate - a.lastMessageDate
+      );
+
+      const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      updateBadge('supportBadge', totalUnread);
+
+      renderSupportThreads(threadArray);
     }
-    
-    if (studentId && studentMap[studentId]) {
-      if (!threads[studentId]) {
-        threads[studentId] = {
-          studentId: studentId,
-          studentName: studentMap[studentId],
-          messages: [],
-          lastMessageDate: new Date(msg.created_at),
-          unreadCount: 0,
-          totalCount: 0
-        };
+
+    function renderSupportThreads(threads) {
+      const container = document.getElementById('supportThreads');
+
+      if (!threads || threads.length === 0) {
+        container.innerHTML = '<div class="empty-state">No student messages yet.</div>';
+        return;
       }
-      
-      threads[studentId].messages.push(msg);
-      threads[studentId].totalCount++;
-      
-      // 🔥 FIXED: ALL admins see unread messages from students
-      if (msg.sender_id === studentId && !msg.is_read) {
-        threads[studentId].unreadCount++;
-      }
-      
-      const msgDate = new Date(msg.created_at);
-      if (msgDate > threads[studentId].lastMessageDate) {
-        threads[studentId].lastMessageDate = msgDate;
-      }
-    }
-  });
 
-  const threadArray = Object.values(threads).sort((a, b) => 
-    b.lastMessageDate - a.lastMessageDate
-  );
+      container.innerHTML = threads.map(thread => {
+        const lastMessage = thread.messages[0];
+        const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+        const lastMessageFrom = lastMessage.sender_id === currentAdminId ? 'You: ' : '';
+        const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
+        
+                const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
 
-  const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
-  updateBadge('supportBadge', totalUnread);
-
-  renderSupportThreads(threadArray);
-}
-
-function renderSupportThreads(threads) {
-  const container = document.getElementById('supportThreads');
-
-  if (!threads || threads.length === 0) {
-    container.innerHTML = '<div class="empty-state">No student messages yet.</div>';
-    return;
-  }
-
-  container.innerHTML = threads.map(thread => {
-    const lastMessage = thread.messages[0];
-    const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
-    const lastMessageFrom = lastMessage.sender_id === currentAdminId ? 'You: ' : '';
-    const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
-    
-    const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-
-    return `
-      <div class="thread-item ${unreadClass}" onclick="openStudentConversation('${thread.studentId}')">
-        <div class="thread-header">
-          <div class="sender-name">${thread.studentName}</div>
-          <div class="thread-meta">
-            ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount}</span>` : ''}
-            <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
-            <span class="last-message-date">${dateStr}</span>
+        return `
+          <div class="thread-item ${unreadClass}" onclick="openStudentConversation('${thread.studentId}')">
+            <div class="thread-header">
+              <div class="sender-name">${thread.studentName}</div>
+              <div class="thread-meta">
+                ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount}</span>` : ''}
+                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
+                <span class="last-message-date">${dateStr}</span>
+              </div>
+            </div>
+            <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
           </div>
-        </div>
-        <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
-      </div>
-    `;
-  }).join('');
-}
+        `;
+      }).join('');
+    }
 
     async function openStudentConversation(studentId) {
       const { data: student } = await supabaseClient
@@ -2802,7 +3143,7 @@ function renderSupportThreads(threads) {
           `;
         }).join('')}
 
-                  <div class="reply-box">
+        <div class="reply-box">
           <h5>💬 Reply to ${studentName}</h5>
           <div class="form-group">
             <label>Subject (optional)</label>
@@ -3408,7 +3749,7 @@ function renderSupportThreads(threads) {
       loadAdminChatThreads();
     }
 
-    function updateBadge(badgeId, count) {
+        function updateBadge(badgeId, count) {
       const badge = document.getElementById(badgeId);
       if (count > 0) {
         badge.textContent = count;
