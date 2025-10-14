@@ -3052,16 +3052,17 @@ async function viewInvoice(invoiceId) {
       </tfoot>
     </table>
     ${invoice.status === 'sent' || invoice.status === 'overdue' ? `
-      <div style="text-align: center; margin: 2rem 0;">
-        ${invoice.payment_schedule === 'installment' && (invoice.paid_installments || 0) < invoice.installment_count ? `
-          <button class="btn-primary" onclick="createNextInstallmentLink('${invoice.id}')">
-            Generate Link for Installment ${(invoice.paid_installments || 0) + 1}
-          </button>
-        ` : `
-          <button class="btn-primary" onclick="createStripePaymentLink('${invoice.id}')">Generate Payment Link</button>
-        `}
-      </div>
+  <div style="text-align: center; margin: 2rem 0; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    ${invoice.payment_schedule === 'installment' && (invoice.paid_installments || 0) > 0 && (invoice.paid_installments || 0) < invoice.installment_count ? `
+      <button class="btn-primary" onclick="createNextInstallmentLink('${invoice.id}')">
+        📋 Generate Link for Installment ${(invoice.paid_installments || 0) + 1}
+      </button>
     ` : ''}
+    <button class="btn-primary" onclick="createStripePaymentLink('${invoice.id}')">
+      💳 ${invoice.payment_link ? 'Regenerate' : 'Generate'} Payment Link
+    </button>
+  </div>
+` : ''}
     <div style="display: flex; gap: 1rem; justify-content: center;">
       <button class="btn-secondary" onclick="closeModal('viewInvoiceModal')">Close</button>
     </div>
