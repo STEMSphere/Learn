@@ -2907,7 +2907,7 @@
           line_items: lineItems,
           mode: invoice.payment_schedule === 'recurring' ? 'subscription' : 'payment',
           success_url: `${window.location.origin}/payment-success.html?session_id={CHECKOUT_SESSION_ID}&invoice_id=${invoice.id}`,
-          cancel_url: `${window.location.origin}/student-dashboard.html`,
+          cancel_url: `${window.location.origin}/dashboard.html`,
           metadata: {
             invoice_id: invoice.id,
             invoice_number: invoice.invoice_number,
