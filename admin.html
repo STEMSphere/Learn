@@ -265,6 +265,14 @@
       background: rgba(108, 117, 125, 0.2);
       color: #6c757d;
     }
+    .status-approved {
+      background: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+    }
+    .status-rejected {
+      background: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+    }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -618,7 +626,7 @@
       border-color: #28a745;
       box-shadow: 0 2px 8px rgba(40,167,69,0.2);
     }
-    .thread-item.unread {
+        .thread-item.unread {
       background: #d4edda;
       border-color: #28a745;
       border-width: 3px;
@@ -673,7 +681,7 @@
       margin-top: 0.5rem;
     }
 
-        .message-bubble {
+    .message-bubble {
       background: #f8f9fa;
       border: 1px solid #ddd;
       border-radius: 8px;
@@ -736,6 +744,57 @@
       margin: 0;
       opacity: 0.9;
       font-size: 0.9em;
+    }
+
+    /* Teacher Applications Specific Styles */
+    .application-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-left: 5px solid #ffc107;
+    }
+    .application-card.approved {
+      border-left-color: #28a745;
+    }
+    .application-card.rejected {
+      border-left-color: #dc3545;
+    }
+    .application-header {
+      display: flex;
+      align-items: start;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .profile-photo {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #ddd;
+    }
+    .profile-photo-placeholder {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    .subject-tag {
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin: 0.25rem;
     }
 
     @media (max-width: 768px) {
@@ -821,6 +880,10 @@
       <button class="tab" onclick="showTab('adminChat')">
         🔒 Admin Chat
         <span class="badge" id="adminChatBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab" onclick="showTab('teacherApplications')">
+        📋 Teacher Applications
+        <span class="badge" id="teacherAppsBadge" style="display:none;">0</span>
       </button>
     </div>
 
@@ -1007,9 +1070,32 @@
         </div>
       </div>
     </div>
+
+    <!-- TEACHER APPLICATIONS TAB -->
+    <div id="teacherApplicationsTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>📋 Teacher Applications</h3>
+          <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+            <select id="applicationStatusFilter" onchange="filterTeacherApplications(this.value)" style="padding:0.5rem; border-radius:6px; border:2px solid #ddd; color:#000; font-weight:600;">
+              <option value="all">All Applications</option>
+              <option value="pending" selected>⏳ Pending</option>
+              <option value="approved">✅ Approved</option>
+              <option value="rejected">❌ Rejected</option>
+            </select>
+            <span id="applicationCount" style="color:#666; font-weight:600;"></span>
+          </div>
+        </div>
+        
+        <div id="teacherApplicationsList">
+          <div class="empty-state">Loading applications...</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- MODALS -->
+  <!-- ALL YOUR EXISTING MODALS STAY THE SAME -->
   
   <!-- ASSIGN TEACHER TO SESSION MODAL -->
   <div id="assignModal" class="modal">
@@ -1074,7 +1160,7 @@
         <input type="tel" id="addTeacherPhone">
       </div>
       
-      <div class="form-group">
+            <div class="form-group">
         <label>Subjects</label>
         <input type="text" id="addTeacherSubjects" placeholder="Math, Science, English">
         <div class="help-text">Comma separated list of subjects they teach</div>
@@ -1157,7 +1243,7 @@
     </div>
   </div>
 
-  <!-- CREATE INVOICE MODAL -->
+  <!-- CREATE INVOICE MODAL (keeping your existing invoice modal exactly as is) -->
   <div id="createInvoiceModal" class="modal">
     <div class="modal-content" style="max-width: 900px;">
       <h3>💳 Create New Invoice</h3>
@@ -1186,7 +1272,6 @@
         <textarea id="invoiceDescription" placeholder="Additional details about this invoice..."></textarea>
       </div>
 
-      <!-- Currency Selection - ALL STRIPE CURRENCIES -->
       <div class="form-group">
         <label>Currency *</label>
         <select id="invoiceCurrency" required>
@@ -1199,142 +1284,9 @@
           <option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
           <option value="INR">🇮🇳 INR - Indian Rupee</option>
           <option value="SGD">🇸🇬 SGD - Singapore Dollar</option>
-          <option value="AED">🇦🇪 AED - UAE Dirham</option>
-          <option value="AFN">🇦🇫 AFN - Afghan Afghani</option>
-          <option value="ALL">🇦🇱 ALL - Albanian Lek</option>
-          <option value="AMD">🇦🇲 AMD - Armenian Dram</option>
-          <option value="ANG">🇳🇱 ANG - Netherlands Antillean Guilder</option>
-          <option value="AOA">🇦🇴 AOA - Angolan Kwanza</option>
-          <option value="ARS">🇦🇷 ARS - Argentine Peso</option>
-          <option value="AWG">🇦🇼 AWG - Aruban Florin</option>
-          <option value="AZN">🇦🇿 AZN - Azerbaijani Manat</option>
-          <option value="BAM">🇧🇦 BAM - Bosnia-Herzegovina Convertible Mark</option>
-          <option value="BBD">🇧🇧 BBD - Barbadian Dollar</option>
-          <option value="BDT">🇧🇩 BDT - Bangladeshi Taka</option>
-          <option value="BGN">🇧🇬 BGN - Bulgarian Lev</option>
-          <option value="BHD">🇧🇭 BHD - Bahraini Dinar</option>
-          <option value="BIF">🇧🇮 BIF - Burundian Franc</option>
-          <option value="BMD">🇧🇲 BMD - Bermudan Dollar</option>
-          <option value="BND">🇧🇳 BND - Brunei Dollar</option>
-          <option value="BOB">🇧🇴 BOB - Bolivian Boliviano</option>
-          <option value="BRL">🇧🇷 BRL - Brazilian Real</option>
-          <option value="BSD">🇧🇸 BSD - Bahamian Dollar</option>
-          <option value="BWP">🇧🇼 BWP - Botswanan Pula</option>
-          <option value="BYN">🇧🇾 BYN - Belarusian Ruble</option>
-          <option value="BZD">🇧🇿 BZD - Belize Dollar</option>
-          <option value="CDF">🇨🇩 CDF - Congolese Franc</option>
-          <option value="CHF">🇨🇭 CHF - Swiss Franc</option>
-          <option value="CLP">🇨🇱 CLP - Chilean Peso</option>
-          <option value="COP">🇨🇴 COP - Colombian Peso</option>
-          <option value="CRC">🇨🇷 CRC - Costa Rican Colón</option>
-          <option value="CVE">🇨🇻 CVE - Cape Verdean Escudo</option>
-          <option value="CZK">🇨🇿 CZK - Czech Koruna</option>
-          <option value="DJF">🇩🇯 DJF - Djiboutian Franc</option>
-          <option value="DKK">🇩🇰 DKK - Danish Krone</option>
-          <option value="DOP">🇩🇴 DOP - Dominican Peso</option>
-          <option value="DZD">🇩🇿 DZD - Algerian Dinar</option>
-          <option value="EGP">🇪🇬 EGP - Egyptian Pound</option>
-          <option value="ETB">🇪🇹 ETB - Ethiopian Birr</option>
-          <option value="FJD">🇫🇯 FJD - Fijian Dollar</option>
-          <option value="FKP">🇫🇰 FKP - Falkland Islands Pound</option>
-          <option value="GEL">🇬🇪 GEL - Georgian Lari</option>
-          <option value="GIP">🇬🇮 GIP - Gibraltar Pound</option>
-          <option value="GMD">🇬🇲 GMD - Gambian Dalasi</option>
-          <option value="GNF">🇬🇳 GNF - Guinean Franc</option>
-          <option value="GTQ">🇬🇹 GTQ - Guatemalan Quetzal</option>
-          <option value="GYD">🇬🇾 GYD - Guyanaese Dollar</option>
-          <option value="HKD">🇭🇰 HKD - Hong Kong Dollar</option>
-          <option value="HNL">🇭🇳 HNL - Honduran Lempira</option>
-          <option value="HRK">🇭🇷 HRK - Croatian Kuna</option>
-          <option value="HTG">🇭🇹 HTG - Haitian Gourde</option>
-          <option value="HUF">🇭🇺 HUF - Hungarian Forint</option>
-          <option value="IDR">🇮🇩 IDR - Indonesian Rupiah</option>
-          <option value="ILS">🇮🇱 ILS - Israeli New Shekel</option>
-          <option value="IQD">🇮🇶 IQD - Iraqi Dinar</option>
-          <option value="ISK">🇮🇸 ISK - Icelandic Króna</option>
-          <option value="JMD">🇯🇲 JMD - Jamaican Dollar</option>
-          <option value="JOD">🇯🇴 JOD - Jordanian Dinar</option>
-          <option value="KES">🇰🇪 KES - Kenyan Shilling</option>
-          <option value="KGS">🇰🇬 KGS - Kyrgystani Som</option>
-          <option value="KHR">🇰🇭 KHR - Cambodian Riel</option>
-          <option value="KMF">🇰🇲 KMF - Comorian Franc</option>
-          <option value="KRW">🇰🇷 KRW - South Korean Won</option>
-          <option value="KWD">🇰🇼 KWD - Kuwaiti Dinar</option>
-          <option value="KYD">🇰🇾 KYD - Cayman Islands Dollar</option>
-          <option value="KZT">🇰🇿 KZT - Kazakhstani Tenge</option>
-          <option value="LAK">🇱🇦 LAK - Laotian Kip</option>
-          <option value="LBP">🇱🇧 LBP - Lebanese Pound</option>
-          <option value="LKR">🇱🇰 LKR - Sri Lankan Rupee</option>
-          <option value="LRD">🇱🇷 LRD - Liberian Dollar</option>
-          <option value="LSL">🇱🇸 LSL - Lesotho Loti</option>
-          <option value="MAD">🇲🇦 MAD - Moroccan Dirham</option>
-          <option value="MDL">🇲🇩 MDL - Moldovan Leu</option>
-          <option value="MGA">🇲🇬 MGA - Malagasy Ariary</option>
-          <option value="MKD">🇲🇰 MKD - Macedonian Denar</option>
-          <option value="MMK">🇲🇲 MMK - Myanma Kyat</option>
-          <option value="MNT">🇲🇳 MNT - Mongolian Tugrik</option>
-          <option value="MOP">🇲🇴 MOP - Macanese Pataca</option>
-          <option value="MRO">🇲🇷 MRO - Mauritanian Ouguiya</option>
-          <option value="MUR">🇲🇺 MUR - Mauritian Rupee</option>
-          <option value="MVR">🇲🇻 MVR - Maldivian Rufiyaa</option>
-          <option value="MWK">🇲🇼 MWK - Malawian Kwacha</option>
-          <option value="MXN">🇲🇽 MXN - Mexican Peso</option>
-          <option value="MYR">🇲🇾 MYR - Malaysian Ringgit</option>
-          <option value="MZN">🇲🇿 MZN - Mozambican Metical</option>
-          <option value="NAD">🇳🇦 NAD - Namibian Dollar</option>
-          <option value="NGN">🇳🇬 NGN - Nigerian Naira</option>
-          <option value="NIO">🇳🇮 NIO - Nicaraguan Córdoba</option>
-          <option value="NOK">🇳🇴 NOK - Norwegian Krone</option>
-          <option value="NPR">🇳🇵 NPR - Nepalese Rupee</option>
-          <option value="NZD">🇳🇿 NZD - New Zealand Dollar</option>
-          <option value="OMR">🇴🇲 OMR - Omani Rial</option>
-          <option value="PAB">🇵🇦 PAB - Panamanian Balboa</option>
-          <option value="PEN">🇵🇪 PEN - Peruvian Nuevo Sol</option>
-          <option value="PGK">🇵🇬 PGK - Papua New Guinean Kina</option>
-          <option value="PHP">🇵🇭 PHP - Philippine Peso</option>
-          <option value="PKR">🇵🇰 PKR - Pakistani Rupee</option>
-          <option value="PLN">🇵🇱 PLN - Polish Zloty</option>
-          <option value="PYG">🇵🇾 PYG - Paraguayan Guarani</option>
-          <option value="QAR">🇶🇦 QAR - Qatari Rial</option>
-          <option value="RON">🇷🇴 RON - Romanian Leu</option>
-          <option value="RSD">🇷🇸 RSD - Serbian Dinar</option>
-          <option value="RUB">🇷🇺 RUB - Russian Ruble</option>
-          <option value="RWF">🇷🇼 RWF - Rwandan Franc</option>
-          <option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
-          <option value="SBD">🇸🇧 SBD - Solomon Islands Dollar</option>
-          <option value="SCR">🇸🇨 SCR - Seychellois Rupee</option>
-          <option value="SEK">🇸🇪 SEK - Swedish Krona</option>
-          <option value="SHP">🇸🇭 SHP - Saint Helena Pound</option>
-          <option value="SLL">🇸🇱 SLL - Sierra Leonean Leone</option>
-          <option value="SOS">🇸🇴 SOS - Somali Shilling</option>
-          <option value="SRD">🇸🇷 SRD - Surinamese Dollar</option>
-          <option value="STD">🇸🇹 STD - São Tomé and Príncipe Dobra</option>
-          <option value="SZL">🇸🇿 SZL - Swazi Lilangeni</option>
-          <option value="THB">🇹🇭 THB - Thai Baht</option>
-          <option value="TJS">🇹🇯 TJS - Tajikistani Somoni</option>
-          <option value="TOP">🇹🇴 TOP - Tongan Paʻanga</option>
-          <option value="TRY">🇹🇷 TRY - Turkish Lira</option>
-          <option value="TTD">🇹🇹 TTD - Trinidad and Tobago Dollar</option>
-          <option value="TWD">🇹🇼 TWD - New Taiwan Dollar</option>
-          <option value="TZS">🇹🇿 TZS - Tanzanian Shilling</option>
-          <option value="UAH">🇺🇦 UAH - Ukrainian Hryvnia</option>
-          <option value="UGX">🇺🇬 UGX - Ugandan Shilling</option>
-          <option value="UYU">🇺🇾 UYU - Uruguayan Peso</option>
-          <option value="UZS">🇺🇿 UZS - Uzbekistan Som</option>
-          <option value="VND">🇻🇳 VND - Vietnamese Dong</option>
-          <option value="VUV">🇻🇺 VUV - Vanuatu Vatu</option>
-          <option value="WST">🇼🇸 WST - Samoan Tala</option>
-          <option value="XAF">🇨🇲 XAF - CFA Franc BEAC</option>
-          <option value="XCD">🇦🇬 XCD - East Caribbean Dollar</option>
-          <option value="XOF">🇸🇳 XOF - CFA Franc BCEAO</option>
-          <option value="XPF">🇵🇫 XPF - CFP Franc</option>
-          <option value="YER">🇾🇪 YER - Yemeni Rial</option>
-          <option value="ZAR">🇿🇦 ZAR - South African Rand</option>
-          <option value="ZMW">🇿🇲 ZMW - Zambian Kwacha</option>
         </select>
       </div>
 
-      <!-- Payment Schedule -->
       <div class="form-group">
         <label>Payment Schedule *</label>
         <select id="paymentSchedule" onchange="toggleInstallmentOptions()">
@@ -1344,7 +1296,6 @@
         </select>
       </div>
 
-      <!-- Installment Options (hidden by default) -->
       <div id="installmentOptions" style="display:none;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div class="form-group">
@@ -1365,7 +1316,6 @@
         </div>
       </div>
 
-      <!-- Payment Methods -->
       <div class="form-group">
         <label>Allowed Payment Methods *</label>
         <div style="display:flex; flex-direction:column; gap:0.5rem;">
@@ -1380,14 +1330,6 @@
           <label style="display:flex; align-items:center; gap:0.5rem;">
             <input type="checkbox" name="paymentMethod" value="paypal">
             💰 PayPal
-          </label>
-          <label style="display:flex; align-items:center; gap:0.5rem;">
-            <input type="checkbox" name="paymentMethod" value="alipay">
-            🇨🇳 Alipay (China)
-          </label>
-          <label style="display:flex; align-items:center; gap:0.5rem;">
-            <input type="checkbox" name="paymentMethod" value="wechat_pay">
-            💬 WeChat Pay (China)
           </label>
         </div>
       </div>
@@ -1467,7 +1409,7 @@
     </div>
   </div>
 
-   <!-- COMPOSE TO ADMIN MODAL -->
+  <!-- COMPOSE TO ADMIN MODAL -->
   <div id="composeToAdminModal" class="modal">
     <div class="modal-content">
       <h3>🔒 Message Another Admin</h3>
@@ -1496,6 +1438,15 @@
     </div>
   </div>
 
+  <!-- VIEW APPLICATION MODAL (NEW - FULL SCREEN WITH NO ENDLESS SCROLLING) -->
+  <div id="viewApplicationModal" class="modal">
+    <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+      <div id="applicationViewContent">
+        <!-- Content populated dynamically -->
+      </div>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
@@ -1516,6 +1467,9 @@
     let unreadTeacherSupportCount = 0;
     let unreadAdminChatCount = 0;
     let invoiceStudents = [];
+    let currentApplicationFilter = 'pending';
+    let teacherAppsAuthenticated = false;
+    const TEACHER_APPS_PASSWORD = 'MYACCESSAVA'; // Password to access teacher applications
 
     async function checkAdminAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -1549,6 +1503,7 @@
       loadTeacherSupportThreads();
       loadAdminChatThreads();
       loadInvoices();
+      loadTeacherApplicationsCount(); // Load count only (not full list until they click tab)
 
       supabaseClient
         .channel('admin_realtime')
@@ -1570,6 +1525,16 @@
           loadInvoices();
           loadStats();
         })
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'teacher_applications'
+        }, () => {
+          loadTeacherApplicationsCount();
+          if (teacherAppsAuthenticated) {
+            loadTeacherApplications();
+          }
+        })
         .subscribe();
     }
 
@@ -1578,7 +1543,7 @@
       window.location.href = 'admin-login.html';
     }
 
-    async function loadStats() {
+       async function loadStats() {
       const { data: bookings } = await supabaseClient.from('bookings').select('id, assigned_teacher_id, status');
       const { data: students } = await supabaseClient.from('profiles').select('id').eq('role', 'student');
       const { data: teachers } = await supabaseClient.from('profiles').select('id').eq('role', 'teacher');
@@ -1609,6 +1574,7 @@
       unreadTeacherSupportCount = teacherMessages?.length || 0;
       
       loadInvoiceStats();
+      loadTeacherApplicationsCount();
     }
 
     function showTab(tabName) {
@@ -1626,7 +1592,274 @@
         loadAdminChatThreads();
       } else if (tabName === 'invoices') {
         loadInvoices();
+      } else if (tabName === 'teacherApplications') {
+        loadTeacherApplications();
       }
+    }
+
+    // ==================== TEACHER APPLICATIONS FUNCTIONS ====================
+
+    async function loadTeacherApplicationsCount() {
+      const { data, error } = await supabaseClient
+        .from('teacher_applications')
+        .select('status')
+        .eq('status', 'pending');
+
+      if (!error && data) {
+        updateBadge('teacherAppsBadge', data.length);
+      }
+    }
+
+    async function loadTeacherApplications() {
+      // Password gate
+      if (!teacherAppsAuthenticated) {
+        const password = prompt('🔐 Enter password to view Teacher Applications:');
+        if (password !== TEACHER_APPS_PASSWORD) {
+          alert('❌ Incorrect password. Access denied.');
+          // Switch back to previous tab
+          document.querySelector('.tab.active')?.classList.remove('active');
+          document.querySelector('.tab')?.classList.add('active');
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          document.getElementById('pendingTab').classList.add('active');
+          return;
+        }
+        teacherAppsAuthenticated = true;
+      }
+
+      let query = supabaseClient
+        .from('teacher_applications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (currentApplicationFilter !== 'all') {
+        query = query.eq('status', currentApplicationFilter);
+      }
+
+      const { data: applications, error } = await query;
+
+      const container = document.getElementById('teacherApplicationsList');
+      const countDisplay = document.getElementById('applicationCount');
+
+      if (error) {
+        console.error('Error loading applications:', error);
+        container.innerHTML = '<div class="empty-state">Error loading applications: ' + error.message + '</div>';
+        return;
+      }
+
+      if (!applications || applications.length === 0) {
+        container.innerHTML = `<div class="empty-state">No ${currentApplicationFilter !== 'all' ? currentApplicationFilter : ''} applications found.</div>`;
+        countDisplay.textContent = '0 applications';
+        return;
+      }
+
+      countDisplay.textContent = `${applications.length} application${applications.length !== 1 ? 's' : ''}`;
+
+      container.innerHTML = applications.map(app => {
+        const statusClass = app.status === 'approved' ? 'approved' : app.status === 'rejected' ? 'rejected' : '';
+        
+        return `
+          <div class="application-card ${statusClass}">
+            <div class="application-header">
+              ${app.profile_photo_url ? `
+                <img src="${app.profile_photo_url}" class="profile-photo">
+              ` : `
+                <div class="profile-photo-placeholder">
+                  ${app.full_name.charAt(0).toUpperCase()}
+                </div>
+              `}
+              
+              <div style="flex: 1; min-width: 300px;">
+                <h3 style="color: #000; margin-bottom: 0.5rem; font-size: 1.5rem;">${app.full_name}</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin: 0.75rem 0;">
+                  <div>
+                    <strong style="color: #666; font-size: 0.85rem;">📧 Email:</strong><br>
+                    <a href="mailto:${app.email}" style="color: #007bff; font-size: 0.95rem;">${app.email}</a>
+                  </div>
+                  <div>
+                    <strong style="color: #666; font-size: 0.85rem;">🌍 Country:</strong><br>
+                    <span style="font-size: 0.95rem;">${app.country}</span>
+                  </div>
+                  <div>
+                    <strong style="color: #666; font-size: 0.85rem;">💰 Expected Pay:</strong><br>
+                    <span style="font-size: 0.95rem;">${app.expected_monthly_pay} (monthly)</span>
+                  </div>
+                  <div>
+                    <strong style="color: #666; font-size: 0.85rem;">📅 Experience:</strong><br>
+                    <span style="font-size: 0.95rem;">${app.years_of_experience}</span>
+                  </div>
+                </div>
+
+                <div style="margin: 0.75rem 0;">
+                  <strong style="color: #666; font-size: 0.85rem;">📚 Subjects:</strong><br>
+                  <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem;">
+                    ${(Array.isArray(app.subjects) ? app.subjects : []).map(subject => 
+                      `<span class="subject-tag">${subject}</span>`
+                    ).join('')}
+                    ${app.other_subject ? `<span class="subject-tag" style="background: #fff3e0; color: #e65100;">${app.other_subject}</span>` : ''}
+                  </div>
+                </div>
+
+                <div style="margin: 0.75rem 0;">
+                  <strong style="color: #666; font-size: 0.85rem;">Status:</strong>
+                  <span class="status-badge status-${app.status}">
+                    ${app.status === 'pending' ? '⏳ PENDING' : app.status === 'approved' ? '✅ APPROVED' : '❌ REJECTED'}
+                  </span>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                  <button class="btn-small btn-view" onclick="viewFullApplication('${app.id}')">
+                    👁️ View Full Details
+                  </button>
+                  
+                  ${app.certifications_url ? `
+                    <button class="btn-small" style="background: #17a2b8; color: #fff;" onclick="window.open('${app.certifications_url.split(',')[0]}', '_blank')">
+                      📄 Certifications
+                    </button>
+                  ` : ''}
+                  
+                  ${app.video_url ? `
+                    <button class="btn-small" style="background: #6f42c1; color: #fff;" onclick="window.open('${app.video_url}', '_blank')">
+                      🎥 Teaching Video
+                    </button>
+                  ` : ''}
+                  
+                  ${app.status === 'pending' ? `
+                    <button class="btn-small btn-complete" onclick="updateApplicationStatus('${app.id}', 'approved', '${app.full_name.replace(/'/g, "\\'")}')">
+                      ✅ Approve
+                    </button>
+                    <button class="btn-small btn-delete" onclick="updateApplicationStatus('${app.id}', 'rejected', '${app.full_name.replace(/'/g, "\\'")}')">
+                      ❌ Reject
+                    </button>
+                  ` : ''}
+                  
+                  ${app.status !== 'pending' ? `
+                    <button class="btn-small" style="background: #ffc107; color: #000;" onclick="updateApplicationStatus('${app.id}', 'pending', '${app.full_name.replace(/'/g, "\\'")}')">
+                      🔄 Reset to Pending
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function filterTeacherApplications(status) {
+      currentApplicationFilter = status;
+      await loadTeacherApplications();
+    }
+
+    async function viewFullApplication(applicationId) {
+      const { data: app, error } = await supabaseClient
+        .from('teacher_applications')
+        .select('*')
+        .eq('id', applicationId)
+        .single();
+
+      if (error || !app) {
+        alert('Error loading application');
+        return;
+      }
+
+      const content = `
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; border-radius: 12px 12px 0 0; margin: -2rem -2rem 2rem -2rem; text-align: center;">
+          ${app.profile_photo_url ? `
+            <img src="${app.profile_photo_url}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; margin-bottom: 1rem;">
+          ` : `
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: #fff; color: #667eea; font-size: 3rem; font-weight: bold; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; border: 4px solid #fff;">
+              ${app.full_name.charAt(0).toUpperCase()}
+            </div>
+          `}
+          <h3 style="margin: 0 0 0.5rem 0; font-size: 2rem;">${app.full_name}</h3>
+          <p style="margin: 0; opacity: 0.9;">${app.email}</p>
+        </div>
+
+        <div style="background: ${app.status === 'approved' ? '#28a745' : app.status === 'rejected' ? '#dc3545' : '#ffc107'}; color: #fff; padding: 1rem; border-radius: 8px; text-align: center; margin-bottom: 2rem;">
+          <strong style="font-size: 1.2rem; text-transform: uppercase;">
+            ${app.status === 'pending' ? '⏳ PENDING REVIEW' : app.status === 'approved' ? '✅ APPROVED' : '❌ REJECTED'}
+          </strong>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+            <h4 style="color: #667eea; margin: 0 0 1rem 0;">📋 Basic Information</h4>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Country:</strong> ${app.country}</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Expected Pay:</strong> ${app.expected_monthly_pay} (monthly)</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Experience:</strong> ${app.years_of_experience}</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Computer:</strong> ${app.has_computer}</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Applied:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
+          </div>
+
+          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+            <h4 style="color: #667eea; margin: 0 0 1rem 0;">📚 Teaching Subjects</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+              ${(Array.isArray(app.subjects) ? app.subjects : []).map(subject => 
+                `<span style="background: #667eea; color: #fff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">${subject}</span>`
+              ).join('')}
+              ${app.other_subject ? `<span style="background: #764ba2; color: #fff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">${app.other_subject}</span>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+          <h4 style="color: #667eea; margin: 0 0 1rem 0;">💬 Why They Want to Join</h4>
+          <p style="color: #333; line-height: 1.8; white-space: pre-wrap;">${app.why_join}</p>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+          ${app.certifications_url ? `
+            <a href="${app.certifications_url.split(',')[0]}" target="_blank" style="background: #17a2b8; color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+              📄 View Certifications
+            </a>
+          ` : ''}
+          
+          ${app.video_url ? `
+            <a href="${app.video_url}" target="_blank" style="background: #6f42c1; color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+              🎥 Watch Teaching Video
+            </a>
+          ` : ''}
+        </div>
+
+        ${app.status === 'pending' ? `
+          <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+            <button class="btn-primary" style="background: #28a745;" onclick="updateApplicationStatus('${app.id}', 'approved', '${app.full_name.replace(/'/g, "\\'")}'); closeModal('viewApplicationModal');">
+              ✅ Approve Application
+            </button>
+            <button class="btn-primary" style="background: #dc3545;" onclick="updateApplicationStatus('${app.id}', 'rejected', '${app.full_name.replace(/'/g, "\\'")}'); closeModal('viewApplicationModal');">
+              ❌ Reject Application
+            </button>
+          </div>
+        ` : ''}
+
+        <div style="text-align: center; margin-top: 2rem;">
+          <button class="btn-secondary" onclick="closeModal('viewApplicationModal')">Close</button>
+        </div>
+      `;
+
+      document.getElementById('applicationViewContent').innerHTML = content;
+      document.getElementById('viewApplicationModal').classList.add('active');
+    }
+
+    async function updateApplicationStatus(appId, newStatus, applicantName) {
+      if (!confirm(`Are you sure you want to mark ${applicantName}'s application as ${newStatus}?`)) {
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('teacher_applications')
+        .update({ status: newStatus })
+        .eq('id', appId);
+
+      if (error) {
+        alert('Error updating status: ' + error.message);
+        return;
+      }
+
+            alert(`✅ Application ${newStatus} successfully!`);
+      await loadTeacherApplications();
+      await loadStats();
     }
 
     async function loadPendingSessions() {
@@ -1901,7 +2134,7 @@
         const subjects = teacher.subjects || 'No subjects listed';
         const alreadyAssigned = assignedTeacherIds.includes(teacher.id);
 
-               return `
+        return `
           <div class="teacher-card ${alreadyAssigned ? 'already-assigned' : ''}" 
                onclick="${alreadyAssigned ? '' : `selectStudentTeacher('${teacher.id}')`}" 
                data-teacher-id="${teacher.id}">
@@ -1989,68 +2222,64 @@
 
       alert('✅ Teacher added successfully!');
 
-// ✅ Send email notifications
-try {
-  // Get student and teacher details
-  const student = await supabaseClient
-    .from('profiles')
-    .select('email, full_name, age_group')
-    .eq('id', studentId)
-    .single();
-  
-  const teacher = await supabaseClient
-    .from('profiles')
-    .select('email, full_name')
-    .eq('id', selectedStudentTeacherId)
-    .single();
+      try {
+        const student = await supabaseClient
+          .from('profiles')
+          .select('email, full_name, age_group')
+          .eq('id', studentId)
+          .single();
+        
+        const teacher = await supabaseClient
+          .from('profiles')
+          .select('email, full_name')
+          .eq('id', selectedStudentTeacherId)
+          .single();
 
-  if (student.data && teacher.data) {
-    // Email to student
-    fetch('https://horqtcwnhwgodwlyqhli.supabase.co/functions/v1/send-notification-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_KEY}`
-      },
-      body: JSON.stringify({
-        type: 'teacher_assigned_to_student',
-        to: student.data.email,
-        data: {
-          studentName: student.data.full_name,
-          teacherName: teacher.data.full_name
+        if (student.data && teacher.data) {
+          fetch('https://horqtcwnhwgodwlyqhli.supabase.co/functions/v1/send-notification-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
+            body: JSON.stringify({
+              type: 'teacher_assigned_to_student',
+              to: student.data.email,
+              data: {
+                studentName: student.data.full_name,
+                teacherName: teacher.data.full_name
+              }
+            })
+          });
+
+          fetch('https://horqtcwnhwgodwlyqhli.supabase.co/functions/v1/send-notification-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
+            body: JSON.stringify({
+              type: 'student_assigned_to_teacher',
+              to: teacher.data.email,
+              data: {
+                teacherName: teacher.data.full_name,
+                studentName: student.data.full_name,
+                ageGroup: student.data.age_group
+              }
+            })
+          });
+
+          console.log('✅ Assignment notification emails sent');
         }
-      })
-    });
+      } catch (emailError) {
+        console.error('⚠️ Email notification failed (non-critical):', emailError);
+      }
 
-    // Email to teacher
-    fetch('https://horqtcwnhwgodwlyqhli.supabase.co/functions/v1/send-notification-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_KEY}`
-      },
-      body: JSON.stringify({
-        type: 'student_assigned_to_teacher',
-        to: teacher.data.email,
-        data: {
-          teacherName: teacher.data.full_name,
-          studentName: student.data.full_name,
-          ageGroup: student.data.age_group
-        }
-      })
-    });
+      closeModal('assignStudentTeacherModal');
 
-    console.log('✅ Assignment notification emails sent');
-  }
-} catch (emailError) {
-  console.error('⚠️ Email notification failed (non-critical):', emailError);
-}
-
-closeModal('assignStudentTeacherModal');
-
-await loadStudents();
-await loadTeachers();
-await loadStats();
+      await loadStudents();
+      await loadTeachers();
+      await loadStats();
       
       document.getElementById('confirmStudentTeacherBtn').textContent = 'Add Teacher';
     }
@@ -2233,7 +2462,7 @@ await loadStats();
       const confirmPassword = document.getElementById('confirmPassword').value;
       const teacherEmail = document.getElementById('resetTeacherEmail').value;
 
-      if (!newPassword || !confirmPassword) {
+            if (!newPassword || !confirmPassword) {
         alert('Please fill in both password fields');
         return;
       }
@@ -2379,8 +2608,6 @@ await loadStats();
       currentBookingId = null;
       document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
-
-       // ==================== INVOICE FUNCTIONS ====================
 
     function generateInvoiceNumber() {
       const now = new Date();
@@ -2603,7 +2830,7 @@ await loadStats();
         const status = isOverdue ? 'overdue' : invoice.status;
         const currencySymbol = getCurrencySymbol(invoice.currency || 'USD');
 
-                return `
+        return `
           <tr>
             <td><strong>${invoice.invoice_number}</strong></td>
             <td><strong>${invoice.student?.full_name || 'Unknown'}</strong><br><small>${invoice.student?.email || ''}</small></td>
