@@ -441,7 +441,23 @@
 
       console.log('✅ Auth user created:', authData.user.id);
 
-      // Step 2: Create profile
+      // Step 1.5: Sign in immediately to establish session
+      const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        console.error('❌ Auto sign-in error:', signInError);
+        showWarning('Account created! Please switch to "Login" tab to sign in.');
+        document.getElementById('signupBtn').disabled = false;
+        document.getElementById('signupBtn').textContent = 'Create Account & Continue';
+        return;
+      }
+
+      console.log('✅ User signed in, session established');
+
+      // Step 2: Create profile (now with active session)
       const { data: profileData, error: profileError } = await supabaseClient
         .from('profiles')
         .insert({
@@ -466,10 +482,12 @@
       }
 
       console.log('✅ Profile created successfully!');
-      showSuccess('✅ Account created! Please switch to the "Login" tab to sign in and book your session.');
-      document.getElementById('signupBtn').disabled = false;
-      document.getElementById('signupBtn').textContent = 'Create Account & Continue';
-      document.getElementById('signupForm').reset();
+      showSuccess('✅ Account created successfully! Redirecting to dashboard...');
+      
+      // Redirect to dashboard
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1500);
     });
 
     // PASSWORD RESET
