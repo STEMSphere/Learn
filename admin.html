@@ -1597,7 +1597,7 @@
       }
     }
 
-   // ==================== TEACHER APPLICATIONS FUNCTIONS ====================
+    // ==================== TEACHER APPLICATIONS FUNCTIONS ====================
 
     async function loadTeacherApplicationsCount() {
       const { data, error } = await supabaseClient
@@ -1649,13 +1649,6 @@
       if (!applications || applications.length === 0) {
         container.innerHTML = `<div class="empty-state">No ${currentApplicationFilter !== 'all' ? currentApplicationFilter : ''} applications found.</div>`;
         countDisplay.textContent = '0 applications';
-        
-        // ✅ FIX: Update badge even when no results for current filter
-        const { data: pendingApps } = await supabaseClient
-          .from('teacher_applications')
-          .select('id')
-          .eq('status', 'pending');
-        updateBadge('teacherAppsBadge', pendingApps?.length || 0);
         return;
       }
 
@@ -1873,7 +1866,7 @@
       }
 
       alert(`✅ Application ${newStatus} successfully!`);
-      await loadTeacherApplications(); // ✅ This will now update the badge
+      await loadTeacherApplications(); // ✅ This will update the badge
       await loadStats();
     }
 
@@ -1882,7 +1875,7 @@
         .from('bookings')
         .select('*')
         .is('assigned_teacher_id', null)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false});
 
       const tbody = document.getElementById('pendingBody');
 
@@ -1935,8 +1928,6 @@
         `;
       }).join('');
     }
-    }
-
     async function loadBookings() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
