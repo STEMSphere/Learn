@@ -1597,7 +1597,7 @@
       }
     }
 
-    // ==================== TEACHER APPLICATIONS FUNCTIONS ====================
+   // ==================== TEACHER APPLICATIONS FUNCTIONS ====================
 
     async function loadTeacherApplicationsCount() {
       const { data, error } = await supabaseClient
@@ -1649,10 +1649,25 @@
       if (!applications || applications.length === 0) {
         container.innerHTML = `<div class="empty-state">No ${currentApplicationFilter !== 'all' ? currentApplicationFilter : ''} applications found.</div>`;
         countDisplay.textContent = '0 applications';
+        
+        // ✅ FIX: Update badge even when no results for current filter
+        const { data: pendingApps } = await supabaseClient
+          .from('teacher_applications')
+          .select('id')
+          .eq('status', 'pending');
+        updateBadge('teacherAppsBadge', pendingApps?.length || 0);
         return;
       }
 
       countDisplay.textContent = `${applications.length} application${applications.length !== 1 ? 's' : ''}`;
+
+      // ✅ FIX: Always update badge with PENDING count (not filtered count)
+      const { data: pendingApps } = await supabaseClient
+        .from('teacher_applications')
+        .select('id')
+        .eq('status', 'pending');
+      
+      updateBadge('teacherAppsBadge', pendingApps?.length || 0);
 
       container.innerHTML = applications.map(app => {
         const statusClass = app.status === 'approved' ? 'approved' : app.status === 'rejected' ? 'rejected' : '';
@@ -1682,7 +1697,7 @@
                   </div>
                   <div>
                     <strong style="color: #666; font-size: 0.85rem;">💰 Expected Pay:</strong><br>
-                    <span style="font-size: 0.95rem;">${app.expected_monthly_pay} (monthly)</span>
+                    <span style="font-size: 0.95rem;">${app.expected_monthly_pay}</span>
                   </div>
                   <div>
                     <strong style="color: #666; font-size: 0.85rem;">📅 Experience:</strong><br>
@@ -1786,7 +1801,7 @@
           <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
             <h4 style="color: #667eea; margin: 0 0 1rem 0;">📋 Basic Information</h4>
             <p style="margin: 0.5rem 0; color: #333;"><strong>Country:</strong> ${app.country}</p>
-            <p style="margin: 0.5rem 0; color: #333;"><strong>Expected Pay:</strong> ${app.expected_monthly_pay} (monthly)</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Expected Pay:</strong> ${app.expected_monthly_pay}</p>
             <p style="margin: 0.5rem 0; color: #333;"><strong>Experience:</strong> ${app.years_of_experience}</p>
             <p style="margin: 0.5rem 0; color: #333;"><strong>Computer:</strong> ${app.has_computer}</p>
             <p style="margin: 0.5rem 0; color: #333;"><strong>Applied:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
@@ -1857,8 +1872,8 @@
         return;
       }
 
-            alert(`✅ Application ${newStatus} successfully!`);
-      await loadTeacherApplications();
+      alert(`✅ Application ${newStatus} successfully!`);
+      await loadTeacherApplications(); // ✅ This will now update the badge
       await loadStats();
     }
 
@@ -1919,6 +1934,7 @@
           </tr>
         `;
       }).join('');
+    }
     }
 
     async function loadBookings() {
