@@ -1851,24 +1851,37 @@
     }
 
     async function updateApplicationStatus(appId, newStatus, applicantName) {
-      if (!confirm(`Are you sure you want to mark ${applicantName}'s application as ${newStatus}?`)) {
-        return;
-      }
+  if (!confirm(`Are you sure you want to mark ${applicantName}'s application as ${newStatus}?`)) {
+    return;
+  }
 
-      const { error } = await supabaseClient
-        .from('teacher_applications')
-        .update({ status: newStatus })
-        .eq('id', appId);
+  console.log('🔄 Updating application:', appId, 'to status:', newStatus);
 
-      if (error) {
-        alert('Error updating status: ' + error.message);
-        return;
-      }
+  const { data, error } = await supabaseClient
+    .from('teacher_applications')
+    .update({ status: newStatus })
+    .eq('id', appId)
+    .select();
 
-      alert(`✅ Application ${newStatus} successfully!`);
-      await loadTeacherApplications(); // ✅ This will update the badge
-      await loadStats();
-    }
+  console.log('📊 Update result:', { data, error });
+
+  if (error) {
+    console.error('❌ Full error:', error);
+    alert('Error updating status: ' + error.message);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    alert('⚠️ Update may have failed - no rows affected. Check console for details.');
+    console.error('No rows were updated. Check if ID exists:', appId);
+    return;
+  }
+
+  console.log('✅ Successfully updated to:', data[0].status);
+  alert(`✅ Application ${newStatus} successfully!`);
+  await loadTeacherApplications();
+  await loadStats();
+}
 
     async function loadPendingSessions() {
       const { data: bookings, error } = await supabaseClient
