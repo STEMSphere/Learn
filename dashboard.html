@@ -1454,7 +1454,7 @@ async function payInvoice(invoiceId) {
       loadSupportThreads();
     }
 
-    async function sendSupportReply() {
+        async function sendSupportReply() {
       const subject = document.getElementById('supportReplySubject').value.trim();
       const message = document.getElementById('supportReplyMessage').value.trim();
 
@@ -1475,7 +1475,7 @@ async function payInvoice(invoiceId) {
         return;
       }
 
-            const { error } = await supabaseClient
+      const { error } = await supabaseClient
         .from('messages')
         .insert({
           sender_id: currentUserId,
@@ -1490,29 +1490,281 @@ async function payInvoice(invoiceId) {
         return;
       }
 
+      alert('✅ Reply sent successfully!');
       closeModal('supportConversationModal');
-     // ✅ Send email notification to admin
-try {
-  const { data: admin } = await supabaseClient
-    .from('profiles')
-    .select('email, full_name')
-    .eq('id', currentAdminId)
-    .single();
+      await openSupportConversation();
+    }
 
-  const { data: currentUser } = await supabaseClient
-    .from('profiles')
-    .select('full_name')
-    .eq('id', currentUserId)
-    .single();
+    // ============================================
+    // TEACHER MESSAGING - THREADED INBOX
+    // ============================================
+    async function loadTeacherThreads() {
+      console.log('📬 Loading teacher threads for student:', currentUserId);
+      
+      if (!myTeachers || myTeachers.length === 0) {
+        document.getElementById('teacherThreads').innerHTML = 
+          '<div class="empty-state">No teachers assigned yet. Contact support for assistance.</div>';
+        return;
+      }
 
-  // Don't send email to admin (they get too many)
-  console.log('⚠️ Skipping email to admin (too many messages)');
-} catch (emailError) {
-  console.error('⚠️ Email notification failed (non-critical):', emailError);
-}
+      const teacherIds = myTeachers.map(t => t.id);
+      console.log('👨‍🏫 Teacher IDs:', teacherIds);
 
-alert('✅ Reply sent successfully!');
-openStudentConversation(studentId);
+      const { data: messages, error } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_student')
+        .or(`and(sender_id.in.(${teacherIds.join(',')}),recipient_id.eq.${currentUserId}),and(sender_id.eq.${currentUserId},recipient_id.in.(${teacherIds.join(',')}))`)
+        .order('created_at', { ascending: false });
+
+      console.log('📨 Messages found:', messages?.length || 0);
+
+      if (error) {
+        console.error('❌ Error loading teacher messages:', error);
+        document.getElementById('teacherThreads').innerHTML = 
+          '<div class="empty-state">Error loading messages. Please refresh the page.</div>';
+        return;
+      }
+
+      const teacherMap = {};
+      myTeachers.forEach(t => {
+        teacherMap[t.id] = t.full_name;
+      });
+
+      const threads = {};
+      
+      messages?.forEach(msg => {
+        const teacherId = msg.sender_id === currentUserId ? msg.recipient_id : msg.sender_id;
+        
+        if (!threads[teacherId]) {
+          threads[teacherId] = {
+            teacherId: teacherId,
+            teacherName: teacherMap[teacherId] || 'Unknown Teacher',
+            messages: [],
+            lastMessageDate: new Date(msg.created_at),
+            unreadCount: 0,
+            totalCount: 0
+          };
+        }
+        
+        threads[teacherId].messages.push(msg);
+        threads[teacherId].totalCount++;
+        
+        if (msg.recipient_id === currentUserId && !msg.is_read) {
+          threads[teacherId].unreadCount++;
+        }
+        
+        const msgDate = new Date(msg.created_at);
+        if (msgDate > threads[teacherId].lastMessageDate) {
+          threads[teacherId].lastMessageDate = msgDate;
+        }
+      });
+
+      const threadArray = Object.values(threads).sort((a, b) => 
+        b.lastMessageDate - a.lastMessageDate
+      );
+
+      console.log('🧵 Threads created:', threadArray.length);
+
+      const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      unreadTeachersCount = totalUnread;
+      updateBadge('teachersBadge', totalUnread);
+
+      console.log('🔔 Total unread messages from teachers:', totalUnread);
+
+      renderTeacherThreads(threadArray);
+    }
+
+    function renderTeacherThreads(threads) {
+      const container = document.getElementById('teacherThreads');
+
+      if (!threads || threads.length === 0) {
+        container.innerHTML = '<div class="empty-state">No messages yet. Click "Message a Teacher" to start a conversation!</div>';
+        return;
+      }
+
+      container.innerHTML = threads.map(thread => {
+        const lastMessage = thread.messages[0];
+        const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+        const lastMessageFrom = lastMessage.sender_id === currentUserId ? 'You: ' : '';
+        const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
+        
+        const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="thread-item ${unreadClass}" onclick="openTeacherConversation('${thread.teacherId}')">
+            <div class="thread-header">
+              <div class="teacher-name">${thread.teacherName}</div>
+              <div class="thread-meta">
+                ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
+                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
+                <span class="last-message-date">${dateStr}</span>
+              </div>
+            </div>
+            <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openTeacherConversation(teacherId) {
+      const teacher = myTeachers.find(t => t.id === teacherId);
+      const teacherName = teacher ? teacher.full_name : 'Teacher';
+
+      console.log('💬 Opening conversation with teacher:', teacherName, teacherId);
+
+      const { data: messages, error } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_student')
+        .or(`and(sender_id.eq.${teacherId},recipient_id.eq.${currentUserId}),and(sender_id.eq.${currentUserId},recipient_id.eq.${teacherId})`)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('❌ Error loading conversation:', error);
+        alert('Error loading conversation');
+        return;
+      }
+
+      console.log('📨 Messages in conversation:', messages?.length || 0);
+
+      const unreadMessageIds = messages
+        ?.filter(m => m.recipient_id === currentUserId && !m.is_read)
+        .map(m => m.id) || [];
+
+      if (unreadMessageIds.length > 0) {
+        console.log('✅ Marking', unreadMessageIds.length, 'messages as read');
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadMessageIds);
+      }
+
+      const conversationHTML = `
+        <div class="conversation-header">
+          <h4>💬 Conversation with ${teacherName}</h4>
+          <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} in this thread</p>
+        </div>
+
+        ${messages?.map(msg => {
+          const isFromMe = msg.sender_id === currentUserId;
+          const bubbleClass = isFromMe ? 'from-me' : 'from-teacher';
+          const date = new Date(msg.created_at).toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          return `
+            <div class="message-bubble ${bubbleClass}">
+              <div class="sender">${isFromMe ? 'You' : teacherName}</div>
+              <div class="timestamp">${date}</div>
+              ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
+              <div class="body">${msg.message}</div>
+            </div>
+          `;
+        }).join('') || '<div class="empty-state">No messages yet</div>'}
+
+        <div class="reply-box">
+          <h5>💬 Reply to ${teacherName}</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="teacherReplySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="teacherReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn-primary" onclick="sendReplyToTeacher('${teacherId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('conversationContent').innerHTML = conversationHTML;
+      document.getElementById('conversationModal').classList.add('active');
+
+      loadTeacherThreads();
+    }
+
+    async function sendReplyToTeacher(teacherId) {
+      const subject = document.getElementById('teacherReplySubject').value.trim();
+      const message = document.getElementById('teacherReplyMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      console.log('📤 Sending reply to teacher:', teacherId);
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          recipient_id: teacherId,
+          message_type: 'teacher_student',
+          subject: subject || 'Reply from student',
+          message: message
+        });
+
+      if (error) {
+        console.error('❌ Error sending message:', error);
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      console.log('✅ Message sent successfully');
+
+      try {
+        const { data: teacher } = await supabaseClient
+          .from('profiles')
+          .select('email, full_name')
+          .eq('id', teacherId)
+          .single();
+
+        const { data: currentUser } = await supabaseClient
+          .from('profiles')
+          .select('full_name')
+          .eq('id', currentUserId)
+          .single();
+
+        if (teacher && currentUser) {
+          fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
+            body: JSON.stringify({
+              type: 'new_message_to_teacher',
+              to: teacher.email,
+              data: {
+                recipientName: teacher.full_name,
+                senderName: currentUser.full_name,
+                subject: subject || 'New message',
+                message: message
+              }
+            })
+          });
+          console.log('✅ Email notification sent to teacher');
+        }
+      } catch (emailError) {
+        console.error('⚠️ Email notification failed (non-critical):', emailError);
+      }
+
+      alert('✅ Reply sent successfully!');
+      closeModal('conversationModal');
+      
+      await openTeacherConversation(teacherId);
     }
 
     function openComposeToTeacherModal() {
@@ -1702,7 +1954,7 @@ openStudentConversation(studentId);
                 style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${style}</button>`).join("")}
           </div>
         `;
-      } else if(wizardStep===4){
+            } else if(wizardStep===4){
         updateProgress(70);
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">🗣️ What do you need help with?</h3>
