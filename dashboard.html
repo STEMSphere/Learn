@@ -1232,16 +1232,41 @@ async function payInvoice(invoiceId) {
     }
 
     function renderSessionCards(bookings, teacherMap) {
-      return bookings.map(booking => {
-        const date = booking.session_date ? new Date(booking.session_date) : null;
-        const dateStr = date ? date.toLocaleDateString('en-US', { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        }) : 'Not scheduled yet';
-        
-        const timeStr = booking.session_time || 'Time not set';
+  return bookings.map(booking => {
+    // ✅ Check if session has UTC timestamp (new format)
+    let dateStr, timeStr;
+    
+    if (booking.session_utc) {
+      // ✅ NEW FORMAT: Convert from UTC to student's timezone
+      const studentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const utcDate = new Date(booking.session_utc);
+      
+      dateStr = utcDate.toLocaleDateString('en-US', { 
+        timeZone: studentTimezone,
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      
+      timeStr = utcDate.toLocaleTimeString('en-US', {
+        timeZone: studentTimezone,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      }) + ` (${studentTimezone})`;
+    } else {
+      // ✅ OLD FORMAT: Fallback for sessions created before timezone update
+      const date = booking.session_date ? new Date(booking.session_date) : null;
+      dateStr = date ? date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }) : 'Not scheduled yet';
+      
+      timeStr = booking.session_time ? booking.session_time + ' ⚠️ (Old format)' : 'Time not set';
+    }
         const statusClass = `status-${booking.status || 'scheduled'}`;
         const statusText = booking.status === 'scheduled' ? '✓ Scheduled' : '✓ Completed';
 
