@@ -1894,9 +1894,13 @@ async function payInvoice(invoiceId) {
       document.getElementById(modalId).classList.remove('active');
     }
 
-        // ============================================
+           // ============================================
     // BOOKING WIZARD (TIMEZONE-AWARE) ✅
     // ============================================
+    function updateProgress(percent) {
+      document.getElementById('wizardProgressFill').style.width = percent + '%';
+    }
+
     function openBookingWizard() {
       wizardStep = 0;
       // ✅ Auto-detect student's timezone
@@ -1979,8 +1983,7 @@ async function payInvoice(invoiceId) {
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
           
-          <!-- ✅ TIMEZONE SELECTOR -->
-          <div style="padding:0 20px; margin-bottom:1.5rem; background:#e3f2fd; border-radius:8px; padding:1rem;">
+          <div style="margin:0 20px 1.5rem 20px; background:#e3f2fd; border-radius:8px; padding:1rem;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
             <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:500px; padding:0.75rem; border:2px solid #007bff; border-radius:6px; font-size:1em; font-weight:600;">
               <option value="${wizardData.timezone}">📍 ${wizardData.timezone} (Auto-detected)</option>
