@@ -1894,17 +1894,22 @@ async function payInvoice(invoiceId) {
       document.getElementById(modalId).classList.remove('active');
     }
 
+        // ============================================
+    // BOOKING WIZARD (TIMEZONE-AWARE) ✅
     // ============================================
-    // BOOKING WIZARD
-    // ============================================
-    function updateProgress(percent) {
-      document.getElementById('wizardProgressFill').style.width = percent + '%';
-    }
-
     function openBookingWizard() {
       wizardStep = 0;
+      // ✅ Auto-detect student's timezone
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: userTimezone };
+      wizardData = { 
+        age: "", 
+        subject: "", 
+        style: "", 
+        help: "", 
+        date: "", 
+        time: "", 
+        timezone: userTimezone 
+      };
       document.getElementById('bookingWizard').classList.add('active');
       updateProgress(0);
       renderWizardStep();
@@ -1954,7 +1959,7 @@ async function payInvoice(invoiceId) {
                 style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${style}</button>`).join("")}
           </div>
         `;
-            } else if(wizardStep===4){
+      } else if(wizardStep===4){
         updateProgress(70);
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">🗣️ What do you need help with?</h3>
@@ -1974,22 +1979,32 @@ async function payInvoice(invoiceId) {
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
           
-          <div style="padding:0 20px; margin-bottom:1rem;">
-            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">🌍 Your Timezone:</label>
-            <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:400px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
-              <option value="${wizardData.timezone}">${wizardData.timezone} (Auto-detected)</option>
-              <option value="America/New_York">Eastern Time (ET)</option>
-              <option value="America/Chicago">Central Time (CT)</option>
-              <option value="America/Denver">Mountain Time (MT)</option>
-              <option value="America/Los_Angeles">Pacific Time (PT)</option>
-              <option value="Europe/London">London (GMT)</option>
-              <option value="Europe/Paris">Paris (CET)</option>
-              <option value="Asia/Dubai">Dubai (GST)</option>
-              <option value="Asia/Hong_Kong">Hong Kong (HKT)</option>
-              <option value="Asia/Singapore">Singapore (SGT)</option>
-              <option value="Asia/Tokyo">Tokyo (JST)</option>
-              <option value="Australia/Sydney">Sydney (AEDT)</option>
+          <!-- ✅ TIMEZONE SELECTOR -->
+          <div style="padding:0 20px; margin-bottom:1.5rem; background:#e3f2fd; border-radius:8px; padding:1rem;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
+            <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:500px; padding:0.75rem; border:2px solid #007bff; border-radius:6px; font-size:1em; font-weight:600;">
+              <option value="${wizardData.timezone}">📍 ${wizardData.timezone} (Auto-detected)</option>
+              <optgroup label="🇺🇸 United States">
+                <option value="America/New_York">Eastern Time (ET)</option>
+                <option value="America/Chicago">Central Time (CT)</option>
+                <option value="America/Denver">Mountain Time (MT)</option>
+                <option value="America/Los_Angeles">Pacific Time (PT)</option>
+              </optgroup>
+              <optgroup label="🇬🇧🇪🇺 Europe">
+                <option value="Europe/London">London (GMT)</option>
+                <option value="Europe/Paris">Paris (CET)</option>
+                <option value="Europe/Berlin">Berlin (CET)</option>
+              </optgroup>
+              <optgroup label="🌏 Asia Pacific">
+                <option value="Asia/Dubai">Dubai (GST)</option>
+                <option value="Asia/Kolkata">India (IST)</option>
+                <option value="Asia/Singapore">Singapore (SGT)</option>
+                <option value="Asia/Hong_Kong">Hong Kong (HKT)</option>
+                <option value="Asia/Tokyo">Tokyo (JST)</option>
+                <option value="Australia/Sydney">Sydney (AEDT)</option>
+              </optgroup>
             </select>
+            <p style="font-size:0.85em; color:#0056b3; margin-top:0.5rem; font-weight:500;">⏰ All times shown in YOUR timezone</p>
           </div>
 
           <div style="padding:0 20px;">
@@ -2014,6 +2029,7 @@ async function payInvoice(invoiceId) {
     function updateTimezone() {
       const selectedTimezone = document.getElementById('timezoneSelect').value;
       wizardData.timezone = selectedTimezone;
+      console.log('🌍 Student timezone:', selectedTimezone);
       const selectedDate = document.getElementById('wizardDate').value;
       if (selectedDate) {
         generateTimeSlots();
@@ -2124,7 +2140,15 @@ async function payInvoice(invoiceId) {
         const videoLink = roomData.url;
 
         console.log('✅ Video room created:', videoLink);
-        console.log('Room privacy:', roomData.privacy);
+
+        // ✅ Convert student's local time to UTC
+        const localDateTime = `${wizardData.date}T${wizardData.time}`;
+        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
+
+        console.log('📅 Student booking:');
+        console.log('  Student TZ:', wizardData.timezone);
+        console.log('  Local:', localDateTime);
+        console.log('  UTC:', utcTimestamp);
 
         const { data, error } = await supabaseClient
           .from('bookings')
@@ -2136,6 +2160,8 @@ async function payInvoice(invoiceId) {
             help_needed: wizardData.help,
             session_date: wizardData.date,
             session_time: wizardData.time,
+            session_timezone: wizardData.timezone,
+            session_utc: utcTimestamp,
             status: 'scheduled',
             instructor_name: 'STEMSphere Enrollment Advisor',
             video_link: videoLink
@@ -2163,6 +2189,66 @@ async function payInvoice(invoiceId) {
         alert('❌ Failed to create video room: ' + error.message + '\n\nPlease contact support.');
         document.getElementById('confirmBtn').disabled = false;
         document.getElementById('confirmBtn').textContent = 'Confirm Booking';
+      }
+    }
+
+    // ✅ TIMEZONE CONVERSION HELPERS
+    function convertToUTC(localDateTimeString, timezone) {
+      try {
+        const [datePart, timePart] = localDateTimeString.split('T');
+        const localDate = new Date(localDateTimeString);
+        
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone: timezone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+        
+        const parts = formatter.formatToParts(localDate);
+        const tzMap = {};
+        parts.forEach(part => {
+          tzMap[part.type] = part.value;
+        });
+        
+        const tzDateStr = `${tzMap.year}-${tzMap.month}-${tzMap.day}T${tzMap.hour}:${tzMap.minute}:${tzMap.second}`;
+        const tzDate = new Date(tzDateStr);
+        
+        const utcDate = new Date(localDate.toLocaleString('en-US', { timeZone: 'UTC' }));
+        const offset = tzDate.getTime() - utcDate.getTime();
+        
+        const finalUTC = new Date(localDate.getTime() - offset);
+        
+        return finalUTC.toISOString();
+      } catch (error) {
+        console.error('❌ Timezone conversion error:', error);
+        return new Date(localDateTimeString + ':00').toISOString();
+      }
+    }
+
+    function convertFromUTC(utcTimestamp, targetTimezone) {
+      try {
+        if (!utcTimestamp) return 'Not scheduled';
+        
+        const date = new Date(utcTimestamp);
+        const options = {
+          timeZone: targetTimezone,
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        };
+        
+        return date.toLocaleString('en-US', options);
+      } catch (error) {
+        console.error('❌ Display error:', error);
+        return new Date(utcTimestamp).toLocaleString();
       }
     }
 
