@@ -1757,11 +1757,29 @@ if (isUpcoming) {
       document.getElementById('wizardProgressFill').style.width = percent + '%';
     }
 
+        // ============================================
+    // CREATE SESSION WIZARD (TIMEZONE-AWARE) ✅
+    // ============================================
     function openCreateSessionWizard() {
       wizardStep = 0;
+      // ✅ Auto-detect teacher's timezone
+      const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      
       if (!wizardData.studentId) {
-        wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
+        wizardData = { 
+          studentId: "", 
+          studentName: "", 
+          subject: "", 
+          style: "", 
+          notes: "", 
+          date: "", 
+          time: "",
+          timezone: detectedTimezone
+        };
+      } else {
+        wizardData.timezone = detectedTimezone;
       }
+      
       document.getElementById('sessionWizard').classList.add('active');
       updateProgress(0);
       renderWizardStep();
@@ -1769,7 +1787,7 @@ if (isUpcoming) {
 
     function closeSessionWizard() {
       document.getElementById('sessionWizard').classList.remove('active');
-      wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
+      wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "", timezone: "" };
     }
 
     function renderWizardStep() {
@@ -1846,8 +1864,35 @@ if (isUpcoming) {
         
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
-          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Full calendar access - schedule anytime!</p>
+          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Schedule in your timezone - students see it in theirs!</p>
           
+          <!-- ✅ TIMEZONE SELECTOR -->
+          <div style="padding:0 20px; margin-bottom:1.5rem; background:#e3f2fd; border-radius:8px; padding:1rem;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
+            <select id="teacherTimezoneSelect" onchange="updateTeacherTimezone()" style="width:100%; max-width:500px; padding:0.75rem; border:2px solid #007bff; border-radius:6px; font-size:1em; font-weight:600;">
+              <option value="${wizardData.timezone}">📍 ${wizardData.timezone} (Auto-detected)</option>
+              <optgroup label="🇺🇸 United States">
+                <option value="America/New_York">Eastern Time (ET)</option>
+                <option value="America/Chicago">Central Time (CT)</option>
+                <option value="America/Denver">Mountain Time (MT)</option>
+                <option value="America/Los_Angeles">Pacific Time (PT)</option>
+              </optgroup>
+              <optgroup label="🇬🇧🇪🇺 Europe">
+                <option value="Europe/London">London (GMT)</option>
+                <option value="Europe/Paris">Paris (CET)</option>
+                <option value="Europe/Berlin">Berlin (CET)</option>
+              </optgroup>
+              <optgroup label="🌏 Asia Pacific">
+                <option value="Asia/Dubai">Dubai (GST)</option>
+                <option value="Asia/Singapore">Singapore (SGT)</option>
+                <option value="Asia/Hong_Kong">Hong Kong (HKT)</option>
+                <option value="Asia/Tokyo">Tokyo (JST)</option>
+                <option value="Australia/Sydney">Sydney (AEDT)</option>
+              </optgroup>
+            </select>
+            <p style="font-size:0.85em; color:#0056b3; margin-top:0.5rem; font-weight:500;">⏰ Times shown are in YOUR timezone. Students see it converted to theirs.</p>
+          </div>
+
           <div style="padding:0 20px;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600;">📆 Select Date:</label>
             <input type="date" id="sessionDate" 
@@ -1873,6 +1918,16 @@ if (isUpcoming) {
       wizardData.studentName = studentName;
       wizardStep = 2;
       renderWizardStep();
+    }
+
+    function updateTeacherTimezone() {
+      const selectedTimezone = document.getElementById('teacherTimezoneSelect').value;
+      wizardData.timezone = selectedTimezone;
+      console.log('🌍 Teacher timezone:', selectedTimezone);
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (selectedDate) {
+        generateTeacherTimeSlots();
+      }
     }
 
     function generateTeacherTimeSlots() {
@@ -1928,6 +1983,15 @@ if (isUpcoming) {
       try {
         const student = myStudents.find(s => s.id === wizardData.studentId);
 
+        // ✅ Convert teacher's local time to UTC
+        const localDateTime = `${wizardData.date}T${wizardData.time}`;
+        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
+
+        console.log('📅 Session creation:');
+        console.log('  Teacher TZ:', wizardData.timezone);
+        console.log('  Local:', localDateTime);
+        console.log('  UTC:', utcTimestamp);
+
         const { data, error } = await supabaseClient
           .from('bookings')
           .insert({
@@ -1938,6 +2002,8 @@ if (isUpcoming) {
             help_needed: wizardData.notes || 'Teacher-created session',
             session_date: wizardData.date,
             session_time: wizardData.time,
+            session_timezone: wizardData.timezone,
+            session_utc: utcTimestamp,
             status: 'scheduled',
             age_group: student?.age_group || 'N/A',
             instructor_name: document.getElementById('teacherName').textContent
@@ -1945,18 +2011,74 @@ if (isUpcoming) {
           .select()
           .single();
 
-        if (error) {
-          throw new Error(error.message);
-        }
+        if (error) throw new Error(error.message);
 
-        alert('✅ Session created successfully!');
+        alert('✅ Session created! Students will see it in their timezone.');
         closeSessionWizard();
         await loadSessions();
         await loadStats();
       } catch (error) {
-        alert('❌ Error creating session: ' + error.message);
+        console.error('❌ Error:', error);
+        alert('❌ Error: ' + error.message);
         btn.disabled = false;
         btn.textContent = 'Create Session';
+      }
+    }
+
+    // ✅ TIMEZONE CONVERSION HELPERS
+    function convertToUTC(localDateTimeString, timezone) {
+      try {
+        // Parse the input (format: "2025-01-15T14:30")
+        const localDate = new Date(localDateTimeString);
+        
+        // Get the date/time components
+        const year = localDate.getFullYear();
+        const month = String(localDate.getMonth() + 1).padStart(2, '0');
+        const day = String(localDate.getDate()).padStart(2, '0');
+        const hours = String(localDate.getHours()).padStart(2, '0');
+        const minutes = String(localDate.getMinutes()).padStart(2, '0');
+        
+        // Create date string in local timezone format
+        const localStr = `${year}-${month}-${day} ${hours}:${minutes}:00`;
+        
+        // Convert to UTC by creating date in specified timezone
+        const tzDate = new Date(localDate.toLocaleString('en-US', { timeZone: timezone }));
+        const utcDate = new Date(localDate.toLocaleString('en-US', { timeZone: 'UTC' }));
+        
+        // Calculate offset
+        const offset = tzDate.getTime() - utcDate.getTime();
+        
+        // Adjust for timezone
+        const utcTimestamp = new Date(localDate.getTime() - offset);
+        
+        // Return in ISO format for PostgreSQL
+        return utcTimestamp.toISOString();
+      } catch (error) {
+        console.error('❌ Timezone conversion error:', error);
+        // Fallback
+        return new Date(localDateTimeString).toISOString();
+      }
+    }
+
+    function convertFromUTC(utcTimestamp, targetTimezone) {
+      try {
+        if (!utcTimestamp) return 'Not scheduled';
+        
+        const date = new Date(utcTimestamp);
+        const options = {
+          timeZone: targetTimezone,
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        };
+        
+        return date.toLocaleString('en-US', options);
+      } catch (error) {
+        console.error('❌ Display error:', error);
+        return new Date(utcTimestamp).toLocaleString();
       }
     }
 
@@ -1997,7 +2119,7 @@ if (isUpcoming) {
       
       console.log('✅ Blackboard link saved to database');
       
-      // Open in new tab
+            // Open in new tab
       window.open(blackboardLink, '_blank');
       
       alert('🖍️ Blackboard opened!\n\n✅ Link saved for students\n✅ Students can now join\n\nTip: Change theme to dark in Excalidraw settings (top-right menu)');
