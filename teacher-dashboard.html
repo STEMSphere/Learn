@@ -986,20 +986,47 @@
       }
     }
 
-    function renderSessionRow(booking, profileMap, isUpcoming) {
+        function renderSessionRow(booking, profileMap, isUpcoming) {
       const profile = profileMap[booking.user_id] || {};
       
+      // ✅ Check if session has UTC timestamp (new format)
+      let dateStr, timeStr;
+      
+      if (booking.session_utc) {
+        // ✅ NEW FORMAT: Convert from UTC to teacher's local timezone
+        const teacherTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const utcDate = new Date(booking.session_utc);
+        
+        dateStr = utcDate.toLocaleDateString('en-US', { 
+          timeZone: teacherTimezone,
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+        
+        timeStr = utcDate.toLocaleTimeString('en-US', {
+          timeZone: teacherTimezone,
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }) + ` (${teacherTimezone})`;
+      } else {
+        // ✅ OLD FORMAT: Fallback for sessions created before timezone update
+        dateStr = booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD';
+        timeStr = (booking.session_time || 'TBD') + ' ⚠️ (Old format)';
+      }
+      
       let videoButton = '';
-if (isUpcoming) {
-  if (booking.video_link) {
-    videoButton = `
-      <a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a>
-      <button class="btn-small" style="background:#2c2c2c; color:#fff; border: 2px solid #4CAF50;" onclick="openBlackboard('${booking.id}')">🖍️ Blackboard</button><br>
-    `;
-  } else {
-    videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
-  }
-}
+      if (isUpcoming) {
+        if (booking.video_link) {
+          videoButton = `
+            <a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a>
+            <button class="btn-small" style="background:#2c2c2c; color:#fff; border: 2px solid #4CAF50;" onclick="openBlackboard('${booking.id}')">🖍️ Blackboard</button><br>
+          `;
+        } else {
+          videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
+        }
+      }
 
       const actionButtons = isUpcoming 
         ? `${videoButton}<button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>`
@@ -1016,8 +1043,8 @@ if (isUpcoming) {
             <strong>${booking.subject || 'N/A'}</strong><br>
             <small style="color:#666;">Style: ${booking.learning_style || 'N/A'}</small>
           </td>
-          <td>${booking.session_date ? new Date(booking.session_date).toLocaleDateString() : 'TBD'}</td>
-          <td>${booking.session_time || 'TBD'}</td>
+          <td>${dateStr}</td>
+          <td>${timeStr}</td>
           <td>
             ${booking.help_needed ? `<small style="color:#666;">${booking.help_needed}</small>` : '<em style="color:#999;">No notes</em>'}
           </td>
