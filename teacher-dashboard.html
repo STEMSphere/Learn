@@ -1496,121 +1496,159 @@
     }
 
     function updateTeacherTimezone() {
-      const selectedTimezone = document.getElementById('teacherTimezoneSelect').value;
-      wizardData.timezone = selectedTimezone;
-      const selectedDate = document.getElementById('sessionDate').value;
-      if (selectedDate) {
-        generateTeacherTimeSlots();
-      }
-    }
+      const selectedTimezone = document.getElementById('teacherTimezoneSelect').value;
+      wizardData.timezone = selectedTimezone;
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (selectedDate) {
+        generateTeacherTimeSlots();
+      }
+    }
 
-    function generateTeacherTimeSlots() {
-      const selectedDate = document.getElementById('sessionDate').value;
-      if (!selectedDate) return;
+    function generateTeacherTimeSlots() {
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (!selectedDate) return;
 
-      const date = new Date(selectedDate + 'T00:00:00');
-      const slots = [];
-      
-      for (let hour = 6; hour < 22; hour++) {
-        for (let min = 0; min < 60; min += 30) {
-          const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-          const period = hour >= 12 ? 'PM' : 'AM';
-          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
-          const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
-          slots.push({ time24: timeStr24, time12: timeStr12 });
-        }
-      }
+      const date = new Date(selectedDate + 'T00:00:00');
+      const slots = [];
+      
+      for (let hour = 0; hour < 24; hour++) {
+        for (let min = 0; min < 60; min += 30) {
+          const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          const period = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+          const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
+          slots.push({ time24: timeStr24, time12: timeStr12 });
+        }
+      }
 
-      wizardData.date = selectedDate;
-      
-      const container = document.getElementById('timeSlotsTeacher');
-      container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
-        <div class="time-slots">
-          ${slots.map(slot => 
-            `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
-          ).join('')}
-        </div>
-      `;
-    }
+      wizardData.date = selectedDate;
+      
+      const container = document.getElementById('timeSlotsTeacher');
+      container.innerHTML = `
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (24 Hours):</p>
+        <div class="time-slots">
+          ${slots.map(slot => 
+            `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
+          ).join('')}
+        </div>
+      `;
+    }
 
-    function selectSessionTime(time) {
-      document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.classList.remove('selected');
-      });
-      event.target.classList.add('selected');
-      wizardData.time = time;
-      document.getElementById('createSessionBtn').style.display = 'block';
-      updateProgress(100);
-    }
+    function selectSessionTime(time) {
+      document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+      wizardData.time = time;
+      document.getElementById('createSessionBtn').style.display = 'block';
+      updateProgress(100);
+    }
 
-    async function confirmSessionCreation() {
-      if (!wizardData.studentId || !wizardData.date || !wizardData.time) {
-        alert('Please complete all required fields');
-        return;
-      }
+    async function confirmSessionCreation() {
+      if (!wizardData.studentId || !wizardData.date || !wizardData.time) {
+        alert('Please complete all required fields');
+        return;
+      }
 
-      const btn = document.getElementById('createSessionBtn');
-      btn.disabled = true;
-      btn.textContent = '⏳ Creating session...';
+      const btn = document.getElementById('createSessionBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Creating session...';
 
-      try {
-        const student = myStudents.find(s => s.id === wizardData.studentId);
-        const localDateTime = `${wizardData.date}T${wizardData.time}`;
-        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
+      try {
+        const student = myStudents.find(s => s.id === wizardData.studentId);
+        const localDateTime = `${wizardData.date}T${wizardData.time}`;
+        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
 
-        const { error } = await supabaseClient
-          .from('bookings')
-          .insert({
-            user_id: wizardData.studentId,
-            assigned_teacher_id: currentTeacherId,
-            subject: wizardData.subject,
-            learning_style: wizardData.style,
-            help_needed: wizardData.notes || 'Teacher-created session',
-            session_date: wizardData.date,
-            session_time: wizardData.time,
-            session_timezone: wizardData.timezone,
-            session_utc: utcTimestamp,
-            status: 'scheduled',
-            age_group: student?.age_group || 'N/A',
-            instructor_name: document.getElementById('teacherName').textContent
-          });
+        const { error } = await supabaseClient
+          .from('bookings')
+      S   .insert({
+            user_id: wizardData.studentId,
+s           assigned_teacher_id: currentTeacherId,
+            subject: wizardData.subject,
+            learning_style: wizardData.style,
+            help_needed: wizardData.notes || 'Teacher-created session',
+            session_date: wizardData.date,
+            session_time: wizardData.time,
+        _   session_timezone: wizardData.timezone,
+            session_utc: utcTimestamp,
+            status: 'scheduled',
+            age_group: student?.age_group || 'N/A',
+            instructor_name: document.getElementById('teacherName').textContent
+          });
 
-        if (error) throw new Error(error.message);
+        if (error) throw new Error(error.message);
 
-        closeSessionWizard();
-        await loadSessions();
-        await loadStats();
-      } catch (error) {
-        alert('❌ Error: ' + error.message);
-        btn.disabled = false;
-        btn.textContent = 'Create Session';
-      }
-    }
+        closeSessionWizard();
+        await loadSessions();
+        await loadStats();
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
+S       btn.disabled = false;
+        btn.textContent = 'Create Session';
+      }
+    }
 
-    // TIMEZONE CONVERSION HELPERS
-    function convertToUTC(localDateTimeString, timezone) {
-      try {
-        const localDate = new Date(localDateTimeString);
-        const formatter = new Intl.DateTimeFormat('en-US', {
-          timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit',
-          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-        });
-        const parts = formatter.formatToParts(localDate);
-        const tzMap = {};
-        parts.forEach(part => { tzMap[part.type] = part.value; });
-        const tzDateStr = `${tzMap.year}-${tzMap.month}-${tzMap.day}T${tzMap.hour}:${tzMap.minute}:${tzMap.second}`;
-        const tzDate = new Date(tzDateStr);
-        const utcDate = new Date(localDate.toLocaleString('en-US', { timeZone: 'UTC' }));
-        const offset = tzDate.getTime() - utcDate.getTime();
-        const finalUTC = new Date(localDate.getTime() - offset);
-        return finalUTC.toISOString();
-      } catch (error) {
-        console.error('❌ Timezone conversion error:', error);
-        return new Date(localDateTimeString + ':00').toISOString();
-      }
-    }
+    // TIMEZONE CONVERSION HELPERS
+    function convertToUTC(localDateTimeString, timezone) {
+      try {
+        // 1. Parse the local date/time string manually
+        // e.g., localDateTimeString = "2025-11-06T09:00"
+        const [datePart, timePart] = localDateTimeString.split('T');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hour, minute] = timePart.split(':').map(Number);
 
+        // 2. Create a date object *as if these components were UTC*.
+        // This gives us a "base" timestamp: 2025-11-06 at 09:00:00 UTC
+        const baseUtcDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
+
+        // 3. Get the string representation of this base date *in the target timezone*.
+s       // e.g., If base is 09:00 UTC and timezone is 'America/Los_Angeles' (UTC-8),
+        // this will format to "2025-11-06, 01:00:00".
+        const options = {
+          timeZone: timezone,
+        g   year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          hour12: false
+        };
+        
+        // Use 'en-CA' (YYYY-MM-DD) or 'sv-SE' for easy, reliable parsing
+        const formatter = new Intl.DateTimeFormat('en-CA', options);
+        const dateInTargetTZ = formatter.format(baseUtcDate); // e.g., "2025-11-06, 01:00:00"
+
+        // 4. Parse the parts from the formatted string.
+        const [tzDatePart, tzTimePart] = dateInTargetTZ.split(', ');
+i       const [tzYear, tzMonth, tzDay] = tzDatePart.split('-').map(Number);
+        const [tzHour, tzMinute] = tzTimePart.split(':').slice(0, 2).map(Number);
+
+        // 5. Create a new UTC date from these *target timezone parts*.
+        // This represents 2025-11-06 at 01:00:00 UTC
+        const localDateInTz_AsUtc = new Date(Date.UTC(tzYear, tzMonth - 1, tzDay, tzHour, tzMinute));
+        
+  F 
+        // 6. Calculate the offset.
+        // (09:00 UTC) - (01:00 UTC) = 8 hours
+        const offset = baseUtcDate.getTime() - localDateInTz_AsUtc.getTime();
+        
+        // 7. Add the offset to the base UTC date to get the true UTC time.
+Note     // (09:00 UTC) + (8 hours) = 17:00 UTC
+        const finalUtcDate = new Date(baseUtcDate.getTime() + offset);
+        
+        return finalUtcDate.toISOString();
+
+      } catch (error) {
+        console.error('❌ Timezone conversion error:', error);
+        // Fallback to assuming the local string is UTC, which is safer than local time
+        return new Date(localDateTimeString + 'Z').toISOString();
+    t }
+    }
+
+      } catch (error) {
+        console.error('❌ Timezone conversion error:', error);
+NET-8, 1, 8, 11
+        // Fallback to assuming the local string is UTC, which is safer than local time
+        return new Date(localDateTimeString + 'Z').toISOString();
+      }
+    }
     function convertFromUTC(utcTimestamp, targetTimezone) {
       try {
         if (!utcTimestamp) return 'Not scheduled';
