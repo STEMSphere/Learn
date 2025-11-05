@@ -2220,43 +2220,58 @@ async function payInvoice(invoiceId) {
       }
     }
 
-    // ✅ TIMEZONE CONVERSION HELPERS
-    function convertToUTC(localDateTimeString, timezone) {
-      try {
-        const [datePart, timePart] = localDateTimeString.split('T');
-        const localDate = new Date(localDateTimeString);
-        
-        const formatter = new Intl.DateTimeFormat('en-US', {
-          timeZone: timezone,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        });
-        
-        const parts = formatter.formatToParts(localDate);
-        const tzMap = {};
-        parts.forEach(part => {
-          tzMap[part.type] = part.value;
-        });
-        
-        const tzDateStr = `${tzMap.year}-${tzMap.month}-${tzMap.day}T${tzMap.hour}:${tzMap.minute}:${tzMap.second}`;
-        const tzDate = new Date(tzDateStr);
-        
-        const utcDate = new Date(localDate.toLocaleString('en-US', { timeZone: 'UTC' }));
-        const offset = tzDate.getTime() - utcDate.getTime();
-        
-        const finalUTC = new Date(localDate.getTime() - offset);
-        
-        return finalUTC.toISOString();
-      } catch (error) {
-        console.error('❌ Timezone conversion error:', error);
-        return new Date(localDateTimeString + ':00').toISOString();
-      }
-    }
+   // ✅ TIMEZONE CONVERSION HELPERS
+    function convertToUTC(localDateTimeString, timezone) {
+      try {
+        // 1. Parse the local date/time string manually
+        // e.g., localDateTimeString = "2025-11-06T09:00"
+        const [datePart, timePart] = localDateTimeString.split('T');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hour, minute] = timePart.split(':').map(Number);
+
+        // 2. Create a date object *as if these components were UTC*.
+        // This gives us a "base" timestamp: 2025-11-06 at 09:00:00 UTC
+        const baseUtcDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
+
+        // 3. Get the string representation of this base date *in the target timezone*.
+        // e.g., If base is 09:00 UTC and timezone is 'America/Los_Angeles' (UTC-8),
+        // this will format to "2025-11-06, 01:00:00".
+        const options = {
+          timeZone: timezone,
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          hour12: false
+        };
+        
+        // Use 'en-CA' (YYYY-MM-DD) or 'sv-SE' for easy, reliable parsing
+        const formatter = new Intl.DateTimeFormat('en-CA', options);
+        const dateInTargetTZ = formatter.format(baseUtcDate); // e.g., "2025-11-06, 01:00:00"
+
+        // 4. Parse the parts from the formatted string.
+        const [tzDatePart, tzTimePart] = dateInTargetTZ.split(', ');
+        const [tzYear, tzMonth, tzDay] = tzDatePart.split('-').map(Number);
+        const [tzHour, tzMinute] = tzTimePart.split(':').slice(0, 2).map(Number);
+
+        // 5. Create a new UTC date from these *target timezone parts*.
+        // This represents 2025-11-06 at 01:00:00 UTC
+        const localDateInTz_AsUtc = new Date(Date.UTC(tzYear, tzMonth - 1, tzDay, tzHour, tzMinute));
+        
+        // 6. Calculate the offset.
+        // (09:00 UTC) - (01:00 UTC) = 8 hours
+        const offset = baseUtcDate.getTime() - localDateInTz_AsUtc.getTime();
+        
+        // 7. Add the offset to the base UTC date to get the true UTC time.
+        // (09:00 UTC) + (8 hours) = 17:00 UTC
+        const finalUtcDate = new Date(baseUtcDate.getTime() + offset);
+        
+        return finalUtcDate.toISOString();
+
+      } catch (error) {
+        console.error('❌ Timezone conversion error:', error);
+        // Fallback to assuming the local string is UTC, which is safer than local time
+        return new Date(localDateTimeString + 'Z').toISOString();
+      }
+    }
 
     function convertFromUTC(utcTimestamp, targetTimezone) {
       try {
