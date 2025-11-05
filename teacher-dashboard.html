@@ -1511,7 +1511,7 @@
       const date = new Date(selectedDate + 'T00:00:00');
       const slots = [];
       
-      for (let hour = 0; hour < 24; hour++) {
+      for (let hour = 6; hour < 22; hour++) {
         for (let min = 0; min < 60; min += 30) {
           const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
           const period = hour >= 12 ? 'PM' : 'AM';
