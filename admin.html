@@ -236,6 +236,10 @@
       background: rgba(128,128,128,0.2);
       color: #666;
     }
+    .status-cancelled {
+      background: rgba(108, 117, 125, 0.2);
+      color: #6c757d;
+    }
 
     .invoice-status {
       padding: 0.3rem 0.8rem;
@@ -1963,6 +1967,7 @@
             <td><span class="status-badge status-pending">⏳ Pending</span></td>
             <td>
               <button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign Teacher</button>
+              <button class="btn-small btn-delete" onclick="cancelSession('${booking.id}')">Cancel</button>
             </td>
           </tr>
         `;
@@ -2044,14 +2049,16 @@
             <td>${teacher.full_name || '⏳ Unassigned'}</td>
             <td><span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span></td>
             <td>
-              ${!booking.assigned_teacher_id ? `
-                <button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>
-              ` : ''}
-              ${booking.status === 'scheduled' ? `
-                <button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>
-              ` : ''}
-              ${booking.status === 'completed' ? '<span style="color:#28a745;">✓ Completed</span>' : ''}
-            </td>
+              ${!booking.assigned_teacher_id ? `
+                <button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>
+              ` : ''}
+              ${booking.status === 'scheduled' ? `
+                <button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>
+                <button class="btn-small btn-delete" onclick="cancelSession('${booking.id}')">Cancel</button>
+              ` : ''}
+              ${booking.status === 'completed' ? '<span style="color:#28a745; font-weight:600;">✓ Completed</span>' : ''}
+              ${booking.status === 'cancelled' ? '<span style="color:#6c757d; font-weight:600;">✗ Cancelled</span>' : ''}
+            </td>
           </tr>
         `;
       }).join('');
@@ -2075,6 +2082,24 @@
       await loadBookings();
       await loadPendingSessions();
     }
+    async function cancelSession(bookingId) {
+      if (!confirm('Are you sure you want to cancel this session? This cannot be undone.')) return;
+
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ status: 'cancelled' })
+        .eq('id', bookingId);
+
+      if (error) {
+        alert('Error cancelling session: ' + error.message);
+        return;
+      }
+
+      alert('✅ Session has been cancelled.');
+      loadStats();
+      loadPendingSessions();
+      loadBookings();
+    }
 
     async function loadStudents() {
       const { data: students, error } = await supabaseClient
