@@ -189,6 +189,11 @@
       color: #666;
       border: 1px solid #999;
     }
+    .status-cancelled {
+      background: rgba(128,128,128,0.2);
+      color: #666;
+      border: 1px solid #999;
+    }
 
     /* THREADED INBOX STYLES */
     .inbox-container {
@@ -1267,15 +1272,22 @@ async function payInvoice(invoiceId) {
       
       timeStr = booking.session_time ? booking.session_time + ' ⚠️ (Old format)' : 'Time not set';
     }
-        const statusClass = `status-${booking.status || 'scheduled'}`;
-        const statusText = booking.status === 'scheduled' ? '✓ Scheduled' : '✓ Completed';
+        const statusClass = `status-${booking.status || 'scheduled'}`;
+        let statusText;
+        if (booking.status === 'completed') {
+          statusText = '✓ Completed';
+        } else if (booking.status === 'cancelled') {
+          statusText = '✗ Cancelled';
+        } else {
+          statusText = '✓ Scheduled';
+        }
 
-        let teacherName = 'STEMSphere Enrollment Advisor';
-        if (booking.assigned_teacher_id && teacherMap[booking.assigned_teacher_id]) {
-          teacherName = teacherMap[booking.assigned_teacher_id];
-        } else if (booking.instructor_name) {
-          teacherName = booking.instructor_name;
-        }
+        let teacherName = 'STEMSphere Enrollment Advisor';
+        if (booking.assigned_teacher_id && teacherMap[booking.assigned_teacher_id]) {
+          teacherName = teacherMap[booking.assigned_teacher_id];
+        } else if (booking.instructor_name) {
+          teacherName = booking.instructor_name;
+        }
 
         // ✅ NEW: Build video and blackboard buttons
         let videoButton = '';
