@@ -1511,7 +1511,8 @@
       const date = new Date(selectedDate + 'T00:00:00');
       const slots = [];
       
-      for (let hour = 6; hour < 22; hour++) {
+      // FIX: Loop changed to allow 24 hours
+      for (let hour = 0; hour < 24; hour++) {
         for (let min = 0; min < 60; min += 30) {
           const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
           const period = hour >= 12 ? 'PM' : 'AM';
@@ -1525,7 +1526,7 @@
       
       const container = document.getElementById('timeSlotsTeacher');
       container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (24 Hours):</p>
         <div class="time-slots">
           ${slots.map(slot => 
             `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
@@ -1591,23 +1592,52 @@
     // TIMEZONE CONVERSION HELPERS
     function convertToUTC(localDateTimeString, timezone) {
       try {
-        const localDate = new Date(localDateTimeString);
-        const formatter = new Intl.DateTimeFormat('en-US', {
-          timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit',
-          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-        });
-        const parts = formatter.formatToParts(localDate);
-        const tzMap = {};
-        parts.forEach(part => { tzMap[part.type] = part.value; });
-        const tzDateStr = `${tzMap.year}-${tzMap.month}-${tzMap.day}T${tzMap.hour}:${tzMap.minute}:${tzMap.second}`;
-        const tzDate = new Date(tzDateStr);
-        const utcDate = new Date(localDate.toLocaleString('en-US', { timeZone: 'UTC' }));
-        const offset = tzDate.getTime() - utcDate.getTime();
-        const finalUTC = new Date(localDate.getTime() - offset);
-        return finalUTC.toISOString();
+        // 1. Parse the local date/time string manually
+        // e.g., localDateTimeString = "2025-11-06T09:00"
+        const [datePart, timePart] = localDateTimeString.split('T');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hour, minute] = timePart.split(':').map(Number);
+
+        // 2. Create a date object *as if these components were UTC*.
+        // This gives us a "base" timestamp: 2025-11-06 at 09:00:00 UTC
+        const baseUtcDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
+
+        // 3. Get the string representation of this base date *in the target timezone*.
+        // e.g., If base is 09:00 UTC and timezone is 'America/Los_Angeles' (UTC-8),
+        // this will format to "2025-11-06, 01:00:00".
+        const options = {
+          timeZone: timezone,
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          hour12: false
+        };
+        
+        // Use 'en-CA' (YYYY-MM-DD) for easy, reliable parsing
+        const formatter = new Intl.DateTimeFormat('en-CA', options);
+        const dateInTargetTZ = formatter.format(baseUtcDate); // e.g., "2025-11-06, 01:00:00"
+
+        // 4. Parse the parts from the formatted string.
+        const [tzDatePart, tzTimePart] = dateInTargetTZ.split(', ');
+        const [tzYear, tzMonth, tzDay] = tzDatePart.split('-').map(Number);
+        const [tzHour, tzMinute] = tzTimePart.split(':').slice(0, 2).map(Number);
+
+        // 5. Create a new UTC date from these *target timezone parts*.
+        // This represents 2025-11-06 at 01:00:00 UTC
+        const localDateInTz_AsUtc = new Date(Date.UTC(tzYear, tzMonth - 1, tzDay, tzHour, tzMinute));
+        
+        // 6. Calculate the offset.
+        // (09:00 UTC) - (01:00 UTC) = 8 hours
+        const offset = baseUtcDate.getTime() - localDateInTz_AsUtc.getTime();
+        
+        // 7. Add the offset to the base UTC date to get the true UTC time.
+        const finalUtcDate = new Date(baseUtcDate.getTime() + offset);
+        
+        return finalUtcDate.toISOString();
+
       } catch (error) {
         console.error('❌ Timezone conversion error:', error);
-        return new Date(localDateTimeString + ':00').toISOString();
+        // Fallback to assuming the local string is UTC, which is safer than local time
+        return new Date(localDateTimeString + 'Z').toISOString();
       }
     }
 
