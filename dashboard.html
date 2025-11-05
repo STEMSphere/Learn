@@ -920,7 +920,8 @@
   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
-        
+    const DAILY_API_KEY = '9fe6990c25d99f2069c223b856d2c171adce6e6bd844474039a2fd8ef009afd3';
+    
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -2137,48 +2138,83 @@ async function payInvoice(invoiceId) {
     }
 
     async function confirmBooking() {
-  if (!wizardData.date || !wizardData.time) {
-    alert('Please select both date and time');
-    return;
-  }
+      if (!wizardData.date || !wizardData.time) {
+        alert('Please select both date and time');
+        return;
+      }
 
-  const confirmBtn = document.getElementById('confirmBtn');
-  confirmBtn.disabled = true;
-  confirmBtn.textContent = '⏳ Booking...';
+      document.getElementById('confirmBtn').disabled = true;
+      document.getElementById('confirmBtn').textContent = '⏳ Booking...';
 
-  try {
-    // 1. Convert student's local time to UTC *before* sending
-    const localDateTime = `${wizardData.date}T${wizardData.time}`;
-    const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
-    wizardData.utcTimestamp = utcTimestamp; // Add UTC to the data
+      const roomName = `stemsphere-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      try {
+        const dailyResponse = await fetch('https://api.daily.co/v1/rooms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${DAILY_API_KEY}`
+          },
+          body: JSON.stringify({
+            name: roomName,
+            privacy: 'public',
+            properties: {
+              enable_screenshare: true,
+              enable_chat: true,
+              start_video_off: false,
+              start_audio_off: false,
+              max_participants: 10,
+              enable_knocking: false,
+              enable_prejoin_ui: true
+            }
+          })
+        });
 
-    // 2. Call our new secure Edge Function
-    const { data, error } = await supabaseClient
-      .functions
-      .invoke('book-trial-session', {
-        body: { wizardData: wizardData }
-      });
+        if (!dailyResponse.ok) {
+          const errorData = await dailyResponse.json();
+          console.error('Daily.co error:', errorData);
+          throw new Error(errorData.info || errorData.error || 'Failed to create video room');
+        }
 
-    if (error) throw new Error(error.message);
-    if (data.error) throw new Error(data.error);
+        const roomData = await dailyResponse.json();
+        const videoLink = roomData.url;
 
-    // 3. Update profile (this is safe to do from client)
-    await supabaseClient
-      .from('profiles')
-      .update({ age_group: wizardData.age })
-      .eq('id', currentUserId);
+        console.log('✅ Video room created:', videoLink);
 
-    alert('✅ Trial session booked successfully!');
-    closeBookingWizard();
-    loadSessions();
+        // ✅ Convert student's local time to UTC
+        const localDateTime = `${wizardData.date}T${wizardData.time}`;
+        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
 
-  } catch (error) {
-    console.error('Error:', error);
-    alert('❌ Failed to book session: ' + error.message + '\n\nPlease contact support.');
-    confirmBtn.disabled = false;
-    confirmBtn.textContent = 'Confirm Booking';
-  }
-}
+        console.log('📅 Student booking:');
+        console.log('  Student TZ:', wizardData.timezone);
+        console.log('  Local:', localDateTime);
+        console.log('  UTC:', utcTimestamp);
+
+        const { data, error } = await supabaseClient
+          .from('bookings')
+          .insert({
+            user_id: currentUserId,
+            subject: wizardData.subject,
+            age_group: wizardData.age,
+            learning_style: wizardData.style,
+            help_needed: wizardData.help,
+            session_date: wizardData.date,
+            session_time: wizardData.time,
+            session_timezone: wizardData.timezone,
+            session_utc: utcTimestamp,
+            status: 'scheduled',
+            instructor_name: 'STEMSphere Enrollment Advisor',
+            video_link: videoLink
+          })
+          .select()
+          .single();
+
+        if (error) {
+          alert('Error booking session: ' + error.message);
+          document.getElementById('confirmBtn').disabled = false;
+          document.getElementById('confirmBtn').textContent = 'Confirm Booking';
+          return;
+        }
 
         await supabaseClient
           .from('profiles')
