@@ -834,8 +834,7 @@
     <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
-    const DAILY_API_KEY = '8c3db949d2ace9fb8237c2db1e711fe4f8b57efcd97943c8ccb705824bf2ab5f';
-    
+        
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -1049,36 +1048,43 @@
     }
 
     async function createVideoRoom(bookingId) {
-      const btn = event.target;
-      btn.disabled = true;
-      btn.textContent = '⏳ Creating...';
-      const roomName = `stemsphere-teacher-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      try {
-        const dailyResponse = await fetch('https://api.daily.co/v1/rooms', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${DAILY_API_KEY}` },
-          body: JSON.stringify({ name: roomName, privacy: 'public', properties: { enable_screenshare: true, enable_chat: true, start_video_off: false, start_audio_off: false, max_participants: 10, enable_knocking: false, enable_prejoin_ui: true } })
-        });
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '⏳ Creating...';
+  
+  try {
+    // 1. Call our new secure Edge Function
+    const { data: roomData, error: functionError } = await supabaseClient
+      .functions
+      .invoke('create-teacher-room', {
+        body: { bookingId: bookingId }
+      });
 
-        if (!dailyResponse.ok) {
-          const errorData = await dailyResponse.json();
-          throw new Error(errorData.info || errorData.error || 'Failed to create video room');
-        }
+    if (functionError) throw new Error(functionError.message);
+    if (roomData.error) throw new Error(roomData.error); // Error from inside the function
 
-        const roomData = await dailyResponse.json();
-        const videoLink = roomData.url;
-
-        const { error } = await supabaseClient.from('bookings').update({ video_link: videoLink }).eq('id', bookingId);
-        if (error) throw new Error(error.message);
-        
-        await loadSessions();
-      } catch (error) {
-        alert('❌ Failed to create video room: ' + error.message);
-        btn.disabled = false;
-        btn.textContent = '🎬 Create Video Room';
-      }
+    const videoLink = roomData.url;
+    if (!videoLink) {
+      throw new Error('No video URL returned from server.');
     }
+
+    // 2. Save the new link back to the bookings table
+    const { error: updateError } = await supabaseClient
+      .from('bookings')
+      .update({ video_link: videoLink })
+      .eq('id', bookingId);
+      
+    if (updateError) throw new Error(updateError.message);
+    
+    // 3. Reload the sessions list to show the "Join" button
+    await loadSessions();
+
+  } catch (error) {
+    alert('❌ Failed to create video room: ' + error.message);
+    btn.disabled = false;
+    btn.textContent = '🎬 Create Video Room';
+  }
+}
 
     async function markComplete(bookingId) {
       const { error } = await supabaseClient.from('bookings').update({ status: 'completed' }).eq('id', bookingId);
