@@ -1489,142 +1489,142 @@
     }
 
     function selectStudent(studentId, studentName) {
-      wizardData.studentId = studentId;
-      wizardData.studentName = studentName;
-      wizardStep = 2;
-      renderWizardStep();
-    }
+      wizardData.studentId = studentId;
+      wizardData.studentName = studentName;
+      wizardStep = 2;
+      renderWizardStep();
+    }
 
-    function updateTeacherTimezone() {
-      const selectedTimezone = document.getElementById('teacherTimezoneSelect').value;
-      wizardData.timezone = selectedTimezone;
-      const selectedDate = document.getElementById('sessionDate').value;
-      if (selectedDate) {
-        generateTeacherTimeSlots();
-      }
-    }
+    function updateTeacherTimezone() {
+      const selectedTimezone = document.getElementById('teacherTimezoneSelect').value;
+      wizardData.timezone = selectedTimezone;
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (selectedDate) {
+        generateTeacherTimeSlots();
+      }
+    }
 
-    function generateTeacherTimeSlots() {
-      const selectedDate = document.getElementById('sessionDate').value;
-      if (!selectedDate) return;
+    function generateTeacherTimeSlots() {
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (!selectedDate) return;
 
-      const date = new Date(selectedDate + 'T00:00:00');
-      const slots = [];
-      
-      for (let hour = 6; hour < 22; hour++) {
-        for (let min = 0; min < 60; min += 30) {
-          const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-          const period = hour >= 12 ? 'PM' : 'AM';
-          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
-          const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
-          slots.push({ time24: timeStr24, time12: timeStr12 });
-        }
-      }
+      const date = new Date(selectedDate + 'T00:00:00');
+      const slots = [];
+      
+      for (let hour = 6; hour < 22; hour++) {
+        for (let min = 0; min < 60; min += 30) {
+          const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          const period = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+          const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
+          slots.push({ time24: timeStr24, time12: timeStr12 });
+        }
+      }
 
-      wizardData.date = selectedDate;
-      
-      const container = document.getElementById('timeSlotsTeacher');
-      container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
-        <div class="time-slots">
-          ${slots.map(slot => 
-            `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
-          ).join('')}
-        </div>
-      `;
-    }
+      wizardData.date = selectedDate;
+      
+      const container = document.getElementById('timeSlotsTeacher');
+      container.innerHTML = `
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (6 AM - 10 PM):</p>
+        <div class="time-slots">
+          ${slots.map(slot => 
+            `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
+          ).join('')}
+        </div>
+      `;
+    }
 
-    function selectSessionTime(time) {
-      document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.classList.remove('selected');
-      });
-      event.target.classList.add('selected');
-      wizardData.time = time;
-      document.getElementById('createSessionBtn').style.display = 'block';
-      updateProgress(100);
-    }
+    function selectSessionTime(time) {
+      document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+      wizardData.time = time;
+      document.getElementById('createSessionBtn').style.display = 'block';
+      updateProgress(100);
+    }
 
-    async function confirmSessionCreation() {
-      if (!wizardData.studentId || !wizardData.date || !wizardData.time) {
-        alert('Please complete all required fields');
-        return;
-      }
+    async function confirmSessionCreation() {
+      if (!wizardData.studentId || !wizardData.date || !wizardData.time) {
+        alert('Please complete all required fields');
+        return;
+      }
 
-      const btn = document.getElementById('createSessionBtn');
-      btn.disabled = true;
-      btn.textContent = '⏳ Creating session...';
+      const btn = document.getElementById('createSessionBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Creating session...';
 
-      try {
-        const student = myStudents.find(s => s.id === wizardData.studentId);
-        const localDateTime = `${wizardData.date}T${wizardData.time}`;
-        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
+      try {
+        const student = myStudents.find(s => s.id === wizardData.studentId);
+        const localDateTime = `${wizardData.date}T${wizardData.time}`;
+        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
 
-        const { error } = await supabaseClient
-          .from('bookings')
-          .insert({
-            user_id: wizardData.studentId,
-            assigned_teacher_id: currentTeacherId,
-            subject: wizardData.subject,
-            learning_style: wizardData.style,
-            help_needed: wizardData.notes || 'Teacher-created session',
-            session_date: wizardData.date,
-            session_time: wizardData.time,
-            session_timezone: wizardData.timezone,
-            session_utc: utcTimestamp,
-            status: 'scheduled',
-            age_group: student?.age_group || 'N/A',
-            instructor_name: document.getElementById('teacherName').textContent
-          });
+        const { error } = await supabaseClient
+          .from('bookings')
+          .insert({
+            user_id: wizardData.studentId,
+            assigned_teacher_id: currentTeacherId,
+            subject: wizardData.subject,
+            learning_style: wizardData.style,
+            help_needed: wizardData.notes || 'Teacher-created session',
+            session_date: wizardData.date,
+            session_time: wizardData.time,
+            session_timezone: wizardData.timezone,
+            session_utc: utcTimestamp,
+            status: 'scheduled',
+            age_group: student?.age_group || 'N/A',
+            instructor_name: document.getElementById('teacherName').textContent
+          });
 
-        if (error) throw new Error(error.message);
+        if (error) throw new Error(error.message);
 
-        closeSessionWizard();
-        await loadSessions();
-        await loadStats();
-      } catch (error) {
-        alert('❌ Error: ' + error.message);
-        btn.disabled = false;
-        btn.textContent = 'Create Session';
-      }
-    }
+        closeSessionWizard();
+        await loadSessions();
+        await loadStats();
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
+        btn.disabled = false;
+        btn.textContent = 'Create Session';
+      }
+    }
 
-    // TIMEZONE CONVERSION HELPERS
-    function convertToUTC(localDateTimeString, timezone) {
-      try {
-        const localDate = new Date(localDateTimeString);
-        const formatter = new Intl.DateTimeFormat('en-US', {
-          timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit',
-          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-        });
-        const parts = formatter.formatToParts(localDate);
-        const tzMap = {};
-        parts.forEach(part => { tzMap[part.type] = part.value; });
-        const tzDateStr = `${tzMap.year}-${tzMap.month}-${tzMap.day}T${tzMap.hour}:${tzMap.minute}:${tzMap.second}`;
-        const tzDate = new Date(tzDateStr);
-        const utcDate = new Date(localDate.toLocaleString('en-US', { timeZone: 'UTC' }));
-        const offset = tzDate.getTime() - utcDate.getTime();
-        const finalUTC = new Date(localDate.getTime() - offset);
-        return finalUTC.toISOString();
-      } catch (error) {
-        console.error('❌ Timezone conversion error:', error);
-        return new Date(localDateTimeString + ':00').toISOString();
-      }
-    }
+    // TIMEZONE CONVERSION HELPERS
+    function convertToUTC(localDateTimeString, timezone) {
+      try {
+        const localDate = new Date(localDateTimeString);
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+        });
+        const parts = formatter.formatToParts(localDate);
+        const tzMap = {};
+        parts.forEach(part => { tzMap[part.type] = part.value; });
+        const tzDateStr = `${tzMap.year}-${tzMap.month}-${tzMap.day}T${tzMap.hour}:${tzMap.minute}:${tzMap.second}`;
+        const tzDate = new Date(tzDateStr);
+        const utcDate = new Date(localDate.toLocaleString('en-US', { timeZone: 'UTC' }));
+        const offset = tzDate.getTime() - utcDate.getTime();
+        const finalUTC = new Date(localDate.getTime() - offset);
+        return finalUTC.toISOString();
+      } catch (error) {
+        console.error('❌ Timezone conversion error:', error);
+        return new Date(localDateTimeString + ':00').toISOString();
+      }
+    }
 
-    function convertFromUTC(utcTimestamp, targetTimezone) {
-      try {
-        if (!utcTimestamp) return 'Not scheduled';
-        const date = new Date(utcTimestamp);
-        const options = {
-          timeZone: targetTimezone, year: 'numeric', month: 'long', day: 'numeric',
-          hour: '2-digit', minute: '2-digit', hour12: true
-        };
-        return date.toLocaleString('en-US', options);
-      } catch (error) {
-        console.error('❌ Display error:', error);
-        return new Date(utcTimestamp).toLocaleString();
-      }
-    }
+    function convertFromUTC(utcTimestamp, targetTimezone) {
+      try {
+        if (!utcTimestamp) return 'Not scheduled';
+        const date = new Date(utcTimestamp);
+        const options = {
+          timeZone: targetTimezone, year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit', hour12: true
+        };
+        return date.toLocaleString('en-US', options);
+      } catch (error) {
+        console.error('❌ Display error:', error);
+        return new Date(utcTimestamp).toLocaleString();
+      }
+    }
 
     // BLACKBOARD FUNCTIONALITY
     async function openBlackboard(bookingId) {
