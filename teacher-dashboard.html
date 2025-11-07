@@ -226,9 +226,9 @@
       color: #666;
     }
     .status-cancelled {
-      background: rgba(128,128,128,0.2);
-      color: #666;
-    }
+      background: rgba(128,128,128,0.2);
+      color: #666;
+    }
 
     .loading {
       text-align: center;
@@ -405,6 +405,25 @@
       color: #333;
       white-space: pre-wrap;
     }
+    .message-bubble .attachment {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .message-bubble .attachment a {
+      color: #007bff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+    .message-bubble .attachment a:hover {
+      text-decoration: underline;
+    }
 
     .reply-box {
       background: #f8f9fa;
@@ -416,6 +435,50 @@
     .reply-box h5 {
       margin: 0 0 1rem 0;
       color: #007bff;
+    }
+
+    .file-upload-section {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #fff;
+      border: 2px dashed #ddd;
+      border-radius: 6px;
+    }
+    .file-upload-btn {
+      background: #6c757d;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .file-upload-btn:hover {
+      background: #5a6268;
+    }
+    .file-preview {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #e3f2fd;
+      border-radius: 4px;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .file-preview.active {
+      display: flex;
+    }
+    .file-preview .remove-file {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85em;
     }
 
     .modal {
@@ -643,7 +706,7 @@
       <button class="tab" onclick="showTab('completed')">✅ Completed Sessions</button>
       <button class="tab" onclick="showTab('students')">👥 My Students</button>
       <button class="tab" onclick="showTab('inbox')">
-              📬 Inbox
+        📬 Inbox
         <span class="badge" id="inboxBadge" style="display:none;">0</span>
       </button>
       <button class="tab" onclick="showTab('support')">
@@ -831,7 +894,7 @@
     </div>
   </div>
 
-    <script>
+  <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     const DAILY_API_KEY = '9fe6990c25d99f2069c223b856d2c171adce6e6bd844474039a2fd8ef009afd3';
@@ -845,6 +908,7 @@
     let unreadSupportCount = 0;
     let wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
     let wizardStep = 0;
+    let selectedFile = null;
 
     // ============================================
     // AUTH & INITIALIZATION
@@ -990,7 +1054,7 @@
       }
     }
 
-            function renderSessionRow(booking, profileMap, isUpcoming) {
+    function renderSessionRow(booking, profileMap, isUpcoming) {
       const profile = profileMap[booking.user_id] || {};
       const studentIdentifier = booking.user_id ? `...${booking.user_id.slice(-8)}` : 'N/A';
       let dateStr, timeStr;
@@ -1020,14 +1084,14 @@
         ? `<button class="btn-small btn-view" onclick="openComposeToStudentModal('${booking.user_id}')">💬 Message</button>` 
         : '';
 
-      const actionButtons = isUpcoming 
-        ? `${videoButton}
-             <button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>
-             <button class="btn-small" style="background:#dc3545; color:#fff;" onclick="cancelSession('${booking.id}')">❌ Cancel</button>
-             ${messageButton}`
-        : (booking.status === 'completed' ?
-           '<span style="color:#28a745; font-weight:600;">✓ Completed</span>' :
-           '<span class="status-badge status-cancelled">✗ Cancelled</span>');
+      const actionButtons = isUpcoming 
+        ? `${videoButton}
+             <button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>
+             <button class="btn-small" style="background:#dc3545; color:#fff;" onclick="cancelSession('${booking.id}')">❌ Cancel</button>
+             ${messageButton}`
+        : (booking.status === 'completed' ?
+           '<span style="color:#28a745; font-weight:600;">✓ Completed</span>' :
+           '<span class="status-badge status-cancelled">✗ Cancelled</span>');
 
       return `
         <tr>
@@ -1090,23 +1154,24 @@
         await loadSessions();
       }
     }
-      async function cancelSession(bookingId) {
-      if (!confirm('Are you sure you want to cancel this session? This will notify the student.')) return;
 
-      const { error } = await supabaseClient
-        .from('bookings')
-        .update({ status: 'cancelled' })
-        .eq('id', bookingId);
+    async function cancelSession(bookingId) {
+      if (!confirm('Are you sure you want to cancel this session? This will notify the student.')) return;
 
-      if (error) {
-        alert('Error cancelling session: ' + error.message);
-        return;
-      }
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ status: 'cancelled' })
+        .eq('id', bookingId);
 
-      alert('✅ Session has been cancelled.');
-      loadStats();
-      loadSessions();
-    }
+      if (error) {
+        alert('Error cancelling session: ' + error.message);
+        return;
+      }
+
+      alert('✅ Session has been cancelled.');
+      loadStats();
+      loadSessions();
+    }
 
     // ============================================
     // STUDENTS MANAGEMENT
@@ -1164,7 +1229,33 @@
     }
 
     // ============================================
-    // STUDENT MESSAGING SYSTEM
+    // FILE UPLOAD HELPER
+    // ============================================
+    async function uploadFile(file) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `message-attachments/${fileName}`;
+
+        const { data, error } = await supabaseClient.storage
+          .from('attachments')
+          .upload(filePath, file);
+
+        if (error) throw error;
+
+        const { data: urlData } = supabaseClient.storage
+          .from('attachments')
+          .getPublicUrl(filePath);
+
+        return urlData.publicUrl;
+      } catch (error) {
+        console.error('File upload error:', error);
+        throw error;
+      }
+    }
+
+    // ============================================
+    // STUDENT MESSAGING SYSTEM WITH ATTACHMENTS
     // ============================================
     async function loadInboxThreads() {
       const { data: assignments } = await supabaseClient.from('teacher_assignments').select('student_id').eq('teacher_id', currentTeacherId);
@@ -1229,7 +1320,9 @@
     async function openConversation(studentId) {
       const student = myStudents.find(s => s.id === studentId);
       const studentName = student ? student.full_name : 'Student';
-      const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_student').or(`and(sender_id.eq.${studentId},recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.eq.${studentId})`).order('created_at', { ascending: true });
+      
+      // ✅ Changed to descending order (newest first)
+      const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_student').or(`and(sender_id.eq.${studentId},recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.eq.${studentId})`).order('created_at', { ascending: false });
 
       if (!messages) { alert('Error loading conversation'); return; }
 
@@ -1239,14 +1332,51 @@
       }
 
       const conversationHTML = `
-        <div class="conversation-header"><h4>💬 Conversation with ${studentName}</h4><p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p></div>
+        <div class="conversation-header"><h4>💬 Conversation with ${studentName}</h4><p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread • Newest first</p></div>
         ${messages.map(msg => {
           const isFromMe = msg.sender_id === currentTeacherId;
           const bubbleClass = isFromMe ? 'from-me' : 'from-student';
           const date = new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-          return `<div class="message-bubble ${bubbleClass}"><div class="sender">${isFromMe ? 'You' : studentName}</div><div class="timestamp">${date}</div>${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}<div class="body">${msg.message}</div></div>`;
+          
+          let attachmentHTML = '';
+          if (msg.attachment_url) {
+            const fileName = msg.attachment_url.split('/').pop();
+            attachmentHTML = `
+              <div class="attachment">
+                <a href="${msg.attachment_url}" target="_blank">
+                  📎 ${fileName}
+                </a>
+              </div>
+            `;
+          }
+          
+          return `<div class="message-bubble ${bubbleClass}"><div class="sender">${isFromMe ? 'You' : studentName}</div><div class="timestamp">${date}</div>${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}<div class="body">${msg.message}</div>${attachmentHTML}</div>`;
         }).join('')}
-        <div class="reply-box"><h5>💬 Reply to ${studentName}</h5><div class="form-group"><label>Subject (optional)</label><input type="text" id="replySubject" placeholder="Enter subject..."></div><div class="form-group"><label>Your Message *</label><textarea id="replyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea></div><div style="display:flex; gap:1rem;"><button class="btn-primary" onclick="sendReplyInConversation('${studentId}')">Send Reply</button><button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button></div></div>
+        <div class="reply-box">
+          <h5>💬 Reply to ${studentName}</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="replySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="replyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div class="file-upload-section">
+            <input type="file" id="replyFileInput" style="display:none;" onchange="handleFileSelect(event, 'replyFile')">
+            <button class="file-upload-btn" onclick="document.getElementById('replyFileInput').click()">
+              📎 Attach File
+            </button>
+            <div id="replyFilePreview" class="file-preview">
+              <span id="replyFileName"></span>
+              <button class="remove-file" onclick="clearFile('replyFile')">✖</button>
+            </div>
+          </div>
+          <div style="display:flex; gap:1rem; margin-top:1rem;">
+            <button class="btn-primary" onclick="sendReplyInConversation('${studentId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
+        </div>
       `;
       document.getElementById('conversationContent').innerHTML = conversationHTML;
       document.getElementById('conversationModal').classList.add('active');
@@ -1254,30 +1384,66 @@
       loadStats();
     }
     
-    async function sendReplyInConversation(studentId) {
-        const subject = document.getElementById('replySubject').value.trim();
-        const message = document.getElementById('replyMessage').value.trim();
-        if (!message) { alert('Please enter a message'); return; }
+    function handleFileSelect(event, fieldName) {
+      const file = event.target.files[0];
+      if (file) {
+        selectedFile = file;
+        document.getElementById(`${fieldName}Preview`).classList.add('active');
+        document.getElementById(`${fieldName}Name`).textContent = file.name;
+      }
+    }
 
-        const { error } = await supabaseClient.from('messages').insert({ sender_id: currentTeacherId, recipient_id: studentId, message_type: 'teacher_student', subject: subject || 'Reply from your teacher', message: message });
+    function clearFile(fieldName) {
+      selectedFile = null;
+      document.getElementById(`${fieldName}Preview`).classList.remove('active');
+      document.getElementById(`${fieldName}Input`).value = '';
+    }
+
+    async function sendReplyInConversation(studentId) {
+      const subject = document.getElementById('replySubject').value.trim();
+      const message = document.getElementById('replyMessage').value.trim();
+      if (!message) { alert('Please enter a message'); return; }
+
+      try {
+        let attachmentUrl = null;
+        if (selectedFile) {
+          const btn = event.target;
+          btn.disabled = true;
+          btn.textContent = '⏳ Uploading...';
+          attachmentUrl = await uploadFile(selectedFile);
+        }
+
+        const { error } = await supabaseClient.from('messages').insert({ 
+          sender_id: currentTeacherId, 
+          recipient_id: studentId, 
+          message_type: 'teacher_student', 
+          subject: subject || 'Reply from your teacher', 
+          message: message,
+          attachment_url: attachmentUrl 
+        });
+        
         if (error) { alert('Error sending message: ' + error.message); return; }
 
         try {
-            const { data: student } = await supabaseClient.from('profiles').select('email, full_name').eq('id', studentId).single();
-            const { data: currentUser } = await supabaseClient.from('profiles').select('full_name').eq('id', currentTeacherId).single();
-            if (student && currentUser) {
-                fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
-                    body: JSON.stringify({ type: 'new_message_to_student', to: student.email, data: { recipientName: student.full_name, senderName: currentUser.full_name, subject: subject || 'New message', message: message } })
-                });
-            }
+          const { data: student } = await supabaseClient.from('profiles').select('email, full_name').eq('id', studentId).single();
+          const { data: currentUser } = await supabaseClient.from('profiles').select('full_name').eq('id', currentTeacherId).single();
+          if (student && currentUser) {
+            fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+              body: JSON.stringify({ type: 'new_message_to_student', to: student.email, data: { recipientName: student.full_name, senderName: currentUser.full_name, subject: subject || 'New message', message: message } })
+            });
+          }
         } catch (emailError) { console.error('⚠️ Email notification failed (non-critical):', emailError); }
 
+        selectedFile = null;
         closeModal('conversationModal');
         await openConversation(studentId);
         await loadInboxThreads();
         await loadStats();
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
+      }
     }
 
     function openComposeToStudentModal(studentIdToSelect = null) {
@@ -1304,7 +1470,7 @@
     }
 
     // ============================================
-    // SUPPORT TICKET SYSTEM
+    // SUPPORT TICKET SYSTEM (NO FILE ATTACHMENTS)
     // ============================================
     async function loadSupportThreads() {
       const { data: admins } = await supabaseClient.from('profiles').select('id').eq('role', 'admin');
@@ -1330,7 +1496,8 @@
     }
 
     async function openSupportConversation() {
-      const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_support').or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`).order('created_at', { ascending: true });
+      // ✅ Changed to descending order (newest first)
+      const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_support').or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`).order('created_at', { ascending: false });
       if (!messages) { alert('Error loading conversation'); return; }
 
       const unreadMessageIds = messages.filter(m => m.recipient_id === currentTeacherId && !m.is_read).map(m => m.id);
@@ -1339,7 +1506,7 @@
       }
 
       const conversationHTML = `
-        <div class="conversation-header"><h4>💬 Conversation with Support Team</h4><p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p></div>
+        <div class="conversation-header"><h4>💬 Conversation with Support Team</h4><p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread • Newest first</p></div>
         ${messages.map(msg => {
           const isFromMe = msg.sender_id === currentTeacherId;
           const bubbleClass = isFromMe ? 'from-me' : 'from-support';
@@ -1405,6 +1572,7 @@
 
     function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
+      selectedFile = null;
     }
 
     // ============================================
@@ -1515,172 +1683,156 @@
     }
 
     function selectStudent(studentId, studentName) {
-      wizardData.studentId = studentId;
-      wizardData.studentName = studentName;
-      wizardStep = 2;
-      renderWizardStep();
-    }
+      wizardData.studentId = studentId;
+      wizardData.studentName = studentName;
+      wizardStep = 2;
+      renderWizardStep();
+    }
 
-    function updateTeacherTimezone() {
-      const selectedTimezone = document.getElementById('teacherTimezoneSelect').value;
-      wizardData.timezone = selectedTimezone;
-      const selectedDate = document.getElementById('sessionDate').value;
-      if (selectedDate) {
-        generateTeacherTimeSlots();
-      }
-    }
+    function updateTeacherTimezone() {
+      const selectedTimezone = document.getElementById('teacherTimezoneSelect').value;
+      wizardData.timezone = selectedTimezone;
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (selectedDate) {
+        generateTeacherTimeSlots();
+      }
+    }
 
-    function generateTeacherTimeSlots() {
-      const selectedDate = document.getElementById('sessionDate').value;
-      if (!selectedDate) return;
+    function generateTeacherTimeSlots() {
+      const selectedDate = document.getElementById('sessionDate').value;
+      if (!selectedDate) return;
 
-      const date = new Date(selectedDate + 'T00:00:00');
-      const slots = [];
-      
-      // FIX: Loop changed to allow 24 hours
-      for (let hour = 0; hour < 24; hour++) {
-        for (let min = 0; min < 60; min += 30) {
-          const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
-          const period = hour >= 12 ? 'PM' : 'AM';
-          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
-          const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
-          slots.push({ time24: timeStr24, time12: timeStr12 });
-        }
-      }
+      const date = new Date(selectedDate + 'T00:00:00');
+      const slots = [];
+      
+      for (let hour = 0; hour < 24; hour++) {
+        for (let min = 0; min < 60; min += 30) {
+          const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          const period = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+          const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
+          slots.push({ time24: timeStr24, time12: timeStr12 });
+        }
+      }
 
-      wizardData.date = selectedDate;
-      
-      const container = document.getElementById('timeSlotsTeacher');
-      container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (24 Hours):</p>
-        <div class="time-slots">
-          ${slots.map(slot => 
-            `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
-          ).join('')}
-        </div>
-      `;
-    }
+      wizardData.date = selectedDate;
+      
+      const container = document.getElementById('timeSlotsTeacher');
+      container.innerHTML = `
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (24 Hours):</p>
+        <div class="time-slots">
+          ${slots.map(slot => 
+            `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
+          ).join('')}
+        </div>
+      `;
+    }
 
-    function selectSessionTime(time) {
-      document.querySelectorAll('.time-slot').forEach(slot => {
-        slot.classList.remove('selected');
-      });
-      event.target.classList.add('selected');
-      wizardData.time = time;
-      document.getElementById('createSessionBtn').style.display = 'block';
-      updateProgress(100);
-    }
+    function selectSessionTime(time) {
+      document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+      wizardData.time = time;
+      document.getElementById('createSessionBtn').style.display = 'block';
+      updateProgress(100);
+    }
 
-    async function confirmSessionCreation() {
-      if (!wizardData.studentId || !wizardData.date || !wizardData.time) {
-        alert('Please complete all required fields');
-        return;
-      }
+    async function confirmSessionCreation() {
+      if (!wizardData.studentId || !wizardData.date || !wizardData.time) {
+        alert('Please complete all required fields');
+        return;
+      }
 
-      const btn = document.getElementById('createSessionBtn');
-      btn.disabled = true;
-      btn.textContent = '⏳ Creating session...';
+      const btn = document.getElementById('createSessionBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Creating session...';
 
-      try {
-        const student = myStudents.find(s => s.id === wizardData.studentId);
-        const localDateTime = `${wizardData.date}T${wizardData.time}`;
-        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
+      try {
+        const student = myStudents.find(s => s.id === wizardData.studentId);
+        const localDateTime = `${wizardData.date}T${wizardData.time}`;
+        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
 
-        const { error } = await supabaseClient
-          .from('bookings')
-          .insert({
-            user_id: wizardData.studentId,
-            assigned_teacher_id: currentTeacherId,
-            subject: wizardData.subject,
-            learning_style: wizardData.style,
-            help_needed: wizardData.notes || 'Teacher-created session',
-            session_date: wizardData.date,
-            session_time: wizardData.time,
-            session_timezone: wizardData.timezone,
-            session_utc: utcTimestamp,
-            status: 'scheduled',
-            age_group: student?.age_group || 'N/A',
-            instructor_name: document.getElementById('teacherName').textContent
-          });
+        const { error } = await supabaseClient
+          .from('bookings')
+          .insert({
+            user_id: wizardData.studentId,
+            assigned_teacher_id: currentTeacherId,
+            subject: wizardData.subject,
+            learning_style: wizardData.style,
+            help_needed: wizardData.notes || 'Teacher-created session',
+            session_date: wizardData.date,
+            session_time: wizardData.time,
+            session_timezone: wizardData.timezone,
+            session_utc: utcTimestamp,
+            status: 'scheduled',
+            age_group: student?.age_group || 'N/A',
+            instructor_name: document.getElementById('teacherName').textContent
+          });
 
-        if (error) throw new Error(error.message);
+        if (error) throw new Error(error.message);
 
-        closeSessionWizard();
-        await loadSessions();
-        await loadStats();
-      } catch (error) {
-        alert('❌ Error: ' + error.message);
-        btn.disabled = false;
-        btn.textContent = 'Create Session';
-      }
-    }
+        closeSessionWizard();
+        await loadSessions();
+        await loadStats();
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
+        btn.disabled = false;
+        btn.textContent = 'Create Session';
+      }
+    }
 
-    // TIMEZONE CONVERSION HELPERS
-    function convertToUTC(localDateTimeString, timezone) {
-      try {
-        // 1. Parse the local date/time string manually
-        // e.g., localDateTimeString = "2025-11-06T09:00"
-        const [datePart, timePart] = localDateTimeString.split('T');
-        const [year, month, day] = datePart.split('-').map(Number);
-        const [hour, minute] = timePart.split(':').map(Number);
+    // TIMEZONE CONVERSION HELPERS
+    function convertToUTC(localDateTimeString, timezone) {
+      try {
+        const [datePart, timePart] = localDateTimeString.split('T');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hour, minute] = timePart.split(':').map(Number);
 
-        // 2. Create a date object *as if these components were UTC*.
-        // This gives us a "base" timestamp: 2025-11-06 at 09:00:00 UTC
-        const baseUtcDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
+        const baseUtcDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
 
-        // 3. Get the string representation of this base date *in the target timezone*.
-        // e.g., If base is 09:00 UTC and timezone is 'America/Los_Angeles' (UTC-8),
-        // this will format to "2025-11-06, 01:00:00".
-        const options = {
-          timeZone: timezone,
-          year: 'numeric', month: '2-digit', day: '2-digit',
-          hour: '2-digit', minute: '2-digit', second: '2-digit',
-          hour12: false
-        };
-        
-        // Use 'en-CA' (YYYY-MM-DD) for easy, reliable parsing
-        const formatter = new Intl.DateTimeFormat('en-CA', options);
-        const dateInTargetTZ = formatter.format(baseUtcDate); // e.g., "2025-11-06, 01:00:00"
+        const options = {
+          timeZone: timezone,
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          hour12: false
+        };
+        
+        const formatter = new Intl.DateTimeFormat('en-CA', options);
+        const dateInTargetTZ = formatter.format(baseUtcDate);
 
-        // 4. Parse the parts from the formatted string.
-        const [tzDatePart, tzTimePart] = dateInTargetTZ.split(', ');
-        const [tzYear, tzMonth, tzDay] = tzDatePart.split('-').map(Number);
-        const [tzHour, tzMinute] = tzTimePart.split(':').slice(0, 2).map(Number);
+        const [tzDatePart, tzTimePart] = dateInTargetTZ.split(', ');
+        const [tzYear, tzMonth, tzDay] = tzDatePart.split('-').map(Number);
+        const [tzHour, tzMinute] = tzTimePart.split(':').slice(0, 2).map(Number);
 
-        // 5. Create a new UTC date from these *target timezone parts*.
-        // This represents 2025-11-06 at 01:00:00 UTC
-        const localDateInTz_AsUtc = new Date(Date.UTC(tzYear, tzMonth - 1, tzDay, tzHour, tzMinute));
-        
-        // 6. Calculate the offset.
-        // (09:00 UTC) - (01:00 UTC) = 8 hours
-        const offset = baseUtcDate.getTime() - localDateInTz_AsUtc.getTime();
-        
-        // 7. Add the offset to the base UTC date to get the true UTC time.
-        const finalUtcDate = new Date(baseUtcDate.getTime() + offset);
-        
-        return finalUtcDate.toISOString();
+        const localDateInTz_AsUtc = new Date(Date.UTC(tzYear, tzMonth - 1, tzDay, tzHour, tzMinute));
+        
+        const offset = baseUtcDate.getTime() - localDateInTz_AsUtc.getTime();
+        
+        const finalUtcDate = new Date(baseUtcDate.getTime() + offset);
+        
+        return finalUtcDate.toISOString();
 
-      } catch (error) {
-        console.error('❌ Timezone conversion error:', error);
-        // Fallback to assuming the local string is UTC, which is safer than local time
-        return new Date(localDateTimeString + 'Z').toISOString();
-      }
-    }
+      } catch (error) {
+        console.error('❌ Timezone conversion error:', error);
+        return new Date(localDateTimeString + 'Z').toISOString();
+      }
+    }
 
-    function convertFromUTC(utcTimestamp, targetTimezone) {
-      try {
-        if (!utcTimestamp) return 'Not scheduled';
-        const date = new Date(utcTimestamp);
-        const options = {
-          timeZone: targetTimezone, year: 'numeric', month: 'long', day: 'numeric',
-          hour: '2-digit', minute: '2-digit', hour12: true
-        };
-        return date.toLocaleString('en-US', options);
-      } catch (error) {
-        console.error('❌ Display error:', error);
-        return new Date(utcTimestamp).toLocaleString();
-      }
-    }
+    function convertFromUTC(utcTimestamp, targetTimezone) {
+      try {
+        if (!utcTimestamp) return 'Not scheduled';
+        const date = new Date(utcTimestamp);
+        const options = {
+          timeZone: targetTimezone, year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit', hour12: true
+        };
+        return date.toLocaleString('en-US', options);
+      } catch (error) {
+        console.error('❌ Display error:', error);
+        return new Date(utcTimestamp).toLocaleString();
+      }
+    }
 
     // BLACKBOARD FUNCTIONALITY
     async function openBlackboard(bookingId) {
