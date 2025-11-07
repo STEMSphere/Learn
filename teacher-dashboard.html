@@ -1321,7 +1321,7 @@
       const student = myStudents.find(s => s.id === studentId);
       const studentName = student ? student.full_name : 'Student';
       
-      // ✅ Changed to descending order (newest first)
+      // ✅ FIXED: Removed .reverse() to show newest messages at top
       const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_student').or(`and(sender_id.eq.${studentId},recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.eq.${studentId})`).order('created_at', { ascending: false });
 
       if (!messages) { alert('Error loading conversation'); return; }
@@ -1365,7 +1365,7 @@
         </div>
         
         <div class="messages-container">
-          ${messages.slice().reverse().map(msg => {
+          ${messages.map(msg => {
             const isFromMe = msg.sender_id === currentTeacherId;
             const bubbleClass = isFromMe ? 'from-me' : 'from-student';
             const date = new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -1504,7 +1504,7 @@
     }
 
     async function openSupportConversation() {
-      // ✅ Changed to descending order (newest first)
+      // ✅ FIXED: Removed .reverse() to show newest messages at top
       const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_support').or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`).order('created_at', { ascending: false });
       if (!messages) { alert('Error loading conversation'); return; }
 
@@ -1537,7 +1537,7 @@
         </div>
         
         <div class="messages-container">
-          ${messages.slice().reverse().map(msg => {
+          ${messages.map(msg => {
             const isFromMe = msg.sender_id === currentTeacherId;
             const bubbleClass = isFromMe ? 'from-me' : 'from-support';
             const date = new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
