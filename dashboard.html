@@ -1498,7 +1498,7 @@
     }
 
     async function openSupportConversation() {
-      // ✅ Changed to descending order (newest first)
+      // ✅ FIXED: Removed .reverse() to show newest messages at top
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1546,7 +1546,7 @@
         </div>
 
         <div class="messages-container">
-          ${messages.slice().reverse().map(msg => {
+          ${messages.map(msg => {
             const isFromMe = msg.sender_id === currentUserId;
             const bubbleClass = isFromMe ? 'from-me' : 'from-teacher';
             const date = new Date(msg.created_at).toLocaleString('en-US', {
@@ -1739,7 +1739,7 @@
 
       console.log('💬 Opening conversation with teacher:', teacherName, teacherId);
 
-      // ✅ Changed to descending order (newest first)
+      // ✅ FIXED: Removed .reverse() to show newest messages at top
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1801,7 +1801,7 @@
         </div>
 
         <div class="messages-container">
-          ${messages?.slice().reverse().map(msg => {
+          ${messages?.map(msg => {
             const isFromMe = msg.sender_id === currentUserId;
             const bubbleClass = isFromMe ? 'from-me' : 'from-teacher';
             const date = new Date(msg.created_at).toLocaleString('en-US', {
