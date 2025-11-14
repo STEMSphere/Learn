@@ -1,1698 +1,2707 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Section: Document Meta & Title -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- SEO Title & Description -->
-  <title>STEMSphere Academy | Cinematic Math & Chemistry Tutoring for SAT, AP, IB, HKAT</title>
-  <meta name="description" content="Book a demo with STEMSphere Academy—cinematic tutoring in Math and Chemistry for SAT, AP, IB, and HKAT. Designed for gifted learners and exam warriors.">
-
- <!-- Open Graph (Social Sharing) -->
-<meta property="og:title" content="STEMSphere Academy | Cinematic STEM Tutoring">
-<meta property="og:description" content="Book a demo for cinematic tutoring in Math and Chemistry. Engineered for gifted learners and exam warriors.">
-<meta property="og:image" content="https://learn.stemsphere.academy/assets/SSTEMSphereAcademybanner.png">
-<meta property="og:url" content="https://learn.stemsphere.academy">
-<meta property="og:type" content="website">
-
-<!-- Canonical URL -->
-<link rel="canonical" href="https://learn.stemsphere.academy">
-
-<!-- Favicon -->
-<link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
-
-  <!-- Structured Data (Schema) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    "name": "STEMSphere Academy",
-    "url": "https://learn.stemsphere.academy",
-    "description": "Cinematic tutoring in Math and Chemistry for SAT, AP, IB, and HKAT. Designed for gifted learners and exam warriors.",
-    "sameAs": [
-      "https://www.facebook.com/STEMxSphere"
-    ],
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "312 W 2nd Street #A8380",
-      "addressLocality": "Casper",
-      "addressRegion": "WY",
-      "postalCode": "82601",
-      "addressCountry": "US"
-    }
-  }
-  </script>
-<!-- Meta Pixel Code -->
-<script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '571053619377842');
-  fbq('track', 'PageView');
-</script>
-<noscript>
-  <img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=571053619377842&ev=PageView&noscript=1"/>
-</noscript>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17612604770"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-17612604770');
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | STEMSphere Academy</title>
   
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
-
+  <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  
   <style>
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🎨 BASE STYLES
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', 'Segoe UI', -apple-system, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  overflow-x: hidden;
-  line-height: 1.6;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🔝 HEADER & NAVIGATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-header {
-  position: relative;
-  padding: 2rem 1rem 1rem;
-  text-align: center;
-  background: rgba(0,0,0,0.3);
-  backdrop-filter: blur(10px);
-}
-
-.brand {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  z-index: 100;
-}
-
-.brand-logo {
-  width: 42px;
-  height: 42px;
-  background: #ff0000;
-  color: #fff;
-  font-weight: 700;
-  font-size: 1.2em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(255,0,0,0.4);
-}
-
-.brand-text {
-  color: #fff;
-  font-size: 1.3em;
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-/* Language Translator */
-#fallback-translator {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background: rgba(255,255,255,0.95);
-  padding: 6px 10px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  z-index: 9999;
-  backdrop-filter: blur(10px);
-}
-
-#fallback-translator select {
-  font-size: 14px;
-  padding: 5px 8px;
-  border: none;
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-}
-
-/* Login Link */
-.login-link {
-  position: fixed;
-  top: 55px;
-  right: 10px;
-  z-index: 9998;
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95em;
-  box-shadow: 0 4px 12px rgba(0,123,255,0.4);
-  transition: all 0.3s;
-}
-
-.login-link:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,123,255,0.6);
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🎬 HERO SECTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.title-group {
-  margin-top: 4rem;
-  animation: fadeInUp 0.8s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.title-group span {
-  display: block;
-  font-size: clamp(2rem, 6vw, 4rem);
-  font-weight: 800;
-  letter-spacing: -1px;
-  margin: 0.2em 0;
-  text-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
-.title-group span:first-child {
-  background: linear-gradient(135deg, #fff, #f0f0f0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.title-group span:last-child {
-  background: linear-gradient(135deg, #ff0000, #ff6b6b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-h2.subtitle {
-  font-size: clamp(1rem, 3vw, 1.5rem);
-  color: rgba(255,255,255,0.9);
-  margin: 1rem auto;
-  max-width: 800px;
-  font-weight: 400;
-}
-
-/* Course Bar */
-.course-bar {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
-  background: linear-gradient(90deg, #00f8ff, #ff00d0);
-  font-weight: 700;
-  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-  color: #fff;
-  margin: 1.5rem auto;
-  box-shadow: 0 8px 20px rgba(0,248,255,0.3);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 8px 20px rgba(0,248,255,0.3);
-  }
-  50% {
-    box-shadow: 0 8px 30px rgba(255,0,208,0.5);
-  }
-}
-
-.course-bar span + span {
-  margin-left: 0.5em;
-}
-
-/* Banner Video */
-.banner-video {
-  width: 100%;
-  max-width: 900px;
-  margin: 3rem auto;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-}
-
-.banner-video video {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🚀 CTA BUTTON
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#highIntentCTA {
-  position: relative;
-  text-align: center;
-  margin: 3rem auto;
-  padding: 0 1rem;
-}
-
-#highIntentCTA button, #highIntentCTA a {
-  display: inline-block;
-  background: linear-gradient(135deg, #ff0000, #ff6b6b);
-  color: #fff;
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
-  font-weight: 800;
-  padding: 1.2rem 2.5rem;
-  border-radius: 12px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 10px 30px rgba(255,0,0,0.5);
-  transition: all 0.3s;
-  position: relative;
-  z-index: 1;
-  margin: 0.5rem;
-}
-
-#highIntentCTA button:hover, #highIntentCTA a:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(255,0,0,0.7);
-}
-
-#liveChatBtn {
-  background: linear-gradient(135deg, #00ff88, #00c853) !important;
-  color: #000 !important;
-  box-shadow: 0 10px 30px rgba(0,255,136,0.5) !important;
-}
-
-#liveChatBtn:hover {
-  box-shadow: 0 15px 40px rgba(0,255,136,0.7) !important;
-}
-
-#highIntentCTA::before {
-  content: "⬇⬇⬇";
-  position: absolute;
-  top: -50px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2rem;
-  color: #fff;
-  text-shadow: 0 0 10px #00c6ff;
-  animation: bounce 1.5s infinite;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translate(-50%, 0);
-  }
-  50% {
-    transform: translate(-50%, 10px);
-  }
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ⭐ REVIEWS SECTION (WHITE TEXT BUTTONS)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#reviews-container {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 2rem;
-  margin: 3rem auto;
-  max-width: 900px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-#reviews-container h3 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #FFD700;
-}
-
-#reviews-container button {
-  background: none;
-  border: none;
-  color: #ffffff !important;
-  cursor: pointer;
-  font-size: 0.95em;
-  text-decoration: underline;
-}
-
-#reviews-container button:hover {
-  color: #00c6ff !important;
-}
-
-#reviews-body {
-  background: rgba(0,0,0,0.4);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-top: 1rem;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   📚 SUBJECTS SECTION (BLUE HOVER)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#tutoring-subjects {
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  padding: 4rem 1rem;
-  position: relative;
-}
-
-#tutoring-subjects h2 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  text-align: center;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, #fff, #00c6ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-#tutoring-subjects p.intro {
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto 3rem;
-  font-size: 1.2rem;
-  color: rgba(255,255,255,0.8);
-}
-
-.tutoring-banner {
-  width: 100%;
-  max-width: 900px;
-  display: block;
-  margin: 2rem auto;
-  border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-}
-
-.tutor-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.tutor-subject {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 2rem;
-  text-align: center;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.tutor-subject::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0,198,255,0.15) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.tutor-subject:hover {
-  transform: translateY(-10px);
-  border-color: #00c6ff;
-  box-shadow: 0 20px 40px rgba(0,198,255,0.4);
-}
-
-.tutor-subject:hover::before {
-  opacity: 1;
-}
-
-.tutor-subject img {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 1rem;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-
-.tutor-subject h4 {
-  color: #00c6ff;
-  font-size: 1.3em;
-  margin: 1rem 0 0.5rem;
-  font-weight: 700;
-}
-
-.tutor-desc {
-  color: rgba(255,255,255,0.8);
-  font-size: 0.95em;
-  line-height: 1.5;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   💰 PRICING SECTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#pricing-section {
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  padding: 4rem 1rem;
-}
-
-#pricing-section .content-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255,215,0,0.3);
-  border-radius: 20px;
-  padding: 3rem 2rem;
-}
-
-#pricing-section h2 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  text-align: center;
-  margin-bottom: 2rem;
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-#pricing-section p {
-  text-align: center;
-  max-width: 800px;
-  margin: 1rem auto;
-  line-height: 1.8;
-  color: rgba(255,255,255,0.9);
-  font-size: 1.05rem;
-}
-
-#pricing-section ul {
-  list-style: none;
-  padding: 0;
-  margin: 2rem auto;
-  max-width: 700px;
-}
-
-#pricing-section ul li {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  position: relative;
-  transition: all 0.3s;
-  font-size: 1.1rem;
-}
-
-#pricing-section ul li:hover {
-  transform: translateX(10px);
-  border-color: #FFD700;
-  box-shadow: 0 10px 30px rgba(255,215,0,0.3);
-}
-
-#pricing-section ul li.most-popular {
-  border: 3px solid #FFD700;
-  background: rgba(255,215,0,0.1);
-  box-shadow: 0 10px 30px rgba(255,215,0,0.4);
-}
-
-#pricing-section ul li.most-popular .badge {
-  position: absolute;
-  top: -15px;
-  left: 20px;
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: #000;
-  font-weight: 800;
-  font-size: 0.85em;
-  padding: 5px 15px;
-  border-radius: 50px;
-  text-transform: uppercase;
-  box-shadow: 0 4px 12px rgba(255,215,0,0.5);
-}
-
-#pricing-section .highlight {
-  color: #FFD700;
-  font-weight: 700;
-}
-
-#pricing-section .conversion-box {
-  margin: 3rem auto 0;
-  padding: 2rem;
-  background: rgba(0,0,0,0.3);
-  border-radius: 12px;
-  max-width: 600px;
-}
-
-#oanda_ecc {
-  width: 100%;
-}
-
-#oanda_ecc span {
-  color: #fff;
-  font-size: 0.9em;
-  display: block;
-  margin-bottom: 1rem;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   📚 EBOOK RESOURCES SECTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#ebook-resources {
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  padding: 4rem 1rem;
-  position: relative;
-}
-
-#ebook-resources h2 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  text-align: center;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, #FFD700, #FFA500);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-#ebook-resources p.intro {
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto 3rem;
-  font-size: 1.2rem;
-  color: rgba(255,255,255,0.9);
-  line-height: 1.8;
-}
-
-.ebook-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.ebook-card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 2rem;
-  text-align: center;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.ebook-card:hover {
-  transform: translateY(-10px);
-  border-color: #00c6ff;
-  box-shadow: 0 20px 40px rgba(0,198,255,0.4);
-}
-
-.ebook-card img {
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  margin: 0 auto 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-.ebook-card h3 {
-  color: #FFD700;
-  font-size: 1.5rem;
-  margin: 1rem 0;
-  font-weight: 700;
-}
-
-.ebook-card p {
-  color: rgba(255,255,255,0.8);
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.ebook-card .ebook-button {
-  display: inline-block;
-  background: linear-gradient(135deg, #00c853, #00e676);
-  color: #fff;
-  padding: 0.75rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1.1rem;
-  transition: all 0.3s;
-  box-shadow: 0 4px 12px rgba(0,200,83,0.4);
-}
-
-.ebook-card .ebook-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,200,83,0.6);
-}
-
-.free-badge {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: #ff0000;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  font-weight: 700;
-  font-size: 1rem;
-  border-radius: 50px;
-  box-shadow: 0 4px 12px rgba(255,0,0,0.5);
-  animation: pulse 2s infinite;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🎯 WHY CHOOSE US SECTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#why-choose {
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  padding: 4rem 1rem;
-}
-
-#why-choose h2 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #fff;
-}
-
-#why-choose .highlight {
-  color: #00c6ff;
-  font-weight: 700;
-}
-
-#why-choose p {
-  max-width: 800px;
-  margin: 1.5rem auto;
-  line-height: 1.8;
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.9);
-  text-align: center;
-}
-
-#why-choose ul {
-  list-style: none;
-  padding: 0;
-  margin: 2rem auto;
-  max-width: 800px;
-}
-
-#why-choose ul li {
-  position: relative;
-  padding-left: 2.5em;
-  margin: 1rem 0;
-  color: rgba(255,255,255,0.9);
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
-
-#why-choose ul li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: #00ff88;
-  font-size: 1.5em;
-  font-weight: 700;
-}
-
-#why-choose .stat {
-  text-align: center;
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
-  margin: 3rem auto;
-  padding: 2rem;
-  background: rgba(0,198,255,0.1);
-  border-left: 5px solid #ff0000;
-  border-radius: 8px;
-  max-width: 700px;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   📝 BLOG SECTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#blog {
-  background: #fff;
-  padding: 4rem 2rem;
-}
-
-.blog-post {
-  max-width: 900px;
-  margin: 0 auto 4rem;
-  background: #fff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-.blog-title {
-  color: #ff0000 !important;
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  margin-bottom: 1rem;
-  font-weight: 800;
-}
-
-.blog-subtitle {
-  color: #333;
-  font-size: 1.5em;
-  margin: 2rem 0 1rem;
-  font-weight: 700;
-}
-
-.blog-body {
-  color: #333;
-  line-height: 1.8;
-  font-size: 1.05rem;
-  margin: 1rem 0;
-}
-
-.blog-body strong {
-  color: #ff0000;
-  font-weight: 600;
-}
-
-.blog-topics {
-  list-style: disc;
-  padding-left: 2em;
-  color: #333;
-  margin: 1rem 0;
-}
-
-.blog-topics li {
-  margin: 0.5rem 0;
-  line-height: 1.6;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ❓ FAQ SECTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#faq-contact {
-  background: linear-gradient(135deg, #0f0c29, #302b63);
-  padding: 4rem 1rem;
-}
-
-#faq-contact h3 {
-  text-align: center;
-  font-size: clamp(2rem, 5vw, 2.5rem);
-  margin-bottom: 2rem;
-  color: #fff;
-}
-
-#faq-contact details {
-  margin: 1.5rem auto;
-  max-width: 800px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.3s;
-}
-
-#faq-contact details:hover {
-  border-color: #00c6ff;
-  box-shadow: 0 10px 30px rgba(0,198,255,0.3);
-}
-
-#faq-contact summary {
-  cursor: pointer;
-  font-size: 1.2em;
-  font-weight: 700;
-  color: #00dffc;
-  outline: none;
-  list-style: none;
-  position: relative;
-  padding-right: 2rem;
-}
-
-#faq-contact summary::after {
-  content: "+";
-  position: absolute;
-  right: 0;
-  top: 0;
-  font-size: 1.5em;
-  color: #00dffc;
-  transition: transform 0.3s;
-}
-
-#faq-contact details[open] summary::after {
-  transform: rotate(45deg);
-}
-
-#faq-contact details p {
-  margin: 1rem 0 0;
-  line-height: 1.8;
-  color: rgba(255,255,255,0.8);
-  font-size: 1.05rem;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🦶 FOOTER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-footer {
-  background: #000;
-  color: rgba(255,255,255,0.7);
-  text-align: center;
-  padding: 2rem 1rem;
-  font-size: 0.95em;
-}
-
-.footer-links {
-  margin: 1rem 0;
-}
-
-.footer-links a,
-.footer-contact a {
-  color: #00dffc;
-  text-decoration: none;
-  margin: 0 1rem;
-  transition: color 0.3s;
-}
-
-.footer-links a:hover,
-.footer-contact a:hover {
-  color: #fff;
-  text-decoration: underline;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   📱 MOBILE RESPONSIVENESS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-@media (max-width: 768px) {
-  .brand {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-  }
-
-  .title-group {
-    margin-top: 5rem;
-  }
-
-  #highIntentCTA::before {
-    top: -40px;
-    font-size: 1.5rem;
-  }
-
-  .tutor-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .ebook-grid {
-    grid-template-columns: 1fr;
-  }
-
-  #pricing-section .content-wrapper {
-    padding: 2rem 1rem;
-  }
-
-  .blog-post {
-    padding: 1.5rem;
-  }
-
-  .login-link {
-    top: 60px;
-    font-size: 0.85em;
-    padding: 8px 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .brand-logo {
-    width: 36px;
-    height: 36px;
-    font-size: 1em;
-  }
-
-  .brand-text {
-    font-size: 1.1em;
-  }
-
-  #fallback-translator {
-    top: 8px;
-    right: 8px;
-    padding: 4px 6px;
-  }
-
-  #fallback-translator select {
-    font-size: 12px;
-    padding: 3px 5px;
-  }
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    header {
+      background: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #ff0000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .brand img {
+      width: 40px;
+      height: 40px;
+    }
+    .brand-text {
+      font-size: 1.2em;
+      font-weight: 700;
+      color: #000;
+    }
+    .logout-btn {
+      background: #ff0000;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      flex: 1;
+    }
+
+    .welcome-card {
+      background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%);
+      border: 2px solid #ff0000;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .welcome-card h1 {
+      margin: 0 0 0.5rem 0;
+      color: #000;
+      font-size: 2em;
+    }
+    .welcome-card p {
+      margin: 0.3rem 0;
+      color: #333;
+    }
+    .book-btn {
+      background: linear-gradient(90deg, #007bff, #00c6ff);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      margin-top: 1rem;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow:0 0 10px rgba(0,123,255,0.5); }
+      50% { box-shadow:0 0 25px rgba(0,198,255,0.8); }
+      100% { box-shadow:0 0 10px rgba(0,123,255,0.5); }
+    }
+
+    /* Teacher Profile Styles */
+    .teacher-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #007bff;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .teacher-avatar:hover {
+      transform: scale(1.1);
+    }
+    .teacher-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #007bff;
+      margin: 0 auto 1rem;
+      display: block;
+    }
+    .teacher-name-clickable {
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .teacher-name-clickable:hover {
+      text-decoration: underline;
+    }
+    .view-profile-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .view-profile-btn:hover {
+      background: #0056b3;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #ddd;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 1rem 2rem;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      color: #666;
+      position: relative;
+    }
+    .tab.active {
+      color: #ff0000;
+      border-bottom-color: #ff0000;
+    }
+    .tab .badge {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: #ff0000;
+      color: #fff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .sessions-section h2 {
+      color: #000;
+      border-bottom: 2px solid #ff0000;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 1.8em;
+    }
+
+    .session-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .session-info h3 {
+      margin: 0 0 0.5rem 0;
+      color: #007bff;
+      font-size: 1.3em;
+    }
+    .session-info p {
+      margin: 0.25rem 0;
+      color: #666;
+      font-size: 0.95rem;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    .status-scheduled {
+      background: rgba(0,200,0,0.2);
+      color: #008800;
+      border: 1px solid #00cc00;
+    }
+    .status-completed {
+      background: rgba(128,128,128,0.2);
+      color: #666;
+      border: 1px solid #999;
+    }
+    .status-cancelled {
+      background: rgba(128,128,128,0.2);
+      color: #666;
+      border: 1px solid #999;
+    }
+
+    .inbox-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .inbox-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .inbox-header h3 {
+      color: #000;
+      font-size: 1.5em;
+    }
+    .compose-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .compose-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .thread-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .thread-item {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #fff;
+    }
+    .thread-item:hover {
+      border-color: #007bff;
+      box-shadow: 0 2px 8px rgba(0,123,255,0.2);
+    }
+    .thread-item.unread {
+      background: #e3f2fd;
+      border-color: #007bff;
+      border-width: 3px;
+    }
+    .thread-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .teacher-name {
+      font-weight: 700;
+      color: #000;
+      font-size: 1.1em;
+    }
+    .thread-meta {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .message-count {
+      background: #007bff;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+    .unread-count {
+      background: #ff0000;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      animation: pulse-badge 1.5s infinite;
+    }
+    @keyframes pulse-badge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .last-message-date {
+      color: #999;
+      font-size: 0.9em;
+    }
+    .last-message-preview {
+      color: #666;
+      font-size: 0.95em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-top: 0.5rem;
+    }
+
+    .conversation-header {
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: #fff;
+      padding: 1.5rem;
+      border-radius: 8px 8px 0 0;
+      margin: -2rem -2rem 1.5rem -2rem;
+    }
+    .conversation-header h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3em;
+    }
+    .conversation-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.9em;
+    }
+
+    .messages-container {
+      max-height: 50vh;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .message-bubble {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .message-bubble.from-me {
+      background: #e3f2fd;
+      border-color: #007bff;
+      margin-left: 2rem;
+    }
+    .message-bubble.from-teacher {
+      margin-right: 2rem;
+    }
+    .message-bubble .sender {
+      font-weight: 600;
+      color: #007bff;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .message-bubble .timestamp {
+      color: #999;
+      font-size: 0.85em;
+      margin-bottom: 0.5rem;
+    }
+    .message-bubble .subject {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    .message-bubble .body {
+      color: #333;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+    .message-bubble .attachment {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .message-bubble .attachment a {
+      color: #007bff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+    .message-bubble .attachment a:hover {
+      text-decoration: underline;
+    }
+
+    .reply-box {
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    .reply-box h5 {
+      margin: 0 0 1rem 0;
+      color: #007bff;
+    }
+
+    .file-upload-section {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #f8f9fa;
+      border: 2px dashed #ddd;
+      border-radius: 6px;
+    }
+    .file-upload-btn {
+      background: #6c757d;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .file-upload-btn:hover {
+      background: #5a6268;
+    }
+    .file-preview {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #e3f2fd;
+      border-radius: 4px;
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .file-preview.active {
+      display: flex;
+    }
+    .file-preview .remove-file {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85em;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      overflow: auto;
+    }
+    .modal.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .modal-content h3 {
+      margin-bottom: 1rem;
+      color: #007bff;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+    .btn-primary {
+      background: #007bff;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      margin-left: 0.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #999;
+    }
+
+    .wizard-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      z-index: 2000;
+      overflow: auto;
+    }
+    .wizard-modal.active {
+      display: block;
+    }
+
+    #wizardProgressBar {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      margin: 20px;
+      overflow: hidden;
+    }
+    #wizardProgressFill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #007bff, #00c6ff);
+      border-radius: 5px;
+      transition: width 0.4s ease;
+    }
+
+    .time-slots {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .time-slot {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .time-slot:hover {
+      background: #e3f2fd;
+      border-color: #007bff;
+    }
+    .time-slot.selected {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+
+    footer {
+      background: #000;
+      color: #bbb;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      font-size: 0.9em;
+      margin-top: auto;
+    }
+    .footer-links a,
+    .footer-contact a {
+      color: #00dffc;
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+
+    .summary-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .summary-card h4 {
+      margin: 0 0 0.5rem 0;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .summary-number {
+      font-size: 1.8em;
+      font-weight: 700;
+      color: #007bff;
+    }
+
+    .invoice-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+
+    .invoice-card:hover {
+      border-color: #007bff;
+      box-shadow: 0 4px 15px rgba(0,123,255,0.2);
+    }
+
+    .invoice-card.overdue {
+      border-color: #ff0000;
+      background: #fff5f5;
+    }
+
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .invoice-number {
+      font-size: 1.2em;
+      font-weight: 700;
+      color: #000;
+    }
+
+    .invoice-amount {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #007bff;
+    }
+
+    .invoice-status {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .status-draft {
+      background: rgba(108, 117, 125, 0.2);
+      color: #6c757d;
+    }
+
+    .status-sent {
+      background: rgba(255, 193, 7, 0.2);
+      color: #856404;
+    }
+
+    .status-paid {
+      background: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+    }
+
+    .status-overdue {
+      background: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+      animation: pulse 2s infinite;
+    }
+
+    .status-cancelled {
+      background: rgba(108, 117, 125, 0.2);
+      color: #6c757d;
+    }
+
+    .invoice-details p {
+      margin: 0.3rem 0;
+      color: #666;
+    }
+
+    .invoice-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-pay {
+      background: linear-gradient(90deg, #28a745, #20c997);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+      animation: pulse-pay 2s infinite;
+    }
+
+    @keyframes pulse-pay {
+      0%, 100% { box-shadow: 0 0 10px rgba(40,167,69,0.5); }
+      50% { box-shadow: 0 0 25px rgba(32,201,151,0.8); }
+    }
+
+    .btn-view {
+      background: #007bff;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+    }
+
+    .invoice-line-items {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+
+    .line-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .line-item:last-child {
+      border-bottom: none;
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #007bff;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+      }
+      .time-slots {
+        grid-template-columns: 1fr;
+      }
+      .tabs {
+        overflow-x: auto;
+      }
+      .tab {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9em;
+      }
+      .message-bubble.from-me {
+        margin-left: 0.5rem;
+      }
+      .message-bubble.from-teacher {
+        margin-right: 0.5rem;
+      }
+    }
   </style>
 </head>
-
 <body>
-
-<!-- START: COMPACT LANGUAGE TRANSLATOR BAR -->
-<div id="fallback-translator">
-  <select onchange="translatePage(this.value)">
-    <option value="en" selected>🌐 English</option>
-    <option value="es">Español</option>
-    <option value="fr">Français</option>
-    <option value="de">Deutsch</option>
-    <option value="zh-CN">简体中文</option>
-    <option value="zh-TW">繁體中文</option>
-    <option value="ja">日本語</option>
-    <option value="ko">한국어</option>
-    <option value="ar">العربية</option>
-    <option value="hi">हिन्दी</option>
-    <option value="pt">Português</option>
-    <option value="ru">Русский</option>
-    <option value="it">Italiano</option>
-    <option value="nl">Nederlands</option>
-    <option value="pl">Polski</option>
-    <option value="tr">Türkçe</option>
-    <option value="vi">Tiếng Việt</option>
-    <option value="th">ไทย</option>
-    <option value="id">Bahasa Indonesia</option>
-    <option value="ms">Bahasa Melayu</option>
-  </select>
-</div>
-
-<script>
-  function translatePage(lang) {
-    if (!lang || lang === 'en') return;
-    const loc = encodeURIComponent(window.location.href);
-    window.location.href =
-      'https://translate.google.com/translate?sl=en&tl='
-      + lang + '&u=' + loc;
-  }
-</script>
-
-<!-- LOGIN LINK -->
-<a href="https://learn.stemsphere.academy/login.html" class="login-link">
-  🔓 Student Login/Signup
-</a>
-
-<!-- HEADER -->
-<header>
-  <div class="brand">
-    <span class="brand-logo">SP</span>
-    <span class="brand-text">STEMSphere</span>
-  </div>
-
-  <div class="title-group">
-    <span>Other Courses Teach.</span>
-    <span>We Transform!</span>
-  </div>
-
-  <h2 class="subtitle">Kids → High School → College & Adult Learners!</h2>
-
-  <div class="course-bar">
-    <span>MATH</span><span>|</span><span>Chemistry</span>
-    <span>|</span><span>Biology</span><span>|</span>
-    <span>Coding & more</span>
-  </div>
-</header>
-
-<!-- BANNER VIDEO -->
-<div class="banner-video">
-  <video autoplay muted loop playsinline>
-    <source src="https://learn.stemsphere.academy/assets/StemspherebannerVid29S3pt.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</div>
-
-<!-- CTA BUTTON WITH LIVE CHAT -->
-<div id="highIntentCTA">
-  <!-- Live Chat Button (shows when advisor available) -->
-  <button onclick="openAnonymousAdvisorChat()" id="liveChatBtn" style="display:none;">
-    💬 Chat with Advisor NOW - Free!
-  </button>
-  
-  <!-- Status Indicator -->
-  <div id="advisorStatusIndicator" style="display: none; margin: 1rem auto;">
-    <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: rgba(0,255,136,0.2); border: 2px solid #00ff88; border-radius: 8px; color: #fff; font-weight: 600;">
-      <span style="width: 10px; height: 10px; background: #00ff88; border-radius: 50%; animation: pulse 2s infinite;"></span>
-      Advisor Online Now
-    </span>
-  </div>
-  
-  <!-- Regular CTA (always visible) -->
-  <a href="https://learn.stemsphere.academy/login.html">
-    🚀 Book Your Enrollment Session Now
-  </a>
-</div>
-<!-- REVIEWS SECTION -->
-<div id="reviews-container"></div>
-<script>
-(async () => {
-  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRSWqhCcu_XZW7SW5uZ3UZdKzvLm2zNw8DvMZV2TD_gcts6K-DBrLwd88pnXVn0xl0fxRRfGW0Y4iyN/pub?output=csv';
-  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSd0lD5dU8nsUbBzfqqRkLflTkJVrAQyvZXI81uXXyOPXpoUdA/viewform?usp=header';
-
-  const res = await fetch(csvUrl);
-  const text = await res.text();
-  const rows = text.trim().split('\n').slice(1).map(r =>
-    r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, ''))
-  );
-
-  const reviews = rows
-    .filter(r => {
-      const name = (r[0] || "").toLowerCase();
-      const textVal = (r[1] || "").toLowerCase();
-      return (
-        r[2] &&
-        !name.includes("facebook") &&
-        !textVal.includes("facebook")
-      );
-    })
-    .sort((a, b) => new Date(b[3]) - new Date(a[3]));
-
-  if (!reviews.length) return;
-
-  const avg = (reviews.reduce((sum, r) => sum + (parseFloat(r[2])||0), 0) / reviews.length).toFixed(1);
-  const count = reviews.length;
-
-  const wrapper = document.createElement('div');
-  wrapper.innerHTML = `
-    <div style="margin-bottom:0.8em;">
-      <span style="background:#007bff; color:#fff; padding:0.4em 1em; border-radius:20px; font-size:0.95em; font-weight:bold; display:inline-block;">
-        4/5 students improve in only 3 weeks!
-      </span>
+  <header>
+    <div class="brand">
+      <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
+      <span class="brand-text">STEMSphere Academy</span>
     </div>
-    <h3 style="font-weight:600; margin:0.6em 0; color:#fff;">
-      <span style="color:#FFD700; font-size:1.2em;">★</span>
-      ${avg} (${count} review${count>1?'s':''})
-    </h3>
-    <div style="margin:1em 0; display:flex; justify-content:center; gap:1.5em;">
-      <button id="toggle-reviews" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.95em; text-decoration:underline;">
-        See all reviews
-      </button>
-      <button id="submit-review" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.95em; text-decoration:underline;">
-        Submit a review
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+
+  <div class="dashboard-container">
+    <div class="welcome-card">
+      <h1>Welcome, <span id="userName">Student</span>! 👋</h1>
+      <p id="userEmail"></p>
+      <p id="userAge"></p>
+      <button class="book-btn" onclick="openBookingWizard()">
+        🚀 Book a Trial/New Session
       </button>
     </div>
-    <div id="reviews-body" style="margin-top:1.2em; display:none; text-align:left;"></div>
-  `;
-  document.getElementById('reviews-container').appendChild(wrapper);
 
-  const reviewsBody = wrapper.querySelector('#reviews-body');
-  let currentIndex = 0;
-  const batchSize = 20;
-
-  const seeMoreBtn = document.createElement('button');
-  seeMoreBtn.textContent = 'See more reviews';
-  seeMoreBtn.style.cssText = "background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.95em; margin-top:1em; display:block; text-decoration:underline;";
-  seeMoreBtn.addEventListener('click', renderNextBatch);
-
-  function renderNextBatch() {
-    const slice = reviews.slice(currentIndex, currentIndex + batchSize);
-    slice.forEach(r => {
-      const reply = (r[5] || "").trim();
-      const div = document.createElement('div');
-      div.style.marginBottom = '1.5em';
-      div.innerHTML = `
-        <strong style="color:#eee;">${r[0]||'Anonymous'}</strong>
-        ${'★'.repeat(+r[2]).padEnd(5,'☆')
-          .replace(/★/g, '<span style="color:#FFD700;">★</span>')
-          .replace(/☆/g, '<span style="color:#555;">★</span>')}<br>
-        <small style="color:#aaa;">${new Date(r[3]).toLocaleDateString()}</small>
-        <p style="margin:0.4em 0 0; color:#ccc; line-height:1.4;">${r[1]}</p>
-        ${reply ? `
-          <div style="margin-left:1em; margin-top:0.3em;">
-            <div style="font-size:0.85em; color:#89c4ff; margin-bottom:0.2em; font-weight:600;">Instructor Reply:</div>
-            <div style="font-size:0.85em; color:#7fbfff; font-style:italic;">${reply}</div>
-          </div>` : ''}
-      `;
-      reviewsBody.appendChild(div);
-    });
-    currentIndex += batchSize;
-
-    if (currentIndex < reviews.length) {
-      if (reviewsBody.contains(seeMoreBtn)) {
-        reviewsBody.removeChild(seeMoreBtn);
-      }
-      reviewsBody.appendChild(seeMoreBtn);
-    } else {
-      seeMoreBtn.remove();
-    }
-  }
-
-  wrapper.querySelector('#toggle-reviews').addEventListener('click', e => {
-    const show = reviewsBody.style.display === 'block';
-    reviewsBody.style.display = show ? 'none' : 'block';
-    e.target.textContent = show ? 'See all reviews' : 'Hide reviews';
-    if (!show && currentIndex === 0) {
-      renderNextBatch();
-    }
-  });
-
-  wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
-})();
-</script>
-
-<!-- TUTORING SUBJECTS SECTION -->
-<section id="tutoring-subjects">
-  <h2>Personalized Tutoring in Every Subject We Offer</h2>
-  <p class="intro">
-    One-on-one or small-group sessions with our expert tutors. From weekly check-ins to intensive exam prep, we cover every level.
-  </p>
-  <img
-    src="https://i.postimg.cc/mkZDYz4T/Ads-11.png"
-    alt="Tutoring Banner"
-    class="tutoring-banner"
-  />
-
-  <div class="tutor-grid">
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/43xqCpgD/9104950.png" alt="Public Speaking Icon" />
-      <h4>Public Speaking Foundations</h4>
-      <p class="tutor-desc">Enhance your confidence and clarity.</p>
+    <!-- Live Advisor Banner -->
+    <div id="liveAdvisorBanner" style="display:none; margin-bottom: 2rem;">
+      <div style="background:linear-gradient(135deg, #00ff88, #00c853); padding:2rem; border-radius:12px; box-shadow:0 4px 20px rgba(0,255,136,0.3); text-align:center;">
+        <h2 style="margin:0 0 1rem 0; color:#000; font-size:2em;">
+          🎯 Live Enrollment Advisor Available NOW!
+        </h2>
+        <p style="margin:0 0 1.5rem 0; color:#000; font-size:1.2em;">
+          Skip the wait! Get instant help scheduling your first session.
+        </p>
+        <button onclick="openAdvisorChat()" style="background:#000; color:#00ff88; padding:1rem 2rem; border:none; border-radius:8px; cursor:pointer; font-weight:700; font-size:1.1em; box-shadow:0 4px 12px rgba(0,0,0,0.3); animation:pulse 2s infinite;">
+          💬 Chat with Advisor Now
+        </button>
+      </div>
     </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/PxKCCzDt/Screenshot-2025-08-28-191534.png" alt="Algebra Essentials Icon" />
-      <h4>Algebra Essentials</h4>
-      <p class="tutor-desc">From linear equations to polynomials.</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('upcoming')">📅 Upcoming Sessions</button>
+      <button class="tab" onclick="showTab('allSessions')">📚 All Sessions</button>
+      <button class="tab" onclick="showTab('invoices')">
+        💳 Invoices
+        <span class="badge" id="invoicesBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab" onclick="showTab('support')">
+        💬 Support
+        <span class="badge" id="supportBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab" onclick="showTab('teachers')">
+        👨‍🏫 My Teachers
+        <span class="badge" id="teachersBadge" style="display:none;">0</span>
+      </button>
     </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/xCjCVJ4B/2792361.png" alt="Geometry Foundations Icon" />
-      <h4>Geometry Foundations</h4>
-      <p class="tutor-desc">Master shapes, angles, and proofs.</p>
+
+    <div id="upcomingTab" class="tab-content active">
+      <div class="sessions-section">
+        <h2>📅 Upcoming Sessions</h2>
+        <div id="upcomingSessions">
+          <div style="text-align:center; padding:3rem; color:#007bff;">Loading your sessions...</div>
+        </div>
+      </div>
     </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/VvpLt7kc/Screenshot-2025-08-28-192149.png" alt="Pre-Calculus & Trig Icon" />
-      <h4>Pre-Calculus &amp; Trigonometry</h4>
-      <p class="tutor-desc">Functions, limits, and trig insights.</p>
+
+    <div id="allSessionsTab" class="tab-content">
+      <div class="sessions-section">
+        <h2>📚 All Sessions</h2>
+        <div id="allSessions">
+          <div style="text-align:center; padding:3rem; color:#007bff;">Loading your sessions...</div>
+        </div>
+      </div>
     </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/mDhsSQqZ/Screenshot-2025-08-28-191639.png" alt="AP Calculus AB & BC Icon" />
-      <h4>AP® Calculus AB &amp; BC</h4>
-      <p class="tutor-desc">Intensive prep for derivatives and integrals.</p>
+
+    <div id="invoicesTab" class="tab-content">
+      <div class="sessions-section">
+        <h2>💳 My Invoices</h2>
+        <div class="invoice-summary" id="invoiceSummary">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="summary-card">
+              <h4>Total Invoices</h4>
+              <div class="summary-number" id="totalInvoices">-</div>
+            </div>
+            <div class="summary-card">
+              <h4>Pending Payment</h4>
+              <div class="summary-number" id="pendingInvoices">-</div>
+            </div>
+            <div class="summary-card">
+              <h4>Amount Due</h4>
+              <div class="summary-number" id="amountDue">$-</div>
+            </div>
+          </div>
+        </div>
+        <div id="invoicesList">
+          <div style="text-align:center; padding:3rem; color:#007bff;">Loading invoices...</div>
+        </div>
+      </div>
     </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/MGH6s2f8/5932783.png" alt="AP Statistics Icon" />
-      <h4>AP® Statistics</h4>
-      <p class="tutor-desc">Data analysis and probability fundamentals.</p>
+
+    <div id="supportTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>💬 Support Messages</h3>
+          <button class="compose-btn" onclick="openComposeModal('support')">✉️ New Message</button>
+        </div>
+        <div id="supportMessages" class="thread-list">
+          <div class="empty-state">Loading messages...</div>
+        </div>
+      </div>
     </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/dVtw1PBT/test-tube-and-chemical-compound-chemistry-colored-icon-vector.jpg" alt="General Chemistry Icon" />
-      <h4>General Chemistry Crash Course</h4>
-      <p class="tutor-desc">Core concepts in atoms and reactions.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/FHdhttVb/Screenshot-2025-08-28-193154.png" alt="Organic Chemistry Icon" />
-      <h4>Organic Chemistry Deep Dive</h4>
-      <p class="tutor-desc">Mechanisms and organic compound synthesis.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/xCR2G99Q/images-1.jpg" alt="IB Chemistry SL & HL Icon" />
-      <h4>IB Chemistry SL &amp; HL Prep</h4>
-      <p class="tutor-desc">Curriculum-focused chemistry strategies.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/RFPYVhMW/Screenshot-2025-08-28-193929.png" alt="Biology Masterclass Icon" />
-      <h4>Biology Masterclass</h4>
-      <p class="tutor-desc">Dive into cell biology and genetics.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/FHVXX9JL/Screenshot-2025-08-28-194223.png" alt="MCAT Biology Review Icon" />
-      <h4>MCAT Biology Review</h4>
-      <p class="tutor-desc">High-yield biology for MCAT success.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/ZRyfZcDM/Screenshot-2025-08-28-195306.png" alt="English Mastery Icon" />
-      <h4>English Mastery</h4>
-      <p class="tutor-desc">Improve reading, writing, and speaking.</p>
-    </div>
-  </div>
-</section>
 
-<!-- WHY CHOOSE US SECTION -->
-<section id="why-choose">
-  <h2>Why <span class="highlight">STEMSphere</span> Tutoring Is Unmatched</h2>
-
-  <p>
-    At STEMSphere, every session is crafted to <span class="highlight">unlock your full potential</span>.  
-    Our tutors blend deep STEM expertise with personalized teaching techniques that adapt to your style, pace, and goals.
-  </p>
-
-  <p>
-    Beyond grades, we cultivate <span class="highlight">critical thinking</span>,  
-    <span class="highlight">confidence</span>, and a genuine passion for learning—so concepts stick for life.
-  </p>
-
-  <ul>
-    <li>Tailored study plans targeting your unique challenges</li>
-    <li>Hands-on exercises and real-world applications</li>
-    <li>Regular progress check-ins with actionable feedback</li>
-    <li>Exclusive resources: practice exams, cheat-sheets, and tutorials</li>
-    <li>Flexible formats: one-on-one, small groups, or on-demand videos</li>
-    <li>Certified STEM experts & exam prep specialists</li>
-    <li>Encouraging, supportive environment for every learner</li>
-  </ul>
-
-  <p class="stat">
-    <span class="highlight">4 out of 5 students</span> saw improvements within  
-    <span class="highlight">just 3 weeks</span> of tutoring.
-  </p>
-
-  <p>
-    Ready to transform your academic journey?  
-    <span class="highlight">Join STEMSphere today</span> and start seeing real results.
-  </p>
-</section>
-
-<!-- PRICING SECTION -->
-<section id="pricing-section">
-  <div class="content-wrapper">
-    <h2>What Are Our Costs?</h2>
-
-    <p>
-      We offer flexible memberships designed to fit your learning style.  
-      Each plan includes <span class="highlight">16 sessions over 8 weeks</span>, with classes held <span class="highlight">twice a week per subject</span>.  
-      Students often stack multiple subjects to build a schedule that fits their goals and pace.
-    </p>
-
-    <ul>
-      <li><span class="highlight">1-on-1 Private Tutoring</span> — $2000 USD per plan</li>
-      <li class="most-popular">
-        <div class="badge">Most Popular</div>
-        <span class="highlight">Small Group (up to 4 students)</span> — $799 USD per plan
-      </li>
-    </ul>
-
-    <h3 style="color: #00c6ff; text-align: center; font-size: clamp(1.5rem, 4vw, 2rem); margin-top: 2rem; margin-bottom: 0.5rem;">
-      Need a smaller flex schedule?
-    </h3>
-    <p style="text-align: center; margin-bottom: 1rem;">
-      For those needing less than 2 classes weekly and preferring a once-weekly pace, we offer a flexible 8-session plan.
-    </p>
-    <ul>
-      <li>
-        <span class="highlight">Flex 1-on-1 Private Tutoring (8 Sessions)</span> — $1000 USD per plan
-      </li>
-    </ul>
-
-    <p>
-      We accept payments in <span class="highlight">most global currencies</span>, including USD, EUR, GBP, NGN, INR, CAD, AUD, JPY, HKD, SGD, PHP, KRW, MYR, THB, TWD, ZAR, BRL, MXN, and more.  
-      Use the converter below to estimate your local cost.
-    </p>
-
-    <div class="conversion-box">
-      <div id="oanda_ecc">
-        <span>Currency Converter by OANDA</span>
-        <script src="https://www.oanda.com/embedded/converter/get/b2FuZGFlY2N1c2VyLy9kZWZhdWx0/?lang=en"></script>
+    <div id="teachersTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>👨‍🏫 Teacher Messages</h3>
+          <button class="compose-btn" onclick="openComposeToTeacherModal()" id="composeTeacherBtn">✉️ Message a Teacher</button>
+        </div>
+        <div id="teacherThreads" class="thread-list">
+          <div class="empty-state">Loading messages...</div>
+        </div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- EBOOK RESOURCES SECTION -->
-<section id="ebook-resources">
-  <h2>📚 Free Learning Resources</h2>
-  <p class="intro">
-    Download our expertly crafted eBooks designed to help you excel in STEM subjects and prepare for college success.  
-    These guides contain proven strategies used by top students worldwide.
-  </p>
-
-  <div class="ebook-grid">
-    <div class="ebook-card">
-      <div class="free-badge">FREE!</div>
-      <img src="https://i.postimg.cc/s24NgxkN/gemini-2-5-flash-image-preview-nano-banana-i-need-an-ebook-cove-2.png" alt="STEM Study System eBook">
-      <h3>The STEM Student's Secret Study System</h3>
-      <p>Master math and science with proven techniques from top students. Learn the 3-step formula for acing exams.</p>
-      <a href="https://books.stemsphere.academy" class="ebook-button">Download Free</a>
-    </div>
-
-    <div class="ebook-card">
-      <div class="free-badge">FREE!</div>
-      <img src="https://i.postimg.cc/N03SnR7V/ergh.png" alt="College Prep Secrets eBook">
-      <h3>College Prep Secrets for Parents</h3>
-      <p>The insider's guide to preparing your teen for college. Learn what schools don't tell you about admissions and scholarships.</p>
-      <a href="https://books.stemsphere.academy" class="ebook-button">Download Free</a>
-    </div>
-  </div>
-</section>
-
-<!-- BLOG SECTION -->
-<section id="blog">
-  <article class="blog-post">
-    <h2 class="blog-title">Why Immersive Chemistry Tutoring Works</h2>
-    <p class="blog-body">
-      At STEMSphere Academy, chemistry comes alive. Our <strong>AP Chemistry tutoring online</strong>
-      sessions transform reaction mechanisms and stoichiometry into vivid, memorable lessons.
-      Students in <strong>New York</strong> and <strong>California</strong> rely on us for
-      <strong>organic chemistry tutoring</strong>, while families in <strong>Chicago</strong>
-      trust us for exam prep that delivers results. Across <strong>Hong Kong</strong> and
-      <strong>Singapore</strong>, we're known for <strong>IB Chemistry HL tutoring</strong>
-      and <strong>HKDSE chemistry prep</strong> that builds confidence and clarity.
-    </p>
-    <p class="blog-body">
-      Whether you're tackling molecular bonding or preparing for high‑stakes exams, our cinematic
-      approach ensures every learner feels like the hero of their own academic journey.
-    </p>
-    <h3 class="blog-subtitle">Topics we excel at</h3>
-    <ul class="blog-topics">
-      <li>AP Chemistry tutor online</li>
-      <li>IB Chemistry HL tutoring in Singapore</li>
-      <li>HKDSE chemistry prep Hong Kong</li>
-      <li>Organic chemistry tutor New York</li>
-      <li>Stoichiometry help California</li>
-      <li>Chemistry exam coaching Chicago</li>
-    </ul>
-  </article>
-
-  <article class="blog-post">
-    <h2 class="blog-title">Why Immersive Math Tutoring Works</h2>
-    <p class="blog-body">
-      Math isn't just numbers—it's a story. Our <strong>SAT Math help for gifted students</strong>
-      and <strong>AP Calculus tutoring online</strong> sessions use cinematic clarity to make
-      complex concepts unforgettable. From <strong>geometry enrichment classes in California</strong>
-      to <strong>IB Math HL tutoring in New York</strong>, we engineer every lesson for results.
-      Families in <strong>Chicago</strong> choose us for <strong>algebra mastery</strong>, while
-      students in <strong>Hong Kong</strong> and <strong>Singapore</strong> rely on us for
-      <strong>IB Math SL/HL prep</strong> and <strong>HKAT math tutoring</strong>.
-    </p>
-    <p class="blog-body">
-      Whether it's derivatives in calculus, probability in statistics, or geometry foundations,
-      STEMSphere Academy ensures every learner gains confidence, speed, and exam‑ready precision.
-    </p>
-    <h3 class="blog-subtitle">Topics we excel at</h3>
-    <ul class="blog-topics">
-      <li>SAT Math help for gifted students</li>
-      <li>AP Calculus tutor online</li>
-      <li>IB Math HL tutoring New York</li>
-      <li>Geometry enrichment classes California</li>
-      <li>Algebra tutor Chicago</li>
-      <li>HKAT math tutoring Hong Kong</li>
-      <li>IB Math SL/HL prep Singapore</li>
-    </ul>
-  </article>
-</section>
-
-<!-- FAQ & CONTACT SECTION -->
-<section id="faq-contact">
-  <h3>Frequently Asked Questions</h3>
-
-  <details>
-    <summary>How do I book a free session?</summary>
-    <p>It's not a free trial but more of a free diagnostics. We offer a free diagnostics/mini session with one of our enrollment specialists. The goal is to match you with a tutor that fits your learning style. Click the "Book Your Enrollment Session" button above or reach out via email. We'll schedule your session within 24 hours.</p>
-  </details>
-
-  <details>
-    <summary>What subjects and levels do you cover?</summary>
-    <p>We offer personalized tutoring in Math, Chemistry, Biology, Coding, English, Public Speaking, SAT/ACT prep, and more—from elementary through adult learners.</p>
-  </details>
-
-  <details>
-    <summary>What's your cancellation and rescheduling policy?</summary>
-    <p>You can cancel or reschedule up to 24 hours before your session at no extra cost. Simply reply to your session confirmation email or contact support.</p>
-  </details>
-
-  <details>
-    <summary>How do I pay and what are your rates?</summary>
-    <p>We accept all major credit cards and PayPal. Rates vary by tutor and format; view detailed pricing above or email support for a custom package.</p>
-  </details>
-
-  <details>
-    <summary>Do you offer group discounts?</summary>
-    <p>Yes! Our Small Group (up to 4 students) plan is our most popular option at $799 USD. It's perfect for friends or siblings learning together.</p>
-  </details>
-
-  <details>
-    <summary>What if I need to learn multiple subjects?</summary>
-    <p>Students often stack multiple subjects! Each membership covers one subject, but you can purchase multiple plans to create a custom schedule that fits your goals.</p>
-  </details>
-
-  <details>
-    <summary>Are the eBooks really free?</summary>
-    <p>Yes! Both eBooks are 100% free. No credit card required. Just enter your email and download instantly. We created these resources to help students succeed.</p>
-  </details>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <p>© 2025 STEMSphere Academy. All rights reserved.</p>
-  <nav class="footer-links">
-    <a href="#faq-contact">FAQs</a> |
-    <a href="/privacy.html">Privacy Policy</a> |
-    <a href="https://www.facebook.com/STEMxSphere" target="_blank">Facebook</a>
-  </nav>
-  <p class="footer-contact">
-    Need help? Contact us at 
-    <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
-  </p>
-  <p style="margin-top: 1rem; font-size: 0.85em; opacity: 0.6;">
-    312 W 2nd Street #A8380, Casper, WY 82601, USA
-  </p>
-</footer>
-
-<!-- ANONYMOUS ADVISOR CHAT MODAL -->
-<div id="anonymousAdvisorChatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
-  <div style="background: #fff; border-radius: 16px; width: 90%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
-    
-    <!-- Header with Advisor Photo -->
-    <div style="background: linear-gradient(135deg, #ff0000, #ff6b6b); color: #fff; padding: 1.5rem 2rem; border-radius: 16px 16px 0 0; position: relative;">
-      <button onclick="closeAnonymousChat()" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.2); color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5em; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">×</button>
+  <!-- Teacher Profile Modal -->
+  <div id="teacherProfileModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <button onclick="closeModal('teacherProfileModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
       
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <img id="advisorPhoto" src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="Advisor" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; background: #fff;">
-        <div>
-          <h3 style="margin: 0 0 0.5rem 0; font-size: 1.6em; font-weight: 800;">💬 Live Chat with Advisor</h3>
-          <p id="advisorChatName" style="margin: 0; opacity: 0.95; font-size: 1em;">Connecting...</p>
-        </div>
+      <div id="teacherProfileContent">
+        <!-- Content populated dynamically -->
       </div>
-    </div>
-
-    <!-- Messages Container -->
-    <div id="anonymousChatMessages" style="flex: 1; overflow-y: auto; padding: 1.5rem; background: #f8f9fa; min-height: 300px; max-height: 400px;">
-      <div style="text-align: center; padding: 2rem; color: #999;">
-        <div style="font-size: 3em; margin-bottom: 1rem;">💬</div>
-        <p style="font-size: 1.1em; color: #666;">Start chatting! An advisor will respond shortly.</p>
-      </div>
-    </div>
-
-    <!-- Input Box - Sticky at Bottom -->
-    <div style="padding: 1.5rem; background: #fff; border-top: 2px solid #eee; border-radius: 0 0 16px 16px;">
-      <textarea id="anonymousChatInput" placeholder="Ask about courses, pricing, schedules... anything!" style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 80px; margin-bottom: 1rem;"></textarea>
-      <button onclick="sendAnonymousMessage()" style="width: 100%; background: linear-gradient(135deg, #ff0000, #ff6b6b); color: #fff; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-        Send Message
-      </button>
-      <p style="margin: 1rem 0 0 0; text-align: center; color: #666; font-size: 0.9em;">
-        💡 Want to book a session? We'll guide you to sign up!
-      </p>
     </div>
   </div>
-</div>
 
-<!-- SUPABASE & ANONYMOUS CHAT JAVASCRIPT -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// Supabase setup
-const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
-
-const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let visitorSessionId = null;
-let anonymousChatInterval = null;
-let currentAdvisorId = null;
-let currentAdvisorData = null;
-
-// Check if advisors are available
-async function checkAdvisorAvailability() {
-  const { data: advisors } = await supabaseClient
-    .from('profiles')
-    .select('id, full_name, profile_photo_url')
-    .eq('role', 'teacher')
-    .eq('is_advisor', true)
-    .eq('advisor_available', true)
-    .limit(1);
-
-  const statusIndicator = document.getElementById('advisorStatusIndicator');
-  const chatBtn = document.getElementById('liveChatBtn');
-  
-  if (advisors && advisors.length > 0) {
-    if (statusIndicator) statusIndicator.style.display = 'block';
-    if (chatBtn) {
-      chatBtn.style.display = 'inline-block';
-      chatBtn.style.animation = 'pulse 2s infinite';
-    }
-  } else {
-    if (statusIndicator) statusIndicator.style.display = 'none';
-    if (chatBtn) chatBtn.style.display = 'none';
-  }
-}
-
-// Open anonymous chat modal
-async function openAnonymousAdvisorChat() {
-  const { data: advisors } = await supabaseClient
-    .from('profiles')
-    .select('id, full_name, profile_photo_url')
-    .eq('role', 'teacher')
-    .eq('is_advisor', true)
-    .eq('advisor_available', true)
-    .limit(1);
-
-  if (!advisors || advisors.length === 0) {
-    alert('⚠️ No advisors available right now. Please sign up or try again later!\n\nCreate an account: ' + window.location.origin + '/login.html');
-    return;
-  }
-
-  // Generate or retrieve visitor session ID
-  if (!visitorSessionId) {
-    visitorSessionId = 'visitor-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('visitor_session_id', visitorSessionId);
-  }
-
-  currentAdvisorId = advisors[0].id;
-  currentAdvisorData = advisors[0];
-  
-  // Update advisor info with photo
-  document.getElementById('advisorChatName').textContent = `Chatting with ${advisors[0].full_name}`;
-  
-  // Set advisor photo
-  const advisorPhoto = document.getElementById('advisorPhoto');
-  if (advisors[0].profile_photo_url) {
-    advisorPhoto.src = advisors[0].profile_photo_url;
-  } else {
-    advisorPhoto.src = 'https://learn.stemsphere.academy/assets/favconsp1.2.png';
-  }
-  
-  document.getElementById('anonymousAdvisorChatModal').style.display = 'flex';
-  
-  loadAnonymousMessages();
-  
-  // Poll for new messages every 3 seconds
-  anonymousChatInterval = setInterval(loadAnonymousMessages, 3000);
-}
-
-// Load anonymous messages
-async function loadAnonymousMessages() {
-  if (!visitorSessionId) return;
-
-  const { data: messages } = await supabaseClient
-    .from('messages')
-    .select('*')
-    .eq('message_type', 'anonymous_inquiry')
-    .eq('visitor_session_id', visitorSessionId)
-    .order('created_at', { ascending: true });
-
-  const container = document.getElementById('anonymousChatMessages');
-
-  if (!messages || messages.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 2rem; color: #999;">
-        <div style="font-size: 3em; margin-bottom: 1rem;">💬</div>
-        <p style="font-size: 1.1em; color: #666;">Start chatting! An advisor will respond shortly.</p>
-      </div>
-    `;
-    return;
-  }
-
-  container.innerHTML = messages.map(msg => {
-    const isFromMe = !msg.sender_id;
-    const bubbleStyle = isFromMe 
-      ? 'background: #e3f2fd; border: 1px solid #007bff; margin-left: 2rem; border-radius: 12px 12px 0 12px;'
-      : 'background: #fff; border: 1px solid #ddd; margin-right: 2rem; border-radius: 12px 12px 12px 0;';
+  <div id="bookingWizard" class="wizard-modal">
+    <button onclick="closeBookingWizard()"
+      style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
     
-    const time = new Date(msg.created_at).toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
+    <div id="wizardProgressBar">
+      <div id="wizardProgressFill"></div>
+    </div>
+    
+    <div id="wizardContent" style="margin-top:20px;"></div>
+  </div>
 
-    const senderName = isFromMe ? 'You' : (currentAdvisorData ? currentAdvisorData.full_name : 'Advisor');
-
-    return `
-      <div style="${bubbleStyle} padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <div style="font-weight: 600; color: #007bff; margin-bottom: 0.5rem; font-size: 0.9em;">
-          ${senderName}
-        </div>
-        <div style="color: #333; white-space: pre-wrap; line-height: 1.5;">${msg.message}</div>
-        <div style="color: #999; font-size: 0.8em; margin-top: 0.5rem;">${time}</div>
+  <div id="advisorChatModal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+      <button onclick="closeModal('advisorChatModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+      
+      <div style="background:linear-gradient(135deg, #00ff88, #00c853); padding:1.5rem; border-radius:8px 8px 0 0; margin:-2rem -2rem 1.5rem -2rem;">
+        <h3 style="margin:0 0 0.5rem 0; color:#000; font-size:1.5em;">
+          🎯 Live Enrollment Advisor
+        </h3>
+        <p style="margin:0; color:#000; opacity:0.8;" id="advisorName">
+          Connecting you with an advisor...
+        </p>
       </div>
-    `;
-  }).join('');
 
-  container.scrollTop = container.scrollHeight;
-}
+      <div id="advisorChatMessages" style="max-height:400px; overflow-y:auto; margin-bottom:1.5rem; padding:1rem; background:#f8f9fa; border-radius:8px;">
+      </div>
 
-// Send anonymous message
-async function sendAnonymousMessage() {
-  const input = document.getElementById('anonymousChatInput');
-  const message = input.value.trim();
+      <div style="background:#f8f9fa; padding:1rem; border-radius:8px;">
+        <textarea id="advisorChatInput" placeholder="Type your message here..." style="width:100%; padding:0.75rem; border:2px solid #ddd; border-radius:6px; resize:vertical; min-height:80px; font-family:inherit;"></textarea>
+        <button onclick="sendAdvisorMessage()" style="margin-top:1rem; background:#00ff88; color:#000; padding:0.75rem 1.5rem; border:none; border-radius:6px; cursor:pointer; font-weight:600; width:100%;">
+          Send Message
+        </button>
+      </div>
+    </div>
+  </div>
 
-  if (!message) {
-    alert('Please enter a message');
-    return;
-  }
+  <div id="composeModal" class="modal">
+    <div class="modal-content">
+      <h3>✉️ New Support Message</h3>
+      <input type="hidden" id="composeType">
+      
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="composeSubject" placeholder="Enter subject...">
+      </div>
+      
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea id="composeMessage" placeholder="Type your message here..." required></textarea>
+      </div>
 
-  if (!currentAdvisorId) {
-    alert('No advisor connected. Please try again.');
-    return;
-  }
+      <div style="display:flex; gap:1rem;">
+        <button class="btn-primary" onclick="sendMessage()">Send Message</button>
+        <button class="btn-secondary" onclick="closeModal('composeModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-  const { error } = await supabaseClient
-    .from('messages')
-    .insert({
-      sender_id: null,
-      recipient_id: currentAdvisorId,
-      message_type: 'anonymous_inquiry',
-      visitor_session_id: visitorSessionId,
-      subject: 'Website Visitor Inquiry',
-      message: message
-    });
+  <div id="composeToTeacherModal" class="modal">
+    <div class="modal-content">
+      <h3>✉️ Message a Teacher</h3>
+      
+      <div class="form-group">
+        <label>Select Teacher *</label>
+        <select id="composeTeacherSelect" style="width:100%; padding:0.75rem; border:2px solid #ddd; border-radius:6px; font-size:1em;">
+          <option value="">-- Choose a teacher --</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="composeTeacherSubject" placeholder="Enter subject...">
+      </div>
+      
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea id="composeTeacherMessage" placeholder="Type your message here..." required></textarea>
+      </div>
 
-  if (error) {
-    alert('Error sending message: ' + error.message);
-    return;
-  }
+      <div style="display:flex; gap:1rem;">
+        <button class="btn-primary" onclick="sendMessageToTeacher()">Send Message</button>
+        <button class="btn-secondary" onclick="closeModal('composeToTeacherModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-  input.value = '';
-  await loadAnonymousMessages();
-}
+  <div id="viewStudentInvoiceModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <div id="studentInvoiceViewContent">
+      </div>
+    </div>
+  </div>
 
-// Close anonymous chat
-function closeAnonymousChat() {
-  document.getElementById('anonymousAdvisorChatModal').style.display = 'none';
-  
-  if (anonymousChatInterval) {
-    clearInterval(anonymousChatInterval);
-    anonymousChatInterval = null;
-  }
-}
+  <div id="paymentModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <h3>💳 Pay Invoice</h3>
+      <div id="paymentContent">
+      </div>
+    </div>
+  </div>
 
-// Check advisor availability on page load
-checkAdvisorAvailability();
+  <div id="conversationModal" class="modal">
+    <div class="modal-content" id="conversationContent">
+    </div>
+  </div>
 
-// Check every 30 seconds
-setInterval(checkAdvisorAvailability, 30000);
-</script>
+  <div id="supportConversationModal" class="modal">
+    <div class="modal-content" id="supportConversationContent">
+    </div>
+  </div>
 
+  <footer>
+    © 2025 STEMSphere Academy. All rights reserved.
+    <nav class="footer-links">
+      <a href="#faq">FAQs</a> |
+      <a href="/privacy.html">Privacy Policy</a>
+    </nav>
+    <p class="footer-contact">
+      Need help? Contact us at 
+      <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
+    </p>
+  </footer>
+  <script>
+    const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+    const DAILY_API_KEY = '9fe6990c25d99f2069c223b856d2c171adce6e6bd844474039a2fd8ef009afd3';
+    
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentUserId = null;
+    let myTeachers = [];
+    let teacherProfiles = {}; // Cache teacher profiles
+    let unreadSupportCount = 0;
+    let unreadTeachersCount = 0;
+    let wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: "" };
+    let wizardStep = 0;
+    let studentInvoices = [];
+    let selectedFile = null;
+    let currentAdvisorId = null;
+    let advisorChatInterval = null;
+
+    async function checkAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUserId = session.user.id;
+
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUserId)
+        .single();
+
+      if (profile) {
+        document.getElementById('userName').textContent = profile.full_name || 'Student';
+        document.getElementById('userEmail').textContent = profile.email;
+        document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
+      }
+
+      checkLiveAdvisors();
+      setInterval(checkLiveAdvisors, 30000);
+
+      loadSessions();
+      loadMyTeachers();
+      loadSupportThreads();
+      loadStudentInvoices();
+      
+      supabaseClient
+        .channel('student_messages')
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `recipient_id=eq.${currentUserId}`
+        }, () => {
+          loadSupportThreads();
+          loadTeacherThreads();
+        })
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'invoices',
+          filter: `student_id=eq.${currentUserId}`
+        }, () => {
+          loadStudentInvoices();
+        })
+        .subscribe();
+    }
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
+    }
+
+    // ==================== TEACHER PROFILE SYSTEM ====================
+
+    async function loadTeacherProfile(teacherId) {
+      // Check cache first
+      if (teacherProfiles[teacherId]) {
+        return teacherProfiles[teacherId];
+      }
+
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email, profile_photo_url, bio, teaching_video_url, years_experience, education, fun_fact')
+        .eq('id', teacherId)
+        .single();
+
+      if (profile) {
+        teacherProfiles[teacherId] = profile;
+        return profile;
+      }
+
+      return null;
+    }
+
+    async function viewTeacherProfile(teacherId) {
+      const profile = await loadTeacherProfile(teacherId);
+      
+      if (!profile) {
+        alert('Unable to load teacher profile');
+        return;
+      }
+
+      const photoUrl = profile.profile_photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.full_name || 'Teacher') + '&size=200&background=007bff&color=fff';
+      
+      const videoEmbed = profile.teaching_video_url ? `
+        <div style="margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem; color: #000;">📹 Teaching Introduction</h4>
+          ${getVideoEmbed(profile.teaching_video_url)}
+        </div>
+      ` : '';
+
+      const content = `
+        <div style="text-align: center; padding: 1rem 0;">
+          <img src="${photoUrl}" class="teacher-avatar-large" alt="${profile.full_name}">
+          <h2 style="margin: 0 0 0.5rem 0; color: #000;">${profile.full_name}</h2>
+          ${profile.years_experience ? `<p style="color: #666; margin: 0.25rem 0;">📚 ${profile.years_experience} years of teaching experience</p>` : ''}
+          ${profile.education ? `<p style="color: #666; margin: 0.25rem 0;">🎓 ${profile.education}</p>` : ''}
+        </div>
+
+        ${profile.bio ? `
+          <div style="margin: 1.5rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #000;">About Me</h4>
+            <p style="color: #333; line-height: 1.6; white-space: pre-wrap;">${profile.bio}</p>
+          </div>
+        ` : ''}
+
+        ${videoEmbed}
+
+        ${profile.fun_fact ? `
+          <div style="margin: 1.5rem 0; padding: 1rem; background: #fff3cd; border-radius: 8px; border: 2px solid #ffc107;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #856404;">💡 Fun Fact</h4>
+            <p style="color: #856404; margin: 0;">${profile.fun_fact}</p>
+          </div>
+        ` : ''}
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+          <button class="btn-primary" onclick="openComposeToTeacherModal('${teacherId}'); closeModal('teacherProfileModal');">
+            ✉️ Send Message
+          </button>
+          <button class="btn-secondary" onclick="closeModal('teacherProfileModal')">Close</button>
+        </div>
+      `;
+
+      document.getElementById('teacherProfileContent').innerHTML = content;
+      document.getElementById('teacherProfileModal').classList.add('active');
+    }
+
+    function getVideoEmbed(url) {
+      if (!url) return '';
+
+      // YouTube
+      if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        let videoId = '';
+        if (url.includes('youtube.com/watch?v=')) {
+          videoId = url.split('v=')[1]?.split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+          videoId = url.split('youtu.be/')[1]?.split('?')[0];
+        }
+        if (videoId) {
+          return `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>`;
+        }
+      }
+
+      // Vimeo
+      if (url.includes('vimeo.com')) {
+        const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
+        if (videoId) {
+          return `<iframe src="https://player.vimeo.com/video/${videoId}" width="100%" height="315" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>`;
+        }
+      }
+
+      // Fallback: show link
+      return `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-weight: 600;">🎥 Watch Teaching Video</a>`;
+    }
+
+    function getTeacherAvatarHTML(teacherId, teacherName, size = 40, showName = true) {
+      const photoUrl = teacherProfiles[teacherId]?.profile_photo_url || 
+                       'https://ui-avatars.com/api/?name=' + encodeURIComponent(teacherName) + '&size=200&background=007bff&color=fff';
+      
+      const avatarHTML = `<img src="${photoUrl}" class="teacher-avatar" style="width:${size}px; height:${size}px;" alt="${teacherName}" onclick="viewTeacherProfile('${teacherId}')" title="View ${teacherName}'s profile">`;
+      
+      if (showName) {
+        return `
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem;">
+            ${avatarHTML}
+            <a href="javascript:void(0)" onclick="viewTeacherProfile('${teacherId}')" class="teacher-name-clickable">${teacherName}</a>
+          </div>
+        `;
+      }
+      
+      return avatarHTML;
+    }
+
+    // ==================== LIVE ADVISOR SYSTEM ====================
+
+    async function checkLiveAdvisors() {
+      const { data: advisors } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, profile_photo_url')
+        .eq('role', 'teacher')
+        .eq('is_advisor', true)
+        .eq('advisor_available', true)
+        .limit(1);
+
+      if (advisors && advisors.length > 0) {
+        // Cache advisor profile
+        teacherProfiles[advisors[0].id] = advisors[0];
+        document.getElementById('liveAdvisorBanner').style.display = 'block';
+      } else {
+        document.getElementById('liveAdvisorBanner').style.display = 'none';
+      }
+    }
+
+    async function openAdvisorChat() {
+      const { data: advisors } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, profile_photo_url')
+        .eq('role', 'teacher')
+        .eq('is_advisor', true)
+        .eq('advisor_available', true)
+        .limit(1);
+
+      if (!advisors || advisors.length === 0) {
+        alert('⚠️ No advisors are currently available. Please try booking a session through the regular system.');
+        return;
+      }
+
+      currentAdvisorId = advisors[0].id;
+      teacherProfiles[currentAdvisorId] = advisors[0];
+      document.getElementById('advisorName').innerHTML = `Chatting with ${getTeacherAvatarHTML(advisors[0].id, advisors[0].full_name, 30)}`;
+      document.getElementById('advisorChatModal').classList.add('active');
+      
+      loadAdvisorMessages();
+      advisorChatInterval = setInterval(loadAdvisorMessages, 3000);
+    }
+
+    async function loadAdvisorMessages() {
+      if (!currentAdvisorId) return;
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'advisor_chat')
+        .or(`and(sender_id.eq.${currentUserId},recipient_id.eq.${currentAdvisorId}),and(sender_id.eq.${currentAdvisorId},recipient_id.eq.${currentUserId})`)
+        .order('created_at', { ascending: true });
+
+      const container = document.getElementById('advisorChatMessages');
+      
+      if (!messages || messages.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#999;">No messages yet. Start the conversation!</p>';
+        return;
+      }
+
+      container.innerHTML = messages.map(msg => {
+        const isFromMe = msg.sender_id === currentUserId;
+        const bubbleStyle = isFromMe 
+          ? 'background:#e3f2fd; border:1px solid #007bff; margin-left:2rem;'
+          : 'background:#fff; border:1px solid #ddd; margin-right:2rem;';
+        
+        const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        
+        const senderName = isFromMe ? 'You' : (teacherProfiles[currentAdvisorId]?.full_name || 'Advisor');
+        
+        return `
+          <div style="${bubbleStyle} padding:1rem; border-radius:8px; margin-bottom:1rem;">
+            <div style="font-weight:600; color:#007bff; margin-bottom:0.5rem;">
+              ${isFromMe ? senderName : getTeacherAvatarHTML(currentAdvisorId, senderName, 30)}
+            </div>
+            <div style="color:#333; white-space:pre-wrap;">${msg.message}</div>
+            <div style="color:#999; font-size:0.85em; margin-top:0.5rem;">${time}</div>
+          </div>
+        `;
+      }).join('');
+
+      const unreadIds = messages.filter(m => m.recipient_id === currentUserId && !m.is_read).map(m => m.id);
+      if (unreadIds.length > 0) {
+        await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadIds);
+      }
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendAdvisorMessage() {
+      const input = document.getElementById('advisorChatInput');
+      const message = input.value.trim();
+      
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      if (!currentAdvisorId) {
+        alert('No advisor connected');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          recipient_id: currentAdvisorId,
+          message_type: 'advisor_chat',
+          subject: 'Advisor Chat',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      input.value = '';
+      await loadAdvisorMessages();
+    }
+
+    // ==================== STUDENT INVOICE SECTION ====================
+
+    async function loadStudentInvoices() {
+      const { data: invoices, error } = await supabaseClient
+        .from('invoices')
+        .select(`
+          *,
+          line_items:invoice_line_items(*)
+        `)
+        .eq('student_id', currentUserId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading invoices:', error);
+        document.getElementById('invoicesList').innerHTML = 
+          '<div class="empty-state">Error loading invoices. Please try again.</div>';
+        return;
+      }
+
+      studentInvoices = invoices || [];
+
+      const total = studentInvoices.length;
+      const pending = studentInvoices.filter(inv => inv.status === 'sent').length;
+      const overdue = studentInvoices.filter(inv => 
+        inv.status === 'sent' && inv.due_date && new Date(inv.due_date) < new Date()
+      ).length;
+      const amountDue = studentInvoices
+        .filter(inv => inv.status === 'sent')
+        .reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
+
+      document.getElementById('totalInvoices').textContent = total;
+      document.getElementById('pendingInvoices').textContent = pending;
+      document.getElementById('amountDue').textContent = `$${amountDue.toFixed(2)}`;
+
+      updateBadge('invoicesBadge', pending + overdue);
+
+      renderStudentInvoices();
+    }
+
+    function renderStudentInvoices() {
+      const container = document.getElementById('invoicesList');
+
+      if (!studentInvoices || studentInvoices.length === 0) {
+        container.innerHTML = '<div class="empty-state">No invoices yet. Your invoices will appear here when created by admin.</div>';
+        return;
+      }
+
+      container.innerHTML = studentInvoices.map(invoice => {
+        const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
+        const createdDate = new Date(invoice.created_at).toLocaleDateString();
+        const isOverdue = invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'sent';
+        const status = isOverdue ? 'overdue' : invoice.status;
+        const overdueClass = isOverdue ? 'overdue' : '';
+
+        return `
+          <div class="invoice-card ${overdueClass}">
+            <div class="invoice-header">
+              <div>
+                <div class="invoice-number">${invoice.invoice_number}</div>
+                <div style="color: #666; font-size: 0.9em;">Created: ${createdDate}</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="invoice-amount">$${parseFloat(invoice.amount).toFixed(2)}</div>
+                <span class="invoice-status status-${status}">${status}</span>
+              </div>
+            </div>
+            
+            <div class="invoice-details">
+              <h4 style="margin: 0 0 0.5rem 0; color: #000;">${invoice.title}</h4>
+              ${invoice.description ? `<p>${invoice.description}</p>` : ''}
+              <p><strong>Due Date:</strong> ${dueDate}</p>
+              ${isOverdue ? '<p style="color: #dc3545; font-weight: bold;">⚠️ This invoice is overdue!</p>' : ''}
+            </div>
+
+            <div class="invoice-actions">
+              <button class="btn-view" onclick="viewStudentInvoice('${invoice.id}')">👁️ View Details</button>
+              ${invoice.status === 'sent' ? `
+                <button class="btn-pay" onclick="payInvoice('${invoice.id}')">💳 Pay Now</button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function viewStudentInvoice(invoiceId) {
+      const invoice = studentInvoices.find(inv => inv.id === invoiceId);
+      if (!invoice) {
+        alert('Invoice not found');
+        return;
+      }
+
+      const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
+      const createdDate = new Date(invoice.created_at).toLocaleDateString();
+      const sentDate = invoice.sent_at ? new Date(invoice.sent_at).toLocaleDateString() : null;
+      const paidDate = invoice.paid_at ? new Date(invoice.paid_at).toLocaleDateString() : null;
+
+      const lineItemsHtml = invoice.line_items ? invoice.line_items.map(item => `
+        <div class="line-item">
+          <span>${item.description} (x${item.quantity})</span>
+          <span>$${parseFloat(item.total_price).toFixed(2)}</span>
+        </div>
+      `).join('') : '<div class="line-item"><span>No itemized details</span><span></span></div>';
+
+      const content = `
+        <div style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 1.5rem; border-radius: 8px 8px 0 0; margin: -2rem -2rem 1.5rem -2rem;">
+          <h3>Invoice ${invoice.invoice_number}</h3>
+          <p>Created: ${createdDate} ${sentDate ? `• Sent: ${sentDate}` : ''}</p>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+          <h4>${invoice.title}</h4>
+          ${invoice.description ? `<p style="color: #666; margin-top: 0.5rem;">${invoice.description}</p>` : ''}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+          <div>
+            <h4>Invoice Details</h4>
+            <p><strong>Status:</strong> <span class="invoice-status status-${invoice.status}">${invoice.status}</span></p>
+            <p><strong>Due Date:</strong> ${dueDate}</p>
+            ${paidDate ? `<p><strong>Paid:</strong> ${paidDate}</p>` : ''}
+          </div>
+          <div style="text-align: right;">
+            <h4>Amount</h4>
+            <div style="font-size: 2em; font-weight: bold; color: #007bff;">$${parseFloat(invoice.amount).toFixed(2)}</div>
+          </div>
+        </div>
+
+        ${invoice.line_items && invoice.line_items.length > 0 ? `
+          <div class="invoice-line-items">
+            <h4>Invoice Items</h4>
+            ${lineItemsHtml}
+          </div>
+        ` : ''}
+
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          ${invoice.status === 'sent' ? `
+            <button class="btn-pay" onclick="payInvoice('${invoice.id}'); closeModal('viewStudentInvoiceModal');">💳 Pay Now</button>
+          ` : ''}
+          <button class="btn-secondary" onclick="closeModal('viewStudentInvoiceModal')">Close</button>
+        </div>
+      `;
+
+      document.getElementById('studentInvoiceViewContent').innerHTML = content;
+      document.getElementById('viewStudentInvoiceModal').classList.add('active');
+    }
+
+    async function payInvoice(invoiceId) {
+      try {
+        const invoice = studentInvoices.find(inv => inv.id === invoiceId);
+        
+        if (!invoice) {
+          alert('Invoice not found');
+          return;
+        }
+
+        if (!invoice.payment_link) {
+          alert('❌ Payment link not available yet. Please contact support.');
+          return;
+        }
+
+        closeModal('paymentModal');
+        closeModal('viewStudentInvoiceModal');
+
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'stripeLoading';
+        loadingDiv.innerHTML = `
+          <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
+            <div style="background:#fff; padding:2rem; border-radius:12px; text-align:center;">
+              <h3 style="margin:0 0 1rem 0; color:#007bff;">🔄 Redirecting to payment...</h3>
+              <p style="margin:0; color:#666;">Opening secure checkout page...</p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(loadingDiv);
+
+        setTimeout(() => {
+          window.location.href = invoice.payment_link;
+        }, 1000);
+
+      } catch (error) {
+        console.error('Payment error:', error);
+        document.getElementById('stripeLoading')?.remove();
+        alert('❌ Error: ' + error.message);
+      }
+    }
+
+    // ============================================
+    // FILE UPLOAD HELPER
+    // ============================================
+    async function uploadFile(file) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `message-attachments/${fileName}`;
+
+        const { data, error } = await supabaseClient.storage
+          .from('attachments')
+          .upload(filePath, file);
+
+        if (error) throw error;
+
+        const { data: urlData } = supabaseClient.storage
+          .from('attachments')
+          .getPublicUrl(filePath);
+
+        return urlData.publicUrl;
+      } catch (error) {
+        console.error('File upload error:', error);
+        throw error;
+      }
+    }
+
+    // ============================================
+    // SESSIONS MANAGEMENT - ✅ FIXED SORTING + TEACHER PROFILES
+    // ============================================
+    async function loadSessions() {
+      const now = new Date().toISOString();
+      
+      const { data: bookings, error } = await supabaseClient
+        .from('bookings')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .order('session_utc', { ascending: true });
+
+      if (error || !bookings || bookings.length === 0) {
+        document.getElementById('upcomingSessions').innerHTML = '<div class="empty-state"><p>📅 No upcoming sessions. Book your first session!</p></div>';
+        document.getElementById('allSessions').innerHTML = '<div class="empty-state"><p>📅 No sessions yet. Book your first trial session!</p></div>';
+        return;
+      }
+
+      const teacherIds = bookings
+        .filter(b => b.assigned_teacher_id)
+        .map(b => b.assigned_teacher_id);
+
+      let teacherMap = {};
+      if (teacherIds.length > 0) {
+        const { data: teachers } = await supabaseClient
+          .from('profiles')
+          .select('id, full_name, profile_photo_url, bio, teaching_video_url, years_experience, education, fun_fact')
+          .in('id', teacherIds);
+        
+        teachers?.forEach(t => {
+          teacherMap[t.id] = t.full_name;
+          teacherProfiles[t.id] = t; // Cache profiles
+        });
+      }
+
+      const upcomingBookings = bookings.filter(b => {
+        if (b.status !== 'scheduled') return false;
+        if (b.session_utc) {
+          return b.session_utc >= now;
+        }
+        if (b.session_date) {
+          const sessionDate = new Date(b.session_date);
+          return sessionDate >= new Date();
+        }
+        return true;
+      });
+
+      const upcomingContainer = document.getElementById('upcomingSessions');
+      if (upcomingBookings.length === 0) {
+        upcomingContainer.innerHTML = '<div class="empty-state"><p>📅 No upcoming sessions. Book a new session!</p></div>';
+      } else {
+        upcomingContainer.innerHTML = renderSessionCards(upcomingBookings, teacherMap);
+      }
+
+      const allContainer = document.getElementById('allSessions');
+      allContainer.innerHTML = renderSessionCards(bookings, teacherMap);
+    }
+
+    function renderSessionCards(bookings, teacherMap) {
+      return bookings.map(booking => {
+        let dateStr, timeStr;
+        
+        if (booking.session_utc) {
+          const studentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const utcDate = new Date(booking.session_utc);
+          
+          dateStr = utcDate.toLocaleDateString('en-US', { 
+            timeZone: studentTimezone,
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          });
+          
+          timeStr = utcDate.toLocaleTimeString('en-US', {
+            timeZone: studentTimezone,
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          }) + ` (${studentTimezone})`;
+        } else {
+          const date = booking.session_date ? new Date(booking.session_date) : null;
+          dateStr = date ? date.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }) : 'Not scheduled yet';
+          
+          timeStr = booking.session_time ? booking.session_time + ' ⚠️ (Old format)' : 'Time not set';
+        }
+
+        const statusClass = `status-${booking.status || 'scheduled'}`;
+        let statusText;
+        if (booking.status === 'completed') {
+          statusText = '✓ Completed';
+        } else if (booking.status === 'cancelled') {
+          statusText = '✗ Cancelled';
+        } else {
+          statusText = '✓ Scheduled';
+        }
+
+        let teacherHTML = 'STEMSphere Enrollment Advisor';
+        if (booking.assigned_teacher_id && teacherMap[booking.assigned_teacher_id]) {
+          teacherHTML = getTeacherAvatarHTML(booking.assigned_teacher_id, teacherMap[booking.assigned_teacher_id], 40);
+        } else if (booking.instructor_name) {
+          teacherHTML = booking.instructor_name;
+        }
+
+        let videoButton = '';
+        if (booking.status === 'scheduled') {
+          if (booking.video_link) {
+            videoButton = `
+              <a href="${booking.video_link}" target="_blank" style="display:inline-block; margin-top:0.5rem; background:#28a745; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; box-shadow:0 2px 5px rgba(0,0,0,0.2);">🎥 Join Video Call</a>
+            `;
+          }
+          if (booking.whiteboard_link) {
+            videoButton += `
+              <a href="${booking.whiteboard_link}" target="_blank" style="display:inline-block; margin-top:0.5rem; margin-left:0.5rem; background:#2c2c2c; color:#fff; padding:0.75rem 1.5rem; border-radius:6px; text-decoration:none; font-weight:600; box-shadow:0 2px 5px rgba(0,0,0,0.2); border: 2px solid #4CAF50;">🖍️ Open Blackboard</a>
+            `;
+          }
+        }
+
+        return `
+          <div class="session-card">
+            <div class="session-info">
+              <h3>${booking.subject || 'Trial Session'}</h3>
+              <p>📅 ${dateStr}</p>
+              <p>⏰ ${timeStr}</p>
+              <p>👨‍🏫 Instructor: ${teacherHTML}</p>
+              <p>👤 ${booking.age_group || 'N/A'} | ${booking.learning_style || 'N/A'}</p>
+              ${booking.help_needed ? `<p>📝 ${booking.help_needed}</p>` : ''}
+              <span class="status-badge ${statusClass}">${statusText}</span>
+              ${videoButton}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ============================================
+    // LOAD ALL ASSIGNED TEACHERS
+    // ============================================
+    async function loadMyTeachers() {
+      const { data: assignments } = await supabaseClient
+        .from('teacher_assignments')
+        .select('teacher_id')
+        .eq('student_id', currentUserId);
+
+      if (!assignments || assignments.length === 0) {
+        myTeachers = [];
+        document.getElementById('composeTeacherBtn').disabled = true;
+        document.getElementById('teacherThreads').innerHTML = 
+          '<div class="empty-state">No teachers assigned yet. Contact support for assistance.</div>';
+        return;
+      }
+
+      const teacherIds = assignments.map(a => a.teacher_id);
+
+      const { data: teachers } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email, profile_photo_url, bio, teaching_video_url, years_experience, education, fun_fact')
+        .in('id', teacherIds);
+
+      myTeachers = teachers || [];
+      
+      // Cache teacher profiles
+      myTeachers.forEach(t => {
+        teacherProfiles[t.id] = t;
+      });
+      
+      if (myTeachers.length > 0) {
+        document.getElementById('composeTeacherBtn').disabled = false;
+        loadTeacherThreads();
+      } else {
+        document.getElementById('composeTeacherBtn').disabled = true;
+        document.getElementById('teacherThreads').innerHTML = 
+          '<div class="empty-state">No teachers assigned yet.</div>';
+      }
+    }
+
+    // ============================================
+    // SUPPORT MESSAGING - THREADED
+    // ============================================
+    async function loadSupportThreads() {
+      const { data: admins } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'admin');
+
+      if (!admins || admins.length === 0) {
+        document.getElementById('supportMessages').innerHTML = 
+          '<div class="empty-state">No support available at the moment.</div>';
+        return;
+      }
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'support')
+        .or(`sender_id.eq.${currentUserId},recipient_id.eq.${currentUserId}`)
+        .order('created_at', { ascending: false });
+
+      unreadSupportCount = messages?.filter(m => m.recipient_id === currentUserId && !m.is_read).length || 0;
+      updateBadge('supportBadge', unreadSupportCount);
+
+      if (!messages || messages.length === 0) {
+        document.getElementById('supportMessages').innerHTML = 
+          '<div class="empty-state">No messages yet. Click "New Message" to start a conversation!</div>';
+        return;
+      }
+
+      const lastMessage = messages[0];
+      const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+      const lastMessageFrom = lastMessage.sender_id === currentUserId ? 'You: ' : '';
+      const unreadClass = unreadSupportCount > 0 ? 'unread' : '';
+      
+      const dateStr = new Date(lastMessage.created_at).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      document.getElementById('supportMessages').innerHTML = `
+        <div class="thread-item ${unreadClass}" onclick="openSupportConversation()">
+          <div class="thread-header">
+            <div class="teacher-name">Support Team</div>
+            <div class="thread-meta">
+              ${unreadSupportCount > 0 ? `<span class="unread-count">${unreadSupportCount} new</span>` : ''}
+              <span class="message-count">${messages.length} message${messages.length !== 1 ? 's' : ''}</span>
+              <span class="last-message-date">${dateStr}</span>
+            </div>
+          </div>
+          <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
+        </div>
+      `;
+    }
+
+    async function openSupportConversation() {
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'support')
+        .or(`sender_id.eq.${currentUserId},recipient_id.eq.${currentUserId}`)
+        .order('created_at', { ascending: false });
+
+      if (!messages) {
+        alert('Error loading conversation');
+        return;
+      }
+
+      const unreadMessageIds = messages
+        .filter(m => m.recipient_id === currentUserId && !m.is_read)
+        .map(m => m.id);
+
+      if (unreadMessageIds.length > 0) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadMessageIds);
+      }
+
+      const conversationHTML = `
+        <button onclick="closeModal('supportConversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+        <div class="conversation-header">
+          <h4>💬 Conversation with Support Team</h4>
+          <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+        </div>
+
+        <div class="messages-container">
+          ${messages.map(msg => {
+            const isFromMe = msg.sender_id === currentUserId;
+            const bubbleClass = isFromMe ? 'from-me' : 'from-teacher';
+            const date = new Date(msg.created_at).toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+
+            return `
+              <div class="message-bubble ${bubbleClass}">
+                <div class="sender">${isFromMe ? 'You' : 'Support Team'}</div>
+                <div class="timestamp">${date}</div>
+                ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
+                <div class="body">${msg.message}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="reply-box">
+          <h5>💬 Reply to Support</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="supportReplySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="supportReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('supportConversationModal')">Close</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('supportConversationContent').innerHTML = conversationHTML;
+      document.getElementById('supportConversationModal').classList.add('active');
+
+      loadSupportThreads();
+    }
+
+    async function sendSupportReply() {
+      const subject = document.getElementById('supportReplySubject').value.trim();
+      const message = document.getElementById('supportReplyMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { data: admins } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('role', 'admin')
+        .limit(1)
+        .single();
+
+      if (!admins) {
+        alert('No admin available');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          recipient_id: admins.id,
+          message_type: 'support',
+          subject: subject || 'Reply to support',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      alert('✅ Reply sent successfully!');
+      closeModal('supportConversationModal');
+      await openSupportConversation();
+    }
+
+    // ============================================
+    // TEACHER MESSAGING - ✅ REPLY BOX AT BOTTOM + PROFILES
+    // ============================================
+    async function loadTeacherThreads() {
+      if (!myTeachers || myTeachers.length === 0) {
+        document.getElementById('teacherThreads').innerHTML = 
+          '<div class="empty-state">No teachers assigned yet. Contact support for assistance.</div>';
+        return;
+      }
+
+      const teacherIds = myTeachers.map(t => t.id);
+
+      const { data: messages, error } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_student')
+        .or(`and(sender_id.in.(${teacherIds.join(',')}),recipient_id.eq.${currentUserId}),and(sender_id.eq.${currentUserId},recipient_id.in.(${teacherIds.join(',')}))`)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading teacher messages:', error);
+        document.getElementById('teacherThreads').innerHTML = 
+          '<div class="empty-state">Error loading messages. Please refresh the page.</div>';
+        return;
+      }
+
+      const teacherMap = {};
+      myTeachers.forEach(t => {
+        teacherMap[t.id] = t.full_name;
+      });
+
+      const threads = {};
+      
+      messages?.forEach(msg => {
+        const teacherId = msg.sender_id === currentUserId ? msg.recipient_id : msg.sender_id;
+        
+        if (!threads[teacherId]) {
+          threads[teacherId] = {
+            teacherId: teacherId,
+            teacherName: teacherMap[teacherId] || 'Unknown Teacher',
+            messages: [],
+            lastMessageDate: new Date(msg.created_at),
+            unreadCount: 0,
+            totalCount: 0
+          };
+        }
+        
+        threads[teacherId].messages.push(msg);
+        threads[teacherId].totalCount++;
+        
+        if (msg.recipient_id === currentUserId && !msg.is_read) {
+          threads[teacherId].unreadCount++;
+        }
+        
+        const msgDate = new Date(msg.created_at);
+        if (msgDate > threads[teacherId].lastMessageDate) {
+          threads[teacherId].lastMessageDate = msgDate;
+        }
+      });
+
+      const threadArray = Object.values(threads).sort((a, b) => 
+        b.lastMessageDate - a.lastMessageDate
+      );
+
+      const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      unreadTeachersCount = totalUnread;
+      updateBadge('teachersBadge', totalUnread);
+
+      renderTeacherThreads(threadArray);
+    }
+
+    function renderTeacherThreads(threads) {
+      const container = document.getElementById('teacherThreads');
+
+      if (!threads || threads.length === 0) {
+        container.innerHTML = '<div class="empty-state">No messages yet. Click "Message a Teacher" to start a conversation!</div>';
+        return;
+      }
+
+      container.innerHTML = threads.map(thread => {
+        const lastMessage = thread.messages[0];
+        const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+        const lastMessageFrom = lastMessage.sender_id === currentUserId ? 'You: ' : '';
+        const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
+        
+        const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="thread-item ${unreadClass}" onclick="openTeacherConversation('${thread.teacherId}')">
+            <div class="thread-header">
+              <div class="teacher-name">${getTeacherAvatarHTML(thread.teacherId, thread.teacherName, 40)}</div>
+              <div class="thread-meta">
+                ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
+                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
+                <span class="last-message-date">${dateStr}</span>
+              </div>
+            </div>
+            <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openTeacherConversation(teacherId) {
+      const teacher = myTeachers.find(t => t.id === teacherId);
+      const teacherName = teacher ? teacher.full_name : 'Teacher';
+
+      const { data: messages, error } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_student')
+        .or(`and(sender_id.eq.${teacherId},recipient_id.eq.${currentUserId}),and(sender_id.eq.${currentUserId},recipient_id.eq.${teacherId})`)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading conversation:', error);
+        alert('Error loading conversation');
+        return;
+      }
+
+      const unreadMessageIds = messages
+        ?.filter(m => m.recipient_id === currentUserId && !m.is_read)
+        .map(m => m.id) || [];
+
+      if (unreadMessageIds.length > 0) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadMessageIds);
+      }
+
+      const conversationHTML = `
+        <button onclick="closeModal('conversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+        <div class="conversation-header">
+          <h4>💬 Conversation with ${getTeacherAvatarHTML(teacherId, teacherName, 40)}</h4>
+          <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} in this thread</p>
+        </div>
+
+        <div class="messages-container">
+          ${messages?.map(msg => {
+            const isFromMe = msg.sender_id === currentUserId;
+            const bubbleClass = isFromMe ? 'from-me' : 'from-teacher';
+            const date = new Date(msg.created_at).toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+
+            let attachmentHTML = '';
+            if (msg.attachment_url) {
+              const fileName = msg.attachment_url.split('/').pop();
+              attachmentHTML = `
+                <div class="attachment">
+                  <a href="${msg.attachment_url}" target="_blank">
+                    📎 ${fileName}
+                  </a>
+                </div>
+              `;
+            }
+
+            return `
+              <div class="message-bubble ${bubbleClass}">
+                <div class="sender">${isFromMe ? 'You' : getTeacherAvatarHTML(teacherId, teacherName, 30)}</div>
+                <div class="timestamp">${date}</div>
+                ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
+                <div class="body">${msg.message}</div>
+                ${attachmentHTML}
+              </div>
+            `;
+          }).join('') || '<div class="empty-state">No messages yet</div>'}
+        </div>
+
+        <div class="reply-box">
+          <h5>💬 Reply to ${teacherName}</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="teacherReplySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="teacherReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div class="file-upload-section">
+            <input type="file" id="teacherReplyFileInput" style="display:none;" onchange="handleFileSelect(event, 'teacherReplyFile')">
+            <button class="file-upload-btn" onclick="document.getElementById('teacherReplyFileInput').click()">
+              📎 Attach File
+            </button>
+            <div id="teacherReplyFilePreview" class="file-preview">
+              <span id="teacherReplyFileName"></span>
+              <button class="remove-file" onclick="clearFile('teacherReplyFile')">✖</button>
+            </div>
+          </div>
+          <div style="display:flex; gap:1rem; margin-top:1rem;">
+            <button class="btn-primary" onclick="sendReplyToTeacher('${teacherId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('conversationContent').innerHTML = conversationHTML;
+      document.getElementById('conversationModal').classList.add('active');
+
+      loadTeacherThreads();
+    }
+
+    function handleFileSelect(event, fieldName) {
+      const file = event.target.files[0];
+      if (file) {
+        selectedFile = file;
+        document.getElementById(`${fieldName}Preview`).classList.add('active');
+        document.getElementById(`${fieldName}Name`).textContent = file.name;
+      }
+    }
+
+    function clearFile(fieldName) {
+      selectedFile = null;
+      document.getElementById(`${fieldName}Preview`).classList.remove('active');
+      document.getElementById(`${fieldName}Input`).value = '';
+    }
+
+    async function sendReplyToTeacher(teacherId) {
+      const subject = document.getElementById('teacherReplySubject').value.trim();
+      const message = document.getElementById('teacherReplyMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      try {
+        let attachmentUrl = null;
+        if (selectedFile) {
+          const btn = event.target;
+          btn.disabled = true;
+          btn.textContent = '⏳ Uploading...';
+          attachmentUrl = await uploadFile(selectedFile);
+        }
+
+        const { error } = await supabaseClient
+          .from('messages')
+          .insert({
+            sender_id: currentUserId,
+            recipient_id: teacherId,
+            message_type: 'teacher_student',
+            subject: subject || 'Reply from student',
+            message: message,
+            attachment_url: attachmentUrl
+          });
+
+        if (error) {
+          console.error('Error sending message:', error);
+          alert('Error sending message: ' + error.message);
+          return;
+        }
+
+        selectedFile = null;
+        alert('✅ Reply sent successfully!');
+        closeModal('conversationModal');
+        
+        await openTeacherConversation(teacherId);
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
+      }
+    }
+
+    function openComposeToTeacherModal(teacherIdToSelect = null) {
+      const select = document.getElementById('composeTeacherSelect');
+      
+      select.innerHTML = '<option value="">-- Choose a teacher --</option>' + 
+        myTeachers.map(teacher => 
+          `<option value="${teacher.id}">${teacher.full_name}</option>`
+        ).join('');
+      
+      if (teacherIdToSelect) {
+        select.value = teacherIdToSelect;
+      }
+      
+      document.getElementById('composeTeacherSubject').value = '';
+      document.getElementById('composeTeacherMessage').value = '';
+      document.getElementById('composeToTeacherModal').classList.add('active');
+    }
+
+    async function sendMessageToTeacher() {
+      const teacherId = document.getElementById('composeTeacherSelect').value;
+      const subject = document.getElementById('composeTeacherSubject').value.trim();
+      const message = document.getElementById('composeTeacherMessage').value.trim();
+
+      if (!teacherId) {
+        alert('Please select a teacher');
+        return;
+      }
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          recipient_id: teacherId,
+          message_type: 'teacher_student',
+          subject: subject || 'Message from student',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      alert('✅ Message sent successfully!');
+      closeModal('composeToTeacherModal');
+      loadTeacherThreads();
+    }
+
+    function openComposeModal(type) {
+      document.getElementById('composeType').value = type;
+      document.getElementById('composeSubject').value = '';
+      document.getElementById('composeMessage').value = '';
+      document.getElementById('composeModal').classList.add('active');
+    }
+
+    async function sendMessage() {
+      const subject = document.getElementById('composeSubject').value.trim();
+      const message = document.getElementById('composeMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { data: admins } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('role', 'admin')
+        .limit(1)
+        .single();
+
+      if (!admins) {
+        alert('No admin available. Please try again later.');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          recipient_id: admins.id,
+          message_type: 'support',
+          subject: subject || 'No subject',
+          message: message
+        });
+
+      if (error) {
+        console.error('Message send error:', error);
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      alert('✅ Message sent successfully!');
+      closeModal('composeModal');
+      loadSupportThreads();
+    }
+
+    function updateBadge(badgeId, count) {
+      const badge = document.getElementById(badgeId);
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function showTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(tabName + 'Tab').classList.add('active');
+
+      if (tabName === 'support') {
+        loadSupportThreads();
+      } else if (tabName === 'teachers') {
+        loadTeacherThreads();
+      } else if (tabName === 'invoices') {
+        loadStudentInvoices();
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+      selectedFile = null;
+      
+      if (modalId === 'advisorChatModal' && advisorChatInterval) {
+        clearInterval(advisorChatInterval);
+        advisorChatInterval = null;
+      }
+    }
+
+    // ============================================
+    // BOOKING WIZARD
+    // ============================================
+    function updateProgress(percent) {
+      document.getElementById('wizardProgressFill').style.width = percent + '%';
+    }
+
+    function openBookingWizard() {
+      wizardStep = 0;
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      wizardData = { 
+        age: "", 
+        subject: "", 
+        style: "", 
+        help: "", 
+        date: "", 
+        time: "", 
+        timezone: userTimezone 
+      };
+      document.getElementById('bookingWizard').classList.add('active');
+      updateProgress(0);
+      renderWizardStep();
+    }
+
+    function closeBookingWizard() {
+      document.getElementById('bookingWizard').classList.remove('active');
+    }
+
+    function renderWizardStep() {
+      const c = document.getElementById('wizardContent');
+
+      if(wizardStep===0){
+        updateProgress(10);
+        c.innerHTML = `
+          <h2 style="padding:0 20px; color:#000;">🎯 Book Your Trial Session</h2>
+          <p style="padding:0 20px; color:#000;">Secure your future with a private consultation. Let's start:</p>
+          <button onclick="wizardStep=1; renderWizardStep()" style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Begin</button>
+        `;
+      } else if(wizardStep===1){
+        updateProgress(25);
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">🧒 Your age group:</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
+            ${["Elementary","Middle School","High School","College","Adult Learner"].map(age=>`
+              <button onclick="wizardData.age='${age}'; wizardStep=2; renderWizardStep()" 
+                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${age}</button>`).join("")}
+          </div>
+        `;
+      } else if(wizardStep===2){
+        updateProgress(40);
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">📘 Choose your subject:</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
+            ${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing"].map(s=>`
+              <button onclick="wizardData.subject='${s}'; wizardStep=3; renderWizardStep()" 
+                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${s}</button>`).join("")}
+          </div>
+        `;
+      } else if(wizardStep===3){
+        updateProgress(55);
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">🎓 Preferred learning style:</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
+            ${["1-on-1 Tutoring","Group Classes","On-Demand Course"].map(style=>`
+              <button onclick="wizardData.style='${style}'; wizardStep=4; renderWizardStep()" 
+                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${style}</button>`).join("")}
+          </div>
+        `;
+      } else if(wizardStep===4){
+        updateProgress(70);
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">🗣️ What do you need help with?</h3>
+          <div style="border:1px solid #ccc; border-radius:5px; padding:10px; margin:10px 20px;">
+            <textarea id="wizardHelp" placeholder="Type your learning goals here..."
+              style="width:100%; padding:10px; height:100px; border:none; resize:vertical; font-size:14px;"></textarea>
+          </div>
+          <button onclick="wizardData.help=document.getElementById('wizardHelp').value; wizardStep=5; renderWizardStep()" 
+            style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Continue</button>
+        `;
+      } else if(wizardStep===5){
+        updateProgress(85);
+        const today = new Date();
+        const minDate = new Date(today.getTime() + (12 * 60 * 60 * 1000));
+        const maxDate = new Date(today.getTime() + (8 * 24 * 60 * 60 * 1000));
+        
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
+          
+          <div style="margin:0 20px 1.5rem 20px; background:#e3f2fd; border-radius:8px; padding:1rem;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
+            <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:500px; padding:0.75rem; border:2px solid #007bff; border-radius:6px; font-size:1em; font-weight:600;">
+              <option value="${wizardData.timezone}">📍 ${wizardData.timezone} (Auto-detected)</option>
+              <optgroup label="🇺🇸 United States">
+                <option value="America/New_York">Eastern Time (ET)</option>
+                <option value="America/Chicago">Central Time (CT)</option>
+                <option value="America/Denver">Mountain Time (MT)</option>
+                <option value="America/Los_Angeles">Pacific Time (PT)</option>
+              </optgroup>
+              <optgroup label="🇬🇧🇪🇺 Europe">
+                <option value="Europe/London">London (GMT)</option>
+                <option value="Europe/Paris">Paris (CET)</option>
+                <option value="Europe/Berlin">Berlin (CET)</option>
+              </optgroup>
+              <optgroup label="🌏 Asia Pacific">
+                <option value="Asia/Dubai">Dubai (GST)</option>
+                <option value="Asia/Kolkata">India (IST)</option>
+                <option value="Asia/Singapore">Singapore (SGT)</option>
+                <option value="Asia/Hong_Kong">Hong Kong (HKT)</option>
+                <option value="Asia/Tokyo">Tokyo (JST)</option>
+                <option value="Australia/Sydney">Sydney (AEDT)</option>
+              </optgroup>
+            </select>
+            <p style="font-size:0.85em; color:#0056b3; margin-top:0.5rem; font-weight:500;">⏰ All times shown in YOUR timezone</p>
+          </div>
+
+          <div style="padding:0 20px;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">📆 Select Date:</label>
+            <input type="date" id="wizardDate" 
+              min="${minDate.toISOString().split('T')[0]}" 
+              max="${maxDate.toISOString().split('T')[0]}"
+              onchange="generateTimeSlots()"
+              style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
+          </div>
+
+          <div id="timeSlotsWizard" style="padding:0 20px; margin-top:1rem;"></div>
+
+          <button id="confirmBtn" onclick="confirmBooking()" 
+            style="margin:20px; background:#ff0000; color:#fff; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600; display:none;">
+            Confirm Booking
+          </button>
+        `;
+      }
+    }
+
+    function updateTimezone() {
+      const selectedTimezone = document.getElementById('timezoneSelect').value;
+      wizardData.timezone = selectedTimezone;
+      const selectedDate = document.getElementById('wizardDate').value;
+      if (selectedDate) {
+        generateTimeSlots();
+      }
+    }
+
+    function generateTimeSlots() {
+      const selectedDate = document.getElementById('wizardDate').value;
+      if (!selectedDate) return;
+
+      const date = new Date(selectedDate + 'T00:00:00');
+      const dayOfWeek = date.getDay();
+
+      if (dayOfWeek === 0) {
+        document.getElementById('timeSlotsWizard').innerHTML = 
+          '<p style="color:#ff0000; margin-top:1rem;">❌ Sorry, we are closed on Sundays. Please select another day.</p>';
+        document.getElementById('confirmBtn').style.display = 'none';
+        return;
+      }
+
+      const slots = [];
+      for (let hour = 0; hour < 24; hour++) {
+        for (let min = 0; min < 60; min += 30) {
+          const timeStr24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          const period = hour >= 12 ? 'PM' : 'AM';
+          const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+          const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
+          slots.push({ time24: timeStr24, time12: timeStr12 });
+        }
+      }
+
+      const now = new Date();
+      const minTime = new Date(now.getTime() + (12 * 60 * 60 * 1000));
+      
+      const availableSlots = slots.filter(slot => {
+        const [hours, minutes] = slot.time24.split(':').map(Number);
+        const slotDateTime = new Date(date);
+        slotDateTime.setHours(hours, minutes, 0, 0);
+        return slotDateTime >= minTime;
+      });
+
+      if (availableSlots.length === 0) {
+        document.getElementById('timeSlotsWizard').innerHTML = 
+          '<p style="color:#ff0000; margin-top:1rem;">❌ No available slots for this date (must be at least 12 hours from now). Please select a later date.</p>';
+        document.getElementById('confirmBtn').style.display = 'none';
+        return;
+      }
+
+      wizardData.date = selectedDate;
+      
+      const container = document.getElementById('timeSlotsWizard');
+      container.innerHTML = '<p style="margin-bottom:0.5rem; font-weight:600;">⏰ Available Time Slots:</p><div class="time-slots">' + 
+        availableSlots.map(slot => 
+          `<div class="time-slot" onclick="selectTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
+        ).join('') + '</div>';
+    }
+
+    function selectTime(time) {
+      document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected');
+      });
+      event.target.classList.add('selected');
+      wizardData.time = time;
+      document.getElementById('confirmBtn').style.display = 'block';
+      updateProgress(100);
+    }
+
+    async function confirmBooking() {
+      if (!wizardData.date || !wizardData.time) {
+        alert('Please select both date and time');
+        return;
+      }
+
+      document.getElementById('confirmBtn').disabled = true;
+      document.getElementById('confirmBtn').textContent = '⏳ Booking...';
+
+      const roomName = `stemsphere-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      try {
+        const dailyResponse = await fetch('https://api.daily.co/v1/rooms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${DAILY_API_KEY}`
+          },
+          body: JSON.stringify({
+            name: roomName,
+            privacy: 'public',
+            properties: {
+              enable_screenshare: true,
+              enable_chat: true,
+              start_video_off: false,
+              start_audio_off: false,
+              max_participants: 10,
+              enable_knocking: false,
+              enable_prejoin_ui: true
+            }
+          })
+        });
+
+        if (!dailyResponse.ok) {
+          const errorData = await dailyResponse.json();
+          throw new Error(errorData.info || errorData.error || 'Failed to create video room');
+        }
+
+        const roomData = await dailyResponse.json();
+        const videoLink = roomData.url;
+
+        const localDateTime = `${wizardData.date}T${wizardData.time}`;
+        const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
+
+        const { data, error } = await supabaseClient
+          .from('bookings')
+          .insert({
+            user_id: currentUserId,
+            subject: wizardData.subject,
+            age_group: wizardData.age,
+            learning_style: wizardData.style,
+            help_needed: wizardData.help,
+            session_date: wizardData.date,
+            session_time: wizardData.time,
+            session_timezone: wizardData.timezone,
+            session_utc: utcTimestamp,
+            status: 'scheduled',
+            instructor_name: 'STEMSphere Enrollment Advisor',
+            video_link: videoLink
+          })
+          .select()
+          .single();
+
+        if (error) {
+          alert('Error booking session: ' + error.message);
+          document.getElementById('confirmBtn').disabled = false;
+          document.getElementById('confirmBtn').textContent = 'Confirm Booking';
+          return;
+        }
+
+        await supabaseClient
+          .from('profiles')
+          .update({ age_group: wizardData.age })
+          .eq('id', currentUserId);
+
+        alert('✅ Trial session booked successfully!');
+        closeBookingWizard();
+        loadSessions();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Failed to create video room: ' + error.message);
+        document.getElementById('confirmBtn').disabled = false;
+        document.getElementById('confirmBtn').textContent = 'Confirm Booking';
+      }
+    }
+
+    function convertToUTC(localDateTimeString, timezone) {
+      try {
+        const [datePart, timePart] = localDateTimeString.split('T');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hour, minute] = timePart.split(':').map(Number);
+
+        const baseUtcDate = new Date(Date.UTC(year, month - 1, day, hour, minute));
+
+        const options = {
+          timeZone: timezone,
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          hour12: false
+        };
+        
+        const formatter = new Intl.DateTimeFormat('en-CA', options);
+        const dateInTargetTZ = formatter.format(baseUtcDate);
+
+        const [tzDatePart, tzTimePart] = dateInTargetTZ.split(', ');
+        const [tzYear, tzMonth, tzDay] = tzDatePart.split('-').map(Number);
+        const [tzHour, tzMinute] = tzTimePart.split(':').slice(0, 2).map(Number);
+
+        const localDateInTz_AsUtc = new Date(Date.UTC(tzYear, tzMonth - 1, tzDay, tzHour, tzMinute));
+        
+        const offset = baseUtcDate.getTime() - localDateInTz_AsUtc.getTime();
+        
+        const finalUtcDate = new Date(baseUtcDate.getTime() + offset);
+        
+        return finalUtcDate.toISOString();
+
+      } catch (error) {
+        console.error('❌ Timezone conversion error:', error);
+        return new Date(localDateTimeString + 'Z').toISOString();
+      }
+    }
+
+    checkAuth();
+  </script>
 </body>
 </html>
