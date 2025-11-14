@@ -1067,7 +1067,6 @@ footer {
     🚀 Book Your Enrollment Session Now
   </a>
 </div>
-
 <!-- REVIEWS SECTION -->
 <div id="reviews-container"></div>
 <script>
@@ -1175,6 +1174,7 @@ footer {
   wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
 })();
 </script>
+
 <!-- TUTORING SUBJECTS SECTION -->
 <section id="tutoring-subjects">
   <h2>Personalized Tutoring in Every Subject We Offer</h2>
@@ -1475,11 +1475,17 @@ footer {
 <div id="anonymousAdvisorChatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
   <div style="background: #fff; border-radius: 16px; width: 90%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
     
-    <!-- Header -->
+    <!-- Header with Advisor Photo -->
     <div style="background: linear-gradient(135deg, #ff0000, #ff6b6b); color: #fff; padding: 1.5rem 2rem; border-radius: 16px 16px 0 0; position: relative;">
       <button onclick="closeAnonymousChat()" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.2); color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5em; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">×</button>
-      <h3 style="margin: 0 0 0.5rem 0; font-size: 1.6em; font-weight: 800;">💬 Live Chat with Advisor</h3>
-      <p id="advisorChatName" style="margin: 0; opacity: 0.95; font-size: 1em;">Connecting...</p>
+      
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <img id="advisorPhoto" src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="Advisor" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; background: #fff;">
+        <div>
+          <h3 style="margin: 0 0 0.5rem 0; font-size: 1.6em; font-weight: 800;">💬 Live Chat with Advisor</h3>
+          <p id="advisorChatName" style="margin: 0; opacity: 0.95; font-size: 1em;">Connecting...</p>
+        </div>
+      </div>
     </div>
 
     <!-- Messages Container -->
@@ -1516,12 +1522,13 @@ const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 let visitorSessionId = null;
 let anonymousChatInterval = null;
 let currentAdvisorId = null;
+let currentAdvisorData = null;
 
 // Check if advisors are available
 async function checkAdvisorAvailability() {
   const { data: advisors } = await supabaseClient
     .from('profiles')
-    .select('id, full_name')
+    .select('id, full_name, profile_photo_url')
     .eq('role', 'teacher')
     .eq('is_advisor', true)
     .eq('advisor_available', true)
@@ -1546,7 +1553,7 @@ async function checkAdvisorAvailability() {
 async function openAnonymousAdvisorChat() {
   const { data: advisors } = await supabaseClient
     .from('profiles')
-    .select('id, full_name')
+    .select('id, full_name, profile_photo_url')
     .eq('role', 'teacher')
     .eq('is_advisor', true)
     .eq('advisor_available', true)
@@ -1564,7 +1571,19 @@ async function openAnonymousAdvisorChat() {
   }
 
   currentAdvisorId = advisors[0].id;
+  currentAdvisorData = advisors[0];
+  
+  // Update advisor info with photo
   document.getElementById('advisorChatName').textContent = `Chatting with ${advisors[0].full_name}`;
+  
+  // Set advisor photo
+  const advisorPhoto = document.getElementById('advisorPhoto');
+  if (advisors[0].profile_photo_url) {
+    advisorPhoto.src = advisors[0].profile_photo_url;
+  } else {
+    advisorPhoto.src = 'https://learn.stemsphere.academy/assets/favconsp1.2.png';
+  }
+  
   document.getElementById('anonymousAdvisorChatModal').style.display = 'flex';
   
   loadAnonymousMessages();
@@ -1607,7 +1626,7 @@ async function loadAnonymousMessages() {
       minute: '2-digit' 
     });
 
-    const senderName = isFromMe ? 'You' : document.getElementById('advisorChatName').textContent.replace('Chatting with ', '');
+    const senderName = isFromMe ? 'You' : (currentAdvisorData ? currentAdvisorData.full_name : 'Advisor');
 
     return `
       <div style="${bubbleStyle} padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
