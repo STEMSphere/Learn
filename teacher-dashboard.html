@@ -81,6 +81,54 @@
       opacity: 0.9;
     }
 
+    /* Advisor Toggle Switch */
+    .advisor-toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 80px;
+      height: 40px;
+    }
+
+    .advisor-toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .advisor-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #dc3545;
+      transition: 0.4s;
+      border-radius: 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .advisor-slider:before {
+      position: absolute;
+      content: "";
+      height: 32px;
+      width: 32px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .advisor-slider {
+      background-color: #00ff88;
+      box-shadow: 0 0 20px rgba(0,255,136,0.6);
+    }
+
+    input:checked + .advisor-slider:before {
+      transform: translateX(40px);
+    }
+
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -682,6 +730,29 @@
       <p>Manage your students and upcoming sessions</p>
     </div>
 
+    <!-- Advisor Toggle Section -->
+    <div id="advisorToggleSection" style="display:none; max-width:1400px; margin:0 auto 2rem; padding:0 1rem;">
+      <div style="background:linear-gradient(135deg, #00ff88, #00c853); padding:2rem; border-radius:12px; box-shadow:0 4px 20px rgba(0,255,136,0.3); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div style="flex:1; min-width:250px;">
+          <h3 style="margin:0 0 0.5rem 0; color:#000; font-size:1.5em;">
+            🎯 Enrollment Advisor Mode
+          </h3>
+          <p style="margin:0; color:#000; opacity:0.8;">
+            Toggle your availability to receive instant session requests from students
+          </p>
+        </div>
+        <div style="display:flex; align-items:center; gap:2rem;">
+          <div id="advisorStatusDisplay" style="font-weight:700; font-size:1.2em; color:#000;">
+            🔴 OFFLINE
+          </div>
+          <label class="advisor-toggle-switch">
+            <input type="checkbox" id="advisorToggle" onchange="toggleAdvisorAvailability()">
+            <span class="advisor-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
     <div class="stats-grid">
       <div class="stat-card">
         <h3>My Students</h3>
@@ -937,6 +1008,8 @@
 
       document.getElementById('teacherName').textContent = profile.full_name || 'Teacher';
 
+      checkIfAdvisor();
+
       loadStats();
       loadSessions();
       loadStudents();
@@ -962,6 +1035,59 @@
     async function logout() {
       await supabaseClient.auth.signOut();
       window.location.href = 'teacher-login.html';
+    }
+
+    // ==================== ADVISOR AVAILABILITY TOGGLE ====================
+
+    async function checkIfAdvisor() {
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('is_advisor, advisor_available')
+        .eq('id', currentTeacherId)
+        .single();
+
+      if (profile && profile.is_advisor) {
+        document.getElementById('advisorToggleSection').style.display = 'block';
+        document.getElementById('advisorToggle').checked = profile.advisor_available || false;
+        updateAdvisorStatusDisplay(profile.advisor_available || false);
+      }
+    }
+
+    function updateAdvisorStatusDisplay(available) {
+      const display = document.getElementById('advisorStatusDisplay');
+      if (available) {
+        display.innerHTML = '🟢 AVAILABLE NOW';
+        display.style.color = '#000';
+      } else {
+        display.innerHTML = '🔴 OFFLINE';
+        display.style.color = '#000';
+      }
+    }
+
+    async function toggleAdvisorAvailability() {
+      const isAvailable = document.getElementById('advisorToggle').checked;
+      
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({ 
+          advisor_available: isAvailable,
+          last_availability_toggle: new Date().toISOString()
+        })
+        .eq('id', currentTeacherId);
+
+      if (error) {
+        alert('Error updating availability: ' + error.message);
+        document.getElementById('advisorToggle').checked = !isAvailable;
+        return;
+      }
+
+      updateAdvisorStatusDisplay(isAvailable);
+      
+      if (isAvailable) {
+        alert('✅ You are now AVAILABLE for instant sessions!\n\nStudents will see you as available and can message you directly.');
+      } else {
+        alert('⚪ You are now OFFLINE.\n\nStudents will use the regular booking system.');
+      }
     }
 
     // ============================================
@@ -1321,7 +1447,6 @@
       const student = myStudents.find(s => s.id === studentId);
       const studentName = student ? student.full_name : 'Student';
       
-      // ✅ FIXED: Removed .reverse() to show newest messages at top
       const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_student').or(`and(sender_id.eq.${studentId},recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.eq.${studentId})`).order('created_at', { ascending: false });
 
       if (!messages) { alert('Error loading conversation'); return; }
@@ -1504,7 +1629,6 @@
     }
 
     async function openSupportConversation() {
-      // ✅ FIXED: Removed .reverse() to show newest messages at top
       const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_support').or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`).order('created_at', { ascending: false });
       if (!messages) { alert('Error loading conversation'); return; }
 
@@ -1665,7 +1789,7 @@
         
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
-          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Schedule in your timezone - students see it in theirs!</p>
+          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Teachers can schedule instantly - no time restrictions!</p>
           
           <div style="padding:0 20px; margin-bottom:1.5rem; background:#e3f2fd; border-radius:8px; padding:1rem;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
@@ -1700,7 +1824,7 @@
               max="${maxDate}"
               onchange="generateTeacherTimeSlots()"
               style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
-            <p style="font-size:0.85em; color:#666; margin-top:0.5rem;">Schedule up to 90 days in advance</p>
+            <p style="font-size:0.85em; color:#666; margin-top:0.5rem;">✅ No restrictions - create sessions instantly!</p>
           </div>
 
           <div id="timeSlotsTeacher" style="padding:0 20px; margin-top:1rem;"></div>
@@ -1750,7 +1874,7 @@
       
       const container = document.getElementById('timeSlotsTeacher');
       container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (24 Hours):</p>
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (All times available - no restrictions):</p>
         <div class="time-slots">
           ${slots.map(slot => 
             `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
