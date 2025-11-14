@@ -7,7 +7,6 @@
   
   <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <script src="https://js.stripe.com/v3/"></script>
   
   <style>
@@ -194,7 +193,6 @@
       border: 1px solid #999;
     }
 
-    /* THREADED INBOX STYLES */
     .inbox-container {
       background: #fff;
       border-radius: 12px;
@@ -227,7 +225,6 @@
       cursor: not-allowed;
     }
 
-    /* Thread list styles */
     .thread-list {
       display: flex;
       flex-direction: column;
@@ -300,7 +297,6 @@
       margin-top: 0.5rem;
     }
 
-    /* Conversation view */
     .conversation-header {
       background: linear-gradient(135deg, #007bff, #0056b3);
       color: #fff;
@@ -318,8 +314,17 @@
       font-size: 0.9em;
     }
 
-    .message-bubble {
+    .messages-container {
+      max-height: 50vh;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding: 1rem;
       background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .message-bubble {
+      background: #fff;
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 1rem;
@@ -374,11 +379,15 @@
     }
 
     .reply-box {
-      background: #f8f9fa;
+      position: sticky;
+      bottom: 0;
+      background: #fff;
       border: 2px solid #007bff;
       border-radius: 8px;
       padding: 1.5rem;
-      margin-top: 1.5rem;
+      margin-top: 1rem;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+      z-index: 100;
     }
     .reply-box h5 {
       margin: 0 0 1rem 0;
@@ -388,7 +397,7 @@
     .file-upload-section {
       margin-top: 1rem;
       padding: 1rem;
-      background: #fff;
+      background: #f8f9fa;
       border: 2px dashed #ddd;
       border-radius: 6px;
     }
@@ -454,6 +463,7 @@
       width: 90%;
       max-height: 85vh;
       overflow-y: auto;
+      position: relative;
     }
     .modal-content h3 {
       margin-bottom: 1rem;
@@ -579,7 +589,6 @@
       margin: 0 0.5rem;
     }
 
-    /* Invoice Styles */
     .summary-card {
       background: #fff;
       border: 1px solid #ddd;
@@ -780,6 +789,21 @@
       </button>
     </div>
 
+    <!-- Live Advisor Banner -->
+    <div id="liveAdvisorBanner" style="display:none; margin-bottom: 2rem;">
+      <div style="background:linear-gradient(135deg, #00ff88, #00c853); padding:2rem; border-radius:12px; box-shadow:0 4px 20px rgba(0,255,136,0.3); text-align:center;">
+        <h2 style="margin:0 0 1rem 0; color:#000; font-size:2em;">
+          🎯 Live Enrollment Advisor Available NOW!
+        </h2>
+        <p style="margin:0 0 1.5rem 0; color:#000; font-size:1.2em;">
+          Skip the wait! Get instant help scheduling your first session.
+        </p>
+        <button onclick="openAdvisorChat()" style="background:#000; color:#00ff88; padding:1rem 2rem; border:none; border-radius:8px; cursor:pointer; font-weight:700; font-size:1.1em; box-shadow:0 4px 12px rgba(0,0,0,0.3); animation:pulse 2s infinite;">
+          💬 Chat with Advisor Now
+        </button>
+      </div>
+    </div>
+
     <div class="tabs">
       <button class="tab active" onclick="showTab('upcoming')">📅 Upcoming Sessions</button>
       <button class="tab" onclick="showTab('allSessions')">📚 All Sessions</button>
@@ -797,7 +821,6 @@
       </button>
     </div>
 
-    <!-- UPCOMING SESSIONS TAB -->
     <div id="upcomingTab" class="tab-content active">
       <div class="sessions-section">
         <h2>📅 Upcoming Sessions</h2>
@@ -807,7 +830,6 @@
       </div>
     </div>
 
-    <!-- ALL SESSIONS TAB -->
     <div id="allSessionsTab" class="tab-content">
       <div class="sessions-section">
         <h2>📚 All Sessions</h2>
@@ -817,7 +839,6 @@
       </div>
     </div>
 
-    <!-- INVOICES TAB -->
     <div id="invoicesTab" class="tab-content">
       <div class="sessions-section">
         <h2>💳 My Invoices</h2>
@@ -843,7 +864,6 @@
       </div>
     </div>
 
-    <!-- SUPPORT INBOX TAB -->
     <div id="supportTab" class="tab-content">
       <div class="inbox-container">
         <div class="inbox-header">
@@ -856,7 +876,6 @@
       </div>
     </div>
 
-    <!-- TEACHERS INBOX TAB WITH THREADS -->
     <div id="teachersTab" class="tab-content">
       <div class="inbox-container">
         <div class="inbox-header">
@@ -870,7 +889,6 @@
     </div>
   </div>
 
-  <!-- BOOKING WIZARD MODAL -->
   <div id="bookingWizard" class="wizard-modal">
     <button onclick="closeBookingWizard()"
       style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
@@ -882,7 +900,31 @@
     <div id="wizardContent" style="margin-top:20px;"></div>
   </div>
 
-  <!-- COMPOSE MESSAGE MODAL (FOR SUPPORT) -->
+  <div id="advisorChatModal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+      <button onclick="closeModal('advisorChatModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+      
+      <div style="background:linear-gradient(135deg, #00ff88, #00c853); padding:1.5rem; border-radius:8px 8px 0 0; margin:-2rem -2rem 1.5rem -2rem;">
+        <h3 style="margin:0 0 0.5rem 0; color:#000; font-size:1.5em;">
+          🎯 Live Enrollment Advisor
+        </h3>
+        <p style="margin:0; color:#000; opacity:0.8;" id="advisorName">
+          Connecting you with an advisor...
+        </p>
+      </div>
+
+      <div id="advisorChatMessages" style="max-height:400px; overflow-y:auto; margin-bottom:1.5rem; padding:1rem; background:#f8f9fa; border-radius:8px;">
+      </div>
+
+      <div style="background:#f8f9fa; padding:1rem; border-radius:8px;">
+        <textarea id="advisorChatInput" placeholder="Type your message here..." style="width:100%; padding:0.75rem; border:2px solid #ddd; border-radius:6px; resize:vertical; min-height:80px; font-family:inherit;"></textarea>
+        <button onclick="sendAdvisorMessage()" style="margin-top:1rem; background:#00ff88; color:#000; padding:0.75rem 1.5rem; border:none; border-radius:6px; cursor:pointer; font-weight:600; width:100%;">
+          Send Message
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="composeModal" class="modal">
     <div class="modal-content">
       <h3>✉️ New Support Message</h3>
@@ -905,7 +947,6 @@
     </div>
   </div>
 
-  <!-- COMPOSE TO TEACHER MODAL -->
   <div id="composeToTeacherModal" class="modal">
     <div class="modal-content">
       <h3>✉️ Message a Teacher</h3>
@@ -934,36 +975,28 @@
     </div>
   </div>
 
-  <!-- VIEW INVOICE MODAL -->
   <div id="viewStudentInvoiceModal" class="modal">
     <div class="modal-content" style="max-width: 800px;">
       <div id="studentInvoiceViewContent">
-        <!-- Content populated dynamically -->
       </div>
     </div>
   </div>
 
-  <!-- PAYMENT MODAL -->
   <div id="paymentModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
       <h3>💳 Pay Invoice</h3>
       <div id="paymentContent">
-        <!-- Payment form will be added here -->
       </div>
     </div>
   </div>
 
-  <!-- CONVERSATION VIEW MODAL -->
   <div id="conversationModal" class="modal">
     <div class="modal-content" id="conversationContent">
-      <!-- Content populated dynamically -->
     </div>
   </div>
 
-  <!-- SUPPORT CONVERSATION MODAL -->
   <div id="supportConversationModal" class="modal">
     <div class="modal-content" id="supportConversationContent">
-      <!-- Content populated dynamically -->
     </div>
   </div>
 
@@ -995,10 +1028,9 @@
     let wizardStep = 0;
     let studentInvoices = [];
     let selectedFile = null;
+    let currentAdvisorId = null;
+    let advisorChatInterval = null;
 
-    // ============================================
-    // AUTH & INITIALIZATION
-    // ============================================
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -1020,6 +1052,9 @@
         document.getElementById('userEmail').textContent = profile.email;
         document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
       }
+
+      checkLiveAdvisors();
+      setInterval(checkLiveAdvisors, 30000);
 
       loadSessions();
       loadMyTeachers();
@@ -1052,8 +1087,124 @@
       await supabaseClient.auth.signOut();
       window.location.href = 'login.html';
     }
+    // ==================== LIVE ADVISOR SYSTEM ====================
 
-    // ==================== BEGIN STUDENT INVOICE SECTION ====================
+    async function checkLiveAdvisors() {
+      const { data: advisors } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'teacher')
+        .eq('is_advisor', true)
+        .eq('advisor_available', true)
+        .limit(1);
+
+      if (advisors && advisors.length > 0) {
+        document.getElementById('liveAdvisorBanner').style.display = 'block';
+      } else {
+        document.getElementById('liveAdvisorBanner').style.display = 'none';
+      }
+    }
+
+    async function openAdvisorChat() {
+      const { data: advisors } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'teacher')
+        .eq('is_advisor', true)
+        .eq('advisor_available', true)
+        .limit(1);
+
+      if (!advisors || advisors.length === 0) {
+        alert('⚠️ No advisors are currently available. Please try booking a session through the regular system.');
+        return;
+      }
+
+      currentAdvisorId = advisors[0].id;
+      document.getElementById('advisorName').textContent = `Chatting with ${advisors[0].full_name}`;
+      document.getElementById('advisorChatModal').classList.add('active');
+      
+      loadAdvisorMessages();
+      advisorChatInterval = setInterval(loadAdvisorMessages, 3000);
+    }
+
+    async function loadAdvisorMessages() {
+      if (!currentAdvisorId) return;
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'advisor_chat')
+        .or(`and(sender_id.eq.${currentUserId},recipient_id.eq.${currentAdvisorId}),and(sender_id.eq.${currentAdvisorId},recipient_id.eq.${currentUserId})`)
+        .order('created_at', { ascending: true });
+
+      const container = document.getElementById('advisorChatMessages');
+      
+      if (!messages || messages.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#999;">No messages yet. Start the conversation!</p>';
+        return;
+      }
+
+      container.innerHTML = messages.map(msg => {
+        const isFromMe = msg.sender_id === currentUserId;
+        const bubbleStyle = isFromMe 
+          ? 'background:#e3f2fd; border:1px solid #007bff; margin-left:2rem;'
+          : 'background:#fff; border:1px solid #ddd; margin-right:2rem;';
+        
+        const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        
+        return `
+          <div style="${bubbleStyle} padding:1rem; border-radius:8px; margin-bottom:1rem;">
+            <div style="font-weight:600; color:#007bff; margin-bottom:0.5rem;">
+              ${isFromMe ? 'You' : document.getElementById('advisorName').textContent.replace('Chatting with ', '')}
+            </div>
+            <div style="color:#333; white-space:pre-wrap;">${msg.message}</div>
+            <div style="color:#999; font-size:0.85em; margin-top:0.5rem;">${time}</div>
+          </div>
+        `;
+      }).join('');
+
+      const unreadIds = messages.filter(m => m.recipient_id === currentUserId && !m.is_read).map(m => m.id);
+      if (unreadIds.length > 0) {
+        await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadIds);
+      }
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendAdvisorMessage() {
+      const input = document.getElementById('advisorChatInput');
+      const message = input.value.trim();
+      
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      if (!currentAdvisorId) {
+        alert('No advisor connected');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          recipient_id: currentAdvisorId,
+          message_type: 'advisor_chat',
+          subject: 'Advisor Chat',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      input.value = '';
+      await loadAdvisorMessages();
+    }
+
+    // ==================== STUDENT INVOICE SECTION ====================
 
     async function loadStudentInvoices() {
       const { data: invoices, error } = await supabaseClient
@@ -1239,8 +1390,6 @@
         alert('❌ Error: ' + error.message);
       }
     }
-    
-    // ==================== END STUDENT INVOICE SECTION ====================
 
     // ============================================
     // FILE UPLOAD HELPER
@@ -1269,14 +1418,16 @@
     }
 
     // ============================================
-    // SESSIONS MANAGEMENT - SPLIT INTO UPCOMING & ALL
+    // SESSIONS MANAGEMENT - ✅ FIXED SORTING
     // ============================================
     async function loadSessions() {
+      const now = new Date().toISOString();
+      
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
         .select('*')
         .eq('user_id', currentUserId)
-        .order('session_date', { ascending: false });
+        .order('session_utc', { ascending: true });
 
       if (error || !bookings || bookings.length === 0) {
         document.getElementById('upcomingSessions').innerHTML = '<div class="empty-state"><p>📅 No upcoming sessions. Book your first session!</p></div>';
@@ -1300,12 +1451,16 @@
         });
       }
 
-      const now = new Date();
       const upcomingBookings = bookings.filter(b => {
         if (b.status !== 'scheduled') return false;
-        if (!b.session_date) return true;
-        const sessionDate = new Date(b.session_date);
-        return sessionDate >= now;
+        if (b.session_utc) {
+          return b.session_utc >= now;
+        }
+        if (b.session_date) {
+          const sessionDate = new Date(b.session_date);
+          return sessionDate >= new Date();
+        }
+        return true;
       });
 
       const upcomingContainer = document.getElementById('upcomingSessions');
@@ -1438,7 +1593,7 @@
     }
 
     // ============================================
-    // SUPPORT MESSAGING - THREADED (NO ATTACHMENTS)
+    // SUPPORT MESSAGING - THREADED
     // ============================================
     async function loadSupportThreads() {
       const { data: admins } = await supabaseClient
@@ -1451,8 +1606,6 @@
           '<div class="empty-state">No support available at the moment.</div>';
         return;
       }
-
-      const adminIds = admins.map(a => a.id);
 
       const { data: messages } = await supabaseClient
         .from('messages')
@@ -1498,7 +1651,6 @@
     }
 
     async function openSupportConversation() {
-      // ✅ FIXED: Removed .reverse() to show newest messages at top
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1529,22 +1681,6 @@
           <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
         </div>
 
-        <div class="reply-box">
-          <h5>💬 Reply to Support</h5>
-          <div class="form-group">
-            <label>Subject (optional)</label>
-            <input type="text" id="supportReplySubject" placeholder="Enter subject...">
-          </div>
-          <div class="form-group">
-            <label>Your Message *</label>
-            <textarea id="supportReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
-          </div>
-          <div style="display:flex; gap:1rem;">
-            <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
-            <button class="btn-secondary" onclick="closeModal('supportConversationModal')">Close</button>
-          </div>
-        </div>
-
         <div class="messages-container">
           ${messages.map(msg => {
             const isFromMe = msg.sender_id === currentUserId;
@@ -1566,6 +1702,22 @@
               </div>
             `;
           }).join('')}
+        </div>
+
+        <div class="reply-box">
+          <h5>💬 Reply to Support</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="supportReplySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="supportReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem;">
+            <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('supportConversationModal')">Close</button>
+          </div>
         </div>
       `;
 
@@ -1617,11 +1769,9 @@
     }
 
     // ============================================
-    // TEACHER MESSAGING - THREADED INBOX WITH ATTACHMENTS
+    // TEACHER MESSAGING - ✅ REPLY BOX AT BOTTOM
     // ============================================
     async function loadTeacherThreads() {
-      console.log('📬 Loading teacher threads for student:', currentUserId);
-      
       if (!myTeachers || myTeachers.length === 0) {
         document.getElementById('teacherThreads').innerHTML = 
           '<div class="empty-state">No teachers assigned yet. Contact support for assistance.</div>';
@@ -1629,7 +1779,6 @@
       }
 
       const teacherIds = myTeachers.map(t => t.id);
-      console.log('👨‍🏫 Teacher IDs:', teacherIds);
 
       const { data: messages, error } = await supabaseClient
         .from('messages')
@@ -1638,10 +1787,8 @@
         .or(`and(sender_id.in.(${teacherIds.join(',')}),recipient_id.eq.${currentUserId}),and(sender_id.eq.${currentUserId},recipient_id.in.(${teacherIds.join(',')}))`)
         .order('created_at', { ascending: false });
 
-      console.log('📨 Messages found:', messages?.length || 0);
-
       if (error) {
-        console.error('❌ Error loading teacher messages:', error);
+        console.error('Error loading teacher messages:', error);
         document.getElementById('teacherThreads').innerHTML = 
           '<div class="empty-state">Error loading messages. Please refresh the page.</div>';
         return;
@@ -1685,13 +1832,9 @@
         b.lastMessageDate - a.lastMessageDate
       );
 
-      console.log('🧵 Threads created:', threadArray.length);
-
       const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
       unreadTeachersCount = totalUnread;
       updateBadge('teachersBadge', totalUnread);
-
-      console.log('🔔 Total unread messages from teachers:', totalUnread);
 
       renderTeacherThreads(threadArray);
     }
@@ -1737,9 +1880,6 @@
       const teacher = myTeachers.find(t => t.id === teacherId);
       const teacherName = teacher ? teacher.full_name : 'Teacher';
 
-      console.log('💬 Opening conversation with teacher:', teacherName, teacherId);
-
-      // ✅ FIXED: Removed .reverse() to show newest messages at top
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1748,19 +1888,16 @@
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('❌ Error loading conversation:', error);
+        console.error('Error loading conversation:', error);
         alert('Error loading conversation');
         return;
       }
-
-      console.log('📨 Messages in conversation:', messages?.length || 0);
 
       const unreadMessageIds = messages
         ?.filter(m => m.recipient_id === currentUserId && !m.is_read)
         .map(m => m.id) || [];
 
       if (unreadMessageIds.length > 0) {
-        console.log('✅ Marking', unreadMessageIds.length, 'messages as read');
         await supabaseClient
           .from('messages')
           .update({ is_read: true })
@@ -1772,32 +1909,6 @@
         <div class="conversation-header">
           <h4>💬 Conversation with ${teacherName}</h4>
           <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} in this thread</p>
-        </div>
-
-        <div class="reply-box">
-          <h5>💬 Reply to ${teacherName}</h5>
-          <div class="form-group">
-            <label>Subject (optional)</label>
-            <input type="text" id="teacherReplySubject" placeholder="Enter subject...">
-          </div>
-          <div class="form-group">
-            <label>Your Message *</label>
-            <textarea id="teacherReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
-          </div>
-          <div class="file-upload-section">
-            <input type="file" id="teacherReplyFileInput" style="display:none;" onchange="handleFileSelect(event, 'teacherReplyFile')">
-            <button class="file-upload-btn" onclick="document.getElementById('teacherReplyFileInput').click()">
-              📎 Attach File
-            </button>
-            <div id="teacherReplyFilePreview" class="file-preview">
-              <span id="teacherReplyFileName"></span>
-              <button class="remove-file" onclick="clearFile('teacherReplyFile')">✖</button>
-            </div>
-          </div>
-          <div style="display:flex; gap:1rem; margin-top:1rem;">
-            <button class="btn-primary" onclick="sendReplyToTeacher('${teacherId}')">Send Reply</button>
-            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
-          </div>
         </div>
 
         <div class="messages-container">
@@ -1835,6 +1946,32 @@
             `;
           }).join('') || '<div class="empty-state">No messages yet</div>'}
         </div>
+
+        <div class="reply-box">
+          <h5>💬 Reply to ${teacherName}</h5>
+          <div class="form-group">
+            <label>Subject (optional)</label>
+            <input type="text" id="teacherReplySubject" placeholder="Enter subject...">
+          </div>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="teacherReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+          </div>
+          <div class="file-upload-section">
+            <input type="file" id="teacherReplyFileInput" style="display:none;" onchange="handleFileSelect(event, 'teacherReplyFile')">
+            <button class="file-upload-btn" onclick="document.getElementById('teacherReplyFileInput').click()">
+              📎 Attach File
+            </button>
+            <div id="teacherReplyFilePreview" class="file-preview">
+              <span id="teacherReplyFileName"></span>
+              <button class="remove-file" onclick="clearFile('teacherReplyFile')">✖</button>
+            </div>
+          </div>
+          <div style="display:flex; gap:1rem; margin-top:1rem;">
+            <button class="btn-primary" onclick="sendReplyToTeacher('${teacherId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
+        </div>
       `;
 
       document.getElementById('conversationContent').innerHTML = conversationHTML;
@@ -1867,8 +2004,6 @@
         return;
       }
 
-      console.log('📤 Sending reply to teacher:', teacherId);
-
       try {
         let attachmentUrl = null;
         if (selectedFile) {
@@ -1890,48 +2025,9 @@
           });
 
         if (error) {
-          console.error('❌ Error sending message:', error);
+          console.error('Error sending message:', error);
           alert('Error sending message: ' + error.message);
           return;
-        }
-
-        console.log('✅ Message sent successfully');
-
-        try {
-          const { data: teacher } = await supabaseClient
-            .from('profiles')
-            .select('email, full_name')
-            .eq('id', teacherId)
-            .single();
-
-          const { data: currentUser } = await supabaseClient
-            .from('profiles')
-            .select('full_name')
-            .eq('id', currentUserId)
-            .single();
-
-          if (teacher && currentUser) {
-            fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-              },
-              body: JSON.stringify({
-                type: 'new_message_to_teacher',
-                to: teacher.email,
-                data: {
-                  recipientName: teacher.full_name,
-                  senderName: currentUser.full_name,
-                  subject: subject || 'New message',
-                  message: message
-                }
-              })
-            });
-            console.log('✅ Email notification sent to teacher');
-          }
-        } catch (emailError) {
-          console.error('⚠️ Email notification failed (non-critical):', emailError);
         }
 
         selectedFile = null;
@@ -2070,10 +2166,15 @@
     function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
       selectedFile = null;
+      
+      if (modalId === 'advisorChatModal' && advisorChatInterval) {
+        clearInterval(advisorChatInterval);
+        advisorChatInterval = null;
+      }
     }
 
     // ============================================
-    // BOOKING WIZARD (TIMEZONE-AWARE) ✅
+    // BOOKING WIZARD
     // ============================================
     function updateProgress(percent) {
       document.getElementById('wizardProgressFill').style.width = percent + '%';
@@ -2209,7 +2310,6 @@
     function updateTimezone() {
       const selectedTimezone = document.getElementById('timezoneSelect').value;
       wizardData.timezone = selectedTimezone;
-      console.log('🌍 Student timezone:', selectedTimezone);
       const selectedDate = document.getElementById('wizardDate').value;
       if (selectedDate) {
         generateTimeSlots();
@@ -2312,22 +2412,14 @@
 
         if (!dailyResponse.ok) {
           const errorData = await dailyResponse.json();
-          console.error('Daily.co error:', errorData);
           throw new Error(errorData.info || errorData.error || 'Failed to create video room');
         }
 
         const roomData = await dailyResponse.json();
         const videoLink = roomData.url;
 
-        console.log('✅ Video room created:', videoLink);
-
         const localDateTime = `${wizardData.date}T${wizardData.time}`;
         const utcTimestamp = convertToUTC(localDateTime, wizardData.timezone);
-
-        console.log('📅 Student booking:');
-        console.log('  Student TZ:', wizardData.timezone);
-        console.log('  Local:', localDateTime);
-        console.log('  UTC:', utcTimestamp);
 
         const { data, error } = await supabaseClient
           .from('bookings')
@@ -2365,7 +2457,7 @@
         loadSessions();
       } catch (error) {
         console.error('Error:', error);
-        alert('❌ Failed to create video room: ' + error.message + '\n\nPlease contact support.');
+        alert('❌ Failed to create video room: ' + error.message);
         document.getElementById('confirmBtn').disabled = false;
         document.getElementById('confirmBtn').textContent = 'Confirm Booking';
       }
@@ -2407,29 +2499,6 @@
       }
     }
 
-    function convertFromUTC(utcTimestamp, targetTimezone) {
-      try {
-        if (!utcTimestamp) return 'Not scheduled';
-        
-        const date = new Date(utcTimestamp);
-        const options = {
-          timeZone: targetTimezone,
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true
-        };
-        
-        return date.toLocaleString('en-US', options);
-      } catch (error) {
-        console.error('❌ Display error:', error);
-        return new Date(utcTimestamp).toLocaleString();
-      }
-    }
-
-    // Initialize on page load
     checkAuth();
   </script>
 </body>
