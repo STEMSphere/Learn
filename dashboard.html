@@ -98,6 +98,57 @@
       100% { box-shadow:0 0 10px rgba(0,123,255,0.5); }
     }
 
+    /* Teacher Profile Styles */
+    .teacher-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #007bff;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .teacher-avatar:hover {
+      transform: scale(1.1);
+    }
+    .teacher-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #007bff;
+      margin: 0 auto 1rem;
+      display: block;
+    }
+    .teacher-name-clickable {
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .teacher-name-clickable:hover {
+      text-decoration: underline;
+    }
+    .view-profile-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .view-profile-btn:hover {
+      background: #0056b3;
+    }
+
     .tabs {
       display: flex;
       gap: 0.5rem;
@@ -342,6 +393,9 @@
       font-weight: 600;
       color: #007bff;
       margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     .message-bubble .timestamp {
       color: #999;
@@ -889,6 +943,17 @@
     </div>
   </div>
 
+  <!-- Teacher Profile Modal -->
+  <div id="teacherProfileModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <button onclick="closeModal('teacherProfileModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+      
+      <div id="teacherProfileContent">
+        <!-- Content populated dynamically -->
+      </div>
+    </div>
+  </div>
+
   <div id="bookingWizard" class="wizard-modal">
     <button onclick="closeBookingWizard()"
       style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
@@ -1011,7 +1076,6 @@
       <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
     </p>
   </footer>
-
   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
@@ -1022,6 +1086,7 @@
 
     let currentUserId = null;
     let myTeachers = [];
+    let teacherProfiles = {}; // Cache teacher profiles
     let unreadSupportCount = 0;
     let unreadTeachersCount = 0;
     let wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: "" };
@@ -1087,18 +1152,142 @@
       await supabaseClient.auth.signOut();
       window.location.href = 'login.html';
     }
+
+    // ==================== TEACHER PROFILE SYSTEM ====================
+
+    async function loadTeacherProfile(teacherId) {
+      // Check cache first
+      if (teacherProfiles[teacherId]) {
+        return teacherProfiles[teacherId];
+      }
+
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email, profile_photo_url, bio, teaching_video_url, years_experience, education, fun_fact')
+        .eq('id', teacherId)
+        .single();
+
+      if (profile) {
+        teacherProfiles[teacherId] = profile;
+        return profile;
+      }
+
+      return null;
+    }
+
+    async function viewTeacherProfile(teacherId) {
+      const profile = await loadTeacherProfile(teacherId);
+      
+      if (!profile) {
+        alert('Unable to load teacher profile');
+        return;
+      }
+
+      const photoUrl = profile.profile_photo_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.full_name || 'Teacher') + '&size=200&background=007bff&color=fff';
+      
+      const videoEmbed = profile.teaching_video_url ? `
+        <div style="margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem; color: #000;">📹 Teaching Introduction</h4>
+          ${getVideoEmbed(profile.teaching_video_url)}
+        </div>
+      ` : '';
+
+      const content = `
+        <div style="text-align: center; padding: 1rem 0;">
+          <img src="${photoUrl}" class="teacher-avatar-large" alt="${profile.full_name}">
+          <h2 style="margin: 0 0 0.5rem 0; color: #000;">${profile.full_name}</h2>
+          ${profile.years_experience ? `<p style="color: #666; margin: 0.25rem 0;">📚 ${profile.years_experience} years of teaching experience</p>` : ''}
+          ${profile.education ? `<p style="color: #666; margin: 0.25rem 0;">🎓 ${profile.education}</p>` : ''}
+        </div>
+
+        ${profile.bio ? `
+          <div style="margin: 1.5rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #000;">About Me</h4>
+            <p style="color: #333; line-height: 1.6; white-space: pre-wrap;">${profile.bio}</p>
+          </div>
+        ` : ''}
+
+        ${videoEmbed}
+
+        ${profile.fun_fact ? `
+          <div style="margin: 1.5rem 0; padding: 1rem; background: #fff3cd; border-radius: 8px; border: 2px solid #ffc107;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #856404;">💡 Fun Fact</h4>
+            <p style="color: #856404; margin: 0;">${profile.fun_fact}</p>
+          </div>
+        ` : ''}
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+          <button class="btn-primary" onclick="openComposeToTeacherModal('${teacherId}'); closeModal('teacherProfileModal');">
+            ✉️ Send Message
+          </button>
+          <button class="btn-secondary" onclick="closeModal('teacherProfileModal')">Close</button>
+        </div>
+      `;
+
+      document.getElementById('teacherProfileContent').innerHTML = content;
+      document.getElementById('teacherProfileModal').classList.add('active');
+    }
+
+    function getVideoEmbed(url) {
+      if (!url) return '';
+
+      // YouTube
+      if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        let videoId = '';
+        if (url.includes('youtube.com/watch?v=')) {
+          videoId = url.split('v=')[1]?.split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+          videoId = url.split('youtu.be/')[1]?.split('?')[0];
+        }
+        if (videoId) {
+          return `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>`;
+        }
+      }
+
+      // Vimeo
+      if (url.includes('vimeo.com')) {
+        const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
+        if (videoId) {
+          return `<iframe src="https://player.vimeo.com/video/${videoId}" width="100%" height="315" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>`;
+        }
+      }
+
+      // Fallback: show link
+      return `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-weight: 600;">🎥 Watch Teaching Video</a>`;
+    }
+
+    function getTeacherAvatarHTML(teacherId, teacherName, size = 40, showName = true) {
+      const photoUrl = teacherProfiles[teacherId]?.profile_photo_url || 
+                       'https://ui-avatars.com/api/?name=' + encodeURIComponent(teacherName) + '&size=200&background=007bff&color=fff';
+      
+      const avatarHTML = `<img src="${photoUrl}" class="teacher-avatar" style="width:${size}px; height:${size}px;" alt="${teacherName}" onclick="viewTeacherProfile('${teacherId}')" title="View ${teacherName}'s profile">`;
+      
+      if (showName) {
+        return `
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem;">
+            ${avatarHTML}
+            <a href="javascript:void(0)" onclick="viewTeacherProfile('${teacherId}')" class="teacher-name-clickable">${teacherName}</a>
+          </div>
+        `;
+      }
+      
+      return avatarHTML;
+    }
+
     // ==================== LIVE ADVISOR SYSTEM ====================
 
     async function checkLiveAdvisors() {
       const { data: advisors } = await supabaseClient
         .from('profiles')
-        .select('id, full_name')
+        .select('id, full_name, profile_photo_url')
         .eq('role', 'teacher')
         .eq('is_advisor', true)
         .eq('advisor_available', true)
         .limit(1);
 
       if (advisors && advisors.length > 0) {
+        // Cache advisor profile
+        teacherProfiles[advisors[0].id] = advisors[0];
         document.getElementById('liveAdvisorBanner').style.display = 'block';
       } else {
         document.getElementById('liveAdvisorBanner').style.display = 'none';
@@ -1108,7 +1297,7 @@
     async function openAdvisorChat() {
       const { data: advisors } = await supabaseClient
         .from('profiles')
-        .select('id, full_name')
+        .select('id, full_name, profile_photo_url')
         .eq('role', 'teacher')
         .eq('is_advisor', true)
         .eq('advisor_available', true)
@@ -1120,7 +1309,8 @@
       }
 
       currentAdvisorId = advisors[0].id;
-      document.getElementById('advisorName').textContent = `Chatting with ${advisors[0].full_name}`;
+      teacherProfiles[currentAdvisorId] = advisors[0];
+      document.getElementById('advisorName').innerHTML = `Chatting with ${getTeacherAvatarHTML(advisors[0].id, advisors[0].full_name, 30)}`;
       document.getElementById('advisorChatModal').classList.add('active');
       
       loadAdvisorMessages();
@@ -1152,10 +1342,12 @@
         
         const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         
+        const senderName = isFromMe ? 'You' : (teacherProfiles[currentAdvisorId]?.full_name || 'Advisor');
+        
         return `
           <div style="${bubbleStyle} padding:1rem; border-radius:8px; margin-bottom:1rem;">
             <div style="font-weight:600; color:#007bff; margin-bottom:0.5rem;">
-              ${isFromMe ? 'You' : document.getElementById('advisorName').textContent.replace('Chatting with ', '')}
+              ${isFromMe ? senderName : getTeacherAvatarHTML(currentAdvisorId, senderName, 30)}
             </div>
             <div style="color:#333; white-space:pre-wrap;">${msg.message}</div>
             <div style="color:#999; font-size:0.85em; margin-top:0.5rem;">${time}</div>
@@ -1418,7 +1610,7 @@
     }
 
     // ============================================
-    // SESSIONS MANAGEMENT - ✅ FIXED SORTING
+    // SESSIONS MANAGEMENT - ✅ FIXED SORTING + TEACHER PROFILES
     // ============================================
     async function loadSessions() {
       const now = new Date().toISOString();
@@ -1443,11 +1635,12 @@
       if (teacherIds.length > 0) {
         const { data: teachers } = await supabaseClient
           .from('profiles')
-          .select('id, full_name')
+          .select('id, full_name, profile_photo_url, bio, teaching_video_url, years_experience, education, fun_fact')
           .in('id', teacherIds);
         
         teachers?.forEach(t => {
           teacherMap[t.id] = t.full_name;
+          teacherProfiles[t.id] = t; // Cache profiles
         });
       }
 
@@ -1518,11 +1711,11 @@
           statusText = '✓ Scheduled';
         }
 
-        let teacherName = 'STEMSphere Enrollment Advisor';
+        let teacherHTML = 'STEMSphere Enrollment Advisor';
         if (booking.assigned_teacher_id && teacherMap[booking.assigned_teacher_id]) {
-          teacherName = teacherMap[booking.assigned_teacher_id];
+          teacherHTML = getTeacherAvatarHTML(booking.assigned_teacher_id, teacherMap[booking.assigned_teacher_id], 40);
         } else if (booking.instructor_name) {
-          teacherName = booking.instructor_name;
+          teacherHTML = booking.instructor_name;
         }
 
         let videoButton = '';
@@ -1545,7 +1738,7 @@
               <h3>${booking.subject || 'Trial Session'}</h3>
               <p>📅 ${dateStr}</p>
               <p>⏰ ${timeStr}</p>
-              <p>👨‍🏫 Instructor: ${teacherName}</p>
+              <p>👨‍🏫 Instructor: ${teacherHTML}</p>
               <p>👤 ${booking.age_group || 'N/A'} | ${booking.learning_style || 'N/A'}</p>
               ${booking.help_needed ? `<p>📝 ${booking.help_needed}</p>` : ''}
               <span class="status-badge ${statusClass}">${statusText}</span>
@@ -1577,10 +1770,15 @@
 
       const { data: teachers } = await supabaseClient
         .from('profiles')
-        .select('id, full_name, email')
+        .select('id, full_name, email, profile_photo_url, bio, teaching_video_url, years_experience, education, fun_fact')
         .in('id', teacherIds);
 
       myTeachers = teachers || [];
+      
+      // Cache teacher profiles
+      myTeachers.forEach(t => {
+        teacherProfiles[t.id] = t;
+      });
       
       if (myTeachers.length > 0) {
         document.getElementById('composeTeacherBtn').disabled = false;
@@ -1769,7 +1967,7 @@
     }
 
     // ============================================
-    // TEACHER MESSAGING - ✅ REPLY BOX AT BOTTOM
+    // TEACHER MESSAGING - ✅ REPLY BOX AT BOTTOM + PROFILES
     // ============================================
     async function loadTeacherThreads() {
       if (!myTeachers || myTeachers.length === 0) {
@@ -1863,7 +2061,7 @@
         return `
           <div class="thread-item ${unreadClass}" onclick="openTeacherConversation('${thread.teacherId}')">
             <div class="thread-header">
-              <div class="teacher-name">${thread.teacherName}</div>
+              <div class="teacher-name">${getTeacherAvatarHTML(thread.teacherId, thread.teacherName, 40)}</div>
               <div class="thread-meta">
                 ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
                 <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
@@ -1907,7 +2105,7 @@
       const conversationHTML = `
         <button onclick="closeModal('conversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
         <div class="conversation-header">
-          <h4>💬 Conversation with ${teacherName}</h4>
+          <h4>💬 Conversation with ${getTeacherAvatarHTML(teacherId, teacherName, 40)}</h4>
           <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} in this thread</p>
         </div>
 
@@ -1937,7 +2135,7 @@
 
             return `
               <div class="message-bubble ${bubbleClass}">
-                <div class="sender">${isFromMe ? 'You' : teacherName}</div>
+                <div class="sender">${isFromMe ? 'You' : getTeacherAvatarHTML(teacherId, teacherName, 30)}</div>
                 <div class="timestamp">${date}</div>
                 ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
                 <div class="body">${msg.message}</div>
@@ -2040,13 +2238,17 @@
       }
     }
 
-    function openComposeToTeacherModal() {
+    function openComposeToTeacherModal(teacherIdToSelect = null) {
       const select = document.getElementById('composeTeacherSelect');
       
       select.innerHTML = '<option value="">-- Choose a teacher --</option>' + 
         myTeachers.map(teacher => 
           `<option value="${teacher.id}">${teacher.full_name}</option>`
         ).join('');
+      
+      if (teacherIdToSelect) {
+        select.value = teacherIdToSelect;
+      }
       
       document.getElementById('composeTeacherSubject').value = '';
       document.getElementById('composeTeacherMessage').value = '';
