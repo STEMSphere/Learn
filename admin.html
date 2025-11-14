@@ -237,9 +237,9 @@
       color: #666;
     }
     .status-cancelled {
-      background: rgba(108, 117, 125, 0.2);
-      color: #6c757d;
-    }
+      background: rgba(108, 117, 125, 0.2);
+      color: #6c757d;
+    }
 
     .invoice-status {
       padding: 0.3rem 0.8rem;
@@ -264,10 +264,6 @@
       background: rgba(220, 53, 69, 0.2);
       color: #dc3545;
       animation: pulse 2s infinite;
-    }
-    .status-cancelled {
-      background: rgba(108, 117, 125, 0.2);
-      color: #6c757d;
     }
     .status-approved {
       background: rgba(40, 167, 69, 0.2);
@@ -321,6 +317,80 @@
     .no-teachers {
       color: #dc3545;
       font-weight: 600;
+    }
+
+    .advisor-card {
+      background: #fff;
+      border: 2px solid #28a745;
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+    }
+
+    .advisor-card.available {
+      border-color: #00ff88;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+      animation: pulse-advisor 2s infinite;
+    }
+
+    @keyframes pulse-advisor {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(0, 255, 136, 0.6); }
+    }
+
+    .advisor-card h4 {
+      margin: 0 0 0.5rem 0;
+      color: #000;
+      font-size: 1.2em;
+    }
+
+    .advisor-card .status-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #dc3545;
+    }
+
+    .advisor-card.available .status-indicator {
+      background: #00ff88;
+      box-shadow: 0 0 10px #00ff88;
+    }
+
+    .advisor-card .remove-advisor-btn {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 1rem;
+      width: 100%;
+    }
+
+    .teacher-card-advisor {
+      background: #f8f9fa;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .teacher-card-advisor:hover {
+      border-color: #28a745;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(40, 167, 69, 0.2);
+    }
+
+    .teacher-card-advisor.is-advisor {
+      border-color: #28a745;
+      background: #d4edda;
     }
 
     .modal {
@@ -630,7 +700,7 @@
       border-color: #28a745;
       box-shadow: 0 2px 8px rgba(40,167,69,0.2);
     }
-        .thread-item.unread {
+    .thread-item.unread {
       background: #d4edda;
       border-color: #28a745;
       border-width: 3px;
@@ -750,7 +820,6 @@
       font-size: 0.9em;
     }
 
-    /* Teacher Applications Specific Styles */
     .application-card {
       background: #fff;
       border-radius: 12px;
@@ -869,6 +938,7 @@
       <button class="tab" onclick="showTab('bookings')">All Bookings</button>
       <button class="tab" onclick="showTab('students')">Students</button>
       <button class="tab" onclick="showTab('teachers')">Teachers</button>
+      <button class="tab" onclick="showTab('advisors')">👨‍💼 Enrollment Advisors</button>
       <button class="tab" onclick="showTab('invoices')">
         💳 Invoices
         <span class="badge" id="invoicesBadge" style="display:none;">0</span>
@@ -890,7 +960,6 @@
         <span class="badge" id="teacherAppsBadge" style="display:none;">0</span>
       </button>
     </div>
-
     <!-- PENDING SESSIONS TAB -->
     <div id="pendingTab" class="tab-content active">
       <div class="info-box">
@@ -986,6 +1055,29 @@
             <tr><td colspan="5" class="loading">Loading teachers...</td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- ADVISORS TAB -->
+    <div id="advisorsTab" class="tab-content">
+      <div class="tab-header">
+        <div class="info-box" style="flex: 1; margin-right: 1rem; margin-bottom: 0;">
+          <p>👨‍💼 Manage enrollment advisors - These teachers can toggle "Available Now" status for instant sessions</p>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 2rem;">
+        <h3 style="color: #28a745; margin-bottom: 1rem;">Current Advisors</h3>
+        <div id="currentAdvisorsList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+          <div class="loading">Loading advisors...</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 3rem;">
+        <h3 style="color: #666; margin-bottom: 1rem;">All Teachers (Click to Toggle Advisor Status)</h3>
+        <div id="allTeachersAdvisorList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+          <div class="loading">Loading teachers...</div>
+        </div>
       </div>
     </div>
 
@@ -1099,8 +1191,6 @@
 
   </div>
 
-  <!-- ALL YOUR EXISTING MODALS STAY THE SAME -->
-  
   <!-- ASSIGN TEACHER TO SESSION MODAL -->
   <div id="assignModal" class="modal">
     <div class="modal-content">
@@ -1164,7 +1254,7 @@
         <input type="tel" id="addTeacherPhone">
       </div>
       
-            <div class="form-group">
+      <div class="form-group">
         <label>Subjects</label>
         <input type="text" id="addTeacherSubjects" placeholder="Math, Science, English">
         <div class="help-text">Comma separated list of subjects they teach</div>
@@ -1247,7 +1337,7 @@
     </div>
   </div>
 
-  <!-- CREATE INVOICE MODAL (keeping your existing invoice modal exactly as is) -->
+  <!-- CREATE INVOICE MODAL -->
   <div id="createInvoiceModal" class="modal">
     <div class="modal-content" style="max-width: 900px;">
       <h3>💳 Create New Invoice</h3>
@@ -1442,7 +1532,7 @@
     </div>
   </div>
 
-  <!-- VIEW APPLICATION MODAL (NEW - FULL SCREEN WITH NO ENDLESS SCROLLING) -->
+  <!-- VIEW APPLICATION MODAL -->
   <div id="viewApplicationModal" class="modal">
     <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
       <div id="applicationViewContent">
@@ -1473,8 +1563,7 @@
     let invoiceStudents = [];
     let currentApplicationFilter = 'pending';
     let teacherAppsAuthenticated = false;
-    const TEACHER_APPS_PASSWORD = 'MYACCESSAVA'; // Password to access teacher applications
-
+    const TEACHER_APPS_PASSWORD = 'MYACCESSAVA';
     async function checkAdminAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -1507,7 +1596,7 @@
       loadTeacherSupportThreads();
       loadAdminChatThreads();
       loadInvoices();
-      loadTeacherApplicationsCount(); // Load count only (not full list until they click tab)
+      loadTeacherApplicationsCount();
 
       supabaseClient
         .channel('admin_realtime')
@@ -1547,7 +1636,7 @@
       window.location.href = 'admin-login.html';
     }
 
-       async function loadStats() {
+    async function loadStats() {
       const { data: bookings } = await supabaseClient.from('bookings').select('id, assigned_teacher_id, status');
       const { data: students } = await supabaseClient.from('profiles').select('id').eq('role', 'student');
       const { data: teachers } = await supabaseClient.from('profiles').select('id').eq('role', 'teacher');
@@ -1598,7 +1687,113 @@
         loadInvoices();
       } else if (tabName === 'teacherApplications') {
         loadTeacherApplications();
+      } else if (tabName === 'advisors') {
+        loadAdvisors();
       }
+    }
+
+    // ==================== ADVISOR MANAGEMENT ====================
+
+    async function loadAdvisors() {
+      const { data: advisors, error } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email, advisor_available')
+        .eq('role', 'teacher')
+        .eq('is_advisor', true)
+        .order('full_name');
+
+      const currentList = document.getElementById('currentAdvisorsList');
+      
+      if (error || !advisors || advisors.length === 0) {
+        currentList.innerHTML = '<div class="empty-state">No advisors assigned yet. Click teachers below to make them advisors.</div>';
+        loadAllTeachersForAdvisor();
+        return;
+      }
+
+      currentList.innerHTML = advisors.map(advisor => `
+        <div class="advisor-card ${advisor.advisor_available ? 'available' : ''}">
+          <div class="status-indicator"></div>
+          <h4>${advisor.full_name}</h4>
+          <p style="color: #666; font-size: 0.9em; margin: 0.5rem 0;">${advisor.email}</p>
+          <p style="margin: 0.5rem 0; font-weight: 600; color: ${advisor.advisor_available ? '#00ff88' : '#dc3545'};">
+            ${advisor.advisor_available ? '🟢 AVAILABLE NOW' : '🔴 Offline'}
+          </p>
+          <button class="remove-advisor-btn" onclick="removeAdvisor('${advisor.id}', '${advisor.full_name.replace(/'/g, "\\'")}')">
+            Remove Advisor Status
+          </button>
+        </div>
+      `).join('');
+
+      loadAllTeachersForAdvisor();
+      subscribeToAdvisorChanges();
+    }
+
+    async function loadAllTeachersForAdvisor() {
+      const { data: teachers } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email, is_advisor')
+        .eq('role', 'teacher')
+        .order('full_name');
+
+      const allList = document.getElementById('allTeachersAdvisorList');
+      
+      if (!teachers || teachers.length === 0) {
+        allList.innerHTML = '<div class="empty-state">No teachers found.</div>';
+        return;
+      }
+
+      allList.innerHTML = teachers.map(teacher => `
+        <div class="teacher-card-advisor ${teacher.is_advisor ? 'is-advisor' : ''}" 
+             onclick="toggleAdvisorStatus('${teacher.id}', ${!teacher.is_advisor}, '${teacher.full_name.replace(/'/g, "\\'")}')">
+          <h4>${teacher.full_name}</h4>
+          <p style="color: #666; font-size: 0.9em; margin: 0.5rem 0;">${teacher.email}</p>
+          <p style="margin: 0.5rem 0; font-weight: 600; color: ${teacher.is_advisor ? '#28a745' : '#666'};">
+            ${teacher.is_advisor ? '✅ IS ADVISOR' : '➕ Make Advisor'}
+          </p>
+        </div>
+      `).join('');
+    }
+
+    async function toggleAdvisorStatus(teacherId, makeAdvisor, teacherName) {
+      const action = makeAdvisor ? 'make' : 'remove';
+      if (!confirm(`${action === 'make' ? 'Make' : 'Remove'} ${teacherName} ${action === 'make' ? 'as an' : 'from being an'} enrollment advisor?`)) {
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({ 
+          is_advisor: makeAdvisor,
+          advisor_available: false
+        })
+        .eq('id', teacherId);
+
+      if (error) {
+        alert('Error updating advisor status: ' + error.message);
+        return;
+      }
+
+      alert(`✅ ${teacherName} ${makeAdvisor ? 'is now' : 'is no longer'} an enrollment advisor!`);
+      await loadAdvisors();
+    }
+
+    async function removeAdvisor(teacherId, teacherName) {
+      await toggleAdvisorStatus(teacherId, false, teacherName);
+    }
+
+    function subscribeToAdvisorChanges() {
+      supabaseClient
+        .channel('advisor_status_changes')
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `is_advisor=eq.true`
+        }, (payload) => {
+          console.log('Advisor status changed:', payload);
+          loadAdvisors();
+        })
+        .subscribe();
     }
 
     // ==================== TEACHER APPLICATIONS FUNCTIONS ====================
@@ -1615,12 +1810,10 @@
     }
 
     async function loadTeacherApplications() {
-      // Password gate
       if (!teacherAppsAuthenticated) {
         const password = prompt('🔐 Enter password to view Teacher Applications:');
         if (password !== TEACHER_APPS_PASSWORD) {
           alert('❌ Incorrect password. Access denied.');
-          // Switch back to previous tab
           document.querySelector('.tab.active')?.classList.remove('active');
           document.querySelector('.tab')?.classList.add('active');
           document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -1658,7 +1851,6 @@
 
       countDisplay.textContent = `${applications.length} application${applications.length !== 1 ? 's' : ''}`;
 
-      // ✅ FIX: Always update badge with PENDING count (not filtered count)
       const { data: pendingApps } = await supabaseClient
         .from('teacher_applications')
         .select('id')
@@ -1855,41 +2047,38 @@
     }
 
     async function updateApplicationStatus(appId, newStatus, applicantName) {
-  if (!confirm(`Are you sure you want to mark ${applicantName}'s application as ${newStatus}?`)) {
-    return;
-  }
+      if (!confirm(`Are you sure you want to mark ${applicantName}'s application as ${newStatus}?`)) {
+        return;
+      }
 
-  console.log('🔄 Updating application:', appId, 'to status:', newStatus);
+      console.log('🔄 Updating application:', appId, 'to status:', newStatus);
 
-  const { data, error } = await supabaseClient
-    .from('teacher_applications')
-    .update({ status: newStatus })
-    .eq('id', appId)
-    .select();
+      const { data, error } = await supabaseClient
+        .from('teacher_applications')
+        .update({ status: newStatus })
+        .eq('id', appId)
+        .select();
 
-  console.log('📊 Update result:', { data, error });
+      console.log('📊 Update result:', { data, error });
 
-  if (error) {
-    console.error('❌ Full error:', error);
-    alert('Error updating status: ' + error.message);
-    return;
-  }
+      if (error) {
+        console.error('❌ Full error:', error);
+        alert('Error updating status: ' + error.message);
+        return;
+      }
 
-  if (!data || data.length === 0) {
-    alert('⚠️ Update may have failed - no rows affected. Check console for details.');
-    console.error('No rows were updated. Check if ID exists:', appId);
-    return;
-  }
+      if (!data || data.length === 0) {
+        alert('⚠️ Update may have failed - no rows affected. Check console for details.');
+        console.error('No rows were updated. Check if ID exists:', appId);
+        return;
+      }
 
-  console.log('✅ Successfully updated to:', data[0].status);
-  alert(`✅ Application ${newStatus} successfully!`);
-  await loadTeacherApplications();
-  await loadStats();
-}
+      console.log('✅ Successfully updated to:', data[0].status);
+      alert(`✅ Application ${newStatus} successfully!`);
+      await loadTeacherApplications();
+      await loadStats();
+    }
 
-           // ============================================
-    // TIMEZONE CONVERSION HELPERS
-    // ============================================
     function getAdminTimezone() {
       return Intl.DateTimeFormat().resolvedOptions().timeZone;
     }
@@ -1973,7 +2162,6 @@
         `;
       }).join('');
     }
-
     async function loadBookings() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
@@ -2022,7 +2210,6 @@
               ${helpNotes}
             </td>
             <td>
-              <!-- ✅ FIX APPLIED HERE: This now matches the logic in loadPendingSessions() -->
               ${booking.session_utc ? 
                 (() => {
                   const adminTz = getAdminTimezone();
@@ -2049,16 +2236,16 @@
             <td>${teacher.full_name || '⏳ Unassigned'}</td>
             <td><span class="status-badge status-${booking.status || 'pending'}">${booking.status || 'pending'}</span></td>
             <td>
-              ${!booking.assigned_teacher_id ? `
-                <button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>
-              ` : ''}
-              ${booking.status === 'scheduled' ? `
-                <button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>
-                <button class="btn-small btn-delete" onclick="cancelSession('${booking.id}')">Cancel</button>
-              ` : ''}
-              ${booking.status === 'completed' ? '<span style="color:#28a745; font-weight:600;">✓ Completed</span>' : ''}
-              ${booking.status === 'cancelled' ? '<span style="color:#6c757d; font-weight:600;">✗ Cancelled</span>' : ''}
-            </td>
+              ${!booking.assigned_teacher_id ? `
+                <button class="btn-small btn-assign" onclick="openAssignModal('${booking.id}', '${booking.subject}')">Assign</button>
+              ` : ''}
+              ${booking.status === 'scheduled' ? `
+                <button class="btn-small btn-complete" onclick="markComplete('${booking.id}')">Mark Complete</button>
+                <button class="btn-small btn-delete" onclick="cancelSession('${booking.id}')">Cancel</button>
+              ` : ''}
+              ${booking.status === 'completed' ? '<span style="color:#28a745; font-weight:600;">✓ Completed</span>' : ''}
+              ${booking.status === 'cancelled' ? '<span style="color:#6c757d; font-weight:600;">✗ Cancelled</span>' : ''}
+            </td>
           </tr>
         `;
       }).join('');
@@ -2082,24 +2269,25 @@
       await loadBookings();
       await loadPendingSessions();
     }
+
     async function cancelSession(bookingId) {
-      if (!confirm('Are you sure you want to cancel this session? This cannot be undone.')) return;
+      if (!confirm('Are you sure you want to cancel this session? This cannot be undone.')) return;
 
-      const { error } = await supabaseClient
-        .from('bookings')
-        .update({ status: 'cancelled' })
-        .eq('id', bookingId);
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ status: 'cancelled' })
+        .eq('id', bookingId);
 
-      if (error) {
-        alert('Error cancelling session: ' + error.message);
-        return;
-      }
+      if (error) {
+        alert('Error cancelling session: ' + error.message);
+        return;
+      }
 
-      alert('✅ Session has been cancelled.');
-      loadStats();
-      loadPendingSessions();
-      loadBookings();
-    }
+      alert('✅ Session has been cancelled.');
+      loadStats();
+      loadPendingSessions();
+      loadBookings();
+    }
 
     async function loadStudents() {
       const { data: students, error } = await supabaseClient
@@ -2556,7 +2744,7 @@
       const confirmPassword = document.getElementById('confirmPassword').value;
       const teacherEmail = document.getElementById('resetTeacherEmail').value;
 
-            if (!newPassword || !confirmPassword) {
+      if (!newPassword || !confirmPassword) {
         alert('Please fill in both password fields');
         return;
       }
@@ -2818,7 +3006,6 @@
       const currencySymbol = getCurrencySymbol(currency);
       document.getElementById('invoiceTotal').textContent = `Total: ${currencySymbol}${total.toFixed(2)}`;
     }
-
     async function createInvoice(status = 'draft') {
       const studentId = document.getElementById('invoiceStudentSelect').value;
       const title = document.getElementById('invoiceTitle').value.trim();
@@ -3357,7 +3544,7 @@ ${result.url}`);
             amount: installmentAmount,
             lineItems: lineItems,
             paymentMethods: paymentMethods,
-                        metadata: {
+            metadata: {
               invoice_id: invoice.id,
               invoice_number: invoice.invoice_number,
               payment_schedule: 'installment',
@@ -3399,7 +3586,6 @@ ${result.url}`);
         alert('Error creating installment link: ' + error.message);
       }
     }
-        // ==================== MESSAGING FUNCTIONS ====================
 
     async function loadSupportThreads() {
       const { data: students } = await supabaseClient
@@ -3735,7 +3921,7 @@ ${result.url}`);
           minute: '2-digit'
         });
 
-               return `
+        return `
           <div class="thread-item ${unreadClass}" onclick="openTeacherConversation('${thread.teacherId}')">
             <div class="thread-header">
               <div class="sender-name">${thread.teacherName}</div>
@@ -4210,7 +4396,6 @@ ${result.url}`);
       document.getElementById(modalId).classList.remove('active');
     }
 
-    // Initialize
     checkAdminAuth();
   </script>
 </body>
