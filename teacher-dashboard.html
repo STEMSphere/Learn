@@ -357,7 +357,7 @@
       align-items: center;
       margin-bottom: 0.75rem;
     }
-    .student-name {
+    .student-name, .teacher-name {
       font-weight: 700;
       color: #000;
       font-size: 1.1em;
@@ -418,6 +418,32 @@
       font-size: 0.9em;
     }
 
+    /* FIXED: Sticky Reply Box */
+    .messages-container {
+      max-height: 50vh;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .reply-box {
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    .reply-box h5 {
+      margin: 0 0 1rem 0;
+      color: #007bff;
+    }
+
     .message-bubble {
       background: #f8f9fa;
       border: 1px solid #ddd;
@@ -431,7 +457,8 @@
       margin-left: 2rem;
     }
     .message-bubble.from-student,
-    .message-bubble.from-support {
+    .message-bubble.from-support,
+    .message-bubble.from-teacher {
       margin-right: 2rem;
     }
     .message-bubble .sender {
@@ -473,18 +500,7 @@
       text-decoration: underline;
     }
 
-    .reply-box {
-      background: #f8f9fa;
-      border: 2px solid #007bff;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-top: 1.5rem;
-    }
-    .reply-box h5 {
-      margin: 0 0 1rem 0;
-      color: #007bff;
-    }
-
+    /* FIXED: Multiple Attachments */
     .file-upload-section {
       margin-top: 1rem;
       padding: 1rem;
@@ -507,26 +523,34 @@
     .file-upload-btn:hover {
       background: #5a6268;
     }
-    .file-preview {
-      margin-top: 0.5rem;
-      padding: 0.5rem;
-      background: #e3f2fd;
-      border-radius: 4px;
-      display: none;
-      align-items: center;
+    .files-preview-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
       gap: 0.5rem;
     }
-    .file-preview.active {
+    .file-preview-item {
+      padding: 0.75rem;
+      background: #e3f2fd;
+      border-radius: 6px;
       display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .file-preview .remove-file {
+    .file-preview-item .file-name {
+      font-weight: 600;
+      color: #007bff;
+      flex: 1;
+    }
+    .file-preview-item .remove-file {
       background: #dc3545;
       color: #fff;
       border: none;
-      padding: 0.25rem 0.5rem;
+      padding: 0.25rem 0.75rem;
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.85em;
+      font-weight: 600;
     }
 
     .modal {
@@ -554,6 +578,7 @@
       width: 90%;
       max-height: 85vh;
       overflow-y: auto;
+      position: relative;
     }
     .modal-content h3 {
       margin-bottom: 1rem;
@@ -697,6 +722,47 @@
       transition: width 0.4s ease;
     }
 
+    /* Switch for Live Inquiries */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #28a745;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
     @media (max-width: 768px) {
       .time-slots {
         grid-template-columns: repeat(2, 1fr);
@@ -708,7 +774,8 @@
         margin-left: 0.5rem;
       }
       .message-bubble.from-student,
-      .message-bubble.from-support {
+      .message-bubble.from-support,
+      .message-bubble.from-teacher {
         margin-right: 0.5rem;
       }
     }
@@ -776,9 +843,14 @@
       <button class="tab active" onclick="showTab('upcoming')">📅 Upcoming Sessions</button>
       <button class="tab" onclick="showTab('completed')">✅ Completed Sessions</button>
       <button class="tab" onclick="showTab('students')">👥 My Students</button>
+      <button class="tab" onclick="showTab('profile')">👤 My Profile</button>
       <button class="tab" onclick="showTab('inbox')">
         📬 Inbox
         <span class="badge" id="inboxBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab" onclick="showTab('liveInquiries')" id="liveInquiriesTabBtn" style="display:none;">
+        ⚡ Live Inquiries
+        <span class="badge" id="liveInquiriesBadge" style="display:none;">0</span>
       </button>
       <button class="tab" onclick="showTab('support')">
         🆘 Support
@@ -861,6 +933,53 @@
       </div>
     </div>
 
+    <!-- MY PROFILE TAB (NEW) -->
+    <div id="profileTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>👤 My Teacher Profile</h3>
+        </div>
+        <div style="max-width:800px;">
+          <div class="form-group">
+            <label>Profile Photo</label>
+            <input type="file" id="profilePhotoInput" accept="image/*" onchange="handleProfilePhotoUpload()" style="padding:0.5rem;">
+            <div id="profilePhotoPreview" style="margin-top:1rem; display:none;">
+              <img id="profilePhotoImg" style="max-width:200px; border-radius:8px; border:2px solid #007bff;">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>About Me (Max 500 characters)</label>
+            <textarea id="profileBio" maxlength="500" placeholder="Tell students about your teaching style and experience..."></textarea>
+            <small style="color:#666;"><span id="bioCharCount">0</span>/500 characters</small>
+          </div>
+          
+          <div class="form-group">
+            <label>Teaching Video URL (YouTube or Vimeo)</label>
+            <input type="url" id="profileVideoUrl" placeholder="https://youtube.com/watch?v=...">
+          </div>
+          
+          <div class="form-group">
+            <label>Years of Experience</label>
+            <input type="number" id="profileYearsExp" min="0" max="50" placeholder="5">
+          </div>
+          
+          <div class="form-group">
+            <label>Education Background</label>
+            <input type="text" id="profileEducation" placeholder="e.g., BS in Mathematics from MIT">
+          </div>
+          
+          <div class="form-group">
+            <label>Fun Fact (Max 100 characters)</label>
+            <input type="text" id="profileFunFact" maxlength="100" placeholder="e.g., I've climbed Mount Kilimanjaro!">
+          </div>
+          
+          <button class="btn-primary" onclick="saveTeacherProfile()">💾 Save Profile</button>
+          <button class="btn-secondary" onclick="loadTeacherProfile()">🔄 Reload</button>
+        </div>
+      </div>
+    </div>
+
     <!-- INBOX TAB WITH THREADED MESSAGES -->
     <div id="inboxTab" class="tab-content">
       <div class="inbox-container">
@@ -870,6 +989,29 @@
         </div>
         <div id="inboxThreads" class="thread-list">
           <div class="empty-state">Loading messages...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE INQUIRIES TAB (NEW) -->
+    <div id="liveInquiriesTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>⚡ Live Inquiries from Website Visitors</h3>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <label class="switch">
+              <input type="checkbox" id="advisorAvailabilityToggle" onchange="toggleAdvisorAvailability()">
+              <span class="slider"></span>
+            </label>
+            <span id="availabilityStatus" style="font-weight: 600;">Loading...</span>
+          </div>
+        </div>
+        
+        <div id="advisorStatusBanner" style="padding: 1rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; font-weight: 600; display: none;">
+        </div>
+
+        <div id="liveInquiriesThreads" class="thread-list">
+          <div class="empty-state">Loading live inquiries...</div>
         </div>
       </div>
     </div>
@@ -964,7 +1106,6 @@
       </div>
     </div>
   </div>
-
   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
@@ -979,7 +1120,8 @@
     let unreadSupportCount = 0;
     let wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
     let wizardStep = 0;
-    let selectedFile = null;
+    let selectedFiles = []; // FIXED: Multiple files support
+    let liveInquiriesInterval = null;
 
     // ============================================
     // AUTH & INITIALIZATION
@@ -1009,7 +1151,7 @@
       document.getElementById('teacherName').textContent = profile.full_name || 'Teacher';
 
       checkIfAdvisor();
-
+      loadTeacherProfile();
       loadStats();
       loadSessions();
       loadStudents();
@@ -1048,8 +1190,11 @@
 
       if (profile && profile.is_advisor) {
         document.getElementById('advisorToggleSection').style.display = 'block';
+        document.getElementById('liveInquiriesTabBtn').style.display = 'block';
         document.getElementById('advisorToggle').checked = profile.advisor_available || false;
+        document.getElementById('advisorAvailabilityToggle').checked = profile.advisor_available || false;
         updateAdvisorStatusDisplay(profile.advisor_available || false);
+        loadAdvisorStatus();
       }
     }
 
@@ -1067,6 +1212,10 @@
     async function toggleAdvisorAvailability() {
       const isAvailable = document.getElementById('advisorToggle').checked;
       
+      // Sync both toggles
+      document.getElementById('advisorToggle').checked = isAvailable;
+      document.getElementById('advisorAvailabilityToggle').checked = isAvailable;
+      
       const { error } = await supabaseClient
         .from('profiles')
         .update({ 
@@ -1078,16 +1227,354 @@
       if (error) {
         alert('Error updating availability: ' + error.message);
         document.getElementById('advisorToggle').checked = !isAvailable;
+        document.getElementById('advisorAvailabilityToggle').checked = !isAvailable;
         return;
       }
 
       updateAdvisorStatusDisplay(isAvailable);
       
+      const banner = document.getElementById('advisorStatusBanner');
+      const status = document.getElementById('availabilityStatus');
+      
+      banner.style.display = 'block';
       if (isAvailable) {
+        banner.style.background = '#d4edda';
+        banner.style.color = '#155724';
+        banner.style.border = '2px solid #28a745';
+        banner.innerHTML = '✅ You are LIVE! Website visitors can chat with you now.';
+        status.textContent = 'Online';
+        status.style.color = '#28a745';
+        
+        loadLiveInquiries();
+        liveInquiriesInterval = setInterval(loadLiveInquiries, 5000);
+        
         alert('✅ You are now AVAILABLE for instant sessions!\n\nStudents will see you as available and can message you directly.');
       } else {
+        banner.style.background = '#f8d7da';
+        banner.style.color = '#721c24';
+        banner.style.border = '2px solid #dc3545';
+        banner.innerHTML = '❌ You are OFFLINE. Visitors cannot reach you right now.';
+        status.textContent = 'Offline';
+        status.style.color = '#dc3545';
+        
+        if (liveInquiriesInterval) {
+          clearInterval(liveInquiriesInterval);
+          liveInquiriesInterval = null;
+        }
+        
         alert('⚪ You are now OFFLINE.\n\nStudents will use the regular booking system.');
       }
+    }
+
+    // ==================== LIVE INQUIRIES SYSTEM ====================
+
+    async function loadAdvisorStatus() {
+      const { data } = await supabaseClient
+        .from('profiles')
+        .select('advisor_available, is_advisor')
+        .eq('id', currentTeacherId)
+        .single();
+
+      if (data) {
+        const toggle = document.getElementById('advisorAvailabilityToggle');
+        const status = document.getElementById('availabilityStatus');
+        
+        if (!data.is_advisor) {
+          toggle.disabled = true;
+          status.textContent = 'Not an advisor';
+          status.style.color = '#999';
+          return;
+        }
+        
+        toggle.checked = data.advisor_available || false;
+        
+        if (data.advisor_available) {
+          status.textContent = 'Online';
+          status.style.color = '#28a745';
+          loadLiveInquiries();
+          liveInquiriesInterval = setInterval(loadLiveInquiries, 5000);
+        } else {
+          status.textContent = 'Offline';
+          status.style.color = '#dc3545';
+        }
+      }
+    }
+
+    async function loadLiveInquiries() {
+      const { data: messages, error } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'anonymous_inquiry')
+        .eq('recipient_id', currentTeacherId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading live inquiries:', error);
+        document.getElementById('liveInquiriesThreads').innerHTML = 
+          '<div class="empty-state">Error loading inquiries. Please refresh.</div>';
+        return;
+      }
+
+      const threads = {};
+      messages?.forEach(msg => {
+        const sessionId = msg.visitor_session_id;
+        if (!threads[sessionId]) {
+          threads[sessionId] = {
+            sessionId: sessionId,
+            messages: [],
+            lastMessageDate: new Date(msg.created_at),
+            unreadCount: 0,
+            totalCount: 0
+          };
+        }
+        
+        threads[sessionId].messages.push(msg);
+        threads[sessionId].totalCount++;
+        
+        if (!msg.is_read && msg.sender_id === null) {
+          threads[sessionId].unreadCount++;
+        }
+        
+        const msgDate = new Date(msg.created_at);
+        if (msgDate > threads[sessionId].lastMessageDate) {
+          threads[sessionId].lastMessageDate = msgDate;
+        }
+      });
+
+      const threadArray = Object.values(threads).sort((a, b) => 
+        b.lastMessageDate - a.lastMessageDate
+      );
+
+      const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      updateBadge('liveInquiriesBadge', totalUnread);
+
+      renderLiveInquiriesThreads(threadArray);
+    }
+
+    function renderLiveInquiriesThreads(threads) {
+      const container = document.getElementById('liveInquiriesThreads');
+
+      if (!threads || threads.length === 0) {
+        container.innerHTML = '<div class="empty-state">No live inquiries yet. When visitors chat from the homepage, they\'ll appear here!</div>';
+        return;
+      }
+
+      container.innerHTML = threads.map(thread => {
+        const lastMessage = thread.messages[0];
+        const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+        const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
+        
+        const dateStr = thread.lastMessageDate.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        return `
+          <div class="thread-item ${unreadClass}" onclick="openLiveInquiryConversation('${thread.sessionId}')">
+            <div class="thread-header">
+              <div class="teacher-name">🌐 Anonymous Visitor</div>
+              <div class="thread-meta">
+                ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
+                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
+                <span class="last-message-date">${dateStr}</span>
+              </div>
+            </div>
+            <div class="last-message-preview">${lastMessagePreview}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function openLiveInquiryConversation(sessionId) {
+      const { data: messages, error } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'anonymous_inquiry')
+        .eq('visitor_session_id', sessionId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        alert('Error loading conversation');
+        return;
+      }
+
+      const unreadIds = messages?.filter(m => !m.is_read && m.sender_id === null).map(m => m.id) || [];
+      if (unreadIds.length > 0) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadIds);
+      }
+
+      const conversationHTML = `
+        <button onclick="closeModal('conversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+        
+        <div class="conversation-header">
+          <h4>💬 Live Inquiry - Anonymous Visitor</h4>
+          <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} • Session ID: ${sessionId}</p>
+        </div>
+
+        <div class="messages-container">
+          ${messages?.map(msg => {
+            const isFromVisitor = !msg.sender_id;
+            const bubbleClass = isFromVisitor ? 'from-teacher' : 'from-me';
+            const date = new Date(msg.created_at).toLocaleString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+
+            return `
+              <div class="message-bubble ${bubbleClass}">
+                <div class="sender">${isFromVisitor ? '🌐 Anonymous Visitor' : 'You'}</div>
+                <div class="timestamp">${date}</div>
+                <div class="body">${msg.message}</div>
+              </div>
+            `;
+          }).join('') || '<div class="empty-state">No messages yet</div>'}
+        </div>
+
+        <div class="reply-box">
+          <h5>💬 Reply to Visitor</h5>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="liveInquiryReplyMessage" placeholder="Type your reply... Encourage them to sign up!" style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem; margin-top:1rem;">
+            <button class="btn-primary" onclick="sendLiveInquiryReply('${sessionId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          </div>
+          <p style="margin-top:1rem; padding:1rem; background:#fff3cd; border:2px solid #ffc107; border-radius:6px; color:#856404;">
+            💡 <strong>Tip:</strong> Encourage this visitor to sign up! Share this link: <code>${window.location.origin}/signup.html?session=${sessionId}</code>
+          </p>
+        </div>
+      `;
+
+      document.getElementById('conversationContent').innerHTML = conversationHTML;
+      document.getElementById('conversationModal').classList.add('active');
+
+      loadLiveInquiries();
+    }
+
+    async function sendLiveInquiryReply(sessionId) {
+      const message = document.getElementById('liveInquiryReplyMessage').value.trim();
+
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentTeacherId,
+          recipient_id: null,
+          message_type: 'anonymous_inquiry',
+          visitor_session_id: sessionId,
+          subject: 'Advisor Reply',
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      alert('✅ Reply sent!');
+      await openLiveInquiryConversation(sessionId);
+    }
+
+    // ==================== TEACHER PROFILE MANAGEMENT ====================
+
+    async function loadTeacherProfile() {
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('profile_photo_url, bio, teaching_video_url, years_experience, education, fun_fact')
+        .eq('id', currentTeacherId)
+        .single();
+
+      if (profile) {
+        if (profile.profile_photo_url) {
+          document.getElementById('profilePhotoPreview').style.display = 'block';
+          document.getElementById('profilePhotoImg').src = profile.profile_photo_url;
+        }
+        document.getElementById('profileBio').value = profile.bio || '';
+        document.getElementById('bioCharCount').textContent = (profile.bio || '').length;
+        document.getElementById('profileVideoUrl').value = profile.teaching_video_url || '';
+        document.getElementById('profileYearsExp').value = profile.years_experience || '';
+        document.getElementById('profileEducation').value = profile.education || '';
+        document.getElementById('profileFunFact').value = profile.fun_fact || '';
+      }
+    }
+
+    // Character counter for bio
+    document.addEventListener('DOMContentLoaded', () => {
+      const bioField = document.getElementById('profileBio');
+      if (bioField) {
+        bioField.addEventListener('input', () => {
+          document.getElementById('bioCharCount').textContent = bioField.value.length;
+        });
+      }
+    });
+
+    async function handleProfilePhotoUpload() {
+      const file = document.getElementById('profilePhotoInput').files[0];
+      if (!file) return;
+
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `profile-${currentTeacherId}-${Date.now()}.${fileExt}`;
+        const filePath = `teacher-profiles/${fileName}`;
+
+        const { error: uploadError } = await supabaseClient.storage
+          .from('attachments')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabaseClient.storage
+          .from('attachments')
+          .getPublicUrl(filePath);
+
+        document.getElementById('profilePhotoPreview').style.display = 'block';
+        document.getElementById('profilePhotoImg').src = urlData.publicUrl;
+
+        alert('✅ Photo uploaded! Click "Save Profile" to save changes.');
+      } catch (error) {
+        alert('❌ Upload failed: ' + error.message);
+      }
+    }
+
+    async function saveTeacherProfile() {
+      const photoUrl = document.getElementById('profilePhotoImg').src || null;
+      const bio = document.getElementById('profileBio').value.trim();
+      const videoUrl = document.getElementById('profileVideoUrl').value.trim();
+      const yearsExp = document.getElementById('profileYearsExp').value;
+      const education = document.getElementById('profileEducation').value.trim();
+      const funFact = document.getElementById('profileFunFact').value.trim();
+
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({
+          profile_photo_url: photoUrl,
+          bio: bio,
+          teaching_video_url: videoUrl,
+          years_experience: yearsExp ? parseInt(yearsExp) : null,
+          education: education,
+          fun_fact: funFact
+        })
+        .eq('id', currentTeacherId);
+
+      if (error) {
+        alert('❌ Error saving profile: ' + error.message);
+        return;
+      }
+
+      alert('✅ Profile saved successfully!');
     }
 
     // ============================================
@@ -1129,14 +1616,17 @@
     }
 
     // ============================================
-    // SESSIONS MANAGEMENT
+    // SESSIONS MANAGEMENT (FIXED SORTING)
     // ============================================
     async function loadSessions() {
+      const now = new Date().toISOString();
+      
+      // FIXED: Sort by session_utc (upcoming first)
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
         .select('*')
         .eq('assigned_teacher_id', currentTeacherId)
-        .order('session_date', { ascending: false });
+        .order('session_utc', { ascending: true });
 
       if (error) {
         console.error('Error loading sessions:', error);
@@ -1162,8 +1652,14 @@
         profileMap[p.id] = p;
       });
 
-      const upcomingBookings = bookings.filter(b => b.status === 'scheduled');
-      const completedBookings = bookings.filter(b => b.status === 'completed' || b.status === 'cancelled');
+      // FIXED: Filter upcoming sessions properly
+      const upcomingBookings = bookings.filter(b => 
+        b.status === 'scheduled' && b.session_utc && new Date(b.session_utc) >= new Date(now)
+      );
+      const completedBookings = bookings.filter(b => 
+        b.status === 'completed' || b.status === 'cancelled' || 
+        (b.session_utc && new Date(b.session_utc) < new Date(now))
+      );
 
       const upcomingBody = document.getElementById('upcomingSessionsBody');
       if (upcomingBookings.length === 0) {
@@ -1307,20 +1803,20 @@
       const tbody = document.getElementById('studentsBody');
 
       if (assignError) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Error loading assignments</td></tr>'; return;
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading assignments</td></tr>'; return;
       }
       if (!assignments || assignments.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No students assigned yet. Contact your admin.</td></tr>'; myStudents = []; return;
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No students assigned yet. Contact your admin.</td></tr>'; myStudents = []; return;
       }
 
       const studentIds = assignments.map(a => a.student_id);
       const { data: students, error: studentsError } = await supabaseClient.from('profiles').select('*').in('id', studentIds);
 
       if (studentsError) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Error loading students</td></tr>'; return;
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading students</td></tr>'; return;
       }
       if (!students || students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No student profiles found.</td></tr>'; myStudents = []; return;
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No student profiles found.</td></tr>'; myStudents = []; return;
       }
 
       myStudents = students;
@@ -1333,7 +1829,8 @@
         return `
           <tr>
             <td><strong>${student.full_name}</strong></td>
-            <td><span style="font-family: monospace; color: #999;">${studentIdentifier}</span></td>
+            <td>${student.email || 'N/A'}</td>
+            <td>${student.phone || 'N/A'}</td>
             <td>${student.age_group || 'N/A'}</td>
             <td>${sessionCount}</td>
             <td>
@@ -1355,7 +1852,7 @@
     }
 
     // ============================================
-    // FILE UPLOAD HELPER
+    // FILE UPLOAD HELPER (FIXED: MULTIPLE FILES)
     // ============================================
     async function uploadFile(file) {
       try {
@@ -1380,8 +1877,49 @@
       }
     }
 
+    function handleFileSelect(event, fieldName) {
+      const files = Array.from(event.target.files);
+      
+      if (selectedFiles.length + files.length > 5) {
+        alert('⚠️ Maximum 5 files per message');
+        return;
+      }
+      
+      selectedFiles = [...selectedFiles, ...files];
+      updateFilePreview(fieldName);
+    }
+
+    function updateFilePreview(fieldName) {
+      const container = document.getElementById(`${fieldName}PreviewList`);
+      if (!container) return;
+      
+      if (selectedFiles.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      container.innerHTML = selectedFiles.map((file, index) => `
+        <div class="file-preview-item">
+          <span class="file-name">📎 ${file.name}</span>
+          <button class="remove-file" onclick="removeFile(${index}, '${fieldName}')">✖</button>
+        </div>
+      `).join('');
+    }
+
+    function removeFile(index, fieldName) {
+      selectedFiles.splice(index, 1);
+      updateFilePreview(fieldName);
+    }
+
+    function clearAllFiles(fieldName) {
+      selectedFiles = [];
+      updateFilePreview(fieldName);
+      const input = document.getElementById(`${fieldName}Input`);
+      if (input) input.value = '';
+    }
+
     // ============================================
-    // STUDENT MESSAGING SYSTEM WITH ATTACHMENTS
+    // STUDENT MESSAGING SYSTEM (FIXED: MULTIPLE ATTACHMENTS + STICKY REPLY)
     // ============================================
     async function loadInboxThreads() {
       const { data: assignments } = await supabaseClient.from('teacher_assignments').select('student_id').eq('teacher_id', currentTeacherId);
@@ -1456,11 +1994,41 @@
         await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadMessageIds);
       }
 
+      // FIXED: Reply box at bottom with sticky positioning
       const conversationHTML = `
         <button onclick="closeModal('conversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
         <div class="conversation-header">
           <h4>💬 Conversation with ${studentName}</h4>
           <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+        </div>
+        
+        <div class="messages-container">
+          ${messages.map(msg => {
+            const isFromMe = msg.sender_id === currentTeacherId;
+            const bubbleClass = isFromMe ? 'from-me' : 'from-student';
+            const date = new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            
+            let attachmentHTML = '';
+            if (msg.attachment_url) {
+              try {
+                const urls = JSON.parse(msg.attachment_url);
+                if (Array.isArray(urls)) {
+                  attachmentHTML = urls.map(url => {
+                    const fileName = url.split('/').pop();
+                    return `<div class="attachment"><a href="${url}" target="_blank">📎 ${fileName}</a></div>`;
+                  }).join('');
+                } else {
+                  const fileName = msg.attachment_url.split('/').pop();
+                  attachmentHTML = `<div class="attachment"><a href="${msg.attachment_url}" target="_blank">📎 ${fileName}</a></div>`;
+                }
+              } catch {
+                const fileName = msg.attachment_url.split('/').pop();
+                attachmentHTML = `<div class="attachment"><a href="${msg.attachment_url}" target="_blank">📎 ${fileName}</a></div>`;
+              }
+            }
+            
+            return `<div class="message-bubble ${bubbleClass}"><div class="sender">${isFromMe ? 'You' : studentName}</div><div class="timestamp">${date}</div>${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}<div class="body">${msg.message}</div>${attachmentHTML}</div>`;
+          }).join('')}
         </div>
         
         <div class="reply-box">
@@ -1474,62 +2042,23 @@
             <textarea id="replyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
           </div>
           <div class="file-upload-section">
-            <input type="file" id="replyFileInput" style="display:none;" onchange="handleFileSelect(event, 'replyFile')">
+            <input type="file" id="replyFileInput" multiple style="display:none;" onchange="handleFileSelect(event, 'replyFile')">
             <button class="file-upload-btn" onclick="document.getElementById('replyFileInput').click()">
-              📎 Attach File
+              📎 Attach Files (Max 5)
             </button>
-            <div id="replyFilePreview" class="file-preview">
-              <span id="replyFileName"></span>
-              <button class="remove-file" onclick="clearFile('replyFile')">✖</button>
-            </div>
+            <div id="replyFilePreviewList" class="files-preview-list"></div>
           </div>
           <div style="display:flex; gap:1rem; margin-top:1rem;">
             <button class="btn-primary" onclick="sendReplyInConversation('${studentId}')">Send Reply</button>
             <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
           </div>
         </div>
-        
-        <div class="messages-container">
-          ${messages.map(msg => {
-            const isFromMe = msg.sender_id === currentTeacherId;
-            const bubbleClass = isFromMe ? 'from-me' : 'from-student';
-            const date = new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            
-            let attachmentHTML = '';
-            if (msg.attachment_url) {
-              const fileName = msg.attachment_url.split('/').pop();
-              attachmentHTML = `
-                <div class="attachment">
-                  <a href="${msg.attachment_url}" target="_blank">
-                    📎 ${fileName}
-                  </a>
-                </div>
-              `;
-            }
-            
-            return `<div class="message-bubble ${bubbleClass}"><div class="sender">${isFromMe ? 'You' : studentName}</div><div class="timestamp">${date}</div>${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}<div class="body">${msg.message}</div>${attachmentHTML}</div>`;
-          }).join('')}
-        </div>
       `;
       document.getElementById('conversationContent').innerHTML = conversationHTML;
       document.getElementById('conversationModal').classList.add('active');
+      selectedFiles = [];
       loadInboxThreads();
       loadStats();
-    }
-    
-    function handleFileSelect(event, fieldName) {
-      const file = event.target.files[0];
-      if (file) {
-        selectedFile = file;
-        document.getElementById(`${fieldName}Preview`).classList.add('active');
-        document.getElementById(`${fieldName}Name`).textContent = file.name;
-      }
-    }
-
-    function clearFile(fieldName) {
-      selectedFile = null;
-      document.getElementById(`${fieldName}Preview`).classList.remove('active');
-      document.getElementById(`${fieldName}Input`).value = '';
     }
 
     async function sendReplyInConversation(studentId) {
@@ -1538,12 +2067,16 @@
       if (!message) { alert('Please enter a message'); return; }
 
       try {
-        let attachmentUrl = null;
-        if (selectedFile) {
+        let attachmentUrls = [];
+        if (selectedFiles.length > 0) {
           const btn = event.target;
           btn.disabled = true;
-          btn.textContent = '⏳ Uploading...';
-          attachmentUrl = await uploadFile(selectedFile);
+          btn.textContent = `⏳ Uploading ${selectedFiles.length} file(s)...`;
+          
+          for (const file of selectedFiles) {
+            const url = await uploadFile(file);
+            attachmentUrls.push(url);
+          }
         }
 
         const { error } = await supabaseClient.from('messages').insert({ 
@@ -1552,7 +2085,7 @@
           message_type: 'teacher_student', 
           subject: subject || 'Reply from your teacher', 
           message: message,
-          attachment_url: attachmentUrl 
+          attachment_url: attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : null
         });
         
         if (error) { alert('Error sending message: ' + error.message); return; }
@@ -1569,7 +2102,7 @@
           }
         } catch (emailError) { console.error('⚠️ Email notification failed (non-critical):', emailError); }
 
-        selectedFile = null;
+        selectedFiles = [];
         closeModal('conversationModal');
         await openConversation(studentId);
         await loadInboxThreads();
@@ -1603,7 +2136,7 @@
     }
 
     // ============================================
-    // SUPPORT TICKET SYSTEM (NO FILE ATTACHMENTS)
+    // SUPPORT TICKET SYSTEM
     // ============================================
     async function loadSupportThreads() {
       const { data: admins } = await supabaseClient.from('profiles').select('id').eq('role', 'admin');
@@ -1644,6 +2177,15 @@
           <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
         </div>
         
+        <div class="messages-container">
+          ${messages.map(msg => {
+            const isFromMe = msg.sender_id === currentTeacherId;
+            const bubbleClass = isFromMe ? 'from-me' : 'from-support';
+            const date = new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            return `<div class="message-bubble ${bubbleClass}"><div class="sender">${isFromMe ? 'You' : 'Support Team'}</div><div class="timestamp">${date}</div>${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}<div class="body">${msg.message}</div></div>`;
+          }).join('')}
+        </div>
+        
         <div class="reply-box">
           <h5>💬 Reply to Support</h5>
           <div class="form-group">
@@ -1658,15 +2200,6 @@
             <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
             <button class="btn-secondary" onclick="closeModal('supportConversationModal')">Close</button>
           </div>
-        </div>
-        
-        <div class="messages-container">
-          ${messages.map(msg => {
-            const isFromMe = msg.sender_id === currentTeacherId;
-            const bubbleClass = isFromMe ? 'from-me' : 'from-support';
-            const date = new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            return `<div class="message-bubble ${bubbleClass}"><div class="sender">${isFromMe ? 'You' : 'Support Team'}</div><div class="timestamp">${date}</div>${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}<div class="body">${msg.message}</div></div>`;
-          }).join('')}
         </div>
       `;
       document.getElementById('supportConversationContent').innerHTML = conversationHTML;
@@ -1721,13 +2254,16 @@
       event.target.classList.add('active');
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.getElementById(tabName + 'Tab').classList.add('active');
+      
       if (tabName === 'inbox') { loadInboxThreads(); } 
       else if (tabName === 'support') { loadSupportThreads(); }
+      else if (tabName === 'liveInquiries') { loadLiveInquiries(); }
+      else if (tabName === 'profile') { loadTeacherProfile(); }
     }
 
     function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
-      selectedFile = null;
+      selectedFiles = [];
     }
 
     // ============================================
