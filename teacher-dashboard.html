@@ -1304,7 +1304,7 @@
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
-        .eq('message_type', 'anonymous_inquiry')
+        .eq('message_type', 'advisor_chat')
         .eq('recipient_id', currentTeacherId)
         .order('created_at', { ascending: false });
 
@@ -1391,7 +1391,7 @@
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
-        .eq('message_type', 'anonymous_inquiry')
+        .eq('message_type', 'advisor_chat')
         .eq('visitor_session_id', sessionId)
         .order('created_at', { ascending: false });
 
