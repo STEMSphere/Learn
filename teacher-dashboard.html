@@ -407,6 +407,19 @@
       padding: 1.5rem;
       border-radius: 8px 8px 0 0;
       margin: -2rem -2rem 1.5rem -2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .conversation-header img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      object-fit: cover;
+    }
+    .conversation-header-text {
+      flex: 1;
     }
     .conversation-header h4 {
       margin: 0 0 0.5rem 0;
@@ -416,6 +429,20 @@
       margin: 0;
       opacity: 0.9;
       font-size: 0.9em;
+    }
+    .view-profile-btn {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 2px solid #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .view-profile-btn:hover {
+      background: #fff;
+      color: #007bff;
     }
 
     /* ✅ FIXED: Better message container */
@@ -801,6 +828,44 @@
       transform: translateX(26px);
     }
 
+    /* Student Profile Modal Styles */
+    .profile-modal-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .profile-modal-header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #007bff;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+    .profile-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .profile-info-item {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+    .profile-info-item h4 {
+      color: #007bff;
+      font-size: 0.9em;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .profile-info-item p {
+      color: #333;
+      font-weight: 600;
+      margin: 0;
+    }
+
     @media (max-width: 768px) {
       .time-slots {
         grid-template-columns: repeat(2, 1fr);
@@ -976,9 +1041,9 @@
           </div>
           
           <div class="form-group">
-            <label>About Me (Max 500 characters)</label>
-            <textarea id="profileBio" maxlength="500" placeholder="Tell students about your teaching style and experience..."></textarea>
-            <small style="color:#666;"><span id="bioCharCount">0</span>/500 characters</small>
+            <label>About Me (Max 1000 characters)</label>
+            <textarea id="profileBio" maxlength="1000" placeholder="Tell students about your teaching style and experience..."></textarea>
+            <small style="color:#666;"><span id="bioCharCount">0</span>/1000 characters</small>
           </div>
           
           <div class="form-group">
@@ -1022,7 +1087,7 @@
     <div id="liveInquiriesTab" class="tab-content">
       <div class="inbox-container">
         <div class="inbox-header">
-          <h3>⚡ Live Inquiries from Website Visitors</h3>
+          <h3>⚡ Live Inquiries from Students</h3>
           <div style="display: flex; gap: 1rem; align-items: center;">
             <label class="switch">
               <input type="checkbox" id="advisorAvailabilityToggle" onchange="toggleAdvisorAvailability()">
@@ -1121,6 +1186,14 @@
         <button class="btn-primary" onclick="sendSupportTicket()">Submit Ticket</button>
         <button class="btn-secondary" onclick="closeModal('composeSupportModal')">Cancel</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Student Profile Modal -->
+  <div id="studentProfileModal" class="modal">
+    <div class="modal-content">
+      <button onclick="closeStudentProfile()" class="modal-close-btn">✖</button>
+      <div id="studentProfileContent"></div>
     </div>
   </div>
   <script>
@@ -1251,7 +1324,7 @@
         banner.style.background = '#d4edda';
         banner.style.color = '#155724';
         banner.style.border = '2px solid #28a745';
-        banner.innerHTML = '✅ You are LIVE! Website visitors can chat with you now.';
+        banner.innerHTML = '✅ You are LIVE! Students can chat with you now.';
         status.textContent = 'Online';
         status.style.color = '#28a745';
         
@@ -1263,7 +1336,7 @@
         banner.style.background = '#f8d7da';
         banner.style.color = '#721c24';
         banner.style.border = '2px solid #dc3545';
-        banner.innerHTML = '❌ You are OFFLINE. Visitors cannot reach you right now.';
+        banner.innerHTML = '❌ You are OFFLINE. Students cannot reach you right now.';
         status.textContent = 'Offline';
         status.style.color = '#dc3545';
         
@@ -1339,7 +1412,7 @@
         threads[sessionId].messages.push(msg);
         threads[sessionId].totalCount++;
         
-        if (!msg.is_read && msg.sender_id === null) {
+        if (!msg.is_read && msg.sender_id !== currentTeacherId) {
           threads[sessionId].unreadCount++;
         }
         
@@ -1359,15 +1432,40 @@
       renderLiveInquiriesThreads(threadArray);
     }
 
-    function renderLiveInquiriesThreads(threads) {
+    async function renderLiveInquiriesThreads(threads) {
       const container = document.getElementById('liveInquiriesThreads');
 
       if (!threads || threads.length === 0) {
-        container.innerHTML = '<div class="empty-state">No live inquiries yet. When visitors chat from the homepage, they\'ll appear here!</div>';
+        container.innerHTML = '<div class="empty-state">No live inquiries yet. When students chat from the homepage, they\'ll appear here!</div>';
         return;
       }
 
-      container.innerHTML = threads.map(thread => {
+      // Get student names for non-anonymous threads
+      const threadArray = await Promise.all(threads.map(async thread => {
+        // Check if any message has a sender_id (logged-in student)
+        const loggedInMessage = thread.messages.find(msg => msg.sender_id !== null && msg.sender_id !== currentTeacherId);
+        
+        if (loggedInMessage) {
+          // This is a logged-in student - get their name
+          const { data: student } = await supabaseClient
+            .from('profiles')
+            .select('full_name')
+            .eq('id', loggedInMessage.sender_id)
+            .single();
+          
+          thread.studentName = student?.full_name || 'Student';
+          thread.isAnonymous = false;
+          thread.studentId = loggedInMessage.sender_id;
+        } else {
+          thread.studentName = 'Anonymous Visitor';
+          thread.isAnonymous = true;
+          thread.studentId = null;
+        }
+        
+        return thread;
+      }));
+
+      container.innerHTML = threadArray.map(thread => {
         const lastMessage = thread.messages[0];
         const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
         const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
@@ -1379,10 +1477,12 @@
           minute: '2-digit'
         });
 
+        const icon = thread.isAnonymous ? '🌐' : '👤';
+
         return `
           <div class="thread-item ${unreadClass}" onclick="openLiveInquiryConversation('${thread.sessionId}')">
             <div class="thread-header">
-              <div class="teacher-name">🌐 Anonymous Visitor</div>
+              <div class="teacher-name">${icon} ${thread.studentName}</div>
               <div class="thread-meta">
                 ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
                 <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
@@ -1408,7 +1508,25 @@
         return;
       }
 
-      const unreadIds = messages?.filter(m => !m.is_read && m.sender_id === null).map(m => m.id) || [];
+      // Check if this is a logged-in student
+      const loggedInMessage = messages?.find(m => m.sender_id !== null && m.sender_id !== currentTeacherId);
+      let studentName = 'Anonymous Visitor';
+      let studentIcon = '🌐';
+      
+      if (loggedInMessage) {
+        const { data: student } = await supabaseClient
+          .from('profiles')
+          .select('full_name')
+          .eq('id', loggedInMessage.sender_id)
+          .single();
+        
+        if (student) {
+          studentName = student.full_name;
+          studentIcon = '👤';
+        }
+      }
+
+      const unreadIds = messages?.filter(m => !m.is_read && m.sender_id !== currentTeacherId).map(m => m.id) || [];
       if (unreadIds.length > 0) {
         await supabaseClient
           .from('messages')
@@ -1420,13 +1538,15 @@
         <button onclick="closeModal('conversationModal')" class="modal-close-btn">✖</button>
         
         <div class="conversation-header">
-          <h4>💬 Live Inquiry - Anonymous Visitor</h4>
-          <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} • Session ID: ${sessionId}</p>
+          <div class="conversation-header-text">
+            <h4>${studentIcon} Live Inquiry - ${studentName}</h4>
+            <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} • Session ID: ${sessionId}</p>
+          </div>
         </div>
 
         <div class="messages-container">
           ${messages?.map(msg => {
-            const isFromVisitor = !msg.sender_id;
+            const isFromVisitor = msg.sender_id !== currentTeacherId;
             const bubbleClass = isFromVisitor ? 'from-teacher' : 'from-me';
             const date = new Date(msg.created_at).toLocaleString('en-US', {
               month: 'short',
@@ -1438,7 +1558,7 @@
 
             return `
               <div class="message-bubble ${bubbleClass}">
-                <div class="sender">${isFromVisitor ? '🌐 Anonymous Visitor' : 'You'}</div>
+                <div class="sender">${isFromVisitor ? studentName : 'You'}</div>
                 <div class="timestamp">${date}</div>
                 <div class="body">${msg.message}</div>
               </div>
@@ -1447,9 +1567,14 @@
         </div>
 
         <div class="reply-box">
-          <textarea id="liveInquiryReplyMessage" class="reply-input-simple" rows="1" placeholder="Type your reply..." onfocus="this.rows=3"></textarea>
-          <div class="reply-actions">
-            <button class="btn-primary" onclick="sendLiveInquiryReply('${sessionId}')">Send</button>
+          <h5>💬 Reply to ${studentName}</h5>
+          <div class="form-group">
+            <label>Your Message *</label>
+            <textarea id="liveInquiryReplyMessage" placeholder="Type your reply..." style="min-height:120px;"></textarea>
+          </div>
+          <div style="display:flex; gap:1rem; margin-top:1rem;">
+            <button class="btn-primary" onclick="sendLiveInquiryReply('${sessionId}')">Send Reply</button>
+            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
           </div>
         </div>
       `;
@@ -1485,7 +1610,6 @@
       }
 
       document.getElementById('liveInquiryReplyMessage').value = '';
-      document.getElementById('liveInquiryReplyMessage').rows = 1;
       await openLiveInquiryConversation(sessionId);
     }
 
@@ -1957,7 +2081,16 @@
 
     async function openConversation(studentId) {
       const student = myStudents.find(s => s.id === studentId);
-      const studentName = student ? student.full_name : 'Student';
+      
+      // Fetch student profile info including photo
+      const { data: studentProfile } = await supabaseClient
+        .from('profiles')
+        .select('full_name, profile_photo_url')
+        .eq('id', studentId)
+        .single();
+
+      const studentName = studentProfile?.full_name || 'Student';
+      const studentPhoto = studentProfile?.profile_photo_url || 'https://via.placeholder.com/60';
       
       const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_student').or(`and(sender_id.eq.${studentId},recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.eq.${studentId})`).order('created_at', { ascending: false });
 
@@ -1972,8 +2105,12 @@
         <button onclick="closeModal('conversationModal')" class="modal-close-btn">✖</button>
         
         <div class="conversation-header">
-          <h4>💬 Conversation with ${studentName}</h4>
-          <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+          <img src="${studentPhoto}" alt="${studentName}">
+          <div class="conversation-header-text">
+            <h4>💬 Conversation with ${studentName}</h4>
+            <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+          </div>
+          <button class="view-profile-btn" onclick="viewStudentProfile('${studentId}')">👁️ View Profile</button>
         </div>
         
         <div class="messages-container">
@@ -2020,6 +2157,76 @@
       selectedFiles = [];
       loadInboxThreads();
       loadStats();
+    }
+
+    async function viewStudentProfile(studentId) {
+      const { data: student, error } = await supabaseClient
+        .from('profiles')
+        .select('profile_photo_url, full_name, email, bio, interested_subjects, age_group, phone, created_at')
+        .eq('id', studentId)
+        .single();
+
+      if (error || !student) {
+        alert('❌ Error loading student profile');
+        return;
+      }
+
+      const profilePhoto = student.profile_photo_url || 'https://via.placeholder.com/120';
+      const memberSince = new Date(student.created_at).toLocaleDateString('en-US', { 
+        month: 'long', 
+        year: 'numeric' 
+      });
+
+      const profileHTML = `
+        <div class="profile-modal-header">
+          <img src="${profilePhoto}" alt="${student.full_name}">
+          <h2 style="color:#007bff; margin-bottom:0.5rem;">${student.full_name}</h2>
+          <p style="color:#666; font-size:0.9em;">Member since ${memberSince}</p>
+        </div>
+
+        <div class="profile-info-grid">
+          <div class="profile-info-item">
+            <h4>📧 Email</h4>
+            <p>${student.email || 'Not provided'}</p>
+          </div>
+          
+          <div class="profile-info-item">
+            <h4>📱 Phone</h4>
+            <p>${student.phone || 'Not provided'}</p>
+          </div>
+          
+          <div class="profile-info-item">
+            <h4>👶 Age Group</h4>
+            <p>${student.age_group || 'Not specified'}</p>
+          </div>
+          
+          <div class="profile-info-item">
+            <h4>📚 Interested Subjects</h4>
+            <p>${student.interested_subjects || 'Not specified'}</p>
+          </div>
+        </div>
+
+        ${student.bio ? `
+          <div style="margin-top:2rem; padding:1.5rem; background:#f8f9fa; border-radius:8px; border-left:4px solid #007bff;">
+            <h4 style="color:#007bff; margin-bottom:1rem;">📝 About ${student.full_name.split(' ')[0]}</h4>
+            <p style="color:#333; line-height:1.6; white-space:pre-wrap;">${student.bio}</p>
+          </div>
+        ` : ''}
+
+        <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
+          <button class="btn-primary" onclick="openComposeToStudentModal('${studentId}'); closeStudentProfile();">
+            💬 Send Message
+          </button>
+          <button class="btn-secondary" onclick="closeStudentProfile()">Close</button>
+        </div>
+      `;
+
+      document.getElementById('studentProfileContent').innerHTML = profileHTML;
+      document.getElementById('studentProfileModal').classList.add('active');
+    }
+
+    function closeStudentProfile() {
+      document.getElementById('studentProfileModal').classList.remove('active');
     }
 
     async function sendReplyInConversation(studentId) {
@@ -2116,8 +2323,10 @@
         <button onclick="closeModal('supportConversationModal')" class="modal-close-btn">✖</button>
         
         <div class="conversation-header">
-          <h4>💬 Conversation with Support Team</h4>
-          <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+          <div class="conversation-header-text">
+            <h4>💬 Conversation with Support Team</h4>
+            <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
+          </div>
         </div>
         
         <div class="messages-container">
