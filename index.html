@@ -650,7 +650,6 @@ h2.subtitle {
   margin-bottom: 1rem;
 }
 
-/* Continue with remaining styles... */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    📚 EBOOK RESOURCES SECTION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -975,6 +974,8 @@ footer {
 }
   </style>
 </head>
+
+<body>
 <!-- START: COMPACT LANGUAGE TRANSLATOR BAR -->
 <div id="fallback-translator">
   <select onchange="translatePage(this.value)">
@@ -1052,6 +1053,14 @@ footer {
     <button onclick="openAnonymousAdvisorChat()" id="liveChatBtn">
       💬 Chat with Advisor NOW - Free!
     </button>
+  </div>
+  
+  <!-- Status Indicator (shows when advisor is online) -->
+  <div id="advisorStatusIndicator" style="display: none; margin: 1rem auto;">
+    <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: rgba(0,255,136,0.2); border: 2px solid #00ff88; border-radius: 8px; color: #fff; font-weight: 600;">
+      <span style="width: 10px; height: 10px; background: #00ff88; border-radius: 50%; animation: pulse 2s infinite;"></span>
+      Advisor Online Now
+    </span>
   </div>
   
   <!-- Regular CTA (always visible) -->
@@ -1488,18 +1497,18 @@ footer {
     <div id="anonymousChatMessages" style="flex: 1; overflow-y: auto; padding: 1.5rem; background: #f8f9fa; min-height: 300px; max-height: 400px;">
       <div style="text-align: center; padding: 2rem; color: #999;">
         <div style="font-size: 3em; margin-bottom: 1rem;">💬</div>
-        <p style="font-size: 1.1em; color: #666;">Start chatting! An advisor will respond shortly.</p>
+        <p style="font-size: 1.1em; color: #666;">Login or sign up to start chatting!</p>
       </div>
     </div>
 
     <!-- Input Box -->
     <div style="padding: 1.5rem; background: #fff; border-top: 2px solid #eee; border-radius: 0 0 16px 16px;">
-      <textarea id="anonymousChatInput" placeholder="Ask about courses, pricing, schedules... anything!" style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 80px; margin-bottom: 1rem;"></textarea>
-      <button onclick="sendAnonymousMessage()" style="width: 100%; background: linear-gradient(135deg, #00ff88, #00c853); color: #000; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-        Send Message
+      <textarea id="anonymousChatInput" placeholder="Ask about courses, pricing, schedules..." style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 80px; margin-bottom: 1rem; background: #f5f5f5; color: #999; cursor: not-allowed;" disabled readonly></textarea>
+      <button onclick="redirectToLogin()" style="width: 100%; background: linear-gradient(135deg, #007bff, #0056b3); color: #fff; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+        🔓 Login/Signup to Chat with Advisor
       </button>
       <p style="margin: 1rem 0 0 0; text-align: center; color: #666; font-size: 0.9em;">
-        💡 Want to book a session? We'll guide you to sign up!
+        💡 Create a free account to start chatting instantly!
       </p>
     </div>
   </div>
@@ -1526,12 +1535,10 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let visitorSessionId = null;
-let anonymousChatInterval = null;
 let currentAdvisorId = null;
 let currentAdvisorData = null;
 
-// Check if advisors are available
+// Check if advisors are available - RUNS IMMEDIATELY ON PAGE LOAD
 async function checkAdvisorAvailability() {
   try {
     const { data: advisors, error } = await supabaseClient
@@ -1548,15 +1555,22 @@ async function checkAdvisorAvailability() {
     }
 
     const chatWrapper = document.getElementById('liveChatWrapper');
+    const statusIndicator = document.getElementById('advisorStatusIndicator');
     
     if (advisors && advisors.length > 0) {
       currentAdvisorData = advisors[0];
       if (chatWrapper) {
         chatWrapper.style.display = 'block';
       }
+      if (statusIndicator) {
+        statusIndicator.style.display = 'block';
+      }
     } else {
       if (chatWrapper) {
         chatWrapper.style.display = 'none';
+      }
+      if (statusIndicator) {
+        statusIndicator.style.display = 'none';
       }
     }
   } catch (err) {
@@ -1579,12 +1593,6 @@ async function openAnonymousAdvisorChat() {
     return;
   }
 
-  // Generate or retrieve visitor session ID
-  if (!visitorSessionId) {
-    visitorSessionId = 'visitor-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('visitor_session_id', visitorSessionId);
-  }
-
   currentAdvisorId = advisors[0].id;
   currentAdvisorData = advisors[0];
   
@@ -1599,110 +1607,27 @@ async function openAnonymousAdvisorChat() {
     advisorPhoto.src = 'https://learn.stemsphere.academy/assets/favconsp1.2.png';
   }
   
+  // Show the modal
   document.getElementById('anonymousAdvisorChatModal').style.display = 'flex';
   
-  loadAnonymousMessages();
-  
-  // Poll for new messages every 3 seconds
-  if (anonymousChatInterval) {
-    clearInterval(anonymousChatInterval);
-  }
-  anonymousChatInterval = setInterval(loadAnonymousMessages, 3000);
-}
-
-// Load anonymous messages
-async function loadAnonymousMessages() {
-  if (!visitorSessionId) return;
-
-  const { data: messages } = await supabaseClient
-    .from('messages')
-    .select('*')
-    .eq('message_type', 'advisor_chat')
-    .eq('visitor_session_id', visitorSessionId)
-    .order('created_at', { ascending: true });
-
+  // Show login prompt in messages area
   const container = document.getElementById('anonymousChatMessages');
-
-  if (!messages || messages.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 2rem; color: #999;">
-        <div style="font-size: 3em; margin-bottom: 1rem;">💬</div>
-        <p style="font-size: 1.1em; color: #666;">Start chatting! An advisor will respond shortly.</p>
-      </div>
-    `;
-    return;
-  }
-
-  container.innerHTML = messages.map(msg => {
-    const isFromMe = !msg.sender_id;
-    const bubbleStyle = isFromMe 
-      ? 'background: #e3f2fd; border: 1px solid #007bff; margin-left: 2rem; border-radius: 12px 12px 0 12px;'
-      : 'background: #fff; border: 1px solid #ddd; margin-right: 2rem; border-radius: 12px 12px 12px 0;';
-    
-    const time = new Date(msg.created_at).toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-
-    const senderName = isFromMe ? 'You' : (currentAdvisorData ? currentAdvisorData.full_name : 'Advisor');
-
-    return `
-      <div style="${bubbleStyle} padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <div style="font-weight: 600; color: #007bff; margin-bottom: 0.5rem; font-size: 0.9em;">
-          ${senderName}
-        </div>
-        <div style="color: #333; white-space: pre-wrap; line-height: 1.5;">${msg.message}</div>
-        <div style="color: #999; font-size: 0.8em; margin-top: 0.5rem;">${time}</div>
-      </div>
-    `;
-  }).join('');
-
-  container.scrollTop = container.scrollHeight;
+  container.innerHTML = `
+    <div style="text-align: center; padding: 2rem; color: #999;">
+      <div style="font-size: 3em; margin-bottom: 1rem;">💬</div>
+      <p style="font-size: 1.1em; color: #666;">Login or sign up to start chatting with ${advisors[0].full_name}!</p>
+    </div>
+  `;
 }
 
-// Send anonymous message
-async function sendAnonymousMessage() {
-  const input = document.getElementById('anonymousChatInput');
-  const message = input.value.trim();
-
-  if (!message) {
-    alert('Please enter a message');
-    return;
-  }
-
-  if (!currentAdvisorId) {
-    alert('No advisor connected. Please try again.');
-    return;
-  }
-
-  const { error } = await supabaseClient
-    .from('messages')
-    .insert({
-      sender_id: null,
-      recipient_id: currentAdvisorId,
-      message_type: 'advisor_chat',
-      visitor_session_id: visitorSessionId,
-      subject: 'Website Visitor Inquiry',
-      message: message
-    });
-
-  if (error) {
-    alert('Error sending message: ' + error.message);
-    return;
-  }
-
-  input.value = '';
-  await loadAnonymousMessages();
+// Redirect to login page when user tries to send message
+function redirectToLogin() {
+  window.location.href = 'https://learn.stemsphere.academy/login.html';
 }
 
 // Close anonymous chat
 function closeAnonymousChat() {
   document.getElementById('anonymousAdvisorChatModal').style.display = 'none';
-  
-  if (anonymousChatInterval) {
-    clearInterval(anonymousChatInterval);
-    anonymousChatInterval = null;
-  }
 }
 
 // Open advisor profile
@@ -1791,11 +1716,12 @@ function closeTeacherProfile() {
   document.getElementById('teacherProfileModal').style.display = 'none';
 }
 
-// Initialize on page load
+// 🚀 CRITICAL: Run immediately when page loads (not waiting for DOMContentLoaded)
+checkAdvisorAvailability();
+
+// Also check when DOM is ready (backup)
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', checkAdvisorAvailability);
-} else {
-  checkAdvisorAvailability();
 }
 
 // Check every 5 seconds for fast updates
@@ -1804,5 +1730,3 @@ setInterval(checkAdvisorAvailability, 5000);
 
 </body>
 </html>
-
-<body>
