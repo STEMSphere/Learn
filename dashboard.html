@@ -10,23 +10,37 @@
   <script src="https://js.stripe.com/v3/"></script>
   
   <style>
+    :root {
+      /* Default theme colors */
+      --theme-bg: #f5f5f5;
+      --theme-accent: #ff0000;
+      --theme-button: #007bff;
+      --theme-button-gradient: linear-gradient(90deg, #007bff, #00c6ff);
+      --theme-text: #000;
+      --theme-text-secondary: #666;
+      --theme-card-bg: #fff;
+      --theme-border: #ddd;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f5f5f5;
-      color: #000;
+      background: var(--theme-bg);
+      color: var(--theme-text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      transition: background 0.3s, color 0.3s;
     }
     
     header {
-      background: #fff;
+      background: var(--theme-card-bg);
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 3px solid #ff0000;
+      border-bottom: 3px solid var(--theme-accent);
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       flex-wrap: wrap;
       gap: 1rem;
@@ -43,10 +57,35 @@
     .brand-text {
       font-size: 1.2em;
       font-weight: 700;
-      color: #000;
+      color: var(--theme-text);
     }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .theme-settings-btn {
+      background: var(--theme-card-bg);
+      color: var(--theme-accent);
+      border: 2px solid var(--theme-accent);
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+    }
+    .theme-settings-btn:hover {
+      background: var(--theme-accent);
+      color: #fff;
+    }
+    
     .logout-btn {
-      background: #ff0000;
+      background: var(--theme-accent);
       color: #fff;
       border: none;
       padding: 0.6rem 1.2rem;
@@ -63,24 +102,67 @@
     }
 
     .welcome-card {
-      background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%);
-      border: 2px solid #ff0000;
+      background: var(--theme-card-bg);
+      border: 2px solid var(--theme-accent);
       border-radius: 12px;
       padding: 2rem;
       margin-bottom: 2rem;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
     }
+    
+    .welcome-profile-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--theme-accent);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .welcome-profile-photo:hover {
+      transform: scale(1.05);
+    }
+    
+    .welcome-content {
+      flex: 1;
+      min-width: 250px;
+    }
+    
     .welcome-card h1 {
       margin: 0 0 0.5rem 0;
-      color: #000;
+      color: var(--theme-text);
       font-size: 2em;
     }
     .welcome-card p {
       margin: 0.3rem 0;
-      color: #333;
+      color: var(--theme-text-secondary);
     }
+    
+    .edit-profile-btn {
+      background: transparent;
+      color: var(--theme-accent);
+      border: 2px solid var(--theme-accent);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+    }
+    .edit-profile-btn:hover {
+      background: var(--theme-accent);
+      color: #fff;
+    }
+    
     .book-btn {
-      background: linear-gradient(90deg, #007bff, #00c6ff);
+      background: var(--theme-button-gradient);
       color: #fff;
       padding: 0.75rem 1.5rem;
       border-radius: 8px;
@@ -104,7 +186,7 @@
       height: 40px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #007bff;
+      border: 2px solid var(--theme-button);
       cursor: pointer;
       transition: transform 0.3s;
     }
@@ -116,12 +198,12 @@
       height: 120px;
       border-radius: 50%;
       object-fit: cover;
-      border: 4px solid #007bff;
+      border: 4px solid var(--theme-button);
       margin: 0 auto 1rem;
       display: block;
     }
     .teacher-name-clickable {
-      color: #007bff;
+      color: var(--theme-button);
       cursor: pointer;
       text-decoration: none;
       font-weight: 700;
@@ -133,7 +215,7 @@
       text-decoration: underline;
     }
     .view-profile-btn {
-      background: #007bff;
+      background: var(--theme-button);
       color: #fff;
       border: none;
       padding: 0.5rem 1rem;
@@ -146,14 +228,14 @@
       gap: 0.5rem;
     }
     .view-profile-btn:hover {
-      background: #0056b3;
+      opacity: 0.9;
     }
 
     .tabs {
       display: flex;
       gap: 0.5rem;
       margin-bottom: 2rem;
-      border-bottom: 2px solid #ddd;
+      border-bottom: 2px solid var(--theme-border);
       flex-wrap: wrap;
     }
     .tab {
@@ -164,18 +246,18 @@
       cursor: pointer;
       font-weight: 600;
       font-size: 1em;
-      color: #666;
+      color: var(--theme-text-secondary);
       position: relative;
     }
     .tab.active {
-      color: #ff0000;
-      border-bottom-color: #ff0000;
+      color: var(--theme-accent);
+      border-bottom-color: var(--theme-accent);
     }
     .tab .badge {
       position: absolute;
       top: 0.5rem;
       right: 0.5rem;
-      background: #ff0000;
+      background: var(--theme-accent);
       color: #fff;
       border-radius: 50%;
       width: 20px;
@@ -195,16 +277,16 @@
     }
 
     .sessions-section h2 {
-      color: #000;
-      border-bottom: 2px solid #ff0000;
+      color: var(--theme-text);
+      border-bottom: 2px solid var(--theme-accent);
       padding-bottom: 0.5rem;
       margin-bottom: 1.5rem;
       font-size: 1.8em;
     }
 
     .session-card {
-      background: #fff;
-      border: 1px solid #ddd;
+      background: var(--theme-card-bg);
+      border: 1px solid var(--theme-border);
       border-radius: 8px;
       padding: 1.5rem;
       margin-bottom: 1rem;
@@ -212,12 +294,12 @@
     }
     .session-info h3 {
       margin: 0 0 0.5rem 0;
-      color: #007bff;
+      color: var(--theme-button);
       font-size: 1.3em;
     }
     .session-info p {
       margin: 0.25rem 0;
-      color: #666;
+      color: var(--theme-text-secondary);
       font-size: 0.95rem;
     }
     .status-badge {
@@ -245,7 +327,7 @@
     }
 
     .inbox-container {
-      background: #fff;
+      background: var(--theme-card-bg);
       border-radius: 12px;
       padding: 2rem;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -259,11 +341,11 @@
       gap: 1rem;
     }
     .inbox-header h3 {
-      color: #000;
+      color: var(--theme-text);
       font-size: 1.5em;
     }
     .compose-btn {
-      background: #007bff;
+      background: var(--theme-button);
       color: #fff;
       border: none;
       padding: 0.75rem 1.5rem;
@@ -282,20 +364,20 @@
       gap: 1rem;
     }
     .thread-item {
-      border: 2px solid #ddd;
+      border: 2px solid var(--theme-border);
       border-radius: 8px;
       padding: 1.5rem;
       cursor: pointer;
       transition: all 0.3s;
-      background: #fff;
+      background: var(--theme-card-bg);
     }
     .thread-item:hover {
-      border-color: #007bff;
+      border-color: var(--theme-button);
       box-shadow: 0 2px 8px rgba(0,123,255,0.2);
     }
     .thread-item.unread {
       background: #e3f2fd;
-      border-color: #007bff;
+      border-color: var(--theme-button);
       border-width: 3px;
     }
     .thread-header {
@@ -306,7 +388,7 @@
     }
     .teacher-name {
       font-weight: 700;
-      color: #000;
+      color: var(--theme-text);
       font-size: 1.1em;
     }
     .thread-meta {
@@ -315,7 +397,7 @@
       align-items: center;
     }
     .message-count {
-      background: #007bff;
+      background: var(--theme-button);
       color: #fff;
       padding: 0.25rem 0.75rem;
       border-radius: 20px;
@@ -323,7 +405,7 @@
       font-weight: 600;
     }
     .unread-count {
-      background: #ff0000;
+      background: var(--theme-accent);
       color: #fff;
       padding: 0.25rem 0.75rem;
       border-radius: 20px;
@@ -340,7 +422,7 @@
       font-size: 0.9em;
     }
     .last-message-preview {
-      color: #666;
+      color: var(--theme-text-secondary);
       font-size: 0.95em;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -349,7 +431,7 @@
     }
 
     .conversation-header {
-      background: linear-gradient(135deg, #007bff, #0056b3);
+      background: linear-gradient(135deg, var(--theme-button), #0056b3);
       color: #fff;
       padding: 1.5rem;
       border-radius: 8px 8px 0 0;
@@ -365,8 +447,9 @@
       font-size: 0.9em;
     }
 
+    /* ✅ FIXED: Better message container */
     .messages-container {
-      max-height: 50vh;
+      max-height: 60vh;
       overflow-y: auto;
       margin-bottom: 1rem;
       padding: 1rem;
@@ -375,15 +458,15 @@
     }
 
     .message-bubble {
-      background: #fff;
-      border: 1px solid #ddd;
+      background: var(--theme-card-bg);
+      border: 1px solid var(--theme-border);
       border-radius: 8px;
       padding: 1rem;
       margin-bottom: 1rem;
     }
     .message-bubble.from-me {
       background: #e3f2fd;
-      border-color: #007bff;
+      border-color: var(--theme-button);
       margin-left: 2rem;
     }
     .message-bubble.from-teacher {
@@ -391,7 +474,7 @@
     }
     .message-bubble .sender {
       font-weight: 600;
-      color: #007bff;
+      color: var(--theme-button);
       margin-bottom: 0.5rem;
       display: flex;
       align-items: center;
@@ -404,24 +487,24 @@
     }
     .message-bubble .subject {
       font-weight: 600;
-      color: #333;
+      color: var(--theme-text-secondary);
       margin-bottom: 0.5rem;
     }
     .message-bubble .body {
-      color: #333;
+      color: var(--theme-text-secondary);
       white-space: pre-wrap;
       line-height: 1.6;
     }
     .message-bubble .attachment {
       margin-top: 0.75rem;
       padding: 0.75rem;
-      background: #fff;
-      border: 1px solid #ddd;
+      background: var(--theme-card-bg);
+      border: 1px solid var(--theme-border);
       border-radius: 6px;
       display: inline-block;
     }
     .message-bubble .attachment a {
-      color: #007bff;
+      color: var(--theme-button);
       text-decoration: none;
       display: flex;
       align-items: center;
@@ -432,27 +515,49 @@
       text-decoration: underline;
     }
 
+    /* ✅ FIXED: Gmail-style reply box */
     .reply-box {
       position: sticky;
       bottom: 0;
-      background: #fff;
-      border: 2px solid #007bff;
-      border-radius: 8px;
-      padding: 1.5rem;
+      background: var(--theme-card-bg);
+      border-top: 2px solid var(--theme-border);
+      padding: 1rem;
       margin-top: 1rem;
-      box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
       z-index: 100;
     }
-    .reply-box h5 {
-      margin: 0 0 1rem 0;
-      color: #007bff;
+
+    .reply-input-simple {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--theme-border);
+      border-radius: 6px;
+      font-size: 0.95em;
+      font-family: inherit;
+      resize: none;
+      transition: all 0.3s;
+      background: var(--theme-card-bg);
+      color: var(--theme-text);
+    }
+
+    .reply-input-simple:focus {
+      outline: none;
+      border-color: var(--theme-button);
+      box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    }
+
+    .reply-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      justify-content: flex-end;
     }
 
     .file-upload-section {
       margin-top: 1rem;
       padding: 1rem;
       background: #f8f9fa;
-      border: 2px dashed #ddd;
+      border: 2px dashed var(--theme-border);
       border-radius: 6px;
     }
     .file-upload-btn {
@@ -510,7 +615,7 @@
       padding: 1rem;
     }
     .modal-content {
-      background: #fff;
+      background: var(--theme-card-bg);
       padding: 2rem;
       border-radius: 12px;
       max-width: 900px;
@@ -519,9 +624,29 @@
       overflow-y: auto;
       position: relative;
     }
+    
+    /* ✅ FIXED: Sticky close button */
+    .modal-close-btn {
+      position: sticky;
+      top: 0;
+      right: 0;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2em;
+      z-index: 9999;
+      width: 40px;
+      height: 40px;
+      float: right;
+      margin: -1rem -1rem 1rem 1rem;
+    }
+    
     .modal-content h3 {
       margin-bottom: 1rem;
-      color: #007bff;
+      color: var(--theme-button);
     }
     .form-group {
       margin-bottom: 1rem;
@@ -530,24 +655,26 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 600;
-      color: #333;
+      color: var(--theme-text-secondary);
     }
     .form-group input,
     .form-group textarea,
     .form-group select {
       width: 100%;
       padding: 0.75rem;
-      border: 2px solid #ddd;
+      border: 2px solid var(--theme-border);
       border-radius: 6px;
       font-size: 1em;
       font-family: inherit;
+      background: var(--theme-card-bg);
+      color: var(--theme-text);
     }
     .form-group textarea {
       resize: vertical;
       min-height: 150px;
     }
     .btn-primary {
-      background: #007bff;
+      background: var(--theme-button);
       color: #fff;
       padding: 0.75rem 1.5rem;
       border: none;
@@ -581,7 +708,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: #ffffff;
+      background: var(--theme-card-bg);
       z-index: 2000;
       overflow: auto;
     }
@@ -599,7 +726,7 @@
     #wizardProgressFill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #007bff, #00c6ff);
+      background: var(--theme-button-gradient);
       border-radius: 5px;
       transition: width 0.4s ease;
     }
@@ -612,20 +739,22 @@
     }
     .time-slot {
       padding: 0.75rem;
-      border: 1px solid #ddd;
+      border: 1px solid var(--theme-border);
       border-radius: 6px;
       cursor: pointer;
       text-align: center;
       transition: all 0.3s;
+      background: var(--theme-card-bg);
+      color: var(--theme-text);
     }
     .time-slot:hover {
       background: #e3f2fd;
-      border-color: #007bff;
+      border-color: var(--theme-button);
     }
     .time-slot.selected {
-      background: #007bff;
+      background: var(--theme-button);
       color: #fff;
-      border-color: #007bff;
+      border-color: var(--theme-button);
     }
 
     footer {
@@ -644,8 +773,8 @@
     }
 
     .summary-card {
-      background: #fff;
-      border: 1px solid #ddd;
+      background: var(--theme-card-bg);
+      border: 1px solid var(--theme-border);
       border-radius: 8px;
       padding: 1.5rem;
       text-align: center;
@@ -654,19 +783,19 @@
 
     .summary-card h4 {
       margin: 0 0 0.5rem 0;
-      color: #666;
+      color: var(--theme-text-secondary);
       font-size: 0.9em;
     }
 
     .summary-number {
       font-size: 1.8em;
       font-weight: 700;
-      color: #007bff;
+      color: var(--theme-button);
     }
 
     .invoice-card {
-      background: #fff;
-      border: 1px solid #ddd;
+      background: var(--theme-card-bg);
+      border: 1px solid var(--theme-border);
       border-radius: 8px;
       padding: 1.5rem;
       margin-bottom: 1rem;
@@ -675,12 +804,12 @@
     }
 
     .invoice-card:hover {
-      border-color: #007bff;
+      border-color: var(--theme-button);
       box-shadow: 0 4px 15px rgba(0,123,255,0.2);
     }
 
     .invoice-card.overdue {
-      border-color: #ff0000;
+      border-color: var(--theme-accent);
       background: #fff5f5;
     }
 
@@ -696,13 +825,13 @@
     .invoice-number {
       font-size: 1.2em;
       font-weight: 700;
-      color: #000;
+      color: var(--theme-text);
     }
 
     .invoice-amount {
       font-size: 1.3em;
       font-weight: 700;
-      color: #007bff;
+      color: var(--theme-button);
     }
 
     .invoice-status {
@@ -741,7 +870,7 @@
 
     .invoice-details p {
       margin: 0.3rem 0;
-      color: #666;
+      color: var(--theme-text-secondary);
     }
 
     .invoice-actions {
@@ -769,7 +898,7 @@
     }
 
     .btn-view {
-      background: #007bff;
+      background: var(--theme-button);
       color: #fff;
       padding: 0.75rem 1.5rem;
       border: none;
@@ -791,14 +920,151 @@
       justify-content: space-between;
       align-items: center;
       padding: 0.5rem 0;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid var(--theme-border);
     }
 
     .line-item:last-child {
       border-bottom: none;
       font-weight: bold;
       font-size: 1.1em;
-      color: #007bff;
+      color: var(--theme-button);
+    }
+
+    /* ============================================ */
+    /* THEME SETTINGS MODAL */
+    /* ============================================ */
+    
+    .theme-settings-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6);
+      z-index: 3000;
+      overflow: auto;
+    }
+    .theme-settings-modal.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    
+    .theme-settings-content {
+      background: var(--theme-card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .theme-section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 2px solid var(--theme-border);
+    }
+    
+    .theme-section h4 {
+      margin: 0 0 1rem 0;
+      color: var(--theme-text);
+      font-size: 1.2em;
+    }
+    
+    .color-swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    
+    .color-swatch {
+      padding: 1.5rem 0.5rem;
+      border: 3px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.85em;
+      transition: all 0.3s;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    .color-swatch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .color-swatch.selected {
+      border-color: #000;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+      transform: scale(1.05);
+    }
+    
+    .theme-preview {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      border: 2px solid var(--theme-border);
+      border-radius: 8px;
+      background: var(--theme-bg);
+    }
+    
+    .theme-preview h4 {
+      margin: 0 0 1rem 0;
+      color: var(--theme-text);
+    }
+    
+    .preview-sample {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .preview-button {
+      background: var(--theme-button-gradient);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    
+    .preview-card {
+      background: var(--theme-card-bg);
+      border: 2px solid var(--theme-accent);
+      padding: 1rem;
+      border-radius: 8px;
+      color: var(--theme-text);
+    }
+
+    /* Profile Tab Styles */
+    .profile-photo-upload {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .profile-photo-preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--theme-accent);
+      margin: 1rem auto;
+      display: block;
+    }
+    
+    .char-counter {
+      text-align: right;
+      font-size: 0.85em;
+      color: var(--theme-text-secondary);
+      margin-top: 0.25rem;
     }
 
     @media (max-width: 768px) {
@@ -821,26 +1087,49 @@
       .message-bubble.from-teacher {
         margin-right: 0.5rem;
       }
+      .welcome-card {
+        flex-direction: column;
+        text-align: center;
+      }
+      .color-swatches {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
     }
   </style>
 </head>
-<body>
+<body><body>
   <header>
     <div class="brand">
       <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
       <span class="brand-text">STEMSphere Academy</span>
     </div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="header-right">
+      <button class="theme-settings-btn" onclick="openThemeSettings()">
+        🎨 Theme Settings
+      </button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
   </header>
 
   <div class="dashboard-container">
     <div class="welcome-card">
-      <h1>Welcome, <span id="userName">Student</span>! 👋</h1>
-      <p id="userEmail"></p>
-      <p id="userAge"></p>
-      <button class="book-btn" onclick="openBookingWizard()">
-        🚀 Book a Trial/New Session
-      </button>
+      <img id="welcomeProfilePhoto" 
+           src="https://ui-avatars.com/api/?name=Student&size=200&background=007bff&color=fff" 
+           alt="Profile Photo" 
+           class="welcome-profile-photo"
+           onclick="openProfileTab()"
+           style="display: none;">
+      <div class="welcome-content">
+        <h1>Welcome, <span id="userName">Student</span>! 👋</h1>
+        <p id="userEmail"></p>
+        <p id="userAge"></p>
+        <button class="edit-profile-btn" onclick="openProfileTab()">
+          ✏️ Edit Profile
+        </button>
+        <button class="book-btn" onclick="openBookingWizard()">
+          🚀 Book a Trial/New Session
+        </button>
+      </div>
     </div>
 
     <!-- Live Advisor Banner -->
@@ -865,6 +1154,7 @@
         💳 Invoices
         <span class="badge" id="invoicesBadge" style="display:none;">0</span>
       </button>
+      <button class="tab" onclick="showTab('profile')">👤 My Profile</button>
       <button class="tab" onclick="showTab('support')">
         💬 Support
         <span class="badge" id="supportBadge" style="display:none;">0</span>
@@ -918,6 +1208,44 @@
       </div>
     </div>
 
+    <div id="profileTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>👤 My Profile</h3>
+        </div>
+        
+        <div style="max-width:800px;">
+          <div class="profile-photo-upload">
+            <h4 style="margin-bottom: 1rem; color: var(--theme-text);">Profile Photo (Optional)</h4>
+            <img id="profilePhotoPreview" 
+                 src="https://ui-avatars.com/api/?name=Student&size=200&background=007bff&color=fff" 
+                 alt="Profile Photo" 
+                 class="profile-photo-preview">
+            <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="handleProfilePhotoUpload()">
+            <button class="btn-primary" onclick="document.getElementById('profilePhotoInput').click()">
+              📸 Upload Photo
+            </button>
+            <p style="font-size: 0.85em; color: var(--theme-text-secondary); margin-top: 0.5rem;">Max size: 5MB (JPG, PNG, WEBP)</p>
+          </div>
+          
+          <div class="form-group">
+            <label>About Me</label>
+            <textarea id="profileBio" maxlength="1000" placeholder="Tell us about yourself, your learning goals, interests..." style="min-height: 120px;"></textarea>
+            <div class="char-counter"><span id="bioCharCount">0</span>/1000 characters</div>
+          </div>
+          
+          <div class="form-group">
+            <label>Subjects I'm Interested In</label>
+            <textarea id="profileSubjects" maxlength="300" placeholder="e.g., Math, Chemistry, SAT Prep, Python Coding..." style="min-height: 80px;"></textarea>
+            <div class="char-counter"><span id="subjectsCharCount">0</span>/300 characters</div>
+          </div>
+          
+          <button class="btn-primary" onclick="saveStudentProfile()">💾 Save Profile</button>
+          <button class="btn-secondary" onclick="loadStudentProfile()">🔄 Reload</button>
+        </div>
+      </div>
+    </div>
+
     <div id="supportTab" class="tab-content">
       <div class="inbox-container">
         <div class="inbox-header">
@@ -943,20 +1271,78 @@
     </div>
   </div>
 
+  <!-- ============================================ -->
+  <!-- THEME SETTINGS MODAL -->
+  <!-- ============================================ -->
+  <div id="themeSettingsModal" class="theme-settings-modal">
+    <div class="theme-settings-content">
+      <button onclick="closeModal('themeSettingsModal')" class="modal-close-btn">✖</button>
+      
+      <h2 style="margin: 0 0 2rem 0; color: var(--theme-text); text-align: center;">🎨 Customize Your Dashboard</h2>
+      
+      <!-- Background Color Section -->
+      <div class="theme-section">
+        <h4>1️⃣ Background Color</h4>
+        <p style="color: var(--theme-text-secondary); font-size: 0.9em; margin-bottom: 1rem;">
+          Current: <strong id="currentBgLabel">Default</strong>
+        </p>
+        <div class="color-swatches" id="bgColorSwatches">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Button Color Section -->
+      <div class="theme-section">
+        <h4>2️⃣ Button Color</h4>
+        <p style="color: var(--theme-text-secondary); font-size: 0.9em; margin-bottom: 1rem;">
+          Current: <strong id="currentButtonLabel">Default</strong>
+        </p>
+        <div class="color-swatches" id="buttonColorSwatches">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Border/Accent Color Section -->
+      <div class="theme-section">
+        <h4>3️⃣ Border/Accent Color</h4>
+        <p style="color: var(--theme-text-secondary); font-size: 0.9em; margin-bottom: 1rem;">
+          Current: <strong id="currentAccentLabel">Default</strong>
+        </p>
+        <div class="color-swatches" id="accentColorSwatches">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Live Preview -->
+      <div class="theme-preview">
+        <h4>✨ Live Preview</h4>
+        <div class="preview-sample">
+          <div class="preview-card">
+            Sample card with current theme
+          </div>
+          <button class="preview-button">Sample Button</button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+        <button class="btn-primary" onclick="closeModal('themeSettingsModal')">✅ Apply Theme</button>
+        <button class="btn-secondary" onclick="resetThemeToDefault()">🔄 Reset All to Default</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Teacher Profile Modal -->
   <div id="teacherProfileModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
-      <button onclick="closeModal('teacherProfileModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
-      
-      <div id="teacherProfileContent">
-        <!-- Content populated dynamically -->
-      </div>
+      <button onclick="closeModal('teacherProfileModal')" class="modal-close-btn">✖</button>
+      <div id="teacherProfileContent"></div>
     </div>
   </div>
 
   <div id="bookingWizard" class="wizard-modal">
     <button onclick="closeBookingWizard()"
-      style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:#000; cursor:pointer; z-index:2001;">✖</button>
+      style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:var(--theme-text); cursor:pointer; z-index:2001;">✖</button>
     
     <div id="wizardProgressBar">
       <div id="wizardProgressFill"></div>
@@ -967,7 +1353,7 @@
 
   <div id="advisorChatModal" class="modal">
     <div class="modal-content" style="max-width: 700px;">
-      <button onclick="closeModal('advisorChatModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+      <button onclick="closeModal('advisorChatModal')" class="modal-close-btn">✖</button>
       
       <div style="background:linear-gradient(135deg, #00ff88, #00c853); padding:1.5rem; border-radius:8px 8px 0 0; margin:-2rem -2rem 1.5rem -2rem;">
         <h3 style="margin:0 0 0.5rem 0; color:#000; font-size:1.5em;">
@@ -981,17 +1367,18 @@
       <div id="advisorChatMessages" style="max-height:400px; overflow-y:auto; margin-bottom:1.5rem; padding:1rem; background:#f8f9fa; border-radius:8px;">
       </div>
 
-      <div style="background:#f8f9fa; padding:1rem; border-radius:8px;">
-        <textarea id="advisorChatInput" placeholder="Type your message here..." style="width:100%; padding:0.75rem; border:2px solid #ddd; border-radius:6px; resize:vertical; min-height:80px; font-family:inherit;"></textarea>
-        <button onclick="sendAdvisorMessage()" style="margin-top:1rem; background:#00ff88; color:#000; padding:0.75rem 1.5rem; border:none; border-radius:6px; cursor:pointer; font-weight:600; width:100%;">
-          Send Message
-        </button>
+      <div class="reply-box">
+        <textarea id="advisorChatInput" class="reply-input-simple" rows="1" placeholder="Type your message..." onfocus="this.rows=3"></textarea>
+        <div class="reply-actions">
+          <button class="btn-primary" onclick="sendAdvisorMessage()">Send Message</button>
+        </div>
       </div>
     </div>
   </div>
 
   <div id="composeModal" class="modal">
     <div class="modal-content">
+      <button onclick="closeModal('composeModal')" class="modal-close-btn">✖</button>
       <h3>✉️ New Support Message</h3>
       <input type="hidden" id="composeType">
       
@@ -1014,11 +1401,12 @@
 
   <div id="composeToTeacherModal" class="modal">
     <div class="modal-content">
+      <button onclick="closeModal('composeToTeacherModal')" class="modal-close-btn">✖</button>
       <h3>✉️ Message a Teacher</h3>
       
       <div class="form-group">
         <label>Select Teacher *</label>
-        <select id="composeTeacherSelect" style="width:100%; padding:0.75rem; border:2px solid #ddd; border-radius:6px; font-size:1em;">
+        <select id="composeTeacherSelect" style="width:100%; padding:0.75rem; border:2px solid var(--theme-border); border-radius:6px; font-size:1em;">
           <option value="">-- Choose a teacher --</option>
         </select>
       </div>
@@ -1042,27 +1430,25 @@
 
   <div id="viewStudentInvoiceModal" class="modal">
     <div class="modal-content" style="max-width: 800px;">
-      <div id="studentInvoiceViewContent">
-      </div>
+      <button onclick="closeModal('viewStudentInvoiceModal')" class="modal-close-btn">✖</button>
+      <div id="studentInvoiceViewContent"></div>
     </div>
   </div>
 
   <div id="paymentModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
+      <button onclick="closeModal('paymentModal')" class="modal-close-btn">✖</button>
       <h3>💳 Pay Invoice</h3>
-      <div id="paymentContent">
-      </div>
+      <div id="paymentContent"></div>
     </div>
   </div>
 
   <div id="conversationModal" class="modal">
-    <div class="modal-content" id="conversationContent">
-    </div>
+    <div class="modal-content" id="conversationContent"></div>
   </div>
 
   <div id="supportConversationModal" class="modal">
-    <div class="modal-content" id="supportConversationContent">
-    </div>
+    <div class="modal-content" id="supportConversationContent"></div>
   </div>
 
   <footer>
@@ -1076,7 +1462,7 @@
       <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
     </p>
   </footer>
-  <script>
+<script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     const DAILY_API_KEY = '9fe6990c25d99f2069c223b856d2c171adce6e6bd844474039a2fd8ef009afd3';
@@ -1086,7 +1472,7 @@
 
     let currentUserId = null;
     let myTeachers = [];
-    let teacherProfiles = {}; // Cache teacher profiles
+    let teacherProfiles = {};
     let unreadSupportCount = 0;
     let unreadTeachersCount = 0;
     let wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: "" };
@@ -1095,6 +1481,428 @@
     let selectedFile = null;
     let currentAdvisorId = null;
     let advisorChatInterval = null;
+
+    // ============================================
+    // THEME SYSTEM - 14 COLOR PALETTE
+    // ============================================
+    
+    const THEME_COLORS = {
+      'default': {
+        name: '⚪ Default',
+        bg: '#f5f5f5',
+        accent: '#ff0000',
+        button: '#007bff',
+        buttonGradient: 'linear-gradient(90deg, #007bff, #00c6ff)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#ddd'
+      },
+      'baby-blue': {
+        name: '💙 Baby Blue',
+        bg: '#e3f2fd',
+        accent: '#60a5fa',
+        button: '#60a5fa',
+        buttonGradient: 'linear-gradient(90deg, #60a5fa, #3b82f6)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#93c5fd'
+      },
+      'light-orange': {
+        name: '🟠 Light Orange',
+        bg: '#fff7ed',
+        accent: '#fb923c',
+        button: '#fb923c',
+        buttonGradient: 'linear-gradient(90deg, #fb923c, #f97316)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#fdba74'
+      },
+      'baby-pink': {
+        name: '🌸 Baby Pink',
+        bg: '#fef2f2',
+        accent: '#fbb6ce',
+        button: '#fbb6ce',
+        buttonGradient: 'linear-gradient(90deg, #fbb6ce, #f472b6)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#fecdd3'
+      },
+      'hot-pink': {
+        name: '💖 Hot Pink',
+        bg: '#fdf2f8',
+        accent: '#ec4899',
+        button: '#ec4899',
+        buttonGradient: 'linear-gradient(90deg, #ec4899, #db2777)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#f9a8d4'
+      },
+      'yellow': {
+        name: '🟡 Sunshine Yellow',
+        bg: '#fefce8',
+        accent: '#fbbf24',
+        button: '#fbbf24',
+        buttonGradient: 'linear-gradient(90deg, #fbbf24, #f59e0b)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#fde047'
+      },
+      'purple': {
+        name: '🟣 Purple',
+        bg: '#f5f3ff',
+        accent: '#8b5cf6',
+        button: '#8b5cf6',
+        buttonGradient: 'linear-gradient(90deg, #8b5cf6, #7c3aed)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#c4b5fd'
+      },
+      'green': {
+        name: '🟢 Green',
+        bg: '#f0fdf4',
+        accent: '#10b981',
+        button: '#10b981',
+        buttonGradient: 'linear-gradient(90deg, #10b981, #059669)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#86efac'
+      },
+      'red': {
+        name: '🔴 Red',
+        bg: '#fef2f2',
+        accent: '#ef4444',
+        button: '#ef4444',
+        buttonGradient: 'linear-gradient(90deg, #ef4444, #dc2626)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#fca5a5'
+      },
+      'orange': {
+        name: '🟠 Orange',
+        bg: '#fff7ed',
+        accent: '#f97316',
+        button: '#f97316',
+        buttonGradient: 'linear-gradient(90deg, #f97316, #ea580c)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#fdba74'
+      },
+      'lime-green': {
+        name: '🍏 Light Lime Green',
+        bg: '#f7fee7',
+        accent: '#a3e635',
+        button: '#a3e635',
+        buttonGradient: 'linear-gradient(90deg, #a3e635, #84cc16)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#bef264'
+      },
+      'brown': {
+        name: '🤎 Brown',
+        bg: '#fef3c7',
+        accent: '#92400e',
+        button: '#92400e',
+        buttonGradient: 'linear-gradient(90deg, #92400e, #78350f)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#fff',
+        border: '#d97706'
+      },
+      'white': {
+        name: '⚪ White Mode',
+        bg: '#ffffff',
+        accent: '#007bff',
+        button: '#007bff',
+        buttonGradient: 'linear-gradient(90deg, #007bff, #0056b3)',
+        text: '#000',
+        textSecondary: '#666',
+        cardBg: '#f8f9fa',
+        border: '#dee2e6'
+      },
+      'dark': {
+        name: '⚫ Dark Mode',
+        bg: '#1f2937',
+        accent: '#60a5fa',
+        button: '#60a5fa',
+        buttonGradient: 'linear-gradient(90deg, #60a5fa, #3b82f6)',
+        text: '#f9fafb',
+        textSecondary: '#d1d5db',
+        cardBg: '#374151',
+        border: '#4b5563'
+      }
+    };
+
+    let currentTheme = {
+      background: 'default',
+      button: 'default',
+      accent: 'default'
+    };
+
+    function loadThemeFromStorage() {
+      const saved = localStorage.getItem('studentTheme');
+      if (saved) {
+        try {
+          currentTheme = JSON.parse(saved);
+          applyTheme();
+        } catch (e) {
+          console.error('Error loading theme:', e);
+        }
+      }
+    }
+
+    function saveThemeToStorage() {
+      localStorage.setItem('studentTheme', JSON.stringify(currentTheme));
+    }
+
+    function applyTheme() {
+      const bgTheme = THEME_COLORS[currentTheme.background] || THEME_COLORS['default'];
+      const buttonTheme = THEME_COLORS[currentTheme.button] || THEME_COLORS['default'];
+      const accentTheme = THEME_COLORS[currentTheme.accent] || THEME_COLORS['default'];
+
+      document.documentElement.style.setProperty('--theme-bg', bgTheme.bg);
+      document.documentElement.style.setProperty('--theme-text', bgTheme.text);
+      document.documentElement.style.setProperty('--theme-text-secondary', bgTheme.textSecondary);
+      document.documentElement.style.setProperty('--theme-card-bg', bgTheme.cardBg);
+      document.documentElement.style.setProperty('--theme-border', bgTheme.border);
+      
+      document.documentElement.style.setProperty('--theme-button', buttonTheme.button);
+      document.documentElement.style.setProperty('--theme-button-gradient', buttonTheme.buttonGradient);
+      
+      document.documentElement.style.setProperty('--theme-accent', accentTheme.accent);
+
+      updateThemeLabels();
+      saveThemeToStorage();
+    }
+
+    function updateThemeLabels() {
+      document.getElementById('currentBgLabel').textContent = THEME_COLORS[currentTheme.background].name;
+      document.getElementById('currentButtonLabel').textContent = THEME_COLORS[currentTheme.button].name;
+      document.getElementById('currentAccentLabel').textContent = THEME_COLORS[currentTheme.accent].name;
+    }
+
+    function openThemeSettings() {
+      renderColorSwatches();
+      document.getElementById('themeSettingsModal').classList.add('active');
+    }
+
+    function renderColorSwatches() {
+      const bgContainer = document.getElementById('bgColorSwatches');
+      const buttonContainer = document.getElementById('buttonColorSwatches');
+      const accentContainer = document.getElementById('accentColorSwatches');
+
+      const colorKeys = Object.keys(THEME_COLORS);
+
+      // Always put DEFAULT first
+      const defaultFirst = ['default', ...colorKeys.filter(k => k !== 'default')];
+
+      bgContainer.innerHTML = defaultFirst.map(key => {
+        const color = THEME_COLORS[key];
+        const selected = currentTheme.background === key ? 'selected' : '';
+        const bgColor = key === 'dark' ? color.cardBg : color.bg;
+        return `
+          <div class="color-swatch ${selected}" 
+               style="background: ${bgColor}; color: ${color.text};"
+               onclick="selectThemeColor('background', '${key}')">
+            ${color.name}
+          </div>
+        `;
+      }).join('');
+
+      buttonContainer.innerHTML = defaultFirst.map(key => {
+        const color = THEME_COLORS[key];
+        const selected = currentTheme.button === key ? 'selected' : '';
+        return `
+          <div class="color-swatch ${selected}" 
+               style="background: ${color.buttonGradient};"
+               onclick="selectThemeColor('button', '${key}')">
+            ${color.name}
+          </div>
+        `;
+      }).join('');
+
+      accentContainer.innerHTML = defaultFirst.map(key => {
+        const color = THEME_COLORS[key];
+        const selected = currentTheme.accent === key ? 'selected' : '';
+        return `
+          <div class="color-swatch ${selected}" 
+               style="background: ${color.accent};"
+               onclick="selectThemeColor('accent', '${key}')">
+            ${color.name}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectThemeColor(type, colorKey) {
+      currentTheme[type] = colorKey;
+      applyTheme();
+      renderColorSwatches();
+    }
+
+    function resetThemeToDefault() {
+      if (confirm('Reset all theme settings to default?')) {
+        currentTheme = {
+          background: 'default',
+          button: 'default',
+          accent: 'default'
+        };
+        applyTheme();
+        renderColorSwatches();
+      }
+    }
+
+    // ============================================
+    // PROFILE SYSTEM
+    // ============================================
+
+    async function loadStudentProfile() {
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('profile_photo_url, bio, interested_subjects')
+        .eq('id', currentUserId)
+        .single();
+
+      if (profile) {
+        if (profile.profile_photo_url) {
+          document.getElementById('profilePhotoPreview').src = profile.profile_photo_url;
+          document.getElementById('welcomeProfilePhoto').src = profile.profile_photo_url;
+          document.getElementById('welcomeProfilePhoto').style.display = 'block';
+        }
+        
+        const bioField = document.getElementById('profileBio');
+        bioField.value = profile.bio || '';
+        document.getElementById('bioCharCount').textContent = (profile.bio || '').length;
+        
+        const subjectsField = document.getElementById('profileSubjects');
+        subjectsField.value = profile.interested_subjects || '';
+        document.getElementById('subjectsCharCount').textContent = (profile.interested_subjects || '').length;
+      }
+    }
+
+    async function handleProfilePhotoUpload() {
+      const file = document.getElementById('profilePhotoInput').files[0];
+      if (!file) return;
+
+      // Check file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('⚠️ File too large! Maximum size is 5MB.');
+        return;
+      }
+
+      // Check file type
+      const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        alert('⚠️ Invalid file type! Please upload JPG, PNG, or WEBP.');
+        return;
+      }
+
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `student-${currentUserId}-${Date.now()}.${fileExt}`;
+        const filePath = `student-profiles/${fileName}`;
+
+        const { error: uploadError } = await supabaseClient.storage
+          .from('attachments')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabaseClient.storage
+          .from('attachments')
+          .getPublicUrl(filePath);
+
+        document.getElementById('profilePhotoPreview').src = urlData.publicUrl;
+        document.getElementById('welcomeProfilePhoto').src = urlData.publicUrl;
+        document.getElementById('welcomeProfilePhoto').style.display = 'block';
+
+        alert('✅ Photo uploaded! Click "Save Profile" to save changes.');
+      } catch (error) {
+        alert('❌ Upload failed: ' + error.message);
+      }
+    }
+
+    async function saveStudentProfile() {
+      const photoUrl = document.getElementById('profilePhotoPreview').src;
+      const bio = document.getElementById('profileBio').value.trim();
+      const subjects = document.getElementById('profileSubjects').value.trim();
+
+      const updateData = {
+        bio: bio,
+        interested_subjects: subjects
+      };
+
+      // Only update photo if it's not the default UI Avatars one
+      if (photoUrl && !photoUrl.includes('ui-avatars.com')) {
+        updateData.profile_photo_url = photoUrl;
+      }
+
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update(updateData)
+        .eq('id', currentUserId);
+
+      if (error) {
+        alert('❌ Error saving profile: ' + error.message);
+        return;
+      }
+
+      alert('✅ Profile saved successfully!');
+      loadStudentProfile();
+    }
+
+    function openProfileTab() {
+      // Switch to profile tab
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      // Find and activate profile tab
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        if (tab.textContent.includes('My Profile')) {
+          tab.classList.add('active');
+        }
+      });
+      
+      document.getElementById('profileTab').classList.add('active');
+      
+      // Scroll to profile photo section
+      setTimeout(() => {
+        document.querySelector('.profile-photo-upload')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+
+    // Character counters
+    document.addEventListener('DOMContentLoaded', () => {
+      const bioField = document.getElementById('profileBio');
+      const subjectsField = document.getElementById('profileSubjects');
+      
+      if (bioField) {
+        bioField.addEventListener('input', () => {
+          document.getElementById('bioCharCount').textContent = bioField.value.length;
+        });
+      }
+      
+      if (subjectsField) {
+        subjectsField.addEventListener('input', () => {
+          document.getElementById('subjectsCharCount').textContent = subjectsField.value.length;
+        });
+      }
+    });
+
+    // ============================================
+    // AUTH & INITIALIZATION
+    // ============================================
 
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -1116,8 +1924,20 @@
         document.getElementById('userName').textContent = profile.full_name || 'Student';
         document.getElementById('userEmail').textContent = profile.email;
         document.getElementById('userAge').textContent = `Age Group: ${profile.age_group || 'Not specified'}`;
+        
+        // Set welcome photo if exists
+        if (profile.profile_photo_url) {
+          document.getElementById('welcomeProfilePhoto').src = profile.profile_photo_url;
+          document.getElementById('welcomeProfilePhoto').style.display = 'block';
+        } else {
+          const initials = (profile.full_name || 'Student').split(' ').map(n => n[0]).join('');
+          document.getElementById('welcomeProfilePhoto').src = 
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&size=200&background=007bff&color=fff`;
+        }
       }
 
+      loadThemeFromStorage();
+      loadStudentProfile();
       checkLiveAdvisors();
       setInterval(checkLiveAdvisors, 30000);
 
@@ -1156,7 +1976,6 @@
     // ==================== TEACHER PROFILE SYSTEM ====================
 
     async function loadTeacherProfile(teacherId) {
-      // Check cache first
       if (teacherProfiles[teacherId]) {
         return teacherProfiles[teacherId];
       }
@@ -1231,7 +2050,6 @@
     function getVideoEmbed(url) {
       if (!url) return '';
 
-      // YouTube
       if (url.includes('youtube.com') || url.includes('youtu.be')) {
         let videoId = '';
         if (url.includes('youtube.com/watch?v=')) {
@@ -1244,7 +2062,6 @@
         }
       }
 
-      // Vimeo
       if (url.includes('vimeo.com')) {
         const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
         if (videoId) {
@@ -1252,7 +2069,6 @@
         }
       }
 
-      // Fallback: show link
       return `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-weight: 600;">🎥 Watch Teaching Video</a>`;
     }
 
@@ -1286,7 +2102,6 @@
         .limit(1);
 
       if (advisors && advisors.length > 0) {
-        // Cache advisor profile
         teacherProfiles[advisors[0].id] = advisors[0];
         document.getElementById('liveAdvisorBanner').style.display = 'block';
       } else {
@@ -1393,6 +2208,7 @@
       }
 
       input.value = '';
+      input.rows = 1;
       await loadAdvisorMessages();
     }
 
@@ -1531,7 +2347,7 @@
           </div>
         ` : ''}
 
-        <div style="display: flex; gap: 1rem; justify-content: center;">
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
           ${invoice.status === 'sent' ? `
             <button class="btn-pay" onclick="payInvoice('${invoice.id}'); closeModal('viewStudentInvoiceModal');">💳 Pay Now</button>
           ` : ''}
@@ -1610,7 +2426,7 @@
     }
 
     // ============================================
-    // SESSIONS MANAGEMENT - ✅ FIXED SORTING + TEACHER PROFILES
+    // SESSIONS MANAGEMENT
     // ============================================
     async function loadSessions() {
       const now = new Date().toISOString();
@@ -1640,7 +2456,7 @@
         
         teachers?.forEach(t => {
           teacherMap[t.id] = t.full_name;
-          teacherProfiles[t.id] = t; // Cache profiles
+          teacherProfiles[t.id] = t;
         });
       }
 
@@ -1775,7 +2591,6 @@
 
       myTeachers = teachers || [];
       
-      // Cache teacher profiles
       myTeachers.forEach(t => {
         teacherProfiles[t.id] = t;
       });
@@ -1873,7 +2688,7 @@
       }
 
       const conversationHTML = `
-        <button onclick="closeModal('supportConversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+        <button onclick="closeModal('supportConversationModal')" class="modal-close-btn">✖</button>
         <div class="conversation-header">
           <h4>💬 Conversation with Support Team</h4>
           <p>${messages.length} message${messages.length !== 1 ? 's' : ''} in this thread</p>
@@ -1903,18 +2718,9 @@
         </div>
 
         <div class="reply-box">
-          <h5>💬 Reply to Support</h5>
-          <div class="form-group">
-            <label>Subject (optional)</label>
-            <input type="text" id="supportReplySubject" placeholder="Enter subject...">
-          </div>
-          <div class="form-group">
-            <label>Your Message *</label>
-            <textarea id="supportReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
-          </div>
-          <div style="display:flex; gap:1rem;">
+          <textarea id="supportReplyMessage" class="reply-input-simple" rows="1" placeholder="Type your reply..." onfocus="this.rows=3"></textarea>
+          <div class="reply-actions">
             <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
-            <button class="btn-secondary" onclick="closeModal('supportConversationModal')">Close</button>
           </div>
         </div>
       `;
@@ -1926,7 +2732,6 @@
     }
 
     async function sendSupportReply() {
-      const subject = document.getElementById('supportReplySubject').value.trim();
       const message = document.getElementById('supportReplyMessage').value.trim();
 
       if (!message) {
@@ -1952,7 +2757,7 @@
           sender_id: currentUserId,
           recipient_id: admins.id,
           message_type: 'support',
-          subject: subject || 'Reply to support',
+          subject: 'Reply to support',
           message: message
         });
 
@@ -1961,13 +2766,13 @@
         return;
       }
 
-      alert('✅ Reply sent successfully!');
-      closeModal('supportConversationModal');
+      document.getElementById('supportReplyMessage').value = '';
+      document.getElementById('supportReplyMessage').rows = 1;
       await openSupportConversation();
     }
 
     // ============================================
-    // TEACHER MESSAGING - ✅ REPLY BOX AT BOTTOM + PROFILES
+    // TEACHER MESSAGING - GMAIL STYLE REPLY
     // ============================================
     async function loadTeacherThreads() {
       if (!myTeachers || myTeachers.length === 0) {
@@ -2103,7 +2908,7 @@
       }
 
       const conversationHTML = `
-        <button onclick="closeModal('conversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
+        <button onclick="closeModal('conversationModal')" class="modal-close-btn">✖</button>
         <div class="conversation-header">
           <h4>💬 Conversation with ${getTeacherAvatarHTML(teacherId, teacherName, 40)}</h4>
           <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} in this thread</p>
@@ -2146,28 +2951,15 @@
         </div>
 
         <div class="reply-box">
-          <h5>💬 Reply to ${teacherName}</h5>
-          <div class="form-group">
-            <label>Subject (optional)</label>
-            <input type="text" id="teacherReplySubject" placeholder="Enter subject...">
-          </div>
-          <div class="form-group">
-            <label>Your Message *</label>
-            <textarea id="teacherReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
-          </div>
-          <div class="file-upload-section">
+          <textarea id="teacherReplyMessage" class="reply-input-simple" rows="1" placeholder="Type your reply..." onfocus="this.rows=3"></textarea>
+          <div class="reply-actions">
             <input type="file" id="teacherReplyFileInput" style="display:none;" onchange="handleFileSelect(event, 'teacherReplyFile')">
-            <button class="file-upload-btn" onclick="document.getElementById('teacherReplyFileInput').click()">
-              📎 Attach File
-            </button>
-            <div id="teacherReplyFilePreview" class="file-preview">
-              <span id="teacherReplyFileName"></span>
-              <button class="remove-file" onclick="clearFile('teacherReplyFile')">✖</button>
-            </div>
+            <button class="btn-secondary" onclick="document.getElementById('teacherReplyFileInput').click()" style="margin:0;">📎</button>
+            <button class="btn-primary" onclick="sendReplyToTeacher('${teacherId}')">Send</button>
           </div>
-          <div style="display:flex; gap:1rem; margin-top:1rem;">
-            <button class="btn-primary" onclick="sendReplyToTeacher('${teacherId}')">Send Reply</button>
-            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+          <div id="teacherReplyFilePreview" class="file-preview">
+            <span id="teacherReplyFileName"></span>
+            <button class="remove-file" onclick="clearFile('teacherReplyFile')">✖</button>
           </div>
         </div>
       `;
@@ -2194,7 +2986,6 @@
     }
 
     async function sendReplyToTeacher(teacherId) {
-      const subject = document.getElementById('teacherReplySubject').value.trim();
       const message = document.getElementById('teacherReplyMessage').value.trim();
 
       if (!message) {
@@ -2217,7 +3008,7 @@
             sender_id: currentUserId,
             recipient_id: teacherId,
             message_type: 'teacher_student',
-            subject: subject || 'Reply from student',
+            subject: 'Reply from student',
             message: message,
             attachment_url: attachmentUrl
           });
@@ -2229,8 +3020,8 @@
         }
 
         selectedFile = null;
-        alert('✅ Reply sent successfully!');
-        closeModal('conversationModal');
+        document.getElementById('teacherReplyMessage').value = '';
+        document.getElementById('teacherReplyMessage').rows = 1;
         
         await openTeacherConversation(teacherId);
       } catch (error) {
@@ -2362,6 +3153,8 @@
         loadTeacherThreads();
       } else if (tabName === 'invoices') {
         loadStudentInvoices();
+      } else if (tabName === 'profile') {
+        loadStudentProfile();
       }
     }
 
@@ -2409,50 +3202,50 @@
       if(wizardStep===0){
         updateProgress(10);
         c.innerHTML = `
-          <h2 style="padding:0 20px; color:#000;">🎯 Book Your Trial Session</h2>
-          <p style="padding:0 20px; color:#000;">Secure your future with a private consultation. Let's start:</p>
-          <button onclick="wizardStep=1; renderWizardStep()" style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Begin</button>
+          <h2 style="padding:0 20px; color:var(--theme-text);">🎯 Book Your Trial Session</h2>
+          <p style="padding:0 20px; color:var(--theme-text);">Secure your future with a private consultation. Let's start:</p>
+          <button onclick="wizardStep=1; renderWizardStep()" style="margin:20px; background:var(--theme-button-gradient); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Begin</button>
         `;
       } else if(wizardStep===1){
         updateProgress(25);
         c.innerHTML = `
-          <h3 style="padding:0 20px; color:#000;">🧒 Your age group:</h3>
+          <h3 style="padding:0 20px; color:var(--theme-text);">🧒 Your age group:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
             ${["Elementary","Middle School","High School","College","Adult Learner"].map(age=>`
               <button onclick="wizardData.age='${age}'; wizardStep=2; renderWizardStep()" 
-                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${age}</button>`).join("")}
+                style="background:var(--theme-button-gradient); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${age}</button>`).join("")}
           </div>
         `;
       } else if(wizardStep===2){
         updateProgress(40);
         c.innerHTML = `
-          <h3 style="padding:0 20px; color:#000;">📘 Choose your subject:</h3>
+          <h3 style="padding:0 20px; color:var(--theme-text);">📘 Choose your subject:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
             ${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing"].map(s=>`
               <button onclick="wizardData.subject='${s}'; wizardStep=3; renderWizardStep()" 
-                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${s}</button>`).join("")}
+                style="background:var(--theme-button-gradient); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${s}</button>`).join("")}
           </div>
         `;
       } else if(wizardStep===3){
         updateProgress(55);
         c.innerHTML = `
-          <h3 style="padding:0 20px; color:#000;">🎓 Preferred learning style:</h3>
+          <h3 style="padding:0 20px; color:var(--theme-text);">🎓 Preferred learning style:</h3>
           <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
             ${["1-on-1 Tutoring","Group Classes","On-Demand Course"].map(style=>`
               <button onclick="wizardData.style='${style}'; wizardStep=4; renderWizardStep()" 
-                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${style}</button>`).join("")}
+                style="background:var(--theme-button-gradient); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${style}</button>`).join("")}
           </div>
         `;
       } else if(wizardStep===4){
         updateProgress(70);
         c.innerHTML = `
-          <h3 style="padding:0 20px; color:#000;">🗣️ What do you need help with?</h3>
+          <h3 style="padding:0 20px; color:var(--theme-text);">🗣️ What do you need help with?</h3>
           <div style="border:1px solid #ccc; border-radius:5px; padding:10px; margin:10px 20px;">
             <textarea id="wizardHelp" placeholder="Type your learning goals here..."
-              style="width:100%; padding:10px; height:100px; border:none; resize:vertical; font-size:14px;"></textarea>
+              style="width:100%; padding:10px; height:100px; border:none; resize:vertical; font-size:14px; background:var(--theme-card-bg); color:var(--theme-text);"></textarea>
           </div>
           <button onclick="wizardData.help=document.getElementById('wizardHelp').value; wizardStep=5; renderWizardStep()" 
-            style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Continue</button>
+            style="margin:0 20px 20px; background:var(--theme-button-gradient); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Continue</button>
         `;
       } else if(wizardStep===5){
         updateProgress(85);
@@ -2461,7 +3254,7 @@
         const maxDate = new Date(today.getTime() + (8 * 24 * 60 * 60 * 1000));
         
         c.innerHTML = `
-          <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
+          <h3 style="padding:0 20px; color:var(--theme-text);">📅 Select Date & Time</h3>
           
           <div style="margin:0 20px 1.5rem 20px; background:#e3f2fd; border-radius:8px; padding:1rem;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
@@ -2496,13 +3289,13 @@
               min="${minDate.toISOString().split('T')[0]}" 
               max="${maxDate.toISOString().split('T')[0]}"
               onchange="generateTimeSlots()"
-              style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
+              style="width:100%; max-width:300px; padding:0.75rem; border:1px solid var(--theme-border); border-radius:6px; font-size:1em; background:var(--theme-card-bg); color:var(--theme-text);">
           </div>
 
           <div id="timeSlotsWizard" style="padding:0 20px; margin-top:1rem;"></div>
 
           <button id="confirmBtn" onclick="confirmBooking()" 
-            style="margin:20px; background:#ff0000; color:#fff; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600; display:none;">
+            style="margin:20px; background:var(--theme-accent); color:#fff; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600; display:none;">
             Confirm Booking
           </button>
         `;
