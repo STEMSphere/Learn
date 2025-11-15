@@ -418,9 +418,9 @@
       font-size: 0.9em;
     }
 
-    /* FIXED: Sticky Reply Box */
+    /* ✅ FIXED: Compact Collapsible Reply Box */
     .messages-container {
-      max-height: 50vh;
+      max-height: 60vh;
       overflow-y: auto;
       margin-bottom: 1rem;
       padding: 1rem;
@@ -434,14 +434,34 @@
       background: #fff;
       border: 2px solid #007bff;
       border-radius: 8px;
-      padding: 1.5rem;
-      margin-top: 1.5rem;
+      padding: 0.75rem 1rem;
+      margin-top: 1rem;
       box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
       z-index: 100;
     }
-    .reply-box h5 {
-      margin: 0 0 1rem 0;
-      color: #007bff;
+
+    .reply-box.collapsed {
+      padding: 0.5rem 1rem;
+    }
+
+    .reply-box.collapsed .reply-form {
+      display: none;
+    }
+
+    .reply-toggle {
+      width: 100%;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1em;
+    }
+
+    .reply-toggle:hover {
+      background: #0056b3;
     }
 
     .message-bubble {
@@ -933,7 +953,7 @@
       </div>
     </div>
 
-    <!-- MY PROFILE TAB (NEW) -->
+    <!-- MY PROFILE TAB -->
     <div id="profileTab" class="tab-content">
       <div class="inbox-container">
         <div class="inbox-header">
@@ -993,7 +1013,7 @@
       </div>
     </div>
 
-    <!-- LIVE INQUIRIES TAB (NEW) -->
+    <!-- LIVE INQUIRIES TAB -->
     <div id="liveInquiriesTab" class="tab-content">
       <div class="inbox-container">
         <div class="inbox-header">
@@ -1120,7 +1140,7 @@
     let unreadSupportCount = 0;
     let wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
     let wizardStep = 0;
-    let selectedFiles = []; // FIXED: Multiple files support
+    let selectedFiles = [];
     let liveInquiriesInterval = null;
 
     // ============================================
@@ -1158,7 +1178,6 @@
       loadInboxThreads();
       loadSupportThreads();
 
-      // Subscribe to realtime messages
       supabaseClient
         .channel('teacher_messages')
         .on('postgres_changes', { 
@@ -1212,7 +1231,6 @@
     async function toggleAdvisorAvailability() {
       const isAvailable = document.getElementById('advisorToggle').checked;
       
-      // Sync both toggles
       document.getElementById('advisorToggle').checked = isAvailable;
       document.getElementById('advisorAvailabilityToggle').checked = isAvailable;
       
@@ -1248,7 +1266,7 @@
         loadLiveInquiries();
         liveInquiriesInterval = setInterval(loadLiveInquiries, 5000);
         
-        alert('✅ You are now AVAILABLE for instant sessions!\n\nStudents will see you as available and can message you directly.');
+        alert('✅ You are now AVAILABLE for instant sessions!');
       } else {
         banner.style.background = '#f8d7da';
         banner.style.color = '#721c24';
@@ -1262,11 +1280,11 @@
           liveInquiriesInterval = null;
         }
         
-        alert('⚪ You are now OFFLINE.\n\nStudents will use the regular booking system.');
+        alert('⚪ You are now OFFLINE.');
       }
     }
 
-    // ==================== LIVE INQUIRIES SYSTEM ====================
+    // ==================== LIVE INQUIRIES SYSTEM (✅ FIXED) ====================
 
     async function loadAdvisorStatus() {
       const { data } = await supabaseClient
@@ -1301,11 +1319,12 @@
     }
 
     async function loadLiveInquiries() {
+      // ✅ FIXED: Load ALL anonymous messages (both null and assigned to this teacher)
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
         .eq('message_type', 'advisor_chat')
-        .eq('recipient_id', currentTeacherId)
+        .or(`recipient_id.eq.${currentTeacherId},recipient_id.is.null`)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -1317,7 +1336,7 @@
 
       const threads = {};
       messages?.forEach(msg => {
-        const sessionId = msg.visitor_session_id;
+        const sessionId = msg.visitor_session_id || 'unknown';
         if (!threads[sessionId]) {
           threads[sessionId] = {
             sessionId: sessionId,
@@ -1408,6 +1427,7 @@
           .in('id', unreadIds);
       }
 
+      // ✅ FIXED: Collapsible reply box
       const conversationHTML = `
         <button onclick="closeModal('conversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
         
@@ -1438,19 +1458,24 @@
           }).join('') || '<div class="empty-state">No messages yet</div>'}
         </div>
 
-        <div class="reply-box">
-          <h5>💬 Reply to Visitor</h5>
-          <div class="form-group">
-            <label>Your Message *</label>
-            <textarea id="liveInquiryReplyMessage" placeholder="Type your reply... Encourage them to sign up!" style="min-height:120px;"></textarea>
+        <div class="reply-box collapsed" id="replyBox">
+          <button class="reply-toggle" onclick="toggleReplyBox()">
+            💬 Click to Reply
+          </button>
+          <div class="reply-form">
+            <h5 style="margin: 1rem 0 0.5rem 0;">Reply to Visitor</h5>
+            <div class="form-group">
+              <label>Your Message *</label>
+              <textarea id="liveInquiryReplyMessage" placeholder="Type your reply... Encourage them to sign up!" style="min-height:120px;"></textarea>
+            </div>
+            <div style="display:flex; gap:1rem; margin-top:1rem;">
+              <button class="btn-primary" onclick="sendLiveInquiryReply('${sessionId}')">Send Reply</button>
+              <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+            </div>
+            <p style="margin-top:1rem; padding:1rem; background:#fff3cd; border:2px solid #ffc107; border-radius:6px; color:#856404;">
+              💡 <strong>Tip:</strong> Encourage this visitor to sign up!
+            </p>
           </div>
-          <div style="display:flex; gap:1rem; margin-top:1rem;">
-            <button class="btn-primary" onclick="sendLiveInquiryReply('${sessionId}')">Send Reply</button>
-            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
-          </div>
-          <p style="margin-top:1rem; padding:1rem; background:#fff3cd; border:2px solid #ffc107; border-radius:6px; color:#856404;">
-            💡 <strong>Tip:</strong> Encourage this visitor to sign up! Share this link: <code>${window.location.origin}/signup.html?session=${sessionId}</code>
-          </p>
         </div>
       `;
 
@@ -1473,7 +1498,7 @@
         .insert({
           sender_id: currentTeacherId,
           recipient_id: null,
-          message_type: 'anonymous_inquiry',
+          message_type: 'advisor_chat',
           visitor_session_id: sessionId,
           subject: 'Advisor Reply',
           message: message
@@ -1486,6 +1511,19 @@
 
       alert('✅ Reply sent!');
       await openLiveInquiryConversation(sessionId);
+    }
+
+    // ✅ COLLAPSIBLE REPLY BOX TOGGLE
+    function toggleReplyBox() {
+      const replyBox = document.getElementById('replyBox');
+      replyBox.classList.toggle('collapsed');
+      
+      const btn = replyBox.querySelector('.reply-toggle');
+      if (replyBox.classList.contains('collapsed')) {
+        btn.textContent = '💬 Click to Reply';
+      } else {
+        btn.textContent = '✖ Close Reply';
+      }
     }
 
     // ==================== TEACHER PROFILE MANAGEMENT ====================
@@ -1511,7 +1549,6 @@
       }
     }
 
-    // Character counter for bio
     document.addEventListener('DOMContentLoaded', () => {
       const bioField = document.getElementById('profileBio');
       if (bioField) {
@@ -1581,14 +1618,10 @@
     // STATS
     // ============================================
     async function loadStats() {
-      console.log('📊 loadStats() called for teacher:', currentTeacherId);
-      
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
         .select('student_id')
         .eq('teacher_id', currentTeacherId);
-
-      console.log('📊 Stats - assignments found:', assignments?.length || 0);
 
       const studentIds = assignments?.map(a => a.student_id) || [];
 
@@ -1610,18 +1643,15 @@
         sessions?.filter(s => s.status === 'completed').length || 0;
       document.getElementById('unreadMessages').textContent = messages?.length || 0;
       
-      console.log('📊 Stats updated - Total students:', studentIds.length);
-      
       unreadMessageCount = messages?.length || 0;
     }
 
     // ============================================
-    // SESSIONS MANAGEMENT (FIXED SORTING)
+    // SESSIONS MANAGEMENT
     // ============================================
     async function loadSessions() {
       const now = new Date().toISOString();
       
-      // FIXED: Sort by session_utc (upcoming first)
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
         .select('*')
@@ -1652,7 +1682,6 @@
         profileMap[p.id] = p;
       });
 
-      // FIXED: Filter upcoming sessions properly
       const upcomingBookings = bookings.filter(b => 
         b.status === 'scheduled' && b.session_utc && new Date(b.session_utc) >= new Date(now)
       );
@@ -1778,7 +1807,7 @@
     }
 
     async function cancelSession(bookingId) {
-      if (!confirm('Are you sure you want to cancel this session? This will notify the student.')) return;
+      if (!confirm('Are you sure you want to cancel this session?')) return;
 
       const { error } = await supabaseClient
         .from('bookings')
@@ -1824,7 +1853,6 @@
 
       tbody.innerHTML = students.map(student => {
         const sessionCount = bookings?.filter(b => b.user_id === student.id).length || 0;
-        const studentIdentifier = student.id ? `...${student.id.slice(-8)}` : 'N/A';
         
         return `
           <tr>
@@ -1852,7 +1880,7 @@
     }
 
     // ============================================
-    // FILE UPLOAD HELPER (FIXED: MULTIPLE FILES)
+    // FILE UPLOAD HELPER
     // ============================================
     async function uploadFile(file) {
       try {
@@ -1919,7 +1947,7 @@
     }
 
     // ============================================
-    // STUDENT MESSAGING SYSTEM (FIXED: MULTIPLE ATTACHMENTS + STICKY REPLY)
+    // STUDENT MESSAGING SYSTEM (✅ FIXED: COLLAPSIBLE REPLY)
     // ============================================
     async function loadInboxThreads() {
       const { data: assignments } = await supabaseClient.from('teacher_assignments').select('student_id').eq('teacher_id', currentTeacherId);
@@ -1994,7 +2022,7 @@
         await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadMessageIds);
       }
 
-      // FIXED: Reply box at bottom with sticky positioning
+      // ✅ FIXED: Collapsible reply box at bottom
       const conversationHTML = `
         <button onclick="closeModal('conversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
         <div class="conversation-header">
@@ -2031,26 +2059,31 @@
           }).join('')}
         </div>
         
-        <div class="reply-box">
-          <h5>💬 Reply to ${studentName}</h5>
-          <div class="form-group">
-            <label>Subject (optional)</label>
-            <input type="text" id="replySubject" placeholder="Enter subject...">
-          </div>
-          <div class="form-group">
-            <label>Your Message *</label>
-            <textarea id="replyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
-          </div>
-          <div class="file-upload-section">
-            <input type="file" id="replyFileInput" multiple style="display:none;" onchange="handleFileSelect(event, 'replyFile')">
-            <button class="file-upload-btn" onclick="document.getElementById('replyFileInput').click()">
-              📎 Attach Files (Max 5)
-            </button>
-            <div id="replyFilePreviewList" class="files-preview-list"></div>
-          </div>
-          <div style="display:flex; gap:1rem; margin-top:1rem;">
-            <button class="btn-primary" onclick="sendReplyInConversation('${studentId}')">Send Reply</button>
-            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+        <div class="reply-box collapsed" id="replyBox">
+          <button class="reply-toggle" onclick="toggleReplyBox()">
+            💬 Click to Reply
+          </button>
+          <div class="reply-form">
+            <h5 style="margin: 1rem 0 0.5rem 0;">Reply to ${studentName}</h5>
+            <div class="form-group">
+              <label>Subject (optional)</label>
+              <input type="text" id="replySubject" placeholder="Enter subject...">
+            </div>
+            <div class="form-group">
+              <label>Your Message *</label>
+              <textarea id="replyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+            </div>
+            <div class="file-upload-section">
+              <input type="file" id="replyFileInput" multiple style="display:none;" onchange="handleFileSelect(event, 'replyFile')">
+              <button class="file-upload-btn" onclick="document.getElementById('replyFileInput').click()">
+                📎 Attach Files (Max 5)
+              </button>
+              <div id="replyFilePreviewList" class="files-preview-list"></div>
+            </div>
+            <div style="display:flex; gap:1rem; margin-top:1rem;">
+              <button class="btn-primary" onclick="sendReplyInConversation('${studentId}')">Send Reply</button>
+              <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
+            </div>
           </div>
         </div>
       `;
@@ -2090,18 +2123,6 @@
         
         if (error) { alert('Error sending message: ' + error.message); return; }
 
-        try {
-          const { data: student } = await supabaseClient.from('profiles').select('email, full_name').eq('id', studentId).single();
-          const { data: currentUser } = await supabaseClient.from('profiles').select('full_name').eq('id', currentTeacherId).single();
-          if (student && currentUser) {
-            fetch(`${SUPABASE_URL}/functions/v1/send-notification-email`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
-              body: JSON.stringify({ type: 'new_message_to_student', to: student.email, data: { recipientName: student.full_name, senderName: currentUser.full_name, subject: subject || 'New message', message: message } })
-            });
-          }
-        } catch (emailError) { console.error('⚠️ Email notification failed (non-critical):', emailError); }
-
         selectedFiles = [];
         closeModal('conversationModal');
         await openConversation(studentId);
@@ -2136,7 +2157,7 @@
     }
 
     // ============================================
-    // SUPPORT TICKET SYSTEM
+    // SUPPORT TICKET SYSTEM (✅ FIXED: COLLAPSIBLE REPLY)
     // ============================================
     async function loadSupportThreads() {
       const { data: admins } = await supabaseClient.from('profiles').select('id').eq('role', 'admin');
@@ -2170,6 +2191,7 @@
         await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadMessageIds);
       }
 
+      // ✅ FIXED: Collapsible reply box
       const conversationHTML = `
         <button onclick="closeModal('supportConversationModal')" style="position:absolute; top:1rem; right:1rem; background:#dc3545; color:#fff; border:none; padding:0.5rem 1rem; border-radius:50%; cursor:pointer; font-size:1.2em; z-index:10; width:40px; height:40px;">✖</button>
         <div class="conversation-header">
@@ -2186,19 +2208,24 @@
           }).join('')}
         </div>
         
-        <div class="reply-box">
-          <h5>💬 Reply to Support</h5>
-          <div class="form-group">
-            <label>Subject (optional)</label>
-            <input type="text" id="supportReplySubject" placeholder="Enter subject...">
-          </div>
-          <div class="form-group">
-            <label>Your Message *</label>
-            <textarea id="supportReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
-          </div>
-          <div style="display:flex; gap:1rem;">
-            <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
-            <button class="btn-secondary" onclick="closeModal('supportConversationModal')">Close</button>
+        <div class="reply-box collapsed" id="replyBox">
+          <button class="reply-toggle" onclick="toggleReplyBox()">
+            💬 Click to Reply
+          </button>
+          <div class="reply-form">
+            <h5 style="margin: 1rem 0 0.5rem 0;">Reply to Support</h5>
+            <div class="form-group">
+              <label>Subject (optional)</label>
+              <input type="text" id="supportReplySubject" placeholder="Enter subject...">
+            </div>
+            <div class="form-group">
+              <label>Your Message *</label>
+              <textarea id="supportReplyMessage" placeholder="Type your reply here..." style="min-height:120px;"></textarea>
+            </div>
+            <div style="display:flex; gap:1rem;">
+              <button class="btn-primary" onclick="sendSupportReply()">Send Reply</button>
+              <button class="btn-secondary" onclick="closeModal('supportConversationModal')">Close</button>
+            </div>
           </div>
         </div>
       `;
@@ -2410,7 +2437,7 @@
       
       const container = document.getElementById('timeSlotsTeacher');
       container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (All times available - no restrictions):</p>
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (All times available):</p>
         <div class="time-slots">
           ${slots.map(slot => 
             `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
@@ -2473,7 +2500,6 @@
       }
     }
 
-    // TIMEZONE CONVERSION HELPERS
     function convertToUTC(localDateTimeString, timezone) {
       try {
         const [datePart, timePart] = localDateTimeString.split('T');
@@ -2510,22 +2536,6 @@
       }
     }
 
-    function convertFromUTC(utcTimestamp, targetTimezone) {
-      try {
-        if (!utcTimestamp) return 'Not scheduled';
-        const date = new Date(utcTimestamp);
-        const options = {
-          timeZone: targetTimezone, year: 'numeric', month: 'long', day: 'numeric',
-          hour: '2-digit', minute: '2-digit', hour12: true
-        };
-        return date.toLocaleString('en-US', options);
-      } catch (error) {
-        console.error('❌ Display error:', error);
-        return new Date(utcTimestamp).toLocaleString();
-      }
-    }
-
-    // BLACKBOARD FUNCTIONALITY
     async function openBlackboard(bookingId) {
       const timestamp = Date.now().toString(36);
       const random = Math.random().toString(36).substring(2, 8);
@@ -2536,7 +2546,7 @@
       const { error } = await supabaseClient.from('bookings').update({ whiteboard_link: blackboardLink }).eq('id', bookingId);
       
       if (error) {
-        alert('Error saving blackboard link. Check console.');
+        alert('Error saving blackboard link.');
         return;
       }
       
@@ -2551,7 +2561,6 @@
       return key.padEnd(22, Math.random().toString(36).substring(2));
     }
 
-    // Initialize on page load
     checkTeacherAuth();
   </script>
 </body>
