@@ -1658,7 +1658,7 @@
     }
 
     async function assignStudentToMe(studentId, studentName) {
-      if (!confirm(`Assign ${studentName} as your student?`)) return;
+      // Assignment confirmation removed for streamlined UX
 
       const { error } = await supabaseClient
         .from('teacher_assignments')
@@ -1996,7 +1996,7 @@
     }
 
     async function cancelSession(bookingId) {
-      if (!confirm('Are you sure you want to cancel this session?')) return;
+      // Session cancellation confirmation removed
 
       const { error } = await supabaseClient
         .from('bookings')
