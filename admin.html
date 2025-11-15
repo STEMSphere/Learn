@@ -1756,9 +1756,7 @@
 
     async function toggleAdvisorStatus(teacherId, makeAdvisor, teacherName) {
       const action = makeAdvisor ? 'make' : 'remove';
-      if (!confirm(`${action === 'make' ? 'Make' : 'Remove'} ${teacherName} ${action === 'make' ? 'as an' : 'from being an'} enrollment advisor?`)) {
-        return;
-      }
+      // Advisor toggle confirmation removed for streamlined workflow
 
       const { error } = await supabaseClient
         .from('profiles')
@@ -2047,9 +2045,7 @@
     }
 
     async function updateApplicationStatus(appId, newStatus, applicantName) {
-      if (!confirm(`Are you sure you want to mark ${applicantName}'s application as ${newStatus}?`)) {
-        return;
-      }
+      // Application status update confirmation removed
 
       console.log('🔄 Updating application:', appId, 'to status:', newStatus);
 
@@ -2252,7 +2248,7 @@
     }
 
     async function markComplete(bookingId) {
-      if (!confirm('Mark this session as completed?')) return;
+      // Session completion confirmation removed
 
       const { error } = await supabaseClient
         .from('bookings')
@@ -2271,7 +2267,7 @@
     }
 
     async function cancelSession(bookingId) {
-      if (!confirm('Are you sure you want to cancel this session? This cannot be undone.')) return;
+      // Session cancellation confirmation removed
 
       const { error } = await supabaseClient
         .from('bookings')
@@ -2356,7 +2352,7 @@
     }
 
     async function removeTeacherAssignment(studentId, teacherId, studentName, teacherName) {
-      if (!confirm(`Remove ${teacherName} from ${studentName}?`)) return;
+      // Teacher removal confirmation removed
 
       const { error } = await supabaseClient
         .from('teacher_assignments')
@@ -2759,9 +2755,7 @@
         return;
       }
 
-      if (!confirm(`Reset password for ${document.getElementById('resetTeacherName').textContent}?`)) {
-        return;
-      }
+      // Password reset confirmation removed
 
       const { error } = await supabaseClient.auth.resetPasswordForEmail(teacherEmail, {
         redirectTo: window.location.origin + '/reset-password.html'
@@ -3266,7 +3260,7 @@
     }
 
     async function sendInvoice(invoiceId) {
-      if (!confirm('Send this invoice to the student?')) return;
+      // Invoice send confirmation removed
       
       const loadingBtn = event.target;
       const originalText = loadingBtn.textContent;
@@ -3379,7 +3373,7 @@
     }
 
     async function markInvoicePaid(invoiceId) {
-      if (!confirm('Mark as paid?')) return;
+      // Payment confirmation removed
       const { error } = await supabaseClient.from('invoices').update({ status: 'paid', paid_at: new Date().toISOString() }).eq('id', invoiceId);
       if (error) { alert('Error: ' + error.message); return; }
       alert('✅ Marked as paid!');
@@ -3387,7 +3381,7 @@
     }
 
     async function cancelInvoice(invoiceId) {
-      if (!confirm('Cancel this invoice?')) return;
+      // Invoice cancellation confirmation removed
       const { error } = await supabaseClient.from('invoices').update({ status: 'cancelled' }).eq('id', invoiceId);
       if (error) { alert('Error: ' + error.message); return; }
       alert('✅ Cancelled!');
