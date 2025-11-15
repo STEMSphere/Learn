@@ -309,6 +309,16 @@ h2.subtitle {
   box-shadow: 0 15px 40px rgba(255,0,0,0.7);
 }
 
+#liveChatBtn {
+  background: linear-gradient(135deg, #00ff88, #00c853) !important;
+  color: #000 !important;
+  box-shadow: 0 10px 30px rgba(0,255,136,0.5) !important;
+}
+
+#liveChatBtn:hover {
+  box-shadow: 0 15px 40px rgba(0,255,136,0.7) !important;
+}
+
 #highIntentCTA::before {
   content: "⬇⬇⬇";
   position: absolute;
@@ -535,124 +545,6 @@ h2.subtitle {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🟢 LIVE ADVISOR CHAT SECTION (NEW - ABOVE PRICING)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#liveAdvisorSection {
-  background: linear-gradient(135deg, #00ff88, #00c853);
-  padding: 3rem 1rem;
-  margin: 4rem 0;
-  position: relative;
-  box-shadow: 0 10px 40px rgba(0,255,136,0.4);
-}
-
-#liveAdvisorSection::before {
-  content: "⬇⬇⬇";
-  position: absolute;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2.5rem;
-  color: #00ff88;
-  text-shadow: 0 0 20px #00ff88;
-  animation: bounce 1.5s infinite;
-}
-
-.advisor-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 3rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.advisor-photo-section {
-  text-align: center;
-}
-
-.advisor-photo-large {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 5px solid #fff;
-  object-fit: cover;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  background: #fff;
-}
-
-.view-profile-btn {
-  display: inline-block;
-  margin-top: 1rem;
-  background: #fff;
-  color: #00c853;
-  padding: 0.5rem 1.5rem;
-  border-radius: 25px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.9em;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.view-profile-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-
-.advisor-cta-section {
-  flex: 1;
-  min-width: 300px;
-  text-align: center;
-}
-
-.advisor-cta-section h2 {
-  color: #000;
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  margin-bottom: 1rem;
-  font-weight: 800;
-}
-
-.advisor-cta-section p {
-  color: #000;
-  font-size: clamp(1rem, 2.5vw, 1.3rem);
-  margin-bottom: 2rem;
-  opacity: 0.9;
-}
-
-.chat-now-btn {
-  display: inline-block;
-  background: #000;
-  color: #00ff88;
-  padding: 1.2rem 3rem;
-  border-radius: 12px;
-  text-decoration: none;
-  font-weight: 800;
-  font-size: clamp(1.1rem, 3vw, 1.4rem);
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  animation: pulse-green 2s infinite;
-}
-
-.chat-now-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
-}
-
-@keyframes pulse-green {
-  0%, 100% {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  }
-  50% {
-    box-shadow: 0 8px 32px rgba(0,255,136,0.6);
-  }
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    💰 PRICING SECTION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #pricing-section {
@@ -747,7 +639,6 @@ h2.subtitle {
   max-width: 600px;
 }
 
-/* Continue with remaining styles... */
 #oanda_ecc {
   width: 100%;
 }
@@ -759,6 +650,7 @@ h2.subtitle {
   margin-bottom: 1rem;
 }
 
+/* Continue with remaining styles... */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    📚 EBOOK RESOURCES SECTION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -1057,16 +949,6 @@ footer {
     font-size: 0.85em;
     padding: 8px 15px;
   }
-
-  .advisor-container {
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .advisor-photo-large {
-    width: 120px;
-    height: 120px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -1095,7 +977,6 @@ footer {
 </head>
 
 <body>
-
 <!-- START: COMPACT LANGUAGE TRANSLATOR BAR -->
 <div id="fallback-translator">
   <select onchange="translatePage(this.value)">
@@ -1166,8 +1047,14 @@ footer {
   </video>
 </div>
 
-<!-- CTA BUTTON -->
+<!-- CTA BUTTON WITH LIVE CHAT -->
 <div id="highIntentCTA">
+  <!-- Live Chat Button (shows when advisor available) -->
+  <button onclick="openAnonymousAdvisorChat()" id="liveChatBtn" style="display:none;">
+    💬 Chat with Advisor NOW - Free!
+  </button>
+  
+  <!-- Regular CTA (always visible) -->
   <a href="https://learn.stemsphere.academy/login.html">
     🚀 Book Your Enrollment Session Now
   </a>
@@ -1390,22 +1277,6 @@ footer {
     Ready to transform your academic journey?  
     <span class="highlight">Join STEMSphere today</span> and start seeing real results.
   </p>
-</section>
-
-<!-- 🟢 LIVE ADVISOR SECTION (ABOVE PRICING) -->
-<section id="liveAdvisorSection" style="display:none;">
-  <div class="advisor-container">
-    <div class="advisor-photo-section">
-      <img id="advisorPhotoLarge" src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="Advisor" class="advisor-photo-large">
-      <button class="view-profile-btn" onclick="openAdvisorProfile()">👁️ View <span id="advisorNameBtn">Advisor</span>'s Profile</button>
-    </div>
-    
-    <div class="advisor-cta-section">
-      <h2>Questions Before You See Our Plans?</h2>
-      <p>Chat with <span id="advisorNameText">our enrollment advisor</span> and get instant answers about our tutoring programs!</p>
-      <button class="chat-now-btn" onclick="openAnonymousAdvisorChat()">💬 Start Live Chat - Free!</button>
-    </div>
-  </div>
 </section>
 
 <!-- PRICING SECTION -->
@@ -1662,30 +1533,34 @@ let currentAdvisorData = null;
 
 // Check if advisors are available
 async function checkAdvisorAvailability() {
-  const { data: advisors } = await supabaseClient
-    .from('profiles')
-    .select('id, full_name, profile_photo_url, bio, years_experience, education, fun_fact, teaching_video_url')
-    .eq('role', 'teacher')
-    .eq('is_advisor', true)
-    .eq('advisor_available', true)
-    .limit(1);
+  try {
+    const { data: advisors, error } = await supabaseClient
+      .from('profiles')
+      .select('id, full_name, profile_photo_url, bio, years_experience, education, fun_fact, teaching_video_url')
+      .eq('role', 'teacher')
+      .eq('is_advisor', true)
+      .eq('advisor_available', true)
+      .limit(1);
 
-  if (advisors && advisors.length > 0) {
-    currentAdvisorData = advisors[0];
-    
-    // Show live advisor section
-    document.getElementById('liveAdvisorSection').style.display = 'block';
-    
-    // Update advisor photo and name in section
-    const photoLarge = document.getElementById('advisorPhotoLarge');
-    if (advisors[0].profile_photo_url) {
-      photoLarge.src = advisors[0].profile_photo_url;
+    if (error) {
+      console.error('Error fetching advisors:', error);
+      return;
     }
+
+    const chatBtn = document.getElementById('liveChatBtn');
     
-    document.getElementById('advisorNameBtn').textContent = advisors[0].full_name;
-    document.getElementById('advisorNameText').textContent = advisors[0].full_name;
-  } else {
-    document.getElementById('liveAdvisorSection').style.display = 'none';
+    if (advisors && advisors.length > 0) {
+      currentAdvisorData = advisors[0];
+      if (chatBtn) {
+        chatBtn.style.display = 'inline-block';
+      }
+    } else {
+      if (chatBtn) {
+        chatBtn.style.display = 'none';
+      }
+    }
+  } catch (err) {
+    console.error('Exception in checkAdvisorAvailability:', err);
   }
 }
 
@@ -1729,6 +1604,9 @@ async function openAnonymousAdvisorChat() {
   loadAnonymousMessages();
   
   // Poll for new messages every 3 seconds
+  if (anonymousChatInterval) {
+    clearInterval(anonymousChatInterval);
+  }
   anonymousChatInterval = setInterval(loadAnonymousMessages, 3000);
 }
 
@@ -1839,7 +1717,6 @@ function openAdvisorProfile() {
   
   let videoSection = '';
   if (advisor.teaching_video_url) {
-    // Extract video ID for YouTube/Vimeo
     let videoEmbed = '';
     if (advisor.teaching_video_url.includes('youtube.com') || advisor.teaching_video_url.includes('youtu.be')) {
       const videoId = advisor.teaching_video_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
@@ -1886,7 +1763,7 @@ function openAdvisorProfile() {
     
     ${advisor.education ? `
       <div style="margin: 1.5rem 0;">
-        <h4 style="color: #007bff; margin-bottom: 0.5rem;">🎓 Education</h4>
+        <h4 style="color: #007bff; margin-bottom: 0.5rem;">📚 Education</h4>
         <p style="color: #333;">${advisor.education}</p>
       </div>
     ` : ''}
@@ -1914,8 +1791,12 @@ function closeTeacherProfile() {
   document.getElementById('teacherProfileModal').style.display = 'none';
 }
 
-// Check advisor availability on page load
-checkAdvisorAvailability();
+// Initialize on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', checkAdvisorAvailability);
+} else {
+  checkAdvisorAvailability();
+}
 
 // Check every 30 seconds
 setInterval(checkAdvisorAvailability, 30000);
