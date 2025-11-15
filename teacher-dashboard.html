@@ -1915,7 +1915,7 @@
       }
 
       const studentIds = assignments.map(a => a.student_id);
-      const { data: students, error: studentsError } = await supabaseClient.from('profiles').select('*').in('id', studentIds);
+      const { data: students, error: studentsError } = await supabaseClient.from('profiles').select('id, full_name, profile_photo_url, bio, interested_subjects, age_group, created_at, role').in('id', studentIds);
 
       if (studentsError) {
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading students</td></tr>'; return;
