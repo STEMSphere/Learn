@@ -81,7 +81,6 @@
       opacity: 0.9;
     }
 
-    /* Advisor Toggle Switch */
     .advisor-toggle-switch {
       position: relative;
       display: inline-block;
@@ -367,14 +366,6 @@
       gap: 1rem;
       align-items: center;
     }
-    .message-count {
-      background: #007bff;
-      color: #fff;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.85em;
-      font-weight: 600;
-    }
     .unread-count {
       background: #ff0000;
       color: #fff;
@@ -411,6 +402,11 @@
       align-items: center;
       gap: 1rem;
     }
+    
+    .conversation-header.green {
+      background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
     .conversation-header img {
       width: 60px;
       height: 60px;
@@ -444,8 +440,23 @@
       background: #fff;
       color: #007bff;
     }
+    
+    .assign-student-btn {
+      background: #ffc107;
+      color: #000;
+      border: 2px solid #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      margin-left: 0.5rem;
+    }
+    .assign-student-btn:hover {
+      background: #fff;
+      color: #ffc107;
+    }
 
-    /* ✅ FIXED: Better message container */
     .messages-container {
       max-height: 60vh;
       overflow-y: auto;
@@ -455,7 +466,6 @@
       border-radius: 8px;
     }
 
-    /* ✅ FIXED: Gmail-style reply box */
     .reply-box {
       position: sticky;
       bottom: 0;
@@ -627,7 +637,6 @@
       position: relative;
     }
     
-    /* ✅ FIXED: Sticky close button */
     .modal-close-btn {
       position: sticky;
       top: 0;
@@ -757,6 +766,12 @@
       color: #fff;
       border-color: #007bff;
     }
+    .time-slot.disabled {
+      background: #f5f5f5;
+      color: #ccc;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
 
     .wizard-modal {
       display: none;
@@ -828,7 +843,6 @@
       transform: translateX(26px);
     }
 
-    /* Student Profile Modal Styles */
     .profile-modal-header {
       text-align: center;
       margin-bottom: 2rem;
@@ -1189,13 +1203,17 @@
     </div>
   </div>
 
-  <!-- Student Profile Modal -->
   <div id="studentProfileModal" class="modal">
     <div class="modal-content">
       <button onclick="closeStudentProfile()" class="modal-close-btn">✖</button>
       <div id="studentProfileContent"></div>
     </div>
   </div>
+
+  <!-- Audio element for notification sound -->
+  <audio id="notificationSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU" type="audio/wav">
+  </audio>
   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
@@ -1208,10 +1226,36 @@
     let myStudents = [];
     let unreadMessageCount = 0;
     let unreadSupportCount = 0;
+    let previousLiveInquiryCount = 0;
     let wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "" };
     let wizardStep = 0;
     let selectedFiles = [];
     let liveInquiriesInterval = null;
+    let audioContext = null;
+
+    // Create notification sound using Web Audio API
+    function playNotificationSound() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Prominent chime sound
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+      oscillator.frequency.setValueAtTime(900, audioContext.currentTime + 0.2);
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.4);
+    }
 
     async function checkTeacherAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
@@ -1237,6 +1281,9 @@
 
       document.getElementById('teacherName').textContent = profile.full_name || 'Teacher';
 
+      // Reset all unread messages on load (one-time cleanup)
+      await resetUnreadMessages();
+
       checkIfAdvisor();
       loadTeacherProfile();
       loadStats();
@@ -1258,6 +1305,15 @@
           loadStats();
         })
         .subscribe();
+    }
+
+    async function resetUnreadMessages() {
+      // Mark all teacher_student and teacher_support messages as read
+      await supabaseClient
+        .from('messages')
+        .update({ is_read: true })
+        .eq('recipient_id', currentTeacherId)
+        .in('message_type', ['teacher_student', 'teacher_support']);
     }
 
     async function logout() {
@@ -1328,6 +1384,7 @@
         status.textContent = 'Online';
         status.style.color = '#28a745';
         
+        previousLiveInquiryCount = 0;
         loadLiveInquiries();
         liveInquiriesInterval = setInterval(loadLiveInquiries, 5000);
         
@@ -1372,6 +1429,7 @@
         if (data.advisor_available) {
           status.textContent = 'Online';
           status.style.color = '#28a745';
+          previousLiveInquiryCount = 0;
           loadLiveInquiries();
           liveInquiriesInterval = setInterval(loadLiveInquiries, 5000);
         } else {
@@ -1427,6 +1485,13 @@
       );
 
       const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
+      
+      // Play sound if new messages arrived
+      if (totalUnread > previousLiveInquiryCount && previousLiveInquiryCount > 0) {
+        playNotificationSound();
+      }
+      previousLiveInquiryCount = totalUnread;
+      
       updateBadge('liveInquiriesBadge', totalUnread);
 
       renderLiveInquiriesThreads(threadArray);
@@ -1440,13 +1505,10 @@
         return;
       }
 
-      // Get student names for non-anonymous threads
       const threadArray = await Promise.all(threads.map(async thread => {
-        // Check if any message has a sender_id (logged-in student)
         const loggedInMessage = thread.messages.find(msg => msg.sender_id !== null && msg.sender_id !== currentTeacherId);
         
         if (loggedInMessage) {
-          // This is a logged-in student - get their name
           const { data: student } = await supabaseClient
             .from('profiles')
             .select('full_name')
@@ -1485,7 +1547,6 @@
               <div class="teacher-name">${icon} ${thread.studentName}</div>
               <div class="thread-meta">
                 ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
-                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
                 <span class="last-message-date">${dateStr}</span>
               </div>
             </div>
@@ -1508,16 +1569,19 @@
         return;
       }
 
-      // Check if this is a logged-in student
       const loggedInMessage = messages?.find(m => m.sender_id !== null && m.sender_id !== currentTeacherId);
       let studentName = 'Anonymous Visitor';
       let studentIcon = '🌐';
+      let studentId = null;
+      let isLoggedIn = false;
       
       if (loggedInMessage) {
+        studentId = loggedInMessage.sender_id;
+        isLoggedIn = true;
         const { data: student } = await supabaseClient
           .from('profiles')
           .select('full_name')
-          .eq('id', loggedInMessage.sender_id)
+          .eq('id', studentId)
           .single();
         
         if (student) {
@@ -1534,14 +1598,29 @@
           .in('id', unreadIds);
       }
 
+      // Check if student is already assigned
+      let isAssigned = false;
+      if (studentId) {
+        const { data: assignment } = await supabaseClient
+          .from('teacher_assignments')
+          .select('id')
+          .eq('teacher_id', currentTeacherId)
+          .eq('student_id', studentId)
+          .single();
+        
+        isAssigned = !!assignment;
+      }
+
       const conversationHTML = `
         <button onclick="closeModal('conversationModal')" class="modal-close-btn">✖</button>
         
-        <div class="conversation-header">
+        <div class="conversation-header green">
           <div class="conversation-header-text">
             <h4>${studentIcon} Live Inquiry - ${studentName}</h4>
             <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} • Session ID: ${sessionId}</p>
           </div>
+          ${isLoggedIn && !isAssigned ? `<button class="assign-student-btn" onclick="assignStudentToMe('${studentId}', '${studentName.replace(/'/g, "\\'")}')">➕ Assign Student to Me</button>` : ''}
+          ${isAssigned ? '<span style="color:#fff; font-weight:600;">✅ Student Assigned</span>' : ''}
         </div>
 
         <div class="messages-container">
@@ -1556,61 +1635,118 @@
               minute: '2-digit'
             });
 
+            let attachmentHTML = '';
+            if (msg.attachment_url) {
+              try {
+                const urls = JSON.parse(msg.attachment_url);
+                if (Array.isArray(urls)) {
+                  attachmentHTML = urls.map(url => {
+                    const fileName = url.split('/').pop();
+                    return `<div class="attachment"><a href="${url}" target="_blank">📎 ${fileName}</a></div>`;
+                  }).join('');
+                } else {
+                  const fileName = msg.attachment_url.split('/').pop();
+                  attachmentHTML = `<div class="attachment"><a href="${msg.attachment_url}" target="_blank">📎 ${fileName}</a></div>`;
+                }
+              } catch {
+                const fileName = msg.attachment_url.split('/').pop();
+                attachmentHTML = `<div class="attachment"><a href="${msg.attachment_url}" target="_blank">📎 ${fileName}</a></div>`;
+              }
+            }
+
             return `
               <div class="message-bubble ${bubbleClass}">
                 <div class="sender">${isFromVisitor ? studentName : 'You'}</div>
                 <div class="timestamp">${date}</div>
                 <div class="body">${msg.message}</div>
+                ${attachmentHTML}
               </div>
             `;
           }).join('') || '<div class="empty-state">No messages yet</div>'}
         </div>
 
         <div class="reply-box">
-          <h5>💬 Reply to ${studentName}</h5>
-          <div class="form-group">
-            <label>Your Message *</label>
-            <textarea id="liveInquiryReplyMessage" placeholder="Type your reply..." style="min-height:120px;"></textarea>
-          </div>
-          <div style="display:flex; gap:1rem; margin-top:1rem;">
+          <textarea id="liveInquiryReplyMessage" class="reply-input-simple" rows="3" placeholder="Type your reply..."></textarea>
+          <input type="file" id="liveInquiryFileInput" multiple style="display:none;" onchange="handleFileSelect(event, 'liveInquiryFile')">
+          <div id="liveInquiryFilePreviewList" class="files-preview-list"></div>
+          <div class="reply-actions">
+            <button class="btn-secondary" onclick="document.getElementById('liveInquiryFileInput').click()" style="margin:0;">📎 Attach Files</button>
             <button class="btn-primary" onclick="sendLiveInquiryReply('${sessionId}')">Send Reply</button>
-            <button class="btn-secondary" onclick="closeModal('conversationModal')">Close</button>
           </div>
         </div>
       `;
 
       document.getElementById('conversationContent').innerHTML = conversationHTML;
       document.getElementById('conversationModal').classList.add('active');
+      selectedFiles = [];
 
       loadLiveInquiries();
+    }
+
+    async function assignStudentToMe(studentId, studentName) {
+      if (!confirm(`Assign ${studentName} as your student?`)) return;
+
+      const { error } = await supabaseClient
+        .from('teacher_assignments')
+        .insert({
+          teacher_id: currentTeacherId,
+          student_id: studentId
+        });
+
+      if (error) {
+        if (error.code === '23505') {
+          alert('This student is already assigned to you!');
+        } else {
+          alert('Error assigning student: ' + error.message);
+        }
+        return;
+      }
+
+      alert(`✅ ${studentName} has been assigned to you!`);
+      await loadStudents();
+      closeModal('conversationModal');
     }
 
     async function sendLiveInquiryReply(sessionId) {
       const message = document.getElementById('liveInquiryReplyMessage').value.trim();
 
-      if (!message) {
-        alert('Please enter a message');
+      if (!message && selectedFiles.length === 0) {
+        alert('Please enter a message or attach files');
         return;
       }
 
-      const { error } = await supabaseClient
-        .from('messages')
-        .insert({
-          sender_id: currentTeacherId,
-          recipient_id: null,
-          message_type: 'advisor_chat',
-          visitor_session_id: sessionId,
-          subject: 'Advisor Reply',
-          message: message
-        });
+      try {
+        let attachmentUrls = [];
+        if (selectedFiles.length > 0) {
+          for (const file of selectedFiles) {
+            const url = await uploadFile(file);
+            attachmentUrls.push(url);
+          }
+        }
 
-      if (error) {
-        alert('Error sending message: ' + error.message);
-        return;
+        const { error } = await supabaseClient
+          .from('messages')
+          .insert({
+            sender_id: currentTeacherId,
+            recipient_id: null,
+            message_type: 'advisor_chat',
+            visitor_session_id: sessionId,
+            subject: 'Advisor Reply',
+            message: message || 'File attachment',
+            attachment_url: attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : null
+          });
+
+        if (error) {
+          alert('Error sending message: ' + error.message);
+          return;
+        }
+
+        selectedFiles = [];
+        document.getElementById('liveInquiryReplyMessage').value = '';
+        await openLiveInquiryConversation(sessionId);
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
       }
-
-      document.getElementById('liveInquiryReplyMessage').value = '';
-      await openLiveInquiryConversation(sessionId);
     }
 
     async function loadTeacherProfile() {
@@ -1712,11 +1848,13 @@
         .select('id, status')
         .eq('assigned_teacher_id', currentTeacherId);
 
+      // Only count teacher_student and teacher_support unread, NOT advisor_chat
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('id')
         .eq('recipient_id', currentTeacherId)
-        .eq('is_read', false);
+        .eq('is_read', false)
+        .in('message_type', ['teacher_student', 'teacher_support']);
 
       document.getElementById('totalStudents').textContent = studentIds.length || 0;
       document.getElementById('upcomingSessions').textContent = 
@@ -1915,7 +2053,7 @@
       }
 
       const studentIds = assignments.map(a => a.student_id);
-      const { data: students, error: studentsError } = await supabaseClient.from('profiles').select('id, full_name, profile_photo_url, bio, interested_subjects, age_group, created_at, role').in('id', studentIds);
+      const { data: students, error: studentsError } = await supabaseClient.from('profiles').select('*').in('id', studentIds);
 
       if (studentsError) {
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Error loading students</td></tr>'; return;
@@ -2069,7 +2207,6 @@
               <div class="student-name">${thread.studentName}</div>
               <div class="thread-meta">
                 ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
-                <span class="message-count">${thread.totalCount} message${thread.totalCount !== 1 ? 's' : ''}</span>
                 <span class="last-message-date">${dateStr}</span>
               </div>
             </div>
@@ -2082,7 +2219,6 @@
     async function openConversation(studentId) {
       const student = myStudents.find(s => s.id === studentId);
       
-      // Fetch student profile info including photo
       const { data: studentProfile } = await supabaseClient
         .from('profiles')
         .select('full_name, profile_photo_url')
@@ -2177,7 +2313,6 @@
         year: 'numeric' 
       });
 
-      // Only show profile if student has filled out their bio or interests
       const hasProfile = student.bio || student.interested_subjects;
 
       const profileHTML = `
@@ -2209,12 +2344,6 @@
           </div>
         `}
 
-        <div style="margin-top:2rem; padding:1rem; background:#fff3cd; border-radius:8px; border-left:4px solid #ffc107;">
-          <p style="color:#856404; font-size:0.9em; margin:0;">
-            🔒 <strong>Privacy Notice:</strong> Email, phone, and other contact information are kept private for security. Only administrators have access to this information.
-          </p>
-        </div>
-
         <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
           <button class="btn-primary" onclick="openComposeToStudentModal('${studentId}'); closeStudentProfile();">
             💬 Send Message
@@ -2233,7 +2362,7 @@
 
     async function sendReplyInConversation(studentId) {
       const message = document.getElementById('replyMessage').value.trim();
-      if (!message) { alert('Please enter a message'); return; }
+      if (!message && selectedFiles.length === 0) { alert('Please enter a message or attach files'); return; }
 
       try {
         let attachmentUrls = [];
@@ -2249,7 +2378,7 @@
           recipient_id: studentId, 
           message_type: 'teacher_student', 
           subject: 'Reply from your teacher', 
-          message: message,
+          message: message || 'File attachment',
           attachment_url: attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : null
         });
         
@@ -2307,7 +2436,7 @@
 
       document.getElementById('teacherSupportMessages').innerHTML = `
         <div class="thread-item ${unreadClass}" onclick="openSupportConversation()">
-          <div class="thread-header"><div class="student-name">Support Team</div><div class="thread-meta">${unreadSupportCount > 0 ? `<span class="unread-count">${unreadSupportCount} new</span>` : ''}<span class="message-count">${messages.length} message${messages.length !== 1 ? 's' : ''}</span><span class="last-message-date">${dateStr}</span></div></div>
+          <div class="thread-header"><div class="student-name">Support Team</div><div class="thread-meta">${unreadSupportCount > 0 ? `<span class="unread-count">${unreadSupportCount} new</span>` : ''}<span class="last-message-date">${dateStr}</span></div></div>
           <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
         </div>`;
     }
@@ -2467,7 +2596,7 @@
         
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
-          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Teachers can schedule instantly - no time restrictions!</p>
+          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Teachers can schedule instantly - book any available time slot!</p>
           
           <div style="padding:0 20px; margin-bottom:1.5rem; background:#e3f2fd; border-radius:8px; padding:1rem;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
@@ -2502,7 +2631,7 @@
               max="${maxDate}"
               onchange="generateTeacherTimeSlots()"
               style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
-            <p style="font-size:0.85em; color:#666; margin-top:0.5rem;">✅ No restrictions - create sessions instantly!</p>
+            <p style="font-size:0.85em; color:#666; margin-top:0.5rem;">✅ Book current 30-min block or any future slot!</p>
           </div>
 
           <div id="timeSlotsTeacher" style="padding:0 20px; margin-top:1rem;"></div>
@@ -2535,6 +2664,13 @@
       const selectedDate = document.getElementById('sessionDate').value;
       if (!selectedDate) return;
 
+      const now = new Date();
+      const selectedDateObj = new Date(selectedDate + 'T00:00:00');
+      const isToday = selectedDateObj.toDateString() === now.toDateString();
+      
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+
       const slots = [];
       for (let hour = 0; hour < 24; hour++) {
         for (let min = 0; min < 60; min += 30) {
@@ -2542,7 +2678,16 @@
           const period = hour >= 12 ? 'PM' : 'AM';
           const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
           const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
-          slots.push({ time24: timeStr24, time12: timeStr12 });
+          
+          // If it's today, disable past time slots
+          let isPast = false;
+          if (isToday) {
+            if (hour < currentHour || (hour === currentHour && min < currentMinute)) {
+              isPast = true;
+            }
+          }
+          
+          slots.push({ time24: timeStr24, time12: timeStr12, isPast: isPast });
         }
       }
 
@@ -2550,17 +2695,19 @@
       
       const container = document.getElementById('timeSlotsTeacher');
       container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (All times available):</p>
+        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (${isToday ? 'Current & future slots available' : 'All times available'}):</p>
         <div class="time-slots">
           ${slots.map(slot => 
-            `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
+            slot.isPast 
+              ? `<div class="time-slot disabled" data-time="${slot.time24}">${slot.time12}<br><small>Past</small></div>`
+              : `<div class="time-slot" onclick="selectSessionTime('${slot.time24}')" data-time="${slot.time24}">${slot.time12}</div>`
           ).join('')}
         </div>
       `;
     }
 
     function selectSessionTime(time) {
-      document.querySelectorAll('.time-slot').forEach(slot => {
+      document.querySelectorAll('.time-slot:not(.disabled)').forEach(slot => {
         slot.classList.remove('selected');
       });
       event.target.classList.add('selected');
