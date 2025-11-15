@@ -2162,7 +2162,7 @@
     async function viewStudentProfile(studentId) {
       const { data: student, error } = await supabaseClient
         .from('profiles')
-        .select('profile_photo_url, full_name, email, bio, interested_subjects, age_group, phone, created_at')
+        .select('profile_photo_url, full_name, bio, interested_subjects, age_group, created_at')
         .eq('id', studentId)
         .single();
 
@@ -2177,41 +2177,43 @@
         year: 'numeric' 
       });
 
+      // Only show profile if student has filled out their bio or interests
+      const hasProfile = student.bio || student.interested_subjects;
+
       const profileHTML = `
         <div class="profile-modal-header">
           <img src="${profilePhoto}" alt="${student.full_name}">
           <h2 style="color:#007bff; margin-bottom:0.5rem;">${student.full_name}</h2>
           <p style="color:#666; font-size:0.9em;">Member since ${memberSince}</p>
+          ${student.age_group ? `<p style="color:#666; font-size:0.9em;">👶 Age Group: ${student.age_group}</p>` : ''}
         </div>
 
-        <div class="profile-info-grid">
-          <div class="profile-info-item">
-            <h4>📧 Email</h4>
-            <p>${student.email || 'Not provided'}</p>
-          </div>
-          
-          <div class="profile-info-item">
-            <h4>📱 Phone</h4>
-            <p>${student.phone || 'Not provided'}</p>
-          </div>
-          
-          <div class="profile-info-item">
-            <h4>👶 Age Group</h4>
-            <p>${student.age_group || 'Not specified'}</p>
-          </div>
-          
-          <div class="profile-info-item">
-            <h4>📚 Interested Subjects</h4>
-            <p>${student.interested_subjects || 'Not specified'}</p>
-          </div>
-        </div>
+        ${hasProfile ? `
+          ${student.interested_subjects ? `
+            <div style="margin-top:2rem; padding:1.5rem; background:#fff3cd; border-radius:8px; border-left:4px solid #ffc107;">
+              <h4 style="color:#856404; margin-bottom:1rem;">📚 Subjects I'm Interested In</h4>
+              <p style="color:#333; line-height:1.6;">${student.interested_subjects}</p>
+            </div>
+          ` : ''}
 
-        ${student.bio ? `
-          <div style="margin-top:2rem; padding:1.5rem; background:#f8f9fa; border-radius:8px; border-left:4px solid #007bff;">
-            <h4 style="color:#007bff; margin-bottom:1rem;">📝 About ${student.full_name.split(' ')[0]}</h4>
-            <p style="color:#333; line-height:1.6; white-space:pre-wrap;">${student.bio}</p>
+          ${student.bio ? `
+            <div style="margin-top:1.5rem; padding:1.5rem; background:#e3f2fd; border-radius:8px; border-left:4px solid #007bff;">
+              <h4 style="color:#007bff; margin-bottom:1rem;">📝 About ${student.full_name.split(' ')[0]}</h4>
+              <p style="color:#333; line-height:1.6; white-space:pre-wrap;">${student.bio}</p>
+            </div>
+          ` : ''}
+        ` : `
+          <div style="margin-top:2rem; padding:2rem; background:#f8f9fa; border-radius:8px; text-align:center;">
+            <p style="color:#666; font-size:1.1em;">📋 This student hasn't filled out their profile yet.</p>
+            <p style="color:#999; font-size:0.9em; margin-top:0.5rem;">They can add information about themselves and their interests in their profile settings.</p>
           </div>
-        ` : ''}
+        `}
+
+        <div style="margin-top:2rem; padding:1rem; background:#fff3cd; border-radius:8px; border-left:4px solid #ffc107;">
+          <p style="color:#856404; font-size:0.9em; margin:0;">
+            🔒 <strong>Privacy Notice:</strong> Email, phone, and other contact information are kept private for security. Only administrators have access to this information.
+          </p>
+        </div>
 
         <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center;">
           <button class="btn-primary" onclick="openComposeToStudentModal('${studentId}'); closeStudentProfile();">
