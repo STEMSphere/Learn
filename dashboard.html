@@ -1722,16 +1722,15 @@
     }
 
     function resetThemeToDefault() {
-      if (confirm('Reset all theme settings to default?')) {
-        currentTheme = {
-          background: 'default',
-          button: 'default',
-          accent: 'default'
-        };
-        applyTheme();
-        renderColorSwatches();
-      }
-    }
+  // Reset theme without confirmation
+  currentTheme = {
+    background: 'default',
+    button: 'default',
+    accent: 'default'
+  };
+  applyTheme();
+  renderColorSwatches();
+}
 
     // ============================================
     // PROFILE SYSTEM
