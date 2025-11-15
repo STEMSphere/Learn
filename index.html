@@ -975,8 +975,6 @@ footer {
 }
   </style>
 </head>
-
-<body>
 <!-- START: COMPACT LANGUAGE TRANSLATOR BAR -->
 <div id="fallback-translator">
   <select onchange="translatePage(this.value)">
@@ -1049,10 +1047,12 @@ footer {
 
 <!-- CTA BUTTON WITH LIVE CHAT -->
 <div id="highIntentCTA">
-  <!-- Live Chat Button (shows when advisor available) -->
-  <button onclick="openAnonymousAdvisorChat()" id="liveChatBtn" style="display:none;">
-    💬 Chat with Advisor NOW - Free!
-  </button>
+  <!-- Live Chat Button (shows when advisor available) - ABOVE RED BUTTON -->
+  <div id="liveChatWrapper" style="display:none; margin-bottom: 1rem;">
+    <button onclick="openAnonymousAdvisorChat()" id="liveChatBtn">
+      💬 Chat with Advisor NOW - Free!
+    </button>
+  </div>
   
   <!-- Regular CTA (always visible) -->
   <a href="https://learn.stemsphere.academy/login.html">
@@ -1547,16 +1547,16 @@ async function checkAdvisorAvailability() {
       return;
     }
 
-    const chatBtn = document.getElementById('liveChatBtn');
+    const chatWrapper = document.getElementById('liveChatWrapper');
     
     if (advisors && advisors.length > 0) {
       currentAdvisorData = advisors[0];
-      if (chatBtn) {
-        chatBtn.style.display = 'inline-block';
+      if (chatWrapper) {
+        chatWrapper.style.display = 'block';
       }
     } else {
-      if (chatBtn) {
-        chatBtn.style.display = 'none';
+      if (chatWrapper) {
+        chatWrapper.style.display = 'none';
       }
     }
   } catch (err) {
@@ -1798,9 +1798,11 @@ if (document.readyState === 'loading') {
   checkAdvisorAvailability();
 }
 
-// Check every 30 seconds
-setInterval(checkAdvisorAvailability, 30000);
+// Check every 5 seconds for fast updates
+setInterval(checkAdvisorAvailability, 5000);
 </script>
 
 </body>
 </html>
+
+<body>
