@@ -1210,10 +1210,6 @@
     </div>
   </div>
 
-  <!-- Audio element for notification sound -->
-  <audio id="notificationSound" preload="auto">
-    <source src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU" type="audio/wav">
-  </audio>
   <script>
     const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
@@ -1233,7 +1229,6 @@
     let liveInquiriesInterval = null;
     let audioContext = null;
 
-    // Create notification sound using Web Audio API
     function playNotificationSound() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1245,7 +1240,6 @@
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
-      // Prominent chime sound
       oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
       oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
       oscillator.frequency.setValueAtTime(900, audioContext.currentTime + 0.2);
@@ -1281,9 +1275,6 @@
 
       document.getElementById('teacherName').textContent = profile.full_name || 'Teacher';
 
-      // Reset all unread messages on load (one-time cleanup)
-      await resetUnreadMessages();
-
       checkIfAdvisor();
       loadTeacherProfile();
       loadStats();
@@ -1305,15 +1296,6 @@
           loadStats();
         })
         .subscribe();
-    }
-
-    async function resetUnreadMessages() {
-      // Mark all teacher_student and teacher_support messages as read
-      await supabaseClient
-        .from('messages')
-        .update({ is_read: true })
-        .eq('recipient_id', currentTeacherId)
-        .in('message_type', ['teacher_student', 'teacher_support']);
     }
 
     async function logout() {
@@ -1439,12 +1421,14 @@
       }
     }
 
+    // ✅ FIXED: Load live inquiries properly - detect student by sender_id
     async function loadLiveInquiries() {
+      // Get all advisor_chat messages where teacher is involved
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
         .eq('message_type', 'advisor_chat')
-        .or(`recipient_id.eq.${currentTeacherId},recipient_id.is.null`)
+        .or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -1454,12 +1438,18 @@
         return;
       }
 
+      // ✅ Group messages by student (using sender_id who is NOT the teacher)
       const threads = {};
-      messages?.forEach(msg => {
-        const sessionId = msg.visitor_session_id || 'unknown';
-        if (!threads[sessionId]) {
-          threads[sessionId] = {
-            sessionId: sessionId,
+      
+      for (const msg of messages || []) {
+        // Determine who the student is
+        const studentId = msg.sender_id === currentTeacherId ? msg.recipient_id : msg.sender_id;
+        
+        if (!studentId) continue; // Skip if no student ID
+        
+        if (!threads[studentId]) {
+          threads[studentId] = {
+            studentId: studentId,
             messages: [],
             lastMessageDate: new Date(msg.created_at),
             unreadCount: 0,
@@ -1467,18 +1457,19 @@
           };
         }
         
-        threads[sessionId].messages.push(msg);
-        threads[sessionId].totalCount++;
+        threads[studentId].messages.push(msg);
+        threads[studentId].totalCount++;
         
-        if (!msg.is_read && msg.sender_id !== currentTeacherId) {
-          threads[sessionId].unreadCount++;
+        // Count unread messages sent TO the teacher
+        if (msg.recipient_id === currentTeacherId && !msg.is_read) {
+          threads[studentId].unreadCount++;
         }
         
         const msgDate = new Date(msg.created_at);
-        if (msgDate > threads[sessionId].lastMessageDate) {
-          threads[sessionId].lastMessageDate = msgDate;
+        if (msgDate > threads[studentId].lastMessageDate) {
+          threads[studentId].lastMessageDate = msgDate;
         }
-      });
+      }
 
       const threadArray = Object.values(threads).sort((a, b) => 
         b.lastMessageDate - a.lastMessageDate
@@ -1486,8 +1477,7 @@
 
       const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
       
-      // Play sound if new messages arrived
-      if (totalUnread > previousLiveInquiryCount && previousLiveInquiryCount > 0) {
+      if (totalUnread > previousLiveInquiryCount && previousLiveInquiryCount >= 0) {
         playNotificationSound();
       }
       previousLiveInquiryCount = totalUnread;
@@ -1497,37 +1487,28 @@
       renderLiveInquiriesThreads(threadArray);
     }
 
+    // ✅ FIXED: Render threads with actual student names
     async function renderLiveInquiriesThreads(threads) {
       const container = document.getElementById('liveInquiriesThreads');
 
       if (!threads || threads.length === 0) {
-        container.innerHTML = '<div class="empty-state">No live inquiries yet. When students chat from the homepage, they\'ll appear here!</div>';
+        container.innerHTML = '<div class="empty-state">No live inquiries yet. When students chat, they\'ll appear here!</div>';
         return;
       }
 
-      const threadArray = await Promise.all(threads.map(async thread => {
-        const loggedInMessage = thread.messages.find(msg => msg.sender_id !== null && msg.sender_id !== currentTeacherId);
-        
-        if (loggedInMessage) {
-          const { data: student } = await supabaseClient
-            .from('profiles')
-            .select('full_name')
-            .eq('id', loggedInMessage.sender_id)
-            .single();
-          
-          thread.studentName = student?.full_name || 'Student';
-          thread.isAnonymous = false;
-          thread.studentId = loggedInMessage.sender_id;
-        } else {
-          thread.studentName = 'Anonymous Visitor';
-          thread.isAnonymous = true;
-          thread.studentId = null;
-        }
-        
-        return thread;
-      }));
+      // ✅ Fetch student profiles for all threads
+      const studentIds = threads.map(t => t.studentId);
+      const { data: students } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', studentIds);
 
-      container.innerHTML = threadArray.map(thread => {
+      const studentMap = {};
+      students?.forEach(s => {
+        studentMap[s.id] = s.full_name;
+      });
+
+      container.innerHTML = threads.map(thread => {
         const lastMessage = thread.messages[0];
         const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
         const unreadClass = thread.unreadCount > 0 ? 'unread' : '';
@@ -1539,12 +1520,12 @@
           minute: '2-digit'
         });
 
-        const icon = thread.isAnonymous ? '🌐' : '👤';
+        const studentName = studentMap[thread.studentId] || 'Student';
 
         return `
-          <div class="thread-item ${unreadClass}" onclick="openLiveInquiryConversation('${thread.sessionId}')">
+          <div class="thread-item ${unreadClass}" onclick="openLiveInquiryConversation('${thread.studentId}')">
             <div class="thread-header">
-              <div class="teacher-name">${icon} ${thread.studentName}</div>
+              <div class="teacher-name">👤 ${studentName}</div>
               <div class="thread-meta">
                 ${thread.unreadCount > 0 ? `<span class="unread-count">${thread.unreadCount} new</span>` : ''}
                 <span class="last-message-date">${dateStr}</span>
@@ -1556,12 +1537,23 @@
       }).join('');
     }
 
-    async function openLiveInquiryConversation(sessionId) {
+    // ✅ FIXED: Open conversation with proper student name and message display
+    async function openLiveInquiryConversation(studentId) {
+      // Get student info
+      const { data: student } = await supabaseClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', studentId)
+        .single();
+
+      const studentName = student?.full_name || 'Student';
+
+      // Get all messages between teacher and this student
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
         .eq('message_type', 'advisor_chat')
-        .eq('visitor_session_id', sessionId)
+        .or(`and(sender_id.eq.${studentId},recipient_id.eq.${currentTeacherId}),and(sender_id.eq.${currentTeacherId},recipient_id.eq.${studentId})`)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -1569,29 +1561,14 @@
         return;
       }
 
-      const loggedInMessage = messages?.find(m => m.sender_id !== null && m.sender_id !== currentTeacherId);
-      let studentName = 'Anonymous Visitor';
-      let studentIcon = '🌐';
-      let studentId = null;
-      let isLoggedIn = false;
+      // ✅ FIXED: Mark only messages sent TO the teacher as read
+      const unreadIds = messages?.filter(m => 
+        m.recipient_id === currentTeacherId && 
+        !m.is_read
+      ).map(m => m.id) || [];
       
-      if (loggedInMessage) {
-        studentId = loggedInMessage.sender_id;
-        isLoggedIn = true;
-        const { data: student } = await supabaseClient
-          .from('profiles')
-          .select('full_name')
-          .eq('id', studentId)
-          .single();
-        
-        if (student) {
-          studentName = student.full_name;
-          studentIcon = '👤';
-        }
-      }
-
-      const unreadIds = messages?.filter(m => !m.is_read && m.sender_id !== currentTeacherId).map(m => m.id) || [];
       if (unreadIds.length > 0) {
+        console.log(`✅ Marking ${unreadIds.length} messages as read`);
         await supabaseClient
           .from('messages')
           .update({ is_read: true })
@@ -1599,34 +1576,31 @@
       }
 
       // Check if student is already assigned
-      let isAssigned = false;
-      if (studentId) {
-        const { data: assignment } = await supabaseClient
-          .from('teacher_assignments')
-          .select('id')
-          .eq('teacher_id', currentTeacherId)
-          .eq('student_id', studentId)
-          .single();
-        
-        isAssigned = !!assignment;
-      }
+      const { data: assignment } = await supabaseClient
+        .from('teacher_assignments')
+        .select('id')
+        .eq('teacher_id', currentTeacherId)
+        .eq('student_id', studentId)
+        .single();
+      
+      const isAssigned = !!assignment;
 
       const conversationHTML = `
         <button onclick="closeModal('conversationModal')" class="modal-close-btn">✖</button>
         
         <div class="conversation-header green">
           <div class="conversation-header-text">
-            <h4>${studentIcon} Live Inquiry - ${studentName}</h4>
-            <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''} • Session ID: ${sessionId}</p>
+            <h4>👤 Live Inquiry - ${studentName}</h4>
+            <p>${messages?.length || 0} message${messages?.length !== 1 ? 's' : ''}</p>
           </div>
-          ${isLoggedIn && !isAssigned ? `<button class="assign-student-btn" onclick="assignStudentToMe('${studentId}', '${studentName.replace(/'/g, "\\'")}')">➕ Assign Student to Me</button>` : ''}
+          ${!isAssigned ? `<button class="assign-student-btn" onclick="assignStudentToMe('${studentId}', '${studentName.replace(/'/g, "\\'")}')">➕ Assign Student to Me</button>` : ''}
           ${isAssigned ? '<span style="color:#fff; font-weight:600;">✅ Student Assigned</span>' : ''}
         </div>
 
         <div class="messages-container">
           ${messages?.map(msg => {
-            const isFromVisitor = msg.sender_id !== currentTeacherId;
-            const bubbleClass = isFromVisitor ? 'from-teacher' : 'from-me';
+            const isFromStudent = msg.sender_id === studentId;
+            const bubbleClass = isFromStudent ? 'from-student' : 'from-me';
             const date = new Date(msg.created_at).toLocaleString('en-US', {
               month: 'short',
               day: 'numeric',
@@ -1656,7 +1630,7 @@
 
             return `
               <div class="message-bubble ${bubbleClass}">
-                <div class="sender">${isFromVisitor ? studentName : 'You'}</div>
+                <div class="sender">${isFromStudent ? studentName : 'You'}</div>
                 <div class="timestamp">${date}</div>
                 <div class="body">${msg.message}</div>
                 ${attachmentHTML}
@@ -1671,7 +1645,7 @@
           <div id="liveInquiryFilePreviewList" class="files-preview-list"></div>
           <div class="reply-actions">
             <button class="btn-secondary" onclick="document.getElementById('liveInquiryFileInput').click()" style="margin:0;">📎 Attach Files</button>
-            <button class="btn-primary" onclick="sendLiveInquiryReply('${sessionId}')">Send Reply</button>
+            <button class="btn-primary" onclick="sendLiveInquiryReply('${studentId}')">Send Reply</button>
           </div>
         </div>
       `;
@@ -1707,7 +1681,7 @@
       closeModal('conversationModal');
     }
 
-    async function sendLiveInquiryReply(sessionId) {
+    async function sendLiveInquiryReply(studentId) {
       const message = document.getElementById('liveInquiryReplyMessage').value.trim();
 
       if (!message && selectedFiles.length === 0) {
@@ -1728,9 +1702,8 @@
           .from('messages')
           .insert({
             sender_id: currentTeacherId,
-            recipient_id: null,
+            recipient_id: studentId,
             message_type: 'advisor_chat',
-            visitor_session_id: sessionId,
             subject: 'Advisor Reply',
             message: message || 'File attachment',
             attachment_url: attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : null
@@ -1743,7 +1716,7 @@
 
         selectedFiles = [];
         document.getElementById('liveInquiryReplyMessage').value = '';
-        await openLiveInquiryConversation(sessionId);
+        await openLiveInquiryConversation(studentId);
       } catch (error) {
         alert('❌ Error: ' + error.message);
       }
@@ -1848,7 +1821,6 @@
         .select('id, status')
         .eq('assigned_teacher_id', currentTeacherId);
 
-      // Only count teacher_student and teacher_support unread, NOT advisor_chat
       const { data: messages } = await supabaseClient
         .from('messages')
         .select('id')
@@ -2679,7 +2651,6 @@
           const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
           const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
           
-          // If it's today, disable past time slots
           let isPast = false;
           if (isToday) {
             if (hour < currentHour || (hour === currentHour && min < currentMinute)) {
