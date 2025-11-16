@@ -941,6 +941,121 @@
       margin: 0.25rem;
     }
 
+    /* LIVE VISITORS STYLES */
+    .visitor-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .visitor-stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .visitor-stat-card.main-domain {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    .visitor-stat-card.learn-domain {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    }
+    .visitor-stat-card h3 {
+      font-size: 0.9em;
+      margin-bottom: 0.5rem;
+      opacity: 0.9;
+    }
+    .visitor-stat-card .number {
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 0.5rem 0;
+    }
+    .visitor-stat-card .label {
+      font-size: 0.85em;
+      opacity: 0.8;
+    }
+    
+    .visitor-card {
+      background: #fff;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+    }
+    .visitor-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      transform: translateY(-2px);
+    }
+    .visitor-card.active {
+      border-color: #00ff88;
+      background: linear-gradient(to right, #f0fff4 0%, #ffffff 100%);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    }
+    .visitor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .visitor-location {
+      font-weight: 700;
+      font-size: 1.2em;
+      color: #000;
+    }
+    .domain-badge {
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .domain-badge.main {
+      background: #28a745;
+      color: #fff;
+    }
+    .domain-badge.learn {
+      background: #007bff;
+      color: #fff;
+    }
+    .visitor-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .visitor-detail-item {
+      background: #f8f9fa;
+      padding: 0.75rem;
+      border-radius: 6px;
+      border-left: 3px solid #667eea;
+    }
+    .visitor-detail-item strong {
+      color: #667eea;
+      font-size: 0.85em;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .visitor-detail-item span {
+      color: #333;
+      font-size: 0.95em;
+    }
+    .time-active {
+      color: #28a745;
+      font-weight: 600;
+      font-size: 0.9em;
+      margin-top: 0.5rem;
+    }
+    .time-active.inactive {
+      color: #dc3545;
+    }
+
     @media (max-width: 768px) {
       .message-bubble.from-me {
         margin-left: 0.5rem;
@@ -1029,6 +1144,10 @@
       <button class="tab" onclick="showTab('teacherApplications')">
         📋 Teacher Applications
         <span class="badge" id="teacherAppsBadge" style="display:none;">0</span>
+      </button>
+      <button class="tab" onclick="showTab('liveVisitors')">
+        🌍 Live Visitors
+        <span class="badge" id="liveVisitorsBadge" style="display:none; background:#00ff88;">0</span>
       </button>
     </div>
 
@@ -1257,6 +1376,58 @@
         
         <div id="teacherApplicationsList">
           <div class="empty-state">Loading applications...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE VISITORS TAB -->
+    <div id="liveVisitorsTab" class="tab-content">
+      <div class="inbox-container">
+        <div class="inbox-header">
+          <h3>🌍 Live Website Visitors</h3>
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <button class="btn-primary" onclick="loadLiveVisitors()" style="background: #667eea;">
+              🔄 Refresh Now
+            </button>
+            <span id="visitorAutoRefreshStatus" style="color: #28a745; font-weight: 600; font-size: 0.9em;">
+              ● Auto-refresh ON
+            </span>
+          </div>
+        </div>
+
+        <div class="visitor-stats-grid">
+          <div class="visitor-stat-card">
+            <h3>🌍 Total Live Now</h3>
+            <div class="number" id="totalLiveVisitors">-</div>
+            <div class="label">Active Visitors</div>
+          </div>
+          <div class="visitor-stat-card main-domain">
+            <h3>🏠 Main Domain</h3>
+            <div class="number" id="mainDomainVisitors">-</div>
+            <div class="label">stemsphere.academy</div>
+          </div>
+          <div class="visitor-stat-card learn-domain">
+            <h3>📚 Learn Domain</h3>
+            <div class="number" id="learnDomainVisitors">-</div>
+            <div class="label">learn.stemsphere.academy</div>
+          </div>
+          <div class="visitor-stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <h3>📈 Today's Total</h3>
+            <div class="number" id="todayTotalVisitors">-</div>
+            <div class="label">Unique Visitors</div>
+          </div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #667eea;">
+          <p style="margin: 0; color: #333; font-size: 0.95em;">
+            <strong style="color: #667eea;">ℹ️ How it works:</strong> Visitors are tracked on both domains. 
+            Active status means they've been on the site in the last 5 minutes. 
+            Dashboard auto-refreshes every 10 seconds.
+          </p>
+        </div>
+
+        <div id="liveVisitorsList">
+          <div class="loading">Loading live visitors...</div>
         </div>
       </div>
     </div>
@@ -1672,6 +1843,9 @@
     let currentApplicationFilter = 'pending';
     let teacherAppsAuthenticated = false;
     const TEACHER_APPS_PASSWORD = 'MYACCESSAVA';
+    
+    // Live Visitors Variables
+    let visitorAutoRefreshInterval = null;
     async function checkAdminAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -1744,6 +1918,17 @@
         }, () => {
           loadAdvisors();
         })
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'live_visitors'
+        }, () => {
+          // Only refresh if the tab is active
+          const activeTab = document.querySelector('.tab-content.active');
+          if (activeTab && activeTab.id === 'liveVisitorsTab') {
+            loadLiveVisitors();
+          }
+        })
         .subscribe();
     }
 
@@ -1805,6 +1990,10 @@
         loadTeacherApplications();
       } else if (tabName === 'advisors') {
         loadAdvisors();
+      } else if (tabName === 'liveVisitors') {
+        startVisitorAutoRefresh();
+      } else {
+        stopVisitorAutoRefresh();
       }
     }
 
@@ -3085,7 +3274,7 @@
       await loadStats();
     }
 
-    // ==================== INVOICE FUNCTIONS ====================
+    // ==================== INVOICE FUNCTIONS (Abbreviated - Same as Part 5 before) ====================
 
     function generateInvoiceNumber() {
       const now = new Date();
@@ -3344,6 +3533,154 @@
       document.getElementById('overdueInvoicesCount').textContent = overdue;
       document.getElementById('outstandingAmount').textContent = `$${outstanding.toFixed(2)}`;
       updateBadge('invoicesBadge', pending + overdue);
+    }
+
+    // ==================== LIVE VISITORS TRACKING ====================
+
+    async function loadLiveVisitors() {
+      try {
+        const { data, error } = await supabaseClient.rpc('get_live_visitors');
+
+        if (error) {
+          console.error('Error loading live visitors:', error);
+          document.getElementById('liveVisitorsList').innerHTML = 
+            '<div class="empty-state">Error loading visitors: ' + error.message + '</div>';
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          document.getElementById('liveVisitorsList').innerHTML = 
+            '<div class="empty-state">No live visitors at the moment. Tracking both stemsphere.academy and learn.stemsphere.academy</div>';
+          
+          document.getElementById('totalLiveVisitors').textContent = '0';
+          document.getElementById('mainDomainVisitors').textContent = '0';
+          document.getElementById('learnDomainVisitors').textContent = '0';
+          updateBadge('liveVisitorsBadge', 0);
+          return;
+        }
+
+        // Calculate stats
+        const totalLive = data.length;
+        const mainDomain = data.filter(v => v.page_url && v.page_url.includes('stemsphere.academy') && !v.page_url.includes('learn.')).length;
+        const learnDomain = data.filter(v => v.page_url && v.page_url.includes('learn.stemsphere.academy')).length;
+
+        // Update stats
+        document.getElementById('totalLiveVisitors').textContent = totalLive;
+        document.getElementById('mainDomainVisitors').textContent = mainDomain;
+        document.getElementById('learnDomainVisitors').textContent = learnDomain;
+        updateBadge('liveVisitorsBadge', totalLive);
+
+        // Get today's total unique visitors
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const { data: todayVisitors } = await supabaseClient
+          .from('live_visitors')
+          .select('visitor_id')
+          .gte('last_seen', today.toISOString());
+        
+        const uniqueToday = new Set(todayVisitors?.map(v => v.visitor_id)).size;
+        document.getElementById('todayTotalVisitors').textContent = uniqueToday;
+
+        // Render visitor cards
+        renderVisitorCards(data);
+
+      } catch (error) {
+        console.error('Error in loadLiveVisitors:', error);
+        document.getElementById('liveVisitorsList').innerHTML = 
+          '<div class="empty-state">Error loading visitors. Please refresh the page.</div>';
+      }
+    }
+
+    function renderVisitorCards(visitors) {
+      const container = document.getElementById('liveVisitorsList');
+      
+      if (!visitors || visitors.length === 0) {
+        container.innerHTML = '<div class="empty-state">No live visitors right now.</div>';
+        return;
+      }
+
+      // Sort by most recent activity
+      const sortedVisitors = visitors.sort((a, b) => 
+        new Date(b.last_seen) - new Date(a.last_seen)
+      );
+
+      container.innerHTML = sortedVisitors.map(visitor => {
+        const lastSeen = new Date(visitor.last_seen);
+        const now = new Date();
+        const minutesAgo = Math.floor((now - lastSeen) / 60000);
+        
+        const isActive = minutesAgo < 5;
+        const timeText = minutesAgo === 0 ? 'Just now' : 
+                        minutesAgo === 1 ? '1 minute ago' : 
+                        `${minutesAgo} minutes ago`;
+
+        const location = visitor.city && visitor.country ? 
+          `${visitor.city}, ${visitor.country}` : 
+          visitor.country || 'Unknown Location';
+
+        const isMainDomain = visitor.page_url && visitor.page_url.includes('stemsphere.academy') && !visitor.page_url.includes('learn.');
+        const domainBadgeClass = isMainDomain ? 'main' : 'learn';
+        const domainBadgeText = isMainDomain ? 'MAIN' : 'LEARN';
+
+        return `
+          <div class="visitor-card ${isActive ? 'active' : ''}">
+            <div class="visitor-header">
+              <div class="visitor-location">📍 ${location}</div>
+              <span class="domain-badge ${domainBadgeClass}">${domainBadgeText}</span>
+            </div>
+            <div class="visitor-details">
+              <div class="visitor-detail-item">
+                <strong>🌐 Page URL</strong>
+                <span style="word-break: break-all; font-size: 0.85em;">${visitor.page_url || 'Unknown'}</span>
+              </div>
+              <div class="visitor-detail-item">
+                <strong>🖥️ IP Address</strong>
+                <span>${visitor.ip_address || 'Unknown'}</span>
+              </div>
+              <div class="visitor-detail-item">
+                <strong>⏰ Last Seen</strong>
+                <span class="time-active ${isActive ? '' : 'inactive'}">${timeText}</span>
+              </div>
+              <div class="visitor-detail-item">
+                <strong>🔑 Visitor ID</strong>
+                <span style="font-family: monospace; font-size: 0.8em;">${visitor.visitor_id.substring(0, 12)}...</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function startVisitorAutoRefresh() {
+      // Load immediately
+      loadLiveVisitors();
+      
+      // Clear any existing interval
+      if (visitorAutoRefreshInterval) {
+        clearInterval(visitorAutoRefreshInterval);
+      }
+      
+      // Set up auto-refresh every 10 seconds
+      visitorAutoRefreshInterval = setInterval(() => {
+        loadLiveVisitors();
+      }, 10000);
+      
+      document.getElementById('visitorAutoRefreshStatus').textContent = '● Auto-refresh ON (10s)';
+      document.getElementById('visitorAutoRefreshStatus').style.color = '#28a745';
+    }
+
+    function stopVisitorAutoRefresh() {
+      if (visitorAutoRefreshInterval) {
+        clearInterval(visitorAutoRefreshInterval);
+        visitorAutoRefreshInterval = null;
+      }
+      
+      const statusEl = document.getElementById('visitorAutoRefreshStatus');
+      if (statusEl) {
+        statusEl.textContent = '○ Auto-refresh OFF';
+        statusEl.style.color = '#dc3545';
+      }
     }
     async function viewInvoice(invoiceId) {
       const { data: invoice, error } = await supabaseClient
@@ -4564,6 +4901,7 @@ ${result.url}`);
       loadAdminChatThreads();
     }
 
+    // Initialize dashboard
     checkAdminAuth();
   </script>
 </body>
