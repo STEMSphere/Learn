@@ -1227,6 +1227,7 @@
     let wizardStep = 0;
     let selectedFiles = [];
     let liveInquiriesInterval = null;
+    let liveInquiriesRealtimeChannel = null;
     let audioContext = null;
 
     function playNotificationSound() {
@@ -1283,6 +1284,7 @@
       loadInboxThreads();
       loadSupportThreads();
 
+      // ✅ REAL-TIME SUBSCRIPTIONS FOR INSTANT NOTIFICATIONS
       supabaseClient
         .channel('teacher_messages')
         .on('postgres_changes', { 
@@ -1368,7 +1370,10 @@
         
         previousLiveInquiryCount = 0;
         loadLiveInquiries();
+        
+        // ✅ START BOTH POLLING AND REAL-TIME
         liveInquiriesInterval = setInterval(loadLiveInquiries, 5000);
+        setupLiveInquiriesRealtime();
         
         alert('✅ You are now AVAILABLE for instant sessions!');
       } else {
@@ -1379,13 +1384,54 @@
         status.textContent = 'Offline';
         status.style.color = '#dc3545';
         
+        // ✅ STOP BOTH POLLING AND REAL-TIME
         if (liveInquiriesInterval) {
           clearInterval(liveInquiriesInterval);
           liveInquiriesInterval = null;
         }
         
+        if (liveInquiriesRealtimeChannel) {
+          supabaseClient.removeChannel(liveInquiriesRealtimeChannel);
+          liveInquiriesRealtimeChannel = null;
+        }
+        
         alert('⚪ You are now OFFLINE.');
       }
+    }
+
+    // ✅ NEW: REAL-TIME SUBSCRIPTION FOR INSTANT LIVE INQUIRY NOTIFICATIONS
+    function setupLiveInquiriesRealtime() {
+      // Remove existing channel if any
+      if (liveInquiriesRealtimeChannel) {
+        supabaseClient.removeChannel(liveInquiriesRealtimeChannel);
+      }
+
+      // Create new real-time channel for advisor_chat messages
+      liveInquiriesRealtimeChannel = supabaseClient
+        .channel('live_inquiries_realtime')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `message_type=eq.advisor_chat,recipient_id=eq.${currentTeacherId}`
+        }, (payload) => {
+          console.log('🔔 NEW LIVE INQUIRY RECEIVED (REALTIME):', payload);
+          // ✅ INSTANT NOTIFICATION - Load immediately when new message arrives
+          loadLiveInquiries();
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `message_type=eq.advisor_chat,recipient_id=eq.${currentTeacherId}`
+        }, (payload) => {
+          console.log('🔄 LIVE INQUIRY UPDATED (REALTIME):', payload);
+          // ✅ Reload when message is updated (e.g., marked as read)
+          loadLiveInquiries();
+        })
+        .subscribe((status) => {
+          console.log('📡 Live Inquiries Real-time Status:', status);
+        });
     }
 
     async function loadAdvisorStatus() {
@@ -1413,7 +1459,10 @@
           status.style.color = '#28a745';
           previousLiveInquiryCount = 0;
           loadLiveInquiries();
+          
+          // ✅ START BOTH POLLING AND REAL-TIME
           liveInquiriesInterval = setInterval(loadLiveInquiries, 5000);
+          setupLiveInquiriesRealtime();
         } else {
           status.textContent = 'Offline';
           status.style.color = '#dc3545';
@@ -1421,9 +1470,7 @@
       }
     }
 
-    // ✅ FIXED: Load live inquiries properly - detect student by sender_id
     async function loadLiveInquiries() {
-      // Get all advisor_chat messages where teacher is involved
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1438,14 +1485,12 @@
         return;
       }
 
-      // ✅ Group messages by student (using sender_id who is NOT the teacher)
       const threads = {};
       
       for (const msg of messages || []) {
-        // Determine who the student is
         const studentId = msg.sender_id === currentTeacherId ? msg.recipient_id : msg.sender_id;
         
-        if (!studentId) continue; // Skip if no student ID
+        if (!studentId) continue;
         
         if (!threads[studentId]) {
           threads[studentId] = {
@@ -1460,7 +1505,6 @@
         threads[studentId].messages.push(msg);
         threads[studentId].totalCount++;
         
-        // Count unread messages sent TO the teacher
         if (msg.recipient_id === currentTeacherId && !msg.is_read) {
           threads[studentId].unreadCount++;
         }
@@ -1477,7 +1521,9 @@
 
       const totalUnread = threadArray.reduce((sum, thread) => sum + thread.unreadCount, 0);
       
+      // ✅ PLAY SOUND ONLY IF UNREAD COUNT INCREASED
       if (totalUnread > previousLiveInquiryCount && previousLiveInquiryCount >= 0) {
+        console.log('🔔 Playing notification sound - New unread messages!');
         playNotificationSound();
       }
       previousLiveInquiryCount = totalUnread;
@@ -1487,7 +1533,6 @@
       renderLiveInquiriesThreads(threadArray);
     }
 
-    // ✅ FIXED: Render threads with actual student names
     async function renderLiveInquiriesThreads(threads) {
       const container = document.getElementById('liveInquiriesThreads');
 
@@ -1496,7 +1541,6 @@
         return;
       }
 
-      // ✅ Fetch student profiles for all threads
       const studentIds = threads.map(t => t.studentId);
       const { data: students } = await supabaseClient
         .from('profiles')
@@ -1537,9 +1581,7 @@
       }).join('');
     }
 
-    // ✅ FIXED: Open conversation with proper student name and message display
     async function openLiveInquiryConversation(studentId) {
-      // Get student info
       const { data: student } = await supabaseClient
         .from('profiles')
         .select('full_name')
@@ -1548,7 +1590,6 @@
 
       const studentName = student?.full_name || 'Student';
 
-      // Get all messages between teacher and this student
       const { data: messages, error } = await supabaseClient
         .from('messages')
         .select('*')
@@ -1561,7 +1602,6 @@
         return;
       }
 
-      // ✅ FIXED: Mark only messages sent TO the teacher as read
       const unreadIds = messages?.filter(m => 
         m.recipient_id === currentTeacherId && 
         !m.is_read
@@ -1575,7 +1615,6 @@
           .in('id', unreadIds);
       }
 
-      // Check if student is already assigned
       const { data: assignment } = await supabaseClient
         .from('teacher_assignments')
         .select('id')
@@ -2267,7 +2306,7 @@
       loadStats();
     }
 
-    async function viewStudentProfile(studentId) {
+   async function viewStudentProfile(studentId) {
       const { data: student, error } = await supabaseClient
         .from('profiles')
         .select('profile_photo_url, full_name, bio, interested_subjects, age_group, created_at')
@@ -2334,7 +2373,10 @@
 
     async function sendReplyInConversation(studentId) {
       const message = document.getElementById('replyMessage').value.trim();
-      if (!message && selectedFiles.length === 0) { alert('Please enter a message or attach files'); return; }
+      if (!message && selectedFiles.length === 0) { 
+        alert('Please enter a message or attach files'); 
+        return; 
+      }
 
       try {
         let attachmentUrls = [];
@@ -2354,7 +2396,10 @@
           attachment_url: attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : null
         });
         
-        if (error) { alert('Error sending message: ' + error.message); return; }
+        if (error) { 
+          alert('Error sending message: ' + error.message); 
+          return; 
+        }
 
         selectedFiles = [];
         document.getElementById('replyMessage').value = '';
@@ -2369,8 +2414,13 @@
 
     function openComposeToStudentModal(studentIdToSelect = null) {
       const select = document.getElementById('composeStudentSelect');
-      select.innerHTML = '<option value="">-- Choose a student --</option>' + myStudents.map(student => `<option value="${student.id}">${student.full_name}</option>`).join('');
-      if (studentIdToSelect) { select.value = studentIdToSelect; }
+      select.innerHTML = '<option value="">-- Choose a student --</option>' + 
+        myStudents.map(student => `<option value="${student.id}">${student.full_name}</option>`).join('');
+      
+      if (studentIdToSelect) { 
+        select.value = studentIdToSelect; 
+      }
+      
       document.getElementById('composeStudentSubject').value = '';
       document.getElementById('composeStudentMessage').value = '';
       document.getElementById('composeToStudentModal').classList.add('active');
@@ -2380,46 +2430,112 @@
       const studentId = document.getElementById('composeStudentSelect').value;
       const subject = document.getElementById('composeStudentSubject').value.trim();
       const message = document.getElementById('composeStudentMessage').value.trim();
-      if (!studentId) { alert('Please select a student'); return; }
-      if (!message) { alert('Please enter a message'); return; }
+      
+      if (!studentId) { 
+        alert('Please select a student'); 
+        return; 
+      }
+      if (!message) { 
+        alert('Please enter a message'); 
+        return; 
+      }
 
-      const { error } = await supabaseClient.from('messages').insert({ sender_id: currentTeacherId, recipient_id: studentId, message_type: 'teacher_student', subject: subject || 'Message from your teacher', message: message });
-      if (error) { alert('Error sending message: ' + error.message); return; }
+      const { error } = await supabaseClient.from('messages').insert({ 
+        sender_id: currentTeacherId, 
+        recipient_id: studentId, 
+        message_type: 'teacher_student', 
+        subject: subject || 'Message from your teacher', 
+        message: message 
+      });
+      
+      if (error) { 
+        alert('Error sending message: ' + error.message); 
+        return; 
+      }
       
       closeModal('composeToStudentModal');
       loadInboxThreads();
     }
 
     async function loadSupportThreads() {
-      const { data: admins } = await supabaseClient.from('profiles').select('id').eq('role', 'admin');
-      if (!admins || admins.length === 0) { document.getElementById('teacherSupportMessages').innerHTML = '<div class="empty-state">Support unavailable. Please try again later.</div>'; return; }
+      const { data: admins } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('role', 'admin');
+      
+      if (!admins || admins.length === 0) { 
+        document.getElementById('teacherSupportMessages').innerHTML = 
+          '<div class="empty-state">Support unavailable. Please try again later.</div>'; 
+        return; 
+      }
 
-      const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_support').or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`).order('created_at', { ascending: false });
-      unreadSupportCount = messages?.filter(m => m.recipient_id === currentTeacherId && !m.is_read).length || 0;
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_support')
+        .or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`)
+        .order('created_at', { ascending: false });
+      
+      unreadSupportCount = messages?.filter(m => 
+        m.recipient_id === currentTeacherId && !m.is_read
+      ).length || 0;
+      
       updateBadge('supportBadge', unreadSupportCount);
 
-      if (!messages || messages.length === 0) { document.getElementById('teacherSupportMessages').innerHTML = '<div class="empty-state">No support tickets yet. Click "New Support Ticket" if you need help!</div>'; return; }
+      if (!messages || messages.length === 0) { 
+        document.getElementById('teacherSupportMessages').innerHTML = 
+          '<div class="empty-state">No support tickets yet. Click "New Support Ticket" if you need help!</div>'; 
+        return; 
+      }
 
       const lastMessage = messages[0];
-      const lastMessagePreview = lastMessage.message.substring(0, 80) + (lastMessage.message.length > 80 ? '...' : '');
+      const lastMessagePreview = lastMessage.message.substring(0, 80) + 
+        (lastMessage.message.length > 80 ? '...' : '');
       const lastMessageFrom = lastMessage.sender_id === currentTeacherId ? 'You: ' : '';
       const unreadClass = unreadSupportCount > 0 ? 'unread' : '';
-      const dateStr = new Date(lastMessage.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const dateStr = new Date(lastMessage.created_at).toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
 
       document.getElementById('teacherSupportMessages').innerHTML = `
         <div class="thread-item ${unreadClass}" onclick="openSupportConversation()">
-          <div class="thread-header"><div class="student-name">Support Team</div><div class="thread-meta">${unreadSupportCount > 0 ? `<span class="unread-count">${unreadSupportCount} new</span>` : ''}<span class="last-message-date">${dateStr}</span></div></div>
+          <div class="thread-header">
+            <div class="student-name">Support Team</div>
+            <div class="thread-meta">
+              ${unreadSupportCount > 0 ? `<span class="unread-count">${unreadSupportCount} new</span>` : ''}
+              <span class="last-message-date">${dateStr}</span>
+            </div>
+          </div>
           <div class="last-message-preview">${lastMessageFrom}${lastMessagePreview}</div>
-        </div>`;
+        </div>
+      `;
     }
 
     async function openSupportConversation() {
-      const { data: messages } = await supabaseClient.from('messages').select('*').eq('message_type', 'teacher_support').or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`).order('created_at', { ascending: false });
-      if (!messages) { alert('Error loading conversation'); return; }
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'teacher_support')
+        .or(`sender_id.eq.${currentTeacherId},recipient_id.eq.${currentTeacherId}`)
+        .order('created_at', { ascending: false });
+      
+      if (!messages) { 
+        alert('Error loading conversation'); 
+        return; 
+      }
 
-      const unreadMessageIds = messages.filter(m => m.recipient_id === currentTeacherId && !m.is_read).map(m => m.id);
+      const unreadMessageIds = messages.filter(m => 
+        m.recipient_id === currentTeacherId && !m.is_read
+      ).map(m => m.id);
+      
       if (unreadMessageIds.length > 0) {
-        await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadMessageIds);
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadMessageIds);
       }
 
       const conversationHTML = `
@@ -2436,18 +2552,34 @@
           ${messages.map(msg => {
             const isFromMe = msg.sender_id === currentTeacherId;
             const bubbleClass = isFromMe ? 'from-me' : 'from-support';
-            const date = new Date(msg.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            return `<div class="message-bubble ${bubbleClass}"><div class="sender">${isFromMe ? 'You' : 'Support Team'}</div><div class="timestamp">${date}</div>${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}<div class="body">${msg.message}</div></div>`;
+            const date = new Date(msg.created_at).toLocaleString('en-US', { 
+              month: 'short', 
+              day: 'numeric', 
+              year: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            });
+            
+            return `
+              <div class="message-bubble ${bubbleClass}">
+                <div class="sender">${isFromMe ? 'You' : 'Support Team'}</div>
+                <div class="timestamp">${date}</div>
+                ${msg.subject && msg.subject !== 'No subject' ? `<div class="subject">${msg.subject}</div>` : ''}
+                <div class="body">${msg.message}</div>
+              </div>
+            `;
           }).join('')}
         </div>
         
         <div class="reply-box">
-          <textarea id="supportReplyMessage" class="reply-input-simple" rows="1" placeholder="Type your reply..." onfocus="this.rows=3"></textarea>
+          <textarea id="supportReplyMessage" class="reply-input-simple" rows="1" 
+            placeholder="Type your reply..." onfocus="this.rows=3"></textarea>
           <div class="reply-actions">
             <button class="btn-primary" onclick="sendSupportReply()">Send</button>
           </div>
         </div>
       `;
+      
       document.getElementById('supportConversationContent').innerHTML = conversationHTML;
       document.getElementById('supportConversationModal').classList.add('active');
       loadSupportThreads();
@@ -2455,13 +2587,36 @@
 
     async function sendSupportReply() {
       const message = document.getElementById('supportReplyMessage').value.trim();
-      if (!message) { alert('Please enter a message'); return; }
+      
+      if (!message) { 
+        alert('Please enter a message'); 
+        return; 
+      }
 
-      const { data: admins } = await supabaseClient.from('profiles').select('id').eq('role', 'admin').limit(1).single();
-      if (!admins) { alert('No admin available'); return; }
+      const { data: admins } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('role', 'admin')
+        .limit(1)
+        .single();
+      
+      if (!admins) { 
+        alert('No admin available'); 
+        return; 
+      }
 
-      const { error } = await supabaseClient.from('messages').insert({ sender_id: currentTeacherId, recipient_id: admins.id, message_type: 'teacher_support', subject: 'Reply to support', message: message });
-      if (error) { alert('Error sending message: ' + error.message); return; }
+      const { error } = await supabaseClient.from('messages').insert({ 
+        sender_id: currentTeacherId, 
+        recipient_id: admins.id, 
+        message_type: 'teacher_support', 
+        subject: 'Reply to support', 
+        message: message 
+      });
+      
+      if (error) { 
+        alert('Error sending message: ' + error.message); 
+        return; 
+      }
 
       document.getElementById('supportReplyMessage').value = '';
       document.getElementById('supportReplyMessage').rows = 1;
@@ -2477,13 +2632,36 @@
     async function sendSupportTicket() {
       const subject = document.getElementById('supportTicketSubject').value.trim();
       const message = document.getElementById('supportTicketMessage').value.trim();
-      if (!message) { alert('Please enter a message'); return; }
+      
+      if (!message) { 
+        alert('Please enter a message'); 
+        return; 
+      }
 
-      const { data: admins } = await supabaseClient.from('profiles').select('id').eq('role', 'admin').limit(1).single();
-      if (!admins) { alert('No admin available. Please try again later.'); return; }
+      const { data: admins } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('role', 'admin')
+        .limit(1)
+        .single();
+      
+      if (!admins) { 
+        alert('No admin available. Please try again later.'); 
+        return; 
+      }
 
-      const { error } = await supabaseClient.from('messages').insert({ sender_id: currentTeacherId, recipient_id: admins.id, message_type: 'teacher_support', subject: subject || 'Support Ticket', message: message });
-      if (error) { alert('Error sending ticket: ' + error.message); return; }
+      const { error } = await supabaseClient.from('messages').insert({ 
+        sender_id: currentTeacherId, 
+        recipient_id: admins.id, 
+        message_type: 'teacher_support', 
+        subject: subject || 'Support Ticket', 
+        message: message 
+      });
+      
+      if (error) { 
+        alert('Error sending ticket: ' + error.message); 
+        return; 
+      }
 
       closeModal('composeSupportModal');
       loadSupportThreads();
@@ -2491,20 +2669,33 @@
 
     function updateBadge(badgeId, count) {
       const badge = document.getElementById(badgeId);
-      if (count > 0) { badge.textContent = count; badge.style.display = 'flex'; } 
-      else { badge.style.display = 'none'; }
+      if (count > 0) { 
+        badge.textContent = count; 
+        badge.style.display = 'flex'; 
+      } else { 
+        badge.style.display = 'none'; 
+      }
     }
 
     function showTab(tabName) {
       document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
       event.target.classList.add('active');
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      document.querySelectorAll('.tab-content').forEach(content => 
+        content.classList.remove('active')
+      );
+      
       document.getElementById(tabName + 'Tab').classList.add('active');
       
-      if (tabName === 'inbox') { loadInboxThreads(); } 
-      else if (tabName === 'support') { loadSupportThreads(); }
-      else if (tabName === 'liveInquiries') { loadLiveInquiries(); }
-      else if (tabName === 'profile') { loadTeacherProfile(); }
+      if (tabName === 'inbox') { 
+        loadInboxThreads(); 
+      } else if (tabName === 'support') { 
+        loadSupportThreads(); 
+      } else if (tabName === 'liveInquiries') { 
+        loadLiveInquiries(); 
+      } else if (tabName === 'profile') { 
+        loadTeacherProfile(); 
+      }
     }
 
     function closeModal(modalId) {
@@ -2519,11 +2710,22 @@
     function openCreateSessionWizard() {
       wizardStep = 0;
       const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      
       if (!wizardData.studentId) {
-        wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "", timezone: detectedTimezone };
+        wizardData = { 
+          studentId: "", 
+          studentName: "", 
+          subject: "", 
+          style: "", 
+          notes: "", 
+          date: "", 
+          time: "", 
+          timezone: detectedTimezone 
+        };
       } else {
         wizardData.timezone = detectedTimezone;
       }
+      
       document.getElementById('sessionWizard').classList.add('active');
       updateProgress(0);
       renderWizardStep();
@@ -2531,48 +2733,116 @@
 
     function closeSessionWizard() {
       document.getElementById('sessionWizard').classList.remove('active');
-      wizardData = { studentId: "", studentName: "", subject: "", style: "", notes: "", date: "", time: "", timezone: "" };
+      wizardData = { 
+        studentId: "", 
+        studentName: "", 
+        subject: "", 
+        style: "", 
+        notes: "", 
+        date: "", 
+        time: "", 
+        timezone: "" 
+      };
     }
 
     function renderWizardStep() {
       const c = document.getElementById('wizardContent');
 
-      if(wizardStep === 0) {
+      if (wizardStep === 0) {
         updateProgress(10);
-        c.innerHTML = `<h2 style="padding:0 20px; color:#000;">📅 Create New Session</h2><p style="padding:0 20px; color:#666; margin-bottom:1rem;">Schedule a session with one of your students</p><button onclick="wizardStep=1; renderWizardStep()" style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Begin</button>`;
-      } else if(wizardStep === 1) {
+        c.innerHTML = `
+          <h2 style="padding:0 20px; color:#000;">📅 Create New Session</h2>
+          <p style="padding:0 20px; color:#666; margin-bottom:1rem;">Schedule a session with one of your students</p>
+          <button onclick="wizardStep=1; renderWizardStep()" 
+            style="margin:20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
+            Begin
+          </button>
+        `;
+      } else if (wizardStep === 1) {
         updateProgress(20);
-        if (wizardData.studentId) { wizardStep = 2; renderWizardStep(); return; }
-        c.innerHTML = `<h3 style="padding:0 20px; color:#000;">👥 Select Student:</h3><p style="padding:0 20px; color:#666;">Choose which student this session is for</p><div class="student-select-grid" style="margin:0 20px;">${myStudents.map(student => `<div class="student-card" onclick="selectStudent('${student.id}', '${student.full_name.replace(/'/g, "\\'")}')"><h4>${student.full_name}</h4><p style="color:#007bff; font-weight:600;">${student.age_group || 'N/A'}</p></div>`).join('')}</div>`;
-      } else if(wizardStep === 2) {
+        
+        if (wizardData.studentId) { 
+          wizardStep = 2; 
+          renderWizardStep(); 
+          return; 
+        }
+        
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">👥 Select Student:</h3>
+          <p style="padding:0 20px; color:#666;">Choose which student this session is for</p>
+          <div class="student-select-grid" style="margin:0 20px;">
+            ${myStudents.map(student => `
+              <div class="student-card" onclick="selectStudent('${student.id}', '${student.full_name.replace(/'/g, "\\'")}')">
+                <h4>${student.full_name}</h4>
+                <p style="color:#007bff; font-weight:600;">${student.age_group || 'N/A'}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (wizardStep === 2) {
         updateProgress(40);
-        c.innerHTML = `<h3 style="padding:0 20px; color:#000;">📘 Choose Subject:</h3><p style="padding:0 20px; color:#666; margin-bottom:1rem;">Student: <strong>${wizardData.studentName || 'Selected'}</strong></p><div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing","Physics","History","Other"].map(s => `<button onclick="wizardData.subject='${s}'; wizardStep=3; renderWizardStep()" style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">${s}</button>`).join("")}</div>`;
-      } else if(wizardStep === 3) {
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">📘 Choose Subject:</h3>
+          <p style="padding:0 20px; color:#666; margin-bottom:1rem;">
+            Student: <strong>${wizardData.studentName || 'Selected'}</strong>
+          </p>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
+            ${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology",
+               "English Speaking and Writing","Physics","History","Other"].map(s => `
+              <button onclick="wizardData.subject='${s}'; wizardStep=3; renderWizardStep()" 
+                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
+                ${s}
+              </button>
+            `).join("")}
+          </div>
+        `;
+      } else if (wizardStep === 3) {
         updateProgress(60);
-        c.innerHTML = `<h3 style="padding:0 20px; color:#000;">🎓 Session Type:</h3><div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">${["1-on-1 Tutoring","Group Class","Review Session","Test Prep","Homework Help"].map(style => `<button onclick="wizardData.style='${style}'; wizardStep=4; renderWizardStep()" style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">${style}</button>`).join("")}</div>`;
-      } else if(wizardStep === 4) {
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">🎓 Session Type:</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
+            ${["1-on-1 Tutoring","Group Class","Review Session","Test Prep","Homework Help"].map(style => `
+              <button onclick="wizardData.style='${style}'; wizardStep=4; renderWizardStep()" 
+                style="background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
+                ${style}
+              </button>
+            `).join("")}
+          </div>
+        `;
+      } else if (wizardStep === 4) {
         updateProgress(80);
-        c.innerHTML = `<h3 style="padding:0 20px; color:#000;">📝 Session Notes (Optional):</h3><p style="padding:0 20px; color:#666;">Add any notes about what you'll cover in this session</p><div style="border:1px solid #ccc; border-radius:5px; padding:10px; margin:10px 20px;">
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:#000;">📝 Session Notes (Optional):</h3>
+          <p style="padding:0 20px; color:#666;">Add any notes about what you'll cover in this session</p>
+          <div style="border:1px solid #ccc; border-radius:5px; padding:10px; margin:10px 20px;">
             <textarea id="sessionNotes" placeholder="e.g., Review chapter 5, practice problems..."
               style="width:100%; padding:10px; height:100px; border:none; resize:vertical; font-size:14px;"></textarea>
           </div>
           <button onclick="wizardData.notes=document.getElementById('sessionNotes').value; wizardStep=5; renderWizardStep()" 
-            style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Continue</button>
+            style="margin:0 20px 20px; background:linear-gradient(90deg,#007bff,#00c6ff); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
+            Continue
+          </button>
         `;
-      } else if(wizardStep === 5) {
+      } else if (wizardStep === 5) {
         updateProgress(90);
         
         const today = new Date();
         const minDate = today.toISOString().split('T')[0];
-        const maxDate = new Date(today.getTime() + (90 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+        const maxDate = new Date(today.getTime() + (90 * 24 * 60 * 60 * 1000))
+          .toISOString().split('T')[0];
         
         c.innerHTML = `
           <h3 style="padding:0 20px; color:#000;">📅 Select Date & Time</h3>
-          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">✅ Teachers can schedule instantly - book any available time slot!</p>
+          <p style="padding:0 20px; color:#28a745; font-weight:600; margin-bottom:1rem;">
+            ✅ Teachers can schedule instantly - book any available time slot!
+          </p>
           
           <div style="padding:0 20px; margin-bottom:1.5rem; background:#e3f2fd; border-radius:8px; padding:1rem;">
-            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
-            <select id="teacherTimezoneSelect" onchange="updateTeacherTimezone()" style="width:100%; max-width:500px; padding:0.75rem; border:2px solid #007bff; border-radius:6px; font-size:1em; font-weight:600;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">
+              🌍 Your Timezone:
+            </label>
+            <select id="teacherTimezoneSelect" onchange="updateTeacherTimezone()" 
+              style="width:100%; max-width:500px; padding:0.75rem; border:2px solid #007bff; border-radius:6px; font-size:1em; font-weight:600;">
               <option value="${wizardData.timezone}">📍 ${wizardData.timezone} (Auto-detected)</option>
               <optgroup label="🇺🇸 United States">
                 <option value="America/New_York">Eastern Time (ET)</option>
@@ -2593,7 +2863,9 @@
                 <option value="Australia/Sydney">Sydney (AEDT)</option>
               </optgroup>
             </select>
-            <p style="font-size:0.85em; color:#0056b3; margin-top:0.5rem; font-weight:500;">⏰ Times shown are in YOUR timezone. Students see it converted to theirs.</p>
+            <p style="font-size:0.85em; color:#0056b3; margin-top:0.5rem; font-weight:500;">
+              ⏰ Times shown are in YOUR timezone. Students see it converted to theirs.
+            </p>
           </div>
 
           <div style="padding:0 20px;">
@@ -2603,7 +2875,9 @@
               max="${maxDate}"
               onchange="generateTeacherTimeSlots()"
               style="width:100%; max-width:300px; padding:0.75rem; border:1px solid #ddd; border-radius:6px; font-size:1em;">
-            <p style="font-size:0.85em; color:#666; margin-top:0.5rem;">✅ Book current 30-min block or any future slot!</p>
+            <p style="font-size:0.85em; color:#666; margin-top:0.5rem;">
+              ✅ Book current 30-min block or any future slot!
+            </p>
           </div>
 
           <div id="timeSlotsTeacher" style="padding:0 20px; margin-top:1rem;"></div>
@@ -2666,7 +2940,9 @@
       
       const container = document.getElementById('timeSlotsTeacher');
       container.innerHTML = `
-        <p style="margin-bottom:0.5rem; font-weight:600;">⏰ Select Time (${isToday ? 'Current & future slots available' : 'All times available'}):</p>
+        <p style="margin-bottom:0.5rem; font-weight:600;">
+          ⏰ Select Time (${isToday ? 'Current & future slots available' : 'All times available'}):
+        </p>
         <div class="time-slots">
           ${slots.map(slot => 
             slot.isPast 
@@ -2742,8 +3018,12 @@
 
         const options = {
           timeZone: timezone,
-          year: 'numeric', month: '2-digit', day: '2-digit',
-          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          year: 'numeric', 
+          month: '2-digit', 
+          day: '2-digit',
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit',
           hour12: false
         };
         
@@ -2775,7 +3055,10 @@
       const encryptionKey = generateRandomKey();
       const blackboardLink = `https://excalidraw.com/#room=${blackboardRoomId},${encryptionKey}`;
       
-      const { error } = await supabaseClient.from('bookings').update({ whiteboard_link: blackboardLink }).eq('id', bookingId);
+      const { error } = await supabaseClient
+        .from('bookings')
+        .update({ whiteboard_link: blackboardLink })
+        .eq('id', bookingId);
       
       if (error) {
         alert('Error saving blackboard link.');
@@ -2793,6 +3076,7 @@
       return key.padEnd(22, Math.random().toString(36).substring(2));
     }
 
+    // Initialize on page load
     checkTeacherAuth();
   </script>
 </body>
