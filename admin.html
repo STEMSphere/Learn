@@ -3539,7 +3539,7 @@
 
     async function loadLiveVisitors() {
       try {
-        const { data, error } = await supabaseClient.rpc('get_live_visitors');
+        const { data, error } = await supabaseClient.rpc('get_active_visitors');
 
         if (error) {
           console.error('Error loading live visitors:', error);
@@ -3579,7 +3579,7 @@
           .select('visitor_id')
           .gte('last_seen', today.toISOString());
         
-        const uniqueToday = new Set(todayVisitors?.map(v => v.visitor_id)).size;
+        const uniqueToday = new Set(todayVisitors?.map(v => v.session_id)).size;
         document.getElementById('todayTotalVisitors').textContent = uniqueToday;
 
         // Render visitor cards
@@ -3644,7 +3644,7 @@
               </div>
               <div class="visitor-detail-item">
                 <strong>🔑 Visitor ID</strong>
-                <span style="font-family: monospace; font-size: 0.8em;">${visitor.visitor_id.substring(0, 12)}...</span>
+                <span style="font-family: monospace; font-size: 0.8em;">${visitor.session_id.substring(0, 12)}...</span>
               </div>
             </div>
           </div>
