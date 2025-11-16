@@ -1024,6 +1024,208 @@
       margin-top: 0.25rem;
     }
 
+    /* ADVISOR SELECTION MODALS */
+    .subject-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .subject-card {
+      background: var(--theme-card-bg);
+      border: 3px solid var(--theme-border);
+      border-radius: 12px;
+      padding: 2rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .subject-card:hover {
+      border-color: var(--theme-button);
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,123,255,0.3);
+    }
+
+    .subject-card .icon {
+      font-size: 3em;
+      margin-bottom: 0.5rem;
+    }
+
+    .subject-card .name {
+      font-weight: 700;
+      color: var(--theme-text);
+      font-size: 1.1em;
+    }
+
+    .advisor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .advisor-card-select {
+      background: var(--theme-card-bg);
+      border: 3px solid var(--theme-button);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+      box-shadow: 0 4px 16px rgba(0,123,255,0.2);
+      cursor: pointer;
+    }
+
+    .advisor-card-select:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 24px rgba(0,123,255,0.4);
+      border-color: #28a745;
+    }
+
+    .advisor-card-select .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      border: 4px solid var(--theme-button);
+      object-fit: cover;
+    }
+
+    .advisor-card-select h4 {
+      margin: 0 0 0.5rem 0;
+      color: var(--theme-text);
+      font-size: 1.3em;
+    }
+
+    .advisor-card-select .subject {
+      color: var(--theme-button);
+      font-weight: 600;
+      margin: 0.5rem 0;
+    }
+
+    .advisor-card-select .bio {
+      color: var(--theme-text-secondary);
+      font-style: italic;
+      margin: 1rem 0;
+      font-size: 0.95em;
+    }
+
+    .advisor-card-select .chat-btn {
+      background: var(--theme-button-gradient);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 1rem;
+      font-size: 1.1em;
+    }
+
+    .advisor-card-select .chat-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* POPUP CHAT WINDOW */
+    .popup-chat {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 380px;
+      max-height: 600px;
+      background: var(--theme-card-bg);
+      border: 3px solid var(--theme-button);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+    }
+
+    .popup-chat.active {
+      display: flex;
+    }
+
+    .popup-chat.minimized {
+      max-height: 60px;
+      overflow: hidden;
+    }
+
+    .popup-chat-header {
+      background: var(--theme-button-gradient);
+      color: #fff;
+      padding: 1rem;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .popup-chat-title {
+      font-weight: 700;
+      font-size: 1.1em;
+      flex: 1;
+    }
+
+    .popup-chat-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .popup-chat-controls button {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.1em;
+      transition: all 0.3s;
+    }
+
+    .popup-chat-controls button:hover {
+      background: rgba(255,255,255,0.4);
+    }
+
+    .popup-chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      max-height: 400px;
+      background: #f8f9fa;
+    }
+
+    .popup-chat-input-area {
+      padding: 1rem;
+      border-top: 2px solid var(--theme-border);
+    }
+
+    .popup-chat-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--theme-border);
+      border-radius: 6px;
+      resize: none;
+      font-family: inherit;
+      margin-bottom: 0.5rem;
+    }
+
+    .popup-chat-send {
+      width: 100%;
+      background: var(--theme-button);
+      color: #fff;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
     @media (max-width: 768px) {
       header {
         flex-direction: column;
@@ -1050,6 +1252,17 @@
       }
       .color-swatches {
         grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      }
+      .popup-chat {
+        width: calc(100% - 40px);
+        right: 20px;
+        left: 20px;
+      }
+      .subject-grid {
+        grid-template-columns: 1fr;
+      }
+      .advisor-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -1097,7 +1310,7 @@
         <p style="margin:0 0 1.5rem 0; color:#000; font-size:1.2em;">
           Skip the wait! Get instant help scheduling your first session.
         </p>
-        <button onclick="openAdvisorChat()" style="background:#000; color:#00ff88; padding:1rem 2rem; border:none; border-radius:8px; cursor:pointer; font-weight:700; font-size:1.1em; box-shadow:0 4px 12px rgba(0,0,0,0.3); animation:pulse 2s infinite;">
+        <button onclick="openSubjectSelectionModal()" style="background:#000; color:#00ff88; padding:1rem 2rem; border:none; border-radius:8px; cursor:pointer; font-weight:700; font-size:1.1em; box-shadow:0 4px 12px rgba(0,0,0,0.3); animation:pulse 2s infinite;">
           💬 Chat with Advisor Now
         </button>
       </div>
@@ -1227,6 +1440,7 @@
     </div>
   </div>
 
+  <!-- THEME SETTINGS MODAL -->
   <div id="themeSettingsModal" class="theme-settings-modal">
     <div class="theme-settings-content">
       <button onclick="closeModal('themeSettingsModal')" class="modal-close-btn">✖</button>
@@ -1272,6 +1486,67 @@
     </div>
   </div>
 
+  <!-- SUBJECT SELECTION MODAL -->
+  <div id="subjectSelectionModal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+      <button onclick="closeModal('subjectSelectionModal')" class="modal-close-btn">✖</button>
+      
+      <h2 style="text-align: center; color: var(--theme-text); margin-bottom: 1rem;">
+        📚 What subject do you need help with?
+      </h2>
+      <p style="text-align: center; color: var(--theme-text-secondary); margin-bottom: 2rem;">
+        Select a subject to connect with a specialized advisor
+      </p>
+
+      <div class="subject-grid" id="subjectGridContainer">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVISOR SELECTION MODAL -->
+  <div id="advisorSelectionModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <button onclick="closeAdvisorSelectionModal()" class="modal-close-btn">✖</button>
+      
+      <h2 style="text-align: center; color: var(--theme-text); margin-bottom: 0.5rem;">
+        Choose Your <span id="selectedSubjectDisplay"></span> Advisor
+      </h2>
+      <p style="text-align: center; color: var(--theme-text-secondary); margin-bottom: 2rem;">
+        Select one advisor to start chatting
+      </p>
+
+      <div class="advisor-grid" id="advisorGridContainer">
+        <!-- Populated by JavaScript -->
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <button class="btn-secondary" onclick="closeAdvisorSelectionModal()">← Back to Subjects</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POPUP CHAT WINDOW -->
+  <div id="popupChat" class="popup-chat">
+    <div class="popup-chat-header" onclick="toggleMinimizeChat()">
+      <div class="popup-chat-title" id="popupChatTitle">💬 Chat with Advisor</div>
+      <div class="popup-chat-controls">
+        <button onclick="toggleMinimizeChat(); event.stopPropagation();" title="Minimize">−</button>
+        <button onclick="closePopupChat(); event.stopPropagation();" title="Close">×</button>
+      </div>
+    </div>
+    
+    <div class="popup-chat-messages" id="popupChatMessages">
+      <!-- Messages populated by JavaScript -->
+    </div>
+    
+    <div class="popup-chat-input-area">
+      <textarea id="popupChatInput" class="popup-chat-input" rows="2" placeholder="Type your message..."></textarea>
+      <button class="popup-chat-send" onclick="sendPopupChatMessage()">Send Message</button>
+    </div>
+  </div>
+
+  <!-- TEACHER PROFILE MODAL -->
   <div id="teacherProfileModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
       <button onclick="closeModal('teacherProfileModal')" class="modal-close-btn">✖</button>
@@ -1279,6 +1554,7 @@
     </div>
   </div>
 
+  <!-- BOOKING WIZARD -->
   <div id="bookingWizard" class="wizard-modal">
     <button onclick="closeBookingWizard()"
       style="position:absolute; top:15px; left:20px; font-size:28px; background:none; border:none; color:var(--theme-text); cursor:pointer; z-index:2001;">✖</button>
@@ -1290,34 +1566,7 @@
     <div id="wizardContent" style="margin-top:20px;"></div>
   </div>
 
-  <div id="advisorChatModal" class="modal">
-    <div class="modal-content" style="max-width: 700px;">
-      <button onclick="closeModal('advisorChatModal')" class="modal-close-btn">✖</button>
-      
-      <div class="conversation-header green">
-        <h3 style="margin:0 0 0.5rem 0; color:#fff; font-size:1.5em;">
-          🎯 Live Enrollment Advisor
-        </h3>
-        <p style="margin:0; color:#fff; opacity:0.9;" id="advisorName">
-          Connecting you with an advisor...
-        </p>
-      </div>
-
-      <div id="advisorChatMessages" style="max-height:400px; overflow-y:auto; margin-bottom:1.5rem; padding:1rem; background:#f8f9fa; border-radius:8px;">
-      </div>
-
-      <div class="reply-box">
-        <textarea id="advisorChatInput" class="reply-input-simple" rows="3" placeholder="Type your message..."></textarea>
-        <input type="file" id="advisorFileInput" multiple style="display:none;" onchange="handleFileSelect(event, 'advisorFile')">
-        <div id="advisorFilePreviewList" class="files-preview-list"></div>
-        <div class="reply-actions">
-          <button class="btn-secondary" onclick="document.getElementById('advisorFileInput').click()" style="margin:0;">📎 Attach Files</button>
-          <button class="btn-primary" onclick="sendAdvisorMessage()">Send Message</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <!-- COMPOSE MODAL -->
   <div id="composeModal" class="modal">
     <div class="modal-content">
       <button onclick="closeModal('composeModal')" class="modal-close-btn">✖</button>
@@ -1341,6 +1590,7 @@
     </div>
   </div>
 
+  <!-- COMPOSE TO TEACHER MODAL -->
   <div id="composeToTeacherModal" class="modal">
     <div class="modal-content">
       <button onclick="closeModal('composeToTeacherModal')" class="modal-close-btn">✖</button>
@@ -1370,6 +1620,7 @@
     </div>
   </div>
 
+  <!-- VIEW STUDENT INVOICE MODAL -->
   <div id="viewStudentInvoiceModal" class="modal">
     <div class="modal-content" style="max-width: 800px;">
       <button onclick="closeModal('viewStudentInvoiceModal')" class="modal-close-btn">✖</button>
@@ -1377,6 +1628,7 @@
     </div>
   </div>
 
+  <!-- PAYMENT MODAL -->
   <div id="paymentModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
       <button onclick="closeModal('paymentModal')" class="modal-close-btn">✖</button>
@@ -1385,10 +1637,12 @@
     </div>
   </div>
 
+  <!-- CONVERSATION MODAL -->
   <div id="conversationModal" class="modal">
     <div class="modal-content" id="conversationContent"></div>
   </div>
 
+  <!-- SUPPORT CONVERSATION MODAL -->
   <div id="supportConversationModal" class="modal">
     <div class="modal-content" id="supportConversationContent"></div>
   </div>
@@ -1414,19 +1668,41 @@
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // Subject list matching admin's selection
+    const ADVISOR_SUBJECTS = [
+      { name: 'Algebra & Trig', icon: '📐' },
+      { name: 'Precalculus', icon: '📊' },
+      { name: 'Calculus', icon: '∫' },
+      { name: 'Geometry', icon: '📏' },
+      { name: 'Exam Math', icon: '✏️' },
+      { name: "Children's Math", icon: '🔢' },
+      { name: 'Biology', icon: '🧬' },
+      { name: 'Chemistry', icon: '⚗️' },
+      { name: 'Physics', icon: '⚛️' },
+      { name: 'Python Programming', icon: '🐍' },
+      { name: 'English (Public Speaking)', icon: '🎤' },
+      { name: 'English Speaking & Writing', icon: '✍️' },
+      { name: 'History', icon: '📜' },
+      { name: 'Other', icon: '📚' }
+    ];
+
     let currentUserId = null;
     let myTeachers = [];
     let teacherProfiles = {};
     let unreadSupportCount = 0;
     let unreadTeachersCount = 0;
-    let previousAdvisorUnreadCount = 0;
     let wizardData = { age: "", subject: "", style: "", help: "", date: "", time: "", timezone: "" };
     let wizardStep = 0;
     let studentInvoices = [];
     let selectedFiles = [];
-    let currentAdvisorId = null;
-    let advisorChatInterval = null;
     let audioContext = null;
+    
+    // Popup chat state
+    let currentAdvisorChatId = null;
+    let currentAdvisorChatSubject = null;
+    let popupChatInterval = null;
+    let isPopupMinimized = false;
+    let selectedSubjectForAdvisor = null;
 
     // ============================================
     // NOTIFICATION SOUND SYSTEM
@@ -1443,7 +1719,6 @@
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
       
-      // Prominent chime sound - 3 tones
       oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
       oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
       oscillator.frequency.setValueAtTime(900, audioContext.currentTime + 0.2);
@@ -1722,15 +1997,14 @@
     }
 
     function resetThemeToDefault() {
-  // Reset theme without confirmation
-  currentTheme = {
-    background: 'default',
-    button: 'default',
-    accent: 'default'
-  };
-  applyTheme();
-  renderColorSwatches();
-}
+      currentTheme = {
+        background: 'default',
+        button: 'default',
+        accent: 'default'
+      };
+      applyTheme();
+      renderColorSwatches();
+    }
 
     // ============================================
     // PROFILE SYSTEM
@@ -1918,6 +2192,10 @@
         }, () => {
           loadSupportThreads();
           loadTeacherThreads();
+          
+          if (currentAdvisorChatId && document.getElementById('popupChat').classList.contains('active')) {
+            loadPopupChatMessages();
+          }
         })
         .on('postgres_changes', { 
           event: '*', 
@@ -1934,6 +2212,295 @@
       await supabaseClient.auth.signOut();
       window.location.href = 'login.html';
     }
+
+    // ==================== LIVE ADVISOR SYSTEM ====================
+
+    async function checkLiveAdvisors() {
+      const { data: advisors } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'teacher')
+        .eq('is_advisor', true)
+        .eq('advisor_available', true)
+        .limit(1);
+
+      if (advisors && advisors.length > 0) {
+        document.getElementById('liveAdvisorBanner').style.display = 'block';
+      } else {
+        document.getElementById('liveAdvisorBanner').style.display = 'none';
+      }
+    }
+
+    // ==================== SUBJECT SELECTION MODAL ====================
+
+    function openSubjectSelectionModal() {
+      const container = document.getElementById('subjectGridContainer');
+      
+      container.innerHTML = ADVISOR_SUBJECTS.map(subject => `
+        <div class="subject-card" onclick="selectSubject('${subject.name.replace(/'/g, "\\'")}')">
+          <div class="icon">${subject.icon}</div>
+          <div class="name">${subject.name}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('subjectSelectionModal').classList.add('active');
+    }
+
+    async function selectSubject(subjectName) {
+      selectedSubjectForAdvisor = subjectName;
+      
+      closeModal('subjectSelectionModal');
+      
+      const { data: advisors, error } = await supabaseClient
+        .rpc('get_advisors_by_subject', {
+          subject_filter: subjectName,
+          limit_count: 2
+        });
+
+      if (error) {
+        console.error('Error fetching advisors:', error);
+        alert('❌ Error loading advisors. Please try again.');
+        return;
+      }
+
+      if (!advisors || advisors.length === 0) {
+        alert(`⚠️ No ${subjectName} advisors are currently available. Please try again later or select a different subject.`);
+        return;
+      }
+
+      const advisorIds = advisors.map(a => a.id);
+      await supabaseClient.rpc('track_advisors_shown', { advisor_ids: advisorIds });
+
+      showAdvisorSelectionModal(advisors, subjectName);
+    }
+
+    function showAdvisorSelectionModal(advisors, subjectName) {
+      document.getElementById('selectedSubjectDisplay').textContent = subjectName;
+      
+      const container = document.getElementById('advisorGridContainer');
+      
+      container.innerHTML = advisors.map(advisor => {
+        const photoUrl = advisor.profile_photo_url || 
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.full_name)}&size=200&background=007bff&color=fff`;
+        
+        const bio = advisor.bio || `Expert ${subjectName} tutor ready to help!`;
+        
+        return `
+          <div class="advisor-card-select" onclick="selectAdvisor('${advisor.id}', '${advisor.full_name.replace(/'/g, "\\'")}')">
+            <img src="${photoUrl}" alt="${advisor.full_name}" class="avatar">
+            <h4>${advisor.full_name}</h4>
+            <div class="subject">📚 ${subjectName} Specialist</div>
+            <div class="bio">"${bio.substring(0, 80)}${bio.length > 80 ? '...' : ''}"</div>
+            <button class="chat-btn">💬 Chat Now</button>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('advisorSelectionModal').classList.add('active');
+    }
+
+    function closeAdvisorSelectionModal() {
+      closeModal('advisorSelectionModal');
+      openSubjectSelectionModal();
+    }
+
+    async function selectAdvisor(advisorId, advisorName) {
+      await supabaseClient.rpc('track_advisor_picked', { advisor_id: advisorId });
+      
+      closeModal('advisorSelectionModal');
+      
+      currentAdvisorChatId = advisorId;
+      currentAdvisorChatSubject = selectedSubjectForAdvisor;
+      
+      openPopupChat(advisorId, advisorName, selectedSubjectForAdvisor);
+    }
+
+    // ==================== POPUP CHAT WINDOW ====================
+
+    function openPopupChat(advisorId, advisorName, subject) {
+      const popup = document.getElementById('popupChat');
+      const title = document.getElementById('popupChatTitle');
+      
+      title.textContent = `💬 ${advisorName} (${subject})`;
+      
+      popup.classList.add('active');
+      isPopupMinimized = false;
+      
+      loadPopupChatMessages();
+      
+      if (popupChatInterval) {
+        clearInterval(popupChatInterval);
+      }
+      popupChatInterval = setInterval(loadPopupChatMessages, 3000);
+    }
+
+    let previousPopupUnreadCount = 0;
+
+    async function loadPopupChatMessages() {
+      if (!currentAdvisorChatId) return;
+
+      const { data: messages } = await supabaseClient
+        .from('messages')
+        .select('*')
+        .eq('message_type', 'advisor_chat')
+        .or(`and(sender_id.eq.${currentUserId},recipient_id.eq.${currentAdvisorChatId}),and(sender_id.eq.${currentAdvisorChatId},recipient_id.eq.${currentUserId})`)
+        .order('created_at', { ascending: true });
+
+      const container = document.getElementById('popupChatMessages');
+      
+      if (!messages || messages.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#999; padding:2rem;">No messages yet. Start the conversation!</p>';
+        return;
+      }
+
+      const unreadCount = messages.filter(m => m.recipient_id === currentUserId && !m.is_read).length;
+      
+      if (unreadCount > previousPopupUnreadCount && previousPopupUnreadCount >= 0) {
+        if (isPopupMinimized || !document.getElementById('popupChat').classList.contains('active')) {
+          playNotificationSound();
+        }
+      }
+      previousPopupUnreadCount = unreadCount;
+
+      container.innerHTML = messages.map(msg => {
+        const isFromMe = msg.sender_id === currentUserId;
+        const bubbleStyle = isFromMe 
+          ? 'background:#e3f2fd; border:1px solid #007bff; margin-left:2rem; border-radius:12px; padding:0.75rem; margin-bottom:0.75rem;'
+          : 'background:#fff; border:1px solid #ddd; margin-right:2rem; border-radius:12px; padding:0.75rem; margin-bottom:0.75rem;';
+        
+        const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        
+        return `
+          <div style="${bubbleStyle}">
+            <div style="font-weight:600; color:#007bff; margin-bottom:0.25rem; font-size:0.9em;">
+              ${isFromMe ? 'You' : 'Advisor'}
+            </div>
+            <div style="color:#333; white-space:pre-wrap; line-height:1.4;">${msg.message}</div>
+            <div style="color:#999; font-size:0.75em; margin-top:0.25rem; text-align:right;">${time}</div>
+          </div>
+        `;
+      }).join('');
+
+      const unreadIds = messages.filter(m => m.recipient_id === currentUserId && !m.is_read).map(m => m.id);
+      if (unreadIds.length > 0 && !isPopupMinimized) {
+        await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadIds);
+      }
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendPopupChatMessage() {
+      const input = document.getElementById('popupChatInput');
+      const message = input.value.trim();
+      
+      if (!message) {
+        alert('Please enter a message');
+        return;
+      }
+
+      if (!currentAdvisorChatId) {
+        alert('No advisor connected');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          recipient_id: currentAdvisorChatId,
+          message_type: 'advisor_chat',
+          subject: `${currentAdvisorChatSubject} - Advisor Chat`,
+          message: message
+        });
+
+      if (error) {
+        alert('Error sending message: ' + error.message);
+        return;
+      }
+
+      input.value = '';
+      await loadPopupChatMessages();
+    }
+
+    function toggleMinimizeChat() {
+      const popup = document.getElementById('popupChat');
+      isPopupMinimized = !isPopupMinimized;
+      
+      if (isPopupMinimized) {
+        popup.classList.add('minimized');
+      } else {
+        popup.classList.remove('minimized');
+        loadPopupChatMessages();
+      }
+    }
+
+    function closePopupChat() {
+      const popup = document.getElementById('popupChat');
+      popup.classList.remove('active');
+      
+      if (popupChatInterval) {
+        clearInterval(popupChatInterval);
+        popupChatInterval = null;
+      }
+      
+      currentAdvisorChatId = null;
+      currentAdvisorChatSubject = null;
+      previousPopupUnreadCount = 0;
+    }
+
+    // Make popup chat draggable on desktop
+    (function() {
+      let isDragging = false;
+      let currentX;
+      let currentY;
+      let initialX;
+      let initialY;
+      let xOffset = 0;
+      let yOffset = 0;
+
+      const dragItem = document.getElementById('popupChat');
+      const dragHandle = document.querySelector('.popup-chat-header');
+
+      if (dragHandle && window.innerWidth > 768) {
+        dragHandle.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+      }
+
+      function dragStart(e) {
+        if (e.target.tagName === 'BUTTON') return;
+        
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+
+        if (e.target === dragHandle) {
+          isDragging = true;
+        }
+      }
+
+      function drag(e) {
+        if (isDragging) {
+          e.preventDefault();
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+
+          xOffset = currentX;
+          yOffset = currentY;
+
+          setTranslate(currentX, currentY, dragItem);
+        }
+      }
+
+      function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
+      }
+
+      function setTranslate(xPos, yPos, el) {
+        el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+      }
+    })();
 
     // ==================== TEACHER PROFILE SYSTEM ====================
 
@@ -2052,421 +2619,10 @@
       return avatarHTML;
     }
 
-    // ==================== LIVE ADVISOR SYSTEM ====================
-
-    async function checkLiveAdvisors() {
-      const { data: advisors } = await supabaseClient
-        .from('profiles')
-        .select('id, full_name, profile_photo_url')
-        .eq('role', 'teacher')
-        .eq('is_advisor', true)
-        .eq('advisor_available', true)
-        .limit(1);
-
-      if (advisors && advisors.length > 0) {
-        teacherProfiles[advisors[0].id] = advisors[0];
-        document.getElementById('liveAdvisorBanner').style.display = 'block';
-      } else {
-        document.getElementById('liveAdvisorBanner').style.display = 'none';
-      }
-    }
-
-    async function openAdvisorChat() {
-      const { data: advisors } = await supabaseClient
-        .from('profiles')
-        .select('id, full_name, profile_photo_url')
-        .eq('role', 'teacher')
-        .eq('is_advisor', true)
-        .eq('advisor_available', true)
-        .limit(1);
-
-      if (!advisors || advisors.length === 0) {
-        alert('⚠️ No advisors are currently available. Please try booking a session through the regular system.');
-        return;
-      }
-
-      currentAdvisorId = advisors[0].id;
-      teacherProfiles[currentAdvisorId] = advisors[0];
-      document.getElementById('advisorName').innerHTML = `Chatting with ${getTeacherAvatarHTML(advisors[0].id, advisors[0].full_name, 30)}`;
-      document.getElementById('advisorChatModal').classList.add('active');
-      
-      previousAdvisorUnreadCount = 0;
-      loadAdvisorMessages();
-      advisorChatInterval = setInterval(loadAdvisorMessages, 3000);
-    }
-
-    async function loadAdvisorMessages() {
-      if (!currentAdvisorId) return;
-
-      const { data: messages } = await supabaseClient
-        .from('messages')
-        .select('*')
-        .eq('message_type', 'advisor_chat')
-        .or(`and(sender_id.eq.${currentUserId},recipient_id.eq.${currentAdvisorId}),and(sender_id.eq.${currentAdvisorId},recipient_id.eq.${currentUserId})`)
-        .order('created_at', { ascending: true });
-
-      const container = document.getElementById('advisorChatMessages');
-      
-      if (!messages || messages.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#999;">No messages yet. Start the conversation!</p>';
-        return;
-      }
-
-      const unreadCount = messages.filter(m => m.recipient_id === currentUserId && !m.is_read).length;
-      
-      // Play sound if new messages arrived
-      if (unreadCount > previousAdvisorUnreadCount && previousAdvisorUnreadCount >= 0) {
-        playNotificationSound();
-      }
-      previousAdvisorUnreadCount = unreadCount;
-
-      container.innerHTML = messages.map(msg => {
-        const isFromMe = msg.sender_id === currentUserId;
-        const bubbleStyle = isFromMe 
-          ? 'background:#e3f2fd; border:1px solid #007bff; margin-left:2rem;'
-          : 'background:#fff; border:1px solid #ddd; margin-right:2rem;';
-        
-        const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        
-        const senderName = isFromMe ? 'You' : (teacherProfiles[currentAdvisorId]?.full_name || 'Advisor');
-        
-        let attachmentHTML = '';
-        if (msg.attachment_url) {
-          try {
-            const urls = JSON.parse(msg.attachment_url);
-            if (Array.isArray(urls)) {
-              attachmentHTML = urls.map(url => {
-                const fileName = url.split('/').pop();
-                return `<div style="margin-top:0.5rem;"><a href="${url}" target="_blank" style="color:#007bff; text-decoration:none; font-weight:600;">📎 ${fileName}</a></div>`;
-              }).join('');
-            } else {
-              const fileName = msg.attachment_url.split('/').pop();
-              attachmentHTML = `<div style="margin-top:0.5rem;"><a href="${msg.attachment_url}" target="_blank" style="color:#007bff; text-decoration:none; font-weight:600;">📎 ${fileName}</a></div>`;
-            }
-          } catch {
-            const fileName = msg.attachment_url.split('/').pop();
-            attachmentHTML = `<div style="margin-top:0.5rem;"><a href="${msg.attachment_url}" target="_blank" style="color:#007bff; text-decoration:none; font-weight:600;">📎 ${fileName}</a></div>`;
-          }
-        }
-        
-        return `
-          <div style="${bubbleStyle} padding:1rem; border-radius:8px; margin-bottom:1rem;">
-            <div style="font-weight:600; color:#007bff; margin-bottom:0.5rem;">
-              ${isFromMe ? senderName : getTeacherAvatarHTML(currentAdvisorId, senderName, 30)}
-            </div>
-            <div style="color:#333; white-space:pre-wrap;">${msg.message}</div>
-            ${attachmentHTML}
-            <div style="color:#999; font-size:0.85em; margin-top:0.5rem;">${time}</div>
-          </div>
-        `;
-      }).join('');
-
-      // Mark messages as read
-      const unreadIds = messages.filter(m => m.recipient_id === currentUserId && !m.is_read).map(m => m.id);
-      if (unreadIds.length > 0) {
-        await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadIds);
-      }
-
-      container.scrollTop = container.scrollHeight;
-    }
-
-    async function sendAdvisorMessage() {
-      const input = document.getElementById('advisorChatInput');
-      const message = input.value.trim();
-      
-      if (!message && selectedFiles.length === 0) {
-        alert('Please enter a message or attach files');
-        return;
-      }
-
-      if (!currentAdvisorId) {
-        alert('No advisor connected');
-        return;
-      }
-
-      try {
-        let attachmentUrls = [];
-        if (selectedFiles.length > 0) {
-          for (const file of selectedFiles) {
-            const url = await uploadFile(file);
-            attachmentUrls.push(url);
-          }
-        }
-
-        const { error } = await supabaseClient
-          .from('messages')
-          .insert({
-            sender_id: currentUserId,
-            recipient_id: currentAdvisorId,
-            message_type: 'advisor_chat',
-            subject: 'Advisor Chat',
-            message: message || 'File attachment',
-            attachment_url: attachmentUrls.length > 0 ? JSON.stringify(attachmentUrls) : null
-          });
-
-        if (error) {
-          alert('Error sending message: ' + error.message);
-          return;
-        }
-
-        input.value = '';
-        selectedFiles = [];
-        updateFilePreview('advisorFile');
-        await loadAdvisorMessages();
-      } catch (error) {
-        alert('❌ Error: ' + error.message);
-      }
-    }
-
-    // ==================== FILE UPLOAD ====================
-
-    async function uploadFile(file) {
-      try {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        const filePath = `message-attachments/${fileName}`;
-
-        const { data, error } = await supabaseClient.storage
-          .from('attachments')
-          .upload(filePath, file);
-
-        if (error) throw error;
-
-        const { data: urlData } = supabaseClient.storage
-          .from('attachments')
-          .getPublicUrl(filePath);
-
-        return urlData.publicUrl;
-      } catch (error) {
-        console.error('File upload error:', error);
-        throw error;
-      }
-    }
-
-    function handleFileSelect(event, fieldName) {
-      const files = Array.from(event.target.files);
-      
-      if (selectedFiles.length + files.length > 5) {
-        alert('⚠️ Maximum 5 files per message');
-        return;
-      }
-      
-      selectedFiles = [...selectedFiles, ...files];
-      updateFilePreview(fieldName);
-    }
-
-    function updateFilePreview(fieldName) {
-      const container = document.getElementById(`${fieldName}PreviewList`);
-      if (!container) return;
-      
-      if (selectedFiles.length === 0) {
-        container.innerHTML = '';
-        return;
-      }
-      
-      container.innerHTML = selectedFiles.map((file, index) => `
-        <div class="file-preview-item">
-          <span class="file-name">📎 ${file.name}</span>
-          <button class="remove-file" onclick="removeFile(${index}, '${fieldName}')">✖</button>
-        </div>
-      `).join('');
-    }
-
-    function removeFile(index, fieldName) {
-      selectedFiles.splice(index, 1);
-      updateFilePreview(fieldName);
-    }
-
-    // ==================== STUDENT INVOICE SECTION ====================
-
-    async function loadStudentInvoices() {
-      const { data: invoices, error } = await supabaseClient
-        .from('invoices')
-        .select(`
-          *,
-          line_items:invoice_line_items(*)
-        `)
-        .eq('student_id', currentUserId)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error loading invoices:', error);
-        document.getElementById('invoicesList').innerHTML = 
-          '<div class="empty-state">Error loading invoices. Please try again.</div>';
-        return;
-      }
-
-      studentInvoices = invoices || [];
-
-      const total = studentInvoices.length;
-      const pending = studentInvoices.filter(inv => inv.status === 'sent').length;
-      const overdue = studentInvoices.filter(inv => 
-        inv.status === 'sent' && inv.due_date && new Date(inv.due_date) < new Date()
-      ).length;
-      const amountDue = studentInvoices
-        .filter(inv => inv.status === 'sent')
-        .reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
-
-      document.getElementById('totalInvoices').textContent = total;
-      document.getElementById('pendingInvoices').textContent = pending;
-      document.getElementById('amountDue').textContent = `$${amountDue.toFixed(2)}`;
-
-      updateBadge('invoicesBadge', pending + overdue);
-
-      renderStudentInvoices();
-    }
-
-    function renderStudentInvoices() {
-      const container = document.getElementById('invoicesList');
-
-      if (!studentInvoices || studentInvoices.length === 0) {
-        container.innerHTML = '<div class="empty-state">No invoices yet. Your invoices will appear here when created by admin.</div>';
-        return;
-      }
-
-      container.innerHTML = studentInvoices.map(invoice => {
-        const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
-        const createdDate = new Date(invoice.created_at).toLocaleDateString();
-        const isOverdue = invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'sent';
-        const status = isOverdue ? 'overdue' : invoice.status;
-        const overdueClass = isOverdue ? 'overdue' : '';
-
-        return `
-          <div class="invoice-card ${overdueClass}">
-            <div class="invoice-header">
-              <div>
-                <div class="invoice-number">${invoice.invoice_number}</div>
-                <div style="color: #666; font-size: 0.9em;">Created: ${createdDate}</div>
-              </div>
-              <div style="text-align: right;">
-                <div class="invoice-amount">$${parseFloat(invoice.amount).toFixed(2)}</div>
-                <span class="invoice-status status-${status}">${status}</span>
-              </div>
-            </div>
-            
-            <div class="invoice-details">
-              <h4 style="margin: 0 0 0.5rem 0; color: #000;">${invoice.title}</h4>
-              ${invoice.description ? `<p>${invoice.description}</p>` : ''}
-              <p><strong>Due Date:</strong> ${dueDate}</p>
-              ${isOverdue ? '<p style="color: #dc3545; font-weight: bold;">⚠️ This invoice is overdue!</p>' : ''}
-            </div>
-
-            <div class="invoice-actions">
-              <button class="btn-view" onclick="viewStudentInvoice('${invoice.id}')">👁️ View Details</button>
-              ${invoice.status === 'sent' ? `
-                <button class="btn-pay" onclick="payInvoice('${invoice.id}')">💳 Pay Now</button>
-              ` : ''}
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    async function viewStudentInvoice(invoiceId) {
-      const invoice = studentInvoices.find(inv => inv.id === invoiceId);
-      if (!invoice) {
-        alert('Invoice not found');
-        return;
-      }
-
-      const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
-      const createdDate = new Date(invoice.created_at).toLocaleDateString();
-      const sentDate = invoice.sent_at ? new Date(invoice.sent_at).toLocaleDateString() : null;
-      const paidDate = invoice.paid_at ? new Date(invoice.paid_at).toLocaleDateString() : null;
-
-      const lineItemsHtml = invoice.line_items ? invoice.line_items.map(item => `
-        <div class="line-item">
-          <span>${item.description} (x${item.quantity})</span>
-          <span>$${parseFloat(item.total_price).toFixed(2)}</span>
-        </div>
-      `).join('') : '<div class="line-item"><span>No itemized details</span><span></span></div>';
-
-      const content = `
-        <div style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 1.5rem; border-radius: 8px 8px 0 0; margin: -2rem -2rem 1.5rem -2rem;">
-          <h3>Invoice ${invoice.invoice_number}</h3>
-          <p>Created: ${createdDate} ${sentDate ? `• Sent: ${sentDate}` : ''}</p>
-        </div>
-
-        <div style="margin-bottom: 2rem;">
-          <h4>${invoice.title}</h4>
-          ${invoice.description ? `<p style="color: #666; margin-top: 0.5rem;">${invoice.description}</p>` : ''}
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-          <div>
-            <h4>Invoice Details</h4>
-            <p><strong>Status:</strong> <span class="invoice-status status-${invoice.status}">${invoice.status}</span></p>
-            <p><strong>Due Date:</strong> ${dueDate}</p>
-            ${paidDate ? `<p><strong>Paid:</strong> ${paidDate}</p>` : ''}
-          </div>
-          <div style="text-align: right;">
-            <h4>Amount</h4>
-            <div style="font-size: 2em; font-weight: bold; color: #007bff;">$${parseFloat(invoice.amount).toFixed(2)}</div>
-          </div>
-        </div>
-
-        ${invoice.line_items && invoice.line_items.length > 0 ? `
-          <div class="invoice-line-items">
-            <h4>Invoice Items</h4>
-            ${lineItemsHtml}
-          </div>
-        ` : ''}
-
-        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
-          ${invoice.status === 'sent' ? `
-            <button class="btn-pay" onclick="payInvoice('${invoice.id}'); closeModal('viewStudentInvoiceModal');">💳 Pay Now</button>
-          ` : ''}
-          <button class="btn-secondary" onclick="closeModal('viewStudentInvoiceModal')">Close</button>
-        </div>
-      `;
-
-      document.getElementById('studentInvoiceViewContent').innerHTML = content;
-      document.getElementById('viewStudentInvoiceModal').classList.add('active');
-    }
-
-    async function payInvoice(invoiceId) {
-      try {
-        const invoice = studentInvoices.find(inv => inv.id === invoiceId);
-        
-        if (!invoice) {
-          alert('Invoice not found');
-          return;
-        }
-
-        if (!invoice.payment_link) {
-          alert('❌ Payment link not available yet. Please contact support.');
-          return;
-        }
-
-        closeModal('paymentModal');
-        closeModal('viewStudentInvoiceModal');
-
-        const loadingDiv = document.createElement('div');
-        loadingDiv.id = 'stripeLoading';
-        loadingDiv.innerHTML = `
-          <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
-            <div style="background:#fff; padding:2rem; border-radius:12px; text-align:center;">
-              <h3 style="margin:0 0 1rem 0; color:#007bff;">🔄 Redirecting to payment...</h3>
-              <p style="margin:0; color:#666;">Opening secure checkout page...</p>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(loadingDiv);
-
-        setTimeout(() => {
-          window.location.href = invoice.payment_link;
-        }, 1000);
-
-      } catch (error) {
-        console.error('Payment error:', error);
-        document.getElementById('stripeLoading')?.remove();
-        alert('❌ Error: ' + error.message);
-      }
-    }
-
     // ============================================
     // SESSIONS MANAGEMENT
     // ============================================
+    
     async function loadSessions() {
       const now = new Date().toISOString();
       
@@ -2607,6 +2763,7 @@
     // ============================================
     // LOAD ALL ASSIGNED TEACHERS
     // ============================================
+    
     async function loadMyTeachers() {
       const { data: assignments } = await supabaseClient
         .from('teacher_assignments')
@@ -2647,6 +2804,7 @@
     // ============================================
     // SUPPORT MESSAGING - THREADED
     // ============================================
+    
     async function loadSupportThreads() {
       const { data: admins } = await supabaseClient
         .from('profiles')
@@ -2812,6 +2970,7 @@
     // ============================================
     // TEACHER MESSAGING - GMAIL STYLE REPLY
     // ============================================
+    
     async function loadTeacherThreads() {
       if (!myTeachers || myTeachers.length === 0) {
         document.getElementById('teacherThreads').innerHTML = 
@@ -3136,6 +3295,193 @@
       loadSupportThreads();
     }
 
+    // ==================== STUDENT INVOICE SECTION ====================
+
+    async function loadStudentInvoices() {
+      const { data: invoices, error } = await supabaseClient
+        .from('invoices')
+        .select(`
+          *,
+          line_items:invoice_line_items(*)
+        `)
+        .eq('student_id', currentUserId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading invoices:', error);
+        document.getElementById('invoicesList').innerHTML = 
+          '<div class="empty-state">Error loading invoices. Please try again.</div>';
+        return;
+      }
+
+      studentInvoices = invoices || [];
+
+      const total = studentInvoices.length;
+      const pending = studentInvoices.filter(inv => inv.status === 'sent').length;
+      const overdue = studentInvoices.filter(inv => 
+        inv.status === 'sent' && inv.due_date && new Date(inv.due_date) < new Date()
+      ).length;
+      const amountDue = studentInvoices
+        .filter(inv => inv.status === 'sent')
+        .reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
+
+      document.getElementById('totalInvoices').textContent = total;
+      document.getElementById('pendingInvoices').textContent = pending;
+      document.getElementById('amountDue').textContent = `$${amountDue.toFixed(2)}`;
+
+      updateBadge('invoicesBadge', pending + overdue);
+
+      renderStudentInvoices();
+    }
+
+    function renderStudentInvoices() {
+      const container = document.getElementById('invoicesList');
+
+      if (!studentInvoices || studentInvoices.length === 0) {
+        container.innerHTML = '<div class="empty-state">No invoices yet. Your invoices will appear here when created by admin.</div>';
+        return;
+      }
+
+      container.innerHTML = studentInvoices.map(invoice => {
+        const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
+        const createdDate = new Date(invoice.created_at).toLocaleDateString();
+        const isOverdue = invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'sent';
+        const status = isOverdue ? 'overdue' : invoice.status;
+        const overdueClass = isOverdue ? 'overdue' : '';
+
+        return `
+          <div class="invoice-card ${overdueClass}">
+            <div class="invoice-header">
+              <div>
+                <div class="invoice-number">${invoice.invoice_number}</div>
+                <div style="color: #666; font-size: 0.9em;">Created: ${createdDate}</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="invoice-amount">$${parseFloat(invoice.amount).toFixed(2)}</div>
+                <span class="invoice-status status-${status}">${status}</span>
+              </div>
+            </div>
+            
+            <div class="invoice-details">
+              <h4 style="margin: 0 0 0.5rem 0; color: #000;">${invoice.title}</h4>
+              ${invoice.description ? `<p>${invoice.description}</p>` : ''}
+              <p><strong>Due Date:</strong> ${dueDate}</p>
+              ${isOverdue ? '<p style="color: #dc3545; font-weight: bold;">⚠️ This invoice is overdue!</p>' : ''}
+            </div>
+
+            <div class="invoice-actions">
+              <button class="btn-view" onclick="viewStudentInvoice('${invoice.id}')">👁️ View Details</button>
+              ${invoice.status === 'sent' ? `
+                <button class="btn-pay" onclick="payInvoice('${invoice.id}')">💳 Pay Now</button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function viewStudentInvoice(invoiceId) {
+      const invoice = studentInvoices.find(inv => inv.id === invoiceId);
+      if (!invoice) {
+        alert('Invoice not found');
+        return;
+      }
+
+      const dueDate = invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date';
+      const createdDate = new Date(invoice.created_at).toLocaleDateString();
+      const sentDate = invoice.sent_at ? new Date(invoice.sent_at).toLocaleDateString() : null;
+      const paidDate = invoice.paid_at ? new Date(invoice.paid_at).toLocaleDateString() : null;
+
+      const lineItemsHtml = invoice.line_items ? invoice.line_items.map(item => `
+        <div class="line-item">
+          <span>${item.description} (x${item.quantity})</span>
+          <span>$${parseFloat(item.total_price).toFixed(2)}</span>
+        </div>
+      `).join('') : '<div class="line-item"><span>No itemized details</span><span></span></div>';
+
+      const content = `
+        <div style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; padding: 1.5rem; border-radius: 8px 8px 0 0; margin: -2rem -2rem 1.5rem -2rem;">
+          <h3>Invoice ${invoice.invoice_number}</h3>
+          <p>Created: ${createdDate} ${sentDate ? `• Sent: ${sentDate}` : ''}</p>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+          <h4>${invoice.title}</h4>
+          ${invoice.description ? `<p style="color: #666; margin-top: 0.5rem;">${invoice.description}</p>` : ''}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+          <div>
+            <h4>Invoice Details</h4>
+            <p><strong>Status:</strong> <span class="invoice-status status-${invoice.status}">${invoice.status}</span></p>
+            <p><strong>Due Date:</strong> ${dueDate}</p>
+            ${paidDate ? `<p><strong>Paid:</strong> ${paidDate}</p>` : ''}
+          </div>
+          <div style="text-align: right;">
+            <h4>Amount</h4>
+            <div style="font-size: 2em; font-weight: bold; color: #007bff;">$${parseFloat(invoice.amount).toFixed(2)}</div>
+          </div>
+        </div>
+
+        ${invoice.line_items && invoice.line_items.length > 0 ? `
+          <div class="invoice-line-items">
+            <h4>Invoice Items</h4>
+            ${lineItemsHtml}
+          </div>
+        ` : ''}
+
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+          ${invoice.status === 'sent' ? `
+            <button class="btn-pay" onclick="payInvoice('${invoice.id}'); closeModal('viewStudentInvoiceModal');">💳 Pay Now</button>
+          ` : ''}
+          <button class="btn-secondary" onclick="closeModal('viewStudentInvoiceModal')">Close</button>
+        </div>
+      `;
+
+      document.getElementById('studentInvoiceViewContent').innerHTML = content;
+      document.getElementById('viewStudentInvoiceModal').classList.add('active');
+    }
+
+    async function payInvoice(invoiceId) {
+      try {
+        const invoice = studentInvoices.find(inv => inv.id === invoiceId);
+        
+        if (!invoice) {
+          alert('Invoice not found');
+          return;
+        }
+
+        if (!invoice.payment_link) {
+          alert('❌ Payment link not available yet. Please contact support.');
+          return;
+        }
+
+        closeModal('paymentModal');
+        closeModal('viewStudentInvoiceModal');
+
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'stripeLoading';
+        loadingDiv.innerHTML = `
+          <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; display:flex; align-items:center; justify-content:center;">
+            <div style="background:#fff; padding:2rem; border-radius:12px; text-align:center;">
+              <h3 style="margin:0 0 1rem 0; color:#007bff;">🔄 Redirecting to payment...</h3>
+              <p style="margin:0; color:#666;">Opening secure checkout page...</p>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(loadingDiv);
+
+        setTimeout(() => {
+          window.location.href = invoice.payment_link;
+        }, 1000);
+
+      } catch (error) {
+        console.error('Payment error:', error);
+        document.getElementById('stripeLoading')?.remove();
+        alert('❌ Error: ' + error.message);
+      }
+    }
+
     function updateBadge(badgeId, count) {
       const badge = document.getElementById(badgeId);
       if (count > 0) {
@@ -3167,16 +3513,12 @@
     function closeModal(modalId) {
       document.getElementById(modalId).classList.remove('active');
       selectedFiles = [];
-      
-      if (modalId === 'advisorChatModal' && advisorChatInterval) {
-        clearInterval(advisorChatInterval);
-        advisorChatInterval = null;
-      }
     }
 
     // ============================================
     // BOOKING WIZARD
     // ============================================
+    
     function updateProgress(percent) {
       document.getElementById('wizardProgressFill').style.width = percent + '%';
     }
@@ -3500,7 +3842,411 @@
       }
     }
 
+    // ============================================
+    // FILE UPLOAD (for future use)
+    // ============================================
+
+    async function uploadFile(file) {
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `message-attachments/${fileName}`;
+
+        const { data, error } = await supabaseClient.storage
+          .from('attachments')
+          .upload(filePath, file);
+
+        if (error) throw error;
+
+        const { data: urlData } = supabaseClient.storage
+          .from('attachments')
+          .getPublicUrl(filePath);
+
+        return urlData.publicUrl;
+      } catch (error) {
+        console.error('File upload error:', error);
+        throw error;
+      }
+    }
+
+    function handleFileSelect(event, fieldName) {
+      const files = Array.from(event.target.files);
+      
+      if (selectedFiles.length + files.length > 5) {
+        alert('⚠️ Maximum 5 files per message');
+        return;
+      }
+      
+      selectedFiles = [...selectedFiles, ...files];
+      updateFilePreview(fieldName);
+    }
+
+    function updateFilePreview(fieldName) {
+      const container = document.getElementById(`${fieldName}PreviewList`);
+      if (!container) return;
+      
+      if (selectedFiles.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      container.innerHTML = selectedFiles.map((file, index) => `
+        <div class="file-preview-item">
+          <span class="file-name">📎 ${file.name}</span>
+          <button class="remove-file" onclick="removeFile(${index}, '${fieldName}')">✖</button>
+        </div>
+      `).join('');
+    }
+
+    function removeFile(index, fieldName) {
+      selectedFiles.splice(index, 1);
+      updateFilePreview(fieldName);
+    }
+
+    // ============================================
+    // KEYBOARD SHORTCUTS FOR CHAT
+    // ============================================
+
+    document.addEventListener('keydown', (e) => {
+      // Send popup chat message with Enter (not Shift+Enter)
+      const popupInput = document.getElementById('popupChatInput');
+      if (popupInput && document.activeElement === popupInput) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendPopupChatMessage();
+        }
+      }
+
+      // Send support reply with Enter (not Shift+Enter)
+      const supportReplyInput = document.getElementById('supportReplyMessage');
+      if (supportReplyInput && document.activeElement === supportReplyInput) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendSupportReply();
+        }
+      }
+
+      // Send teacher reply with Enter (not Shift+Enter)
+      const teacherReplyInput = document.getElementById('teacherReplyMessage');
+      if (teacherReplyInput && document.activeElement === teacherReplyInput) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          const teacherId = teacherReplyInput.getAttribute('data-teacher-id');
+          if (teacherId) {
+            sendReplyToTeacher(teacherId);
+          }
+        }
+      }
+    });
+
+    // Store teacher ID in reply input for keyboard shortcut
+    window.originalOpenTeacherConversation = openTeacherConversation;
+    openTeacherConversation = async function(teacherId) {
+      await originalOpenTeacherConversation(teacherId);
+      const input = document.getElementById('teacherReplyMessage');
+      if (input) {
+        input.setAttribute('data-teacher-id', teacherId);
+      }
+    };
+
+    // ============================================
+    // INITIALIZE ON PAGE LOAD
+    // ============================================
+
     checkAuth();
+
+    // Handle "Enter" key in chat inputs
+    window.addEventListener('load', () => {
+      const popupInput = document.getElementById('popupChatInput');
+      if (popupInput) {
+        popupInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendPopupChatMessage();
+          }
+        });
+      }
+    });
+
+    // Auto-scroll to bottom when popup chat opens
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const popup = document.getElementById('popupChat');
+          if (popup.classList.contains('active') && !isPopupMinimized) {
+            const messages = document.getElementById('popupChatMessages');
+            if (messages) {
+              messages.scrollTop = messages.scrollHeight;
+            }
+          }
+        }
+      });
+    });
+
+    observer.observe(document.getElementById('popupChat'), {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    // Prevent popup chat from closing when clicking inside
+    document.getElementById('popupChat').addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    // Focus input when popup chat opens
+    const popupChatObserver = new MutationObserver(() => {
+      const popup = document.getElementById('popupChat');
+      if (popup.classList.contains('active') && !isPopupMinimized) {
+        setTimeout(() => {
+          const input = document.getElementById('popupChatInput');
+          if (input) input.focus();
+        }, 100);
+      }
+    });
+
+    popupChatObserver.observe(document.getElementById('popupChat'), {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    // ============================================
+    // VISIBILITY CHANGE DETECTION
+    // ============================================
+
+    // Play sound when new messages arrive while page is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && currentAdvisorChatId) {
+        // Page became visible again, reload messages
+        loadPopupChatMessages();
+      }
+    });
+
+    // ============================================
+    // UNLOAD CLEANUP
+    // ============================================
+
+    window.addEventListener('beforeunload', () => {
+      if (popupChatInterval) {
+        clearInterval(popupChatInterval);
+      }
+    });
+
+    // ============================================
+    // MOBILE RESPONSIVENESS
+    // ============================================
+
+    // Adjust popup chat for mobile
+    function adjustPopupForMobile() {
+      const popup = document.getElementById('popupChat');
+      if (window.innerWidth <= 768) {
+        popup.style.width = 'calc(100vw - 40px)';
+        popup.style.right = '20px';
+        popup.style.left = '20px';
+        popup.style.bottom = '10px';
+      } else {
+        popup.style.width = '380px';
+        popup.style.right = '20px';
+        popup.style.left = 'auto';
+        popup.style.bottom = '20px';
+      }
+    }
+
+    window.addEventListener('resize', adjustPopupForMobile);
+    adjustPopupForMobile();
+
+    // ============================================
+    // NOTIFICATION PERMISSION (Optional Enhancement)
+    // ============================================
+
+    // Request notification permission on first interaction
+    let notificationPermissionRequested = false;
+
+    function requestNotificationPermission() {
+      if (!notificationPermissionRequested && 'Notification' in window && Notification.permission === 'default') {
+        notificationPermissionRequested = true;
+        Notification.requestPermission();
+      }
+    }
+
+    // Request on first user interaction
+    document.addEventListener('click', requestNotificationPermission, { once: true });
+
+    // ============================================
+    // PERFORMANCE OPTIMIZATION
+    // ============================================
+
+    // Debounce function for input handlers
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // ============================================
+    // ERROR HANDLING
+    // ============================================
+
+    // Global error handler
+    window.addEventListener('error', (e) => {
+      console.error('Global error:', e.error);
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      console.error('Unhandled promise rejection:', e.reason);
+    });
+
+    // ============================================
+    // ACCESSIBILITY IMPROVEMENTS
+    // ============================================
+
+    // Add ARIA labels to interactive elements
+    document.addEventListener('DOMContentLoaded', () => {
+      // Add aria-label to buttons that don't have text
+      document.querySelectorAll('button[onclick]').forEach(btn => {
+        if (!btn.getAttribute('aria-label') && !btn.textContent.trim()) {
+          btn.setAttribute('aria-label', 'Interactive button');
+        }
+      });
+
+      // Add role to modal elements
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+      });
+    });
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+
+    // Format date helper
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diff = now - date;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+      if (days === 0) return 'Today';
+      if (days === 1) return 'Yesterday';
+      if (days < 7) return `${days} days ago`;
+      
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+      });
+    }
+
+    // Escape HTML helper
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ============================================
+    // LOCAL STORAGE HELPERS
+    // ============================================
+
+    // Save popup chat state
+    function savePopupChatState() {
+      if (currentAdvisorChatId) {
+        localStorage.setItem('advisorChatState', JSON.stringify({
+          advisorId: currentAdvisorChatId,
+          subject: currentAdvisorChatSubject,
+          minimized: isPopupMinimized
+        }));
+      }
+    }
+
+    // Restore popup chat state on page load
+    function restorePopupChatState() {
+      const saved = localStorage.getItem('advisorChatState');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          // Don't auto-restore - user must click to open new chat
+          // This prevents unwanted popup on every page load
+          localStorage.removeItem('advisorChatState');
+        } catch (e) {
+          console.error('Error restoring chat state:', e);
+        }
+      }
+    }
+
+    // Save state when popup changes
+    const popupStateObserver = new MutationObserver(debounce(savePopupChatState, 500));
+    popupStateObserver.observe(document.getElementById('popupChat'), {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    // ============================================
+    // ANALYTICS HELPERS (Optional)
+    // ============================================
+
+    // Track advisor selection for analytics
+    async function trackAdvisorInteraction(action, advisorId) {
+      try {
+        // This could be expanded to log to an analytics table
+        console.log(`Advisor interaction: ${action}`, advisorId);
+      } catch (error) {
+        console.error('Analytics error:', error);
+      }
+    }
+
+    // ============================================
+    // FEATURE FLAGS (Optional)
+    // ============================================
+
+    // Enable/disable features based on config
+    const FEATURES = {
+      advisorChat: true,
+      notifications: true,
+      fileUploads: false, // Not implemented yet
+      videoChat: true
+    };
+
+    // Check if feature is enabled
+    function isFeatureEnabled(feature) {
+      return FEATURES[feature] === true;
+    }
+
+    // ============================================
+    // CONSOLE WELCOME MESSAGE
+    // ============================================
+
+    console.log('%c👋 Welcome to STEMSphere Academy Student Dashboard!', 'font-size: 16px; font-weight: bold; color: #007bff;');
+    console.log('%cVersion: 2.0 with Live Advisor Chat', 'font-size: 12px; color: #666;');
+    console.log('%cIf you encounter any issues, please contact support@stemsphere.academy', 'font-size: 12px; color: #666;');
+
+    // ============================================
+    // DEBUG HELPERS (Development Only)
+    // ============================================
+
+    // Expose debug helpers in console (comment out in production)
+    window.debugHelpers = {
+      getCurrentUser: () => currentUserId,
+      getAdvisorChat: () => ({
+        advisorId: currentAdvisorChatId,
+        subject: currentAdvisorChatSubject,
+        isMinimized: isPopupMinimized
+      }),
+      getTeacherProfiles: () => teacherProfiles,
+      forceReload: () => {
+        loadSessions();
+        loadMyTeachers();
+        loadSupportThreads();
+        loadStudentInvoices();
+      }
+    };
+
   </script>
 </body>
 </html>
