@@ -373,6 +373,43 @@
       width: 100%;
     }
 
+    .advisor-card .subjects-display {
+      background: #f0f8ff;
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin: 0.75rem 0;
+      border-left: 3px solid #28a745;
+    }
+
+    .advisor-card .subjects-display strong {
+      color: #28a745;
+      font-size: 0.9em;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .advisor-card .subject-pill {
+      display: inline-block;
+      background: #28a745;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.85em;
+      margin: 0.25rem;
+    }
+
+    .advisor-card .edit-subjects-btn {
+      background: #ffc107;
+      color: #000;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+
     .teacher-card-advisor {
       background: #f8f9fa;
       border: 2px solid #ddd;
@@ -422,6 +459,40 @@
     .modal-content h3 {
       margin-bottom: 1rem;
       color: #28a745;
+    }
+
+    .subject-selection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .subject-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .subject-checkbox-item:hover {
+      border-color: #28a745;
+      background: #f0fff4;
+    }
+
+    .subject-checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .subject-checkbox-item.checked {
+      border-color: #28a745;
+      background: #d4edda;
     }
 
     .teacher-search {
@@ -960,6 +1031,7 @@
         <span class="badge" id="teacherAppsBadge" style="display:none;">0</span>
       </button>
     </div>
+
     <!-- PENDING SESSIONS TAB -->
     <div id="pendingTab" class="tab-content active">
       <div class="info-box">
@@ -1190,7 +1262,6 @@
     </div>
 
   </div>
-
   <!-- ASSIGN TEACHER TO SESSION MODAL -->
   <div id="assignModal" class="modal">
     <div class="modal-content">
@@ -1229,6 +1300,26 @@
       <div style="display:flex; gap:1rem; margin-top:1.5rem;">
         <button class="btn-primary" onclick="confirmStudentTeacherAssignment()" id="confirmStudentTeacherBtn" disabled>Add Teacher</button>
         <button class="btn-secondary" onclick="closeModal('assignStudentTeacherModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELECT ADVISOR SUBJECTS MODAL -->
+  <div id="selectAdvisorSubjectsModal" class="modal">
+    <div class="modal-content">
+      <h3>Select Advisor Subjects</h3>
+      <input type="hidden" id="subjectSelectionTeacherId">
+      <p style="margin-bottom:1rem; color:#666;">
+        Choose which subjects <strong id="subjectSelectionTeacherName"></strong> can advise on:
+      </p>
+      
+      <div class="subject-selection-grid" id="advisorSubjectsGrid">
+        <!-- Populated dynamically -->
+      </div>
+
+      <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+        <button class="btn-primary" onclick="saveAdvisorSubjects()">Save Subjects</button>
+        <button class="btn-secondary" onclick="closeModal('selectAdvisorSubjectsModal')">Cancel</button>
       </div>
     </div>
   </div>
@@ -1546,6 +1637,23 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     const STRIPE_PUBLISHABLE_KEY = 'pk_live_51RxMKXECW6aBsiOeryerAEPw7RZJWJpqWDPcydBbSHVaSZNwNV9JsELBECudAfIzoKc5aVzywMxOG4NzG8JqxcSF00beHd7eBy';
     
+    const ADVISOR_SUBJECTS = [
+      'Algebra & Trig',
+      'Precalculus', 
+      'Calculus',
+      'Geometry',
+      'Exam Math',
+      "Children's Math",
+      'Biology',
+      'Chemistry', 
+      'Physics',
+      'Python Programming',
+      'English (Public Speaking)',
+      'English Speaking & Writing',
+      'History',
+      'Other'
+    ];
+    
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
     const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
@@ -1628,6 +1736,14 @@
             loadTeacherApplications();
           }
         })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: 'is_advisor=eq.true'
+        }, () => {
+          loadAdvisors();
+        })
         .subscribe();
     }
 
@@ -1690,389 +1806,6 @@
       } else if (tabName === 'advisors') {
         loadAdvisors();
       }
-    }
-
-    // ==================== ADVISOR MANAGEMENT ====================
-
-    async function loadAdvisors() {
-      const { data: advisors, error } = await supabaseClient
-        .from('profiles')
-        .select('id, full_name, email, advisor_available')
-        .eq('role', 'teacher')
-        .eq('is_advisor', true)
-        .order('full_name');
-
-      const currentList = document.getElementById('currentAdvisorsList');
-      
-      if (error || !advisors || advisors.length === 0) {
-        currentList.innerHTML = '<div class="empty-state">No advisors assigned yet. Click teachers below to make them advisors.</div>';
-        loadAllTeachersForAdvisor();
-        return;
-      }
-
-      currentList.innerHTML = advisors.map(advisor => `
-        <div class="advisor-card ${advisor.advisor_available ? 'available' : ''}">
-          <div class="status-indicator"></div>
-          <h4>${advisor.full_name}</h4>
-          <p style="color: #666; font-size: 0.9em; margin: 0.5rem 0;">${advisor.email}</p>
-          <p style="margin: 0.5rem 0; font-weight: 600; color: ${advisor.advisor_available ? '#00ff88' : '#dc3545'};">
-            ${advisor.advisor_available ? '🟢 AVAILABLE NOW' : '🔴 Offline'}
-          </p>
-          <button class="remove-advisor-btn" onclick="removeAdvisor('${advisor.id}', '${advisor.full_name.replace(/'/g, "\\'")}')">
-            Remove Advisor Status
-          </button>
-        </div>
-      `).join('');
-
-      loadAllTeachersForAdvisor();
-      subscribeToAdvisorChanges();
-    }
-
-    async function loadAllTeachersForAdvisor() {
-      const { data: teachers } = await supabaseClient
-        .from('profiles')
-        .select('id, full_name, email, is_advisor')
-        .eq('role', 'teacher')
-        .order('full_name');
-
-      const allList = document.getElementById('allTeachersAdvisorList');
-      
-      if (!teachers || teachers.length === 0) {
-        allList.innerHTML = '<div class="empty-state">No teachers found.</div>';
-        return;
-      }
-
-      allList.innerHTML = teachers.map(teacher => `
-        <div class="teacher-card-advisor ${teacher.is_advisor ? 'is-advisor' : ''}" 
-             onclick="toggleAdvisorStatus('${teacher.id}', ${!teacher.is_advisor}, '${teacher.full_name.replace(/'/g, "\\'")}')">
-          <h4>${teacher.full_name}</h4>
-          <p style="color: #666; font-size: 0.9em; margin: 0.5rem 0;">${teacher.email}</p>
-          <p style="margin: 0.5rem 0; font-weight: 600; color: ${teacher.is_advisor ? '#28a745' : '#666'};">
-            ${teacher.is_advisor ? '✅ IS ADVISOR' : '➕ Make Advisor'}
-          </p>
-        </div>
-      `).join('');
-    }
-
-    async function toggleAdvisorStatus(teacherId, makeAdvisor, teacherName) {
-      const action = makeAdvisor ? 'make' : 'remove';
-      // Advisor toggle confirmation removed for streamlined workflow
-
-      const { error } = await supabaseClient
-        .from('profiles')
-        .update({ 
-          is_advisor: makeAdvisor,
-          advisor_available: false
-        })
-        .eq('id', teacherId);
-
-      if (error) {
-        alert('Error updating advisor status: ' + error.message);
-        return;
-      }
-
-      alert(`✅ ${teacherName} ${makeAdvisor ? 'is now' : 'is no longer'} an enrollment advisor!`);
-      await loadAdvisors();
-    }
-
-    async function removeAdvisor(teacherId, teacherName) {
-      await toggleAdvisorStatus(teacherId, false, teacherName);
-    }
-
-    function subscribeToAdvisorChanges() {
-      supabaseClient
-        .channel('advisor_status_changes')
-        .on('postgres_changes', {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'profiles',
-          filter: `is_advisor=eq.true`
-        }, (payload) => {
-          console.log('Advisor status changed:', payload);
-          loadAdvisors();
-        })
-        .subscribe();
-    }
-
-    // ==================== TEACHER APPLICATIONS FUNCTIONS ====================
-
-    async function loadTeacherApplicationsCount() {
-      const { data, error } = await supabaseClient
-        .from('teacher_applications')
-        .select('status')
-        .eq('status', 'pending');
-
-      if (!error && data) {
-        updateBadge('teacherAppsBadge', data.length);
-      }
-    }
-
-    async function loadTeacherApplications() {
-      if (!teacherAppsAuthenticated) {
-        const password = prompt('🔐 Enter password to view Teacher Applications:');
-        if (password !== TEACHER_APPS_PASSWORD) {
-          alert('❌ Incorrect password. Access denied.');
-          document.querySelector('.tab.active')?.classList.remove('active');
-          document.querySelector('.tab')?.classList.add('active');
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          document.getElementById('pendingTab').classList.add('active');
-          return;
-        }
-        teacherAppsAuthenticated = true;
-      }
-
-      let query = supabaseClient
-        .from('teacher_applications')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (currentApplicationFilter !== 'all') {
-        query = query.eq('status', currentApplicationFilter);
-      }
-
-      const { data: applications, error } = await query;
-
-      const container = document.getElementById('teacherApplicationsList');
-      const countDisplay = document.getElementById('applicationCount');
-
-      if (error) {
-        console.error('Error loading applications:', error);
-        container.innerHTML = '<div class="empty-state">Error loading applications: ' + error.message + '</div>';
-        return;
-      }
-
-      if (!applications || applications.length === 0) {
-        container.innerHTML = `<div class="empty-state">No ${currentApplicationFilter !== 'all' ? currentApplicationFilter : ''} applications found.</div>`;
-        countDisplay.textContent = '0 applications';
-        return;
-      }
-
-      countDisplay.textContent = `${applications.length} application${applications.length !== 1 ? 's' : ''}`;
-
-      const { data: pendingApps } = await supabaseClient
-        .from('teacher_applications')
-        .select('id')
-        .eq('status', 'pending');
-      
-      updateBadge('teacherAppsBadge', pendingApps?.length || 0);
-
-      container.innerHTML = applications.map(app => {
-        const statusClass = app.status === 'approved' ? 'approved' : app.status === 'rejected' ? 'rejected' : '';
-        
-        return `
-          <div class="application-card ${statusClass}">
-            <div class="application-header">
-              ${app.profile_photo_url ? `
-                <img src="${app.profile_photo_url}" class="profile-photo">
-              ` : `
-                <div class="profile-photo-placeholder">
-                  ${app.full_name.charAt(0).toUpperCase()}
-                </div>
-              `}
-              
-              <div style="flex: 1; min-width: 300px;">
-                <h3 style="color: #000; margin-bottom: 0.5rem; font-size: 1.5rem;">${app.full_name}</h3>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin: 0.75rem 0;">
-                  <div>
-                    <strong style="color: #666; font-size: 0.85rem;">📧 Email:</strong><br>
-                    <a href="mailto:${app.email}" style="color: #007bff; font-size: 0.95rem;">${app.email}</a>
-                  </div>
-                  <div>
-                    <strong style="color: #666; font-size: 0.85rem;">🌍 Country:</strong><br>
-                    <span style="font-size: 0.95rem;">${app.country}</span>
-                  </div>
-                  <div>
-                    <strong style="color: #666; font-size: 0.85rem;">💰 Expected Pay:</strong><br>
-                    <span style="font-size: 0.95rem;">${app.expected_monthly_pay}</span>
-                  </div>
-                  <div>
-                    <strong style="color: #666; font-size: 0.85rem;">📅 Experience:</strong><br>
-                    <span style="font-size: 0.95rem;">${app.years_of_experience}</span>
-                  </div>
-                </div>
-
-                <div style="margin: 0.75rem 0;">
-                  <strong style="color: #666; font-size: 0.85rem;">📚 Subjects:</strong><br>
-                  <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem;">
-                    ${(Array.isArray(app.subjects) ? app.subjects : []).map(subject => 
-                      `<span class="subject-tag">${subject}</span>`
-                    ).join('')}
-                    ${app.other_subject ? `<span class="subject-tag" style="background: #fff3e0; color: #e65100;">${app.other_subject}</span>` : ''}
-                  </div>
-                </div>
-
-                <div style="margin: 0.75rem 0;">
-                  <strong style="color: #666; font-size: 0.85rem;">Status:</strong>
-                  <span class="status-badge status-${app.status}">
-                    ${app.status === 'pending' ? '⏳ PENDING' : app.status === 'approved' ? '✅ APPROVED' : '❌ REJECTED'}
-                  </span>
-                </div>
-
-                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
-                  <button class="btn-small btn-view" onclick="viewFullApplication('${app.id}')">
-                    👁️ View Full Details
-                  </button>
-                  
-                  ${app.certifications_url ? `
-                    <button class="btn-small" style="background: #17a2b8; color: #fff;" onclick="window.open('${app.certifications_url.split(',')[0]}', '_blank')">
-                      📄 Certifications
-                    </button>
-                  ` : ''}
-                  
-                  ${app.video_url ? `
-                    <button class="btn-small" style="background: #6f42c1; color: #fff;" onclick="window.open('${app.video_url}', '_blank')">
-                      🎥 Teaching Video
-                    </button>
-                  ` : ''}
-                  
-                  ${app.status === 'pending' ? `
-                    <button class="btn-small btn-complete" onclick="updateApplicationStatus('${app.id}', 'approved', '${app.full_name.replace(/'/g, "\\'")}')">
-                      ✅ Approve
-                    </button>
-                    <button class="btn-small btn-delete" onclick="updateApplicationStatus('${app.id}', 'rejected', '${app.full_name.replace(/'/g, "\\'")}')">
-                      ❌ Reject
-                    </button>
-                  ` : ''}
-                  
-                  ${app.status !== 'pending' ? `
-                    <button class="btn-small" style="background: #ffc107; color: #000;" onclick="updateApplicationStatus('${app.id}', 'pending', '${app.full_name.replace(/'/g, "\\'")}')">
-                      🔄 Reset to Pending
-                    </button>
-                  ` : ''}
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    async function filterTeacherApplications(status) {
-      currentApplicationFilter = status;
-      await loadTeacherApplications();
-    }
-
-    async function viewFullApplication(applicationId) {
-      const { data: app, error } = await supabaseClient
-        .from('teacher_applications')
-        .select('*')
-        .eq('id', applicationId)
-        .single();
-
-      if (error || !app) {
-        alert('Error loading application');
-        return;
-      }
-
-      const content = `
-        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; border-radius: 12px 12px 0 0; margin: -2rem -2rem 2rem -2rem; text-align: center;">
-          ${app.profile_photo_url ? `
-            <img src="${app.profile_photo_url}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; margin-bottom: 1rem;">
-          ` : `
-            <div style="width: 120px; height: 120px; border-radius: 50%; background: #fff; color: #667eea; font-size: 3rem; font-weight: bold; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; border: 4px solid #fff;">
-              ${app.full_name.charAt(0).toUpperCase()}
-            </div>
-          `}
-          <h3 style="margin: 0 0 0.5rem 0; font-size: 2rem;">${app.full_name}</h3>
-          <p style="margin: 0; opacity: 0.9;">${app.email}</p>
-        </div>
-
-        <div style="background: ${app.status === 'approved' ? '#28a745' : app.status === 'rejected' ? '#dc3545' : '#ffc107'}; color: #fff; padding: 1rem; border-radius: 8px; text-align: center; margin-bottom: 2rem;">
-          <strong style="font-size: 1.2rem; text-transform: uppercase;">
-            ${app.status === 'pending' ? '⏳ PENDING REVIEW' : app.status === 'approved' ? '✅ APPROVED' : '❌ REJECTED'}
-          </strong>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
-            <h4 style="color: #667eea; margin: 0 0 1rem 0;">📋 Basic Information</h4>
-            <p style="margin: 0.5rem 0; color: #333;"><strong>Country:</strong> ${app.country}</p>
-            <p style="margin: 0.5rem 0; color: #333;"><strong>Expected Pay:</strong> ${app.expected_monthly_pay}</p>
-            <p style="margin: 0.5rem 0; color: #333;"><strong>Experience:</strong> ${app.years_of_experience}</p>
-            <p style="margin: 0.5rem 0; color: #333;"><strong>Computer:</strong> ${app.has_computer}</p>
-            <p style="margin: 0.5rem 0; color: #333;"><strong>Applied:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
-          </div>
-
-          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
-            <h4 style="color: #667eea; margin: 0 0 1rem 0;">📚 Teaching Subjects</h4>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-              ${(Array.isArray(app.subjects) ? app.subjects : []).map(subject => 
-                `<span style="background: #667eea; color: #fff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">${subject}</span>`
-              ).join('')}
-              ${app.other_subject ? `<span style="background: #764ba2; color: #fff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">${app.other_subject}</span>` : ''}
-            </div>
-          </div>
-        </div>
-
-        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
-          <h4 style="color: #667eea; margin: 0 0 1rem 0;">💬 Why They Want to Join</h4>
-          <p style="color: #333; line-height: 1.8; white-space: pre-wrap;">${app.why_join}</p>
-        </div>
-
-        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
-          ${app.certifications_url ? `
-            <a href="${app.certifications_url.split(',')[0]}" target="_blank" style="background: #17a2b8; color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
-              📄 View Certifications
-            </a>
-          ` : ''}
-          
-          ${app.video_url ? `
-            <a href="${app.video_url}" target="_blank" style="background: #6f42c1; color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
-              🎥 Watch Teaching Video
-            </a>
-          ` : ''}
-        </div>
-
-        ${app.status === 'pending' ? `
-          <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
-            <button class="btn-primary" style="background: #28a745;" onclick="updateApplicationStatus('${app.id}', 'approved', '${app.full_name.replace(/'/g, "\\'")}'); closeModal('viewApplicationModal');">
-              ✅ Approve Application
-            </button>
-            <button class="btn-primary" style="background: #dc3545;" onclick="updateApplicationStatus('${app.id}', 'rejected', '${app.full_name.replace(/'/g, "\\'")}'); closeModal('viewApplicationModal');">
-              ❌ Reject Application
-            </button>
-          </div>
-        ` : ''}
-
-        <div style="text-align: center; margin-top: 2rem;">
-          <button class="btn-secondary" onclick="closeModal('viewApplicationModal')">Close</button>
-        </div>
-      `;
-
-      document.getElementById('applicationViewContent').innerHTML = content;
-      document.getElementById('viewApplicationModal').classList.add('active');
-    }
-
-    async function updateApplicationStatus(appId, newStatus, applicantName) {
-      // Application status update confirmation removed
-
-      console.log('🔄 Updating application:', appId, 'to status:', newStatus);
-
-      const { data, error } = await supabaseClient
-        .from('teacher_applications')
-        .update({ status: newStatus })
-        .eq('id', appId)
-        .select();
-
-      console.log('📊 Update result:', { data, error });
-
-      if (error) {
-        console.error('❌ Full error:', error);
-        alert('Error updating status: ' + error.message);
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        alert('⚠️ Update may have failed - no rows affected. Check console for details.');
-        console.error('No rows were updated. Check if ID exists:', appId);
-        return;
-      }
-
-      console.log('✅ Successfully updated to:', data[0].status);
-      alert(`✅ Application ${newStatus} successfully!`);
-      await loadTeacherApplications();
-      await loadStats();
     }
 
     function getAdminTimezone() {
@@ -2158,6 +1891,7 @@
         `;
       }).join('');
     }
+
     async function loadBookings() {
       const { data: bookings, error } = await supabaseClient
         .from('bookings')
@@ -2248,8 +1982,6 @@
     }
 
     async function markComplete(bookingId) {
-      // Session completion confirmation removed
-
       const { error } = await supabaseClient
         .from('bookings')
         .update({ status: 'completed' })
@@ -2267,8 +1999,6 @@
     }
 
     async function cancelSession(bookingId) {
-      // Session cancellation confirmation removed
-
       const { error } = await supabaseClient
         .from('bookings')
         .update({ status: 'cancelled' })
@@ -2352,8 +2082,6 @@
     }
 
     async function removeTeacherAssignment(studentId, teacherId, studentName, teacherName) {
-      // Teacher removal confirmation removed
-
       const { error } = await supabaseClient
         .from('teacher_assignments')
         .delete()
@@ -2755,8 +2483,6 @@
         return;
       }
 
-      // Password reset confirmation removed
-
       const { error } = await supabaseClient.auth.resetPasswordForEmail(teacherEmail, {
         redirectTo: window.location.origin + '/reset-password.html'
       });
@@ -2885,6 +2611,482 @@
       document.getElementById('confirmAssignBtn').textContent = 'Assign Teacher';
     }
 
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function updateBadge(badgeId, count) {
+      const badge = document.getElementById(badgeId);
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    // ==================== ADVISOR MANAGEMENT ====================
+
+    async function loadAdvisors() {
+      const { data: advisors, error } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email, advisor_available, advisor_subjects')
+        .eq('role', 'teacher')
+        .eq('is_advisor', true)
+        .order('full_name');
+
+      const currentList = document.getElementById('currentAdvisorsList');
+      
+      if (error || !advisors || advisors.length === 0) {
+        currentList.innerHTML = '<div class="empty-state">No advisors assigned yet. Click teachers below to make them advisors.</div>';
+        loadAllTeachersForAdvisor();
+        return;
+      }
+
+      currentList.innerHTML = advisors.map(advisor => {
+        const subjects = advisor.advisor_subjects || [];
+        const subjectsDisplay = subjects.length > 0 
+          ? `<div class="subjects-display">
+               <strong>📚 Subjects:</strong>
+               ${subjects.map(s => `<span class="subject-pill">${s}</span>`).join('')}
+             </div>`
+          : '<p style="color:#dc3545; font-size:0.9em; margin:0.5rem 0;">⚠️ No subjects selected</p>';
+        
+        return `
+          <div class="advisor-card ${advisor.advisor_available ? 'available' : ''}">
+            <div class="status-indicator"></div>
+            <h4>${advisor.full_name}</h4>
+            <p style="color: #666; font-size: 0.9em; margin: 0.5rem 0;">${advisor.email}</p>
+            <p style="margin: 0.5rem 0; font-weight: 600; color: ${advisor.advisor_available ? '#00ff88' : '#dc3545'};">
+              ${advisor.advisor_available ? '🟢 AVAILABLE NOW' : '🔴 Offline'}
+            </p>
+            ${subjectsDisplay}
+            <button class="edit-subjects-btn" onclick="openEditAdvisorSubjects('${advisor.id}', '${advisor.full_name.replace(/'/g, "\\'")}', '${JSON.stringify(subjects).replace(/'/g, "\\'")}')">
+              ✏️ Edit Subjects
+            </button>
+            <button class="remove-advisor-btn" onclick="removeAdvisor('${advisor.id}', '${advisor.full_name.replace(/'/g, "\\'")}')">
+              Remove Advisor Status
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      loadAllTeachersForAdvisor();
+    }
+
+    async function loadAllTeachersForAdvisor() {
+      const { data: teachers } = await supabaseClient
+        .from('profiles')
+        .select('id, full_name, email, is_advisor')
+        .eq('role', 'teacher')
+        .order('full_name');
+
+      const allList = document.getElementById('allTeachersAdvisorList');
+      
+      if (!teachers || teachers.length === 0) {
+        allList.innerHTML = '<div class="empty-state">No teachers found.</div>';
+        return;
+      }
+
+      allList.innerHTML = teachers.map(teacher => `
+        <div class="teacher-card-advisor ${teacher.is_advisor ? 'is-advisor' : ''}" 
+             onclick="toggleAdvisorStatus('${teacher.id}', ${!teacher.is_advisor}, '${teacher.full_name.replace(/'/g, "\\'")}')">
+          <h4>${teacher.full_name}</h4>
+          <p style="color: #666; font-size: 0.9em; margin: 0.5rem 0;">${teacher.email}</p>
+          <p style="margin: 0.5rem 0; font-weight: 600; color: ${teacher.is_advisor ? '#28a745' : '#666'};">
+            ${teacher.is_advisor ? '✅ IS ADVISOR' : '➕ Make Advisor'}
+          </p>
+        </div>
+      `).join('');
+    }
+
+    async function toggleAdvisorStatus(teacherId, makeAdvisor, teacherName) {
+      if (makeAdvisor) {
+        openSelectAdvisorSubjects(teacherId, teacherName);
+      } else {
+        await removeAdvisor(teacherId, teacherName);
+      }
+    }
+
+    function openSelectAdvisorSubjects(teacherId, teacherName) {
+      document.getElementById('subjectSelectionTeacherId').value = teacherId;
+      document.getElementById('subjectSelectionTeacherName').textContent = teacherName;
+      
+      const grid = document.getElementById('advisorSubjectsGrid');
+      grid.innerHTML = ADVISOR_SUBJECTS.map(subject => `
+        <label class="subject-checkbox-item">
+          <input type="checkbox" value="${subject}" onchange="toggleSubjectCheckbox(this)">
+          <span>${subject}</span>
+        </label>
+      `).join('');
+      
+      document.getElementById('selectAdvisorSubjectsModal').classList.add('active');
+    }
+
+    function openEditAdvisorSubjects(teacherId, teacherName, currentSubjectsJson) {
+      document.getElementById('subjectSelectionTeacherId').value = teacherId;
+      document.getElementById('subjectSelectionTeacherName').textContent = teacherName;
+      
+      let currentSubjects = [];
+      try {
+        currentSubjects = JSON.parse(currentSubjectsJson);
+      } catch (e) {
+        currentSubjects = [];
+      }
+      
+      const grid = document.getElementById('advisorSubjectsGrid');
+      grid.innerHTML = ADVISOR_SUBJECTS.map(subject => {
+        const isChecked = currentSubjects.includes(subject);
+        return `
+          <label class="subject-checkbox-item ${isChecked ? 'checked' : ''}">
+            <input type="checkbox" value="${subject}" ${isChecked ? 'checked' : ''} onchange="toggleSubjectCheckbox(this)">
+            <span>${subject}</span>
+          </label>
+        `;
+      }).join('');
+      
+      document.getElementById('selectAdvisorSubjectsModal').classList.add('active');
+    }
+
+    function toggleSubjectCheckbox(checkbox) {
+      const label = checkbox.closest('.subject-checkbox-item');
+      if (checkbox.checked) {
+        label.classList.add('checked');
+      } else {
+        label.classList.remove('checked');
+      }
+    }
+
+    async function saveAdvisorSubjects() {
+      const teacherId = document.getElementById('subjectSelectionTeacherId').value;
+      const teacherName = document.getElementById('subjectSelectionTeacherName').textContent;
+      
+      const selectedSubjects = Array.from(document.querySelectorAll('#advisorSubjectsGrid input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+      
+      if (selectedSubjects.length === 0) {
+        alert('Please select at least one subject');
+        return;
+      }
+
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({ 
+          is_advisor: true,
+          advisor_available: false,
+          advisor_subjects: selectedSubjects
+        })
+        .eq('id', teacherId);
+
+      if (error) {
+        alert('Error updating advisor: ' + error.message);
+        return;
+      }
+
+      alert(`✅ ${teacherName} is now an enrollment advisor with ${selectedSubjects.length} subject(s)!`);
+      closeModal('selectAdvisorSubjectsModal');
+      await loadAdvisors();
+    }
+
+    async function removeAdvisor(teacherId, teacherName) {
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({ 
+          is_advisor: false,
+          advisor_available: false,
+          advisor_subjects: null
+        })
+        .eq('id', teacherId);
+
+      if (error) {
+        alert('Error removing advisor status: ' + error.message);
+        return;
+      }
+
+      alert(`✅ ${teacherName} is no longer an enrollment advisor.`);
+      await loadAdvisors();
+    }
+
+    // ==================== TEACHER APPLICATIONS ====================
+
+    async function loadTeacherApplicationsCount() {
+      const { data, error } = await supabaseClient
+        .from('teacher_applications')
+        .select('status')
+        .eq('status', 'pending');
+
+      if (!error && data) {
+        updateBadge('teacherAppsBadge', data.length);
+      }
+    }
+
+    async function loadTeacherApplications() {
+      if (!teacherAppsAuthenticated) {
+        const password = prompt('🔐 Enter password to view Teacher Applications:');
+        if (password !== TEACHER_APPS_PASSWORD) {
+          alert('❌ Incorrect password. Access denied.');
+          document.querySelector('.tab.active')?.classList.remove('active');
+          document.querySelector('.tab')?.classList.add('active');
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          document.getElementById('pendingTab').classList.add('active');
+          return;
+        }
+        teacherAppsAuthenticated = true;
+      }
+
+      let query = supabaseClient
+        .from('teacher_applications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (currentApplicationFilter !== 'all') {
+        query = query.eq('status', currentApplicationFilter);
+      }
+
+      const { data: applications, error } = await query;
+
+      const container = document.getElementById('teacherApplicationsList');
+      const countDisplay = document.getElementById('applicationCount');
+
+      if (error) {
+        console.error('Error loading applications:', error);
+        container.innerHTML = '<div class="empty-state">Error loading applications: ' + error.message + '</div>';
+        return;
+      }
+
+      if (!applications || applications.length === 0) {
+        container.innerHTML = `<div class="empty-state">No ${currentApplicationFilter !== 'all' ? currentApplicationFilter : ''} applications found.</div>`;
+        countDisplay.textContent = '0 applications';
+        return;
+      }
+
+      countDisplay.textContent = `${applications.length} application${applications.length !== 1 ? 's' : ''}`;
+
+      const { data: pendingApps } = await supabaseClient
+        .from('teacher_applications')
+        .select('id')
+        .eq('status', 'pending');
+      
+      updateBadge('teacherAppsBadge', pendingApps?.length || 0);
+
+      container.innerHTML = applications.map(app => {
+        const statusClass = app.status === 'approved' ? 'approved' : app.status === 'rejected' ? 'rejected' : '';
+        
+        return `
+          <div class="application-card ${statusClass}">
+            <div class="application-header">
+              ${app.profile_photo_url ? `
+                <img src="${app.profile_photo_url}" class="profile-photo">
+              ` : `
+                <div class="profile-photo-placeholder">
+                  ${app.full_name.charAt(0).toUpperCase()}
+                </div>
+              `}
+              
+              <div style="flex: 1; min-width: 300px;">
+                <h3 style="color: #000; margin-bottom: 0.5rem; font-size: 1.5rem;">${app.full_name}</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin: 0.75rem 0;">
+                  <div>
+                    <strong style="color: #666; font-size: 0.85rem;">📧 Email:</strong><br>
+                    <a href="mailto:${app.email}" style="color: #007bff; font-size: 0.95rem;">${app.email}</a>
+                  </div>
+                  <div>
+                    <strong style="color: #666; font-size: 0.85rem;">🌍 Country:</strong><br>
+                    <span style="font-size: 0.95rem;">${app.country}</span>
+                  </div>
+                  <div>
+                    <strong style="color: #666; font-size: 0.85rem;">💰 Expected Pay:</strong><br>
+                    <span style="font-size: 0.95rem;">${app.expected_monthly_pay}</span>
+                  </div>
+                  <div>
+                    <strong style="color: #666; font-size: 0.85rem;">📅 Experience:</strong><br>
+                    <span style="font-size: 0.95rem;">${app.years_of_experience}</span>
+                  </div>
+                </div>
+
+                <div style="margin: 0.75rem 0;">
+                  <strong style="color: #666; font-size: 0.85rem;">📚 Subjects:</strong><br>
+                  <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem;">
+                    ${(Array.isArray(app.subjects) ? app.subjects : []).map(subject => 
+                      `<span class="subject-tag">${subject}</span>`
+                    ).join('')}
+                    ${app.other_subject ? `<span class="subject-tag" style="background: #fff3e0; color: #e65100;">${app.other_subject}</span>` : ''}
+                  </div>
+                </div>
+
+                <div style="margin: 0.75rem 0;">
+                  <strong style="color: #666; font-size: 0.85rem;">Status:</strong>
+                  <span class="status-badge status-${app.status}">
+                    ${app.status === 'pending' ? '⏳ PENDING' : app.status === 'approved' ? '✅ APPROVED' : '❌ REJECTED'}
+                  </span>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                  <button class="btn-small btn-view" onclick="viewFullApplication('${app.id}')">
+                    👁️ View Full Details
+                  </button>
+                  
+                  ${app.certifications_url ? `
+                    <button class="btn-small" style="background: #17a2b8; color: #fff;" onclick="window.open('${app.certifications_url.split(',')[0]}', '_blank')">
+                      📄 Certifications
+                    </button>
+                  ` : ''}
+                  
+                  ${app.video_url ? `
+                    <button class="btn-small" style="background: #6f42c1; color: #fff;" onclick="window.open('${app.video_url}', '_blank')">
+                      🎥 Teaching Video
+                    </button>
+                  ` : ''}
+                  
+                  ${app.status === 'pending' ? `
+                    <button class="btn-small btn-complete" onclick="updateApplicationStatus('${app.id}', 'approved', '${app.full_name.replace(/'/g, "\\'")}')">
+                      ✅ Approve
+                    </button>
+                    <button class="btn-small btn-delete" onclick="updateApplicationStatus('${app.id}', 'rejected', '${app.full_name.replace(/'/g, "\\'")}')">
+                      ❌ Reject
+                    </button>
+                  ` : ''}
+                  
+                  ${app.status !== 'pending' ? `
+                    <button class="btn-small" style="background: #ffc107; color: #000;" onclick="updateApplicationStatus('${app.id}', 'pending', '${app.full_name.replace(/'/g, "\\'")}')">
+                      🔄 Reset to Pending
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function filterTeacherApplications(status) {
+      currentApplicationFilter = status;
+      await loadTeacherApplications();
+    }
+
+    async function viewFullApplication(applicationId) {
+      const { data: app, error } = await supabaseClient
+        .from('teacher_applications')
+        .select('*')
+        .eq('id', applicationId)
+        .single();
+
+      if (error || !app) {
+        alert('Error loading application');
+        return;
+      }
+
+      const content = `
+        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; border-radius: 12px 12px 0 0; margin: -2rem -2rem 2rem -2rem; text-align: center;">
+          ${app.profile_photo_url ? `
+            <img src="${app.profile_photo_url}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; margin-bottom: 1rem;">
+          ` : `
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: #fff; color: #667eea; font-size: 3rem; font-weight: bold; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; border: 4px solid #fff;">
+              ${app.full_name.charAt(0).toUpperCase()}
+            </div>
+          `}
+          <h3 style="margin: 0 0 0.5rem 0; font-size: 2rem;">${app.full_name}</h3>
+          <p style="margin: 0; opacity: 0.9;">${app.email}</p>
+        </div>
+
+        <div style="background: ${app.status === 'approved' ? '#28a745' : app.status === 'rejected' ? '#dc3545' : '#ffc107'}; color: #fff; padding: 1rem; border-radius: 8px; text-align: center; margin-bottom: 2rem;">
+          <strong style="font-size: 1.2rem; text-transform: uppercase;">
+            ${app.status === 'pending' ? '⏳ PENDING REVIEW' : app.status === 'approved' ? '✅ APPROVED' : '❌ REJECTED'}
+          </strong>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+            <h4 style="color: #667eea; margin: 0 0 1rem 0;">📋 Basic Information</h4>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Country:</strong> ${app.country}</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Expected Pay:</strong> ${app.expected_monthly_pay}</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Experience:</strong> ${app.years_of_experience}</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Computer:</strong> ${app.has_computer}</p>
+            <p style="margin: 0.5rem 0; color: #333;"><strong>Applied:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
+          </div>
+
+          <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+            <h4 style="color: #667eea; margin: 0 0 1rem 0;">📚 Teaching Subjects</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+              ${(Array.isArray(app.subjects) ? app.subjects : []).map(subject => 
+                `<span style="background: #667eea; color: #fff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">${subject}</span>`
+              ).join('')}
+              ${app.other_subject ? `<span style="background: #764ba2; color: #fff; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">${app.other_subject}</span>` : ''}
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+          <h4 style="color: #667eea; margin: 0 0 1rem 0;">💬 Why They Want to Join</h4>
+          <p style="color: #333; line-height: 1.8; white-space: pre-wrap;">${app.why_join}</p>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+          ${app.certifications_url ? `
+            <a href="${app.certifications_url.split(',')[0]}" target="_blank" style="background: #17a2b8; color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+              📄 View Certifications
+            </a>
+          ` : ''}
+          
+          ${app.video_url ? `
+            <a href="${app.video_url}" target="_blank" style="background: #6f42c1; color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+              🎥 Watch Teaching Video
+            </a>
+          ` : ''}
+        </div>
+
+        ${app.status === 'pending' ? `
+          <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+            <button class="btn-primary" style="background: #28a745;" onclick="updateApplicationStatus('${app.id}', 'approved', '${app.full_name.replace(/'/g, "\\'")}'); closeModal('viewApplicationModal');">
+              ✅ Approve Application
+            </button>
+            <button class="btn-primary" style="background: #dc3545;" onclick="updateApplicationStatus('${app.id}', 'rejected', '${app.full_name.replace(/'/g, "\\'")}'); closeModal('viewApplicationModal');">
+              ❌ Reject Application
+            </button>
+          </div>
+        ` : ''}
+
+        <div style="text-align: center; margin-top: 2rem;">
+          <button class="btn-secondary" onclick="closeModal('viewApplicationModal')">Close</button>
+        </div>
+      `;
+
+      document.getElementById('applicationViewContent').innerHTML = content;
+      document.getElementById('viewApplicationModal').classList.add('active');
+    }
+
+    async function updateApplicationStatus(appId, newStatus, applicantName) {
+      console.log('🔄 Updating application:', appId, 'to status:', newStatus);
+
+      const { data, error } = await supabaseClient
+        .from('teacher_applications')
+        .update({ status: newStatus })
+        .eq('id', appId)
+        .select();
+
+      console.log('📊 Update result:', { data, error });
+
+      if (error) {
+        console.error('❌ Full error:', error);
+        alert('Error updating status: ' + error.message);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        alert('⚠️ Update may have failed - no rows affected. Check console for details.');
+        console.error('No rows were updated. Check if ID exists:', appId);
+        return;
+      }
+
+      console.log('✅ Successfully updated to:', data[0].status);
+      alert(`✅ Application ${newStatus} successfully!`);
+      await loadTeacherApplications();
+      await loadStats();
+    }
+
+    // ==================== INVOICE FUNCTIONS ====================
+
     function generateInvoiceNumber() {
       const now = new Date();
       const year = now.getFullYear();
@@ -3000,6 +3202,7 @@
       const currencySymbol = getCurrencySymbol(currency);
       document.getElementById('invoiceTotal').textContent = `Total: ${currencySymbol}${total.toFixed(2)}`;
     }
+
     async function createInvoice(status = 'draft') {
       const studentId = document.getElementById('invoiceStudentSelect').value;
       const title = document.getElementById('invoiceTitle').value.trim();
@@ -3142,7 +3345,6 @@
       document.getElementById('outstandingAmount').textContent = `$${outstanding.toFixed(2)}`;
       updateBadge('invoicesBadge', pending + overdue);
     }
-
     async function viewInvoice(invoiceId) {
       const { data: invoice, error } = await supabaseClient
         .from('invoices')
@@ -3220,7 +3422,7 @@
           ${!invoice.payment_link ? `
             <div style="text-align: center; margin: 2rem 0;">
               <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                <p style="margin: 0; color: #856404; font-weight: 600;">⚠️ Payment link missing! This should not happen if you used "Send Invoice". Click below to fix:</p>
+                <p style="margin: 0; color: #856404; font-weight: 600;">⚠️ Payment link missing! Click below to generate:</p>
               </div>
               <button class="btn-primary" onclick="createStripePaymentLink('${invoice.id}')">
                 🔄 Generate Payment Link Now
@@ -3260,8 +3462,6 @@
     }
 
     async function sendInvoice(invoiceId) {
-      // Invoice send confirmation removed
-      
       const loadingBtn = event.target;
       const originalText = loadingBtn.textContent;
       loadingBtn.disabled = true;
@@ -3276,8 +3476,6 @@
         if (fetchError || !invoice) {
           throw new Error('Invoice not found: ' + (fetchError?.message || 'Unknown error'));
         }
-
-        console.log('📧 Sending invoice:', invoice.invoice_number);
 
         const currency = invoice.currency?.toLowerCase() || 'usd';
         const paymentMethods = invoice.allowed_payment_methods || ['card'];
@@ -3298,8 +3496,6 @@
             quantity: item.quantity
           }));
         }
-
-        console.log('💳 Creating Stripe checkout with methods:', paymentMethods);
 
         const response = await fetch('https://horqtcwnhwgodwlyqhli.supabase.co/functions/v1/create-checkout', {
           method: 'POST',
@@ -3327,8 +3523,6 @@
         });
 
         const result = await response.json();
-        
-        console.log('✅ Stripe response:', result);
 
         if (result.error) {
           throw new Error('Stripe error: ' + result.error);
@@ -3358,8 +3552,6 @@
           throw new Error('Failed to update invoice status: ' + updateStatusError.message);
         }
         
-        console.log('✅ Invoice sent successfully with payment link:', result.url);
-        
         alert('✅ Invoice sent with payment link!\n\nPayment link: ' + result.url.substring(0, 50) + '...');
         await loadInvoices();
         
@@ -3373,7 +3565,6 @@
     }
 
     async function markInvoicePaid(invoiceId) {
-      // Payment confirmation removed
       const { error } = await supabaseClient.from('invoices').update({ status: 'paid', paid_at: new Date().toISOString() }).eq('id', invoiceId);
       if (error) { alert('Error: ' + error.message); return; }
       alert('✅ Marked as paid!');
@@ -3381,7 +3572,6 @@
     }
 
     async function cancelInvoice(invoiceId) {
-      // Invoice cancellation confirmation removed
       const { error } = await supabaseClient.from('invoices').update({ status: 'cancelled' }).eq('id', invoiceId);
       if (error) { alert('Error: ' + error.message); return; }
       alert('✅ Cancelled!');
@@ -3398,8 +3588,6 @@
         const currency = invoice.currency?.toLowerCase() || 'usd';
         const currencySymbol = getCurrencySymbol(invoice.currency || 'USD');
         const paymentMethods = invoice.allowed_payment_methods || ['card'];
-
-        console.log('Creating payment link with currency:', currency, 'methods:', paymentMethods);
 
         let lineItems = [];
         
@@ -3445,8 +3633,6 @@
         });
 
         const result = await response.json();
-        
-        console.log('Edge function response:', result);
 
         if (result.error) {
           throw new Error(result.error);
@@ -3580,6 +3766,8 @@ ${result.url}`);
         alert('Error creating installment link: ' + error.message);
       }
     }
+
+    // ==================== MESSAGING SYSTEMS ====================
 
     async function loadSupportThreads() {
       const { data: students } = await supabaseClient
@@ -4374,20 +4562,6 @@ ${result.url}`);
       alert('✅ Message sent successfully!');
       closeModal('composeToAdminModal');
       loadAdminChatThreads();
-    }
-
-    function updateBadge(badgeId, count) {
-      const badge = document.getElementById(badgeId);
-      if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = 'flex';
-      } else {
-        badge.style.display = 'none';
-      }
-    }
-
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
     }
 
     checkAdminAuth();
