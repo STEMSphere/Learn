@@ -3570,17 +3570,16 @@
         document.getElementById('learnDomainVisitors').textContent = learnDomain;
         updateBadge('liveVisitorsBadge', totalLive);
 
-        // Get today's total unique visitors
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        const { data: todayVisitors } = await supabaseClient
-  .from('live_visitors')
-  .select('visitor_id')
-  .gte('last_seen', today.toISOString());
+        // Get today's total unique visitors from visitor_history table
+        const { data: todayCount, error: todayError } = await supabaseClient
+          .rpc('get_today_visitor_count');
 
-const uniqueToday = new Set(todayVisitors?.map(v => v.visitor_id)).size;
-        document.getElementById('todayTotalVisitors').textContent = uniqueToday;
+        if (todayError) {
+          console.error('Error getting today visitor count:', todayError);
+          document.getElementById('todayTotalVisitors').textContent = '?';
+        } else {
+          document.getElementById('todayTotalVisitors').textContent = todayCount || 0;
+        }
 
         // Render visitor cards
         renderVisitorCards(data);
