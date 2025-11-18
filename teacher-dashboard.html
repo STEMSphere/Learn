@@ -905,8 +905,13 @@
       <span class="brand-text">STEMSphere Academy</span>
       <span class="teacher-badge">TEACHER</span>
     </div>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </header>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <button class="logout-btn" onclick="window.open('teacher-beauty-filter.html', '_blank')" style="background: #ff6b9d; margin-right: 0.5rem;">
+        ✨ Beauty Filter Setup
+      </button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>>
 
   <div class="teacher-container">
     <div class="welcome-section">
@@ -1949,15 +1954,15 @@
       }
 
       let videoButton = '';
-        if (isUpcoming) {
-          if (booking.video_link) {
-            videoButton = `
-              <a href="teacher-video-room.html?room=${encodeURIComponent(booking.video_link)}" target="_blank" class="btn-small btn-video">🎥 Join Class</a>
-              <button class="btn-small" style="background:#2c2c2c; color:#fff; border: 2px solid #4CAF50;" onclick="openBlackboard('${booking.id}')">🖍️ Blackboard</button><br>`;
-          } else {
-            videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
-          }
+      if (isUpcoming) {
+        if (booking.video_link) {
+          videoButton = `
+            <a href="${booking.video_link}" target="_blank" class="btn-small btn-video">🎥 Join Class</a>
+            <button class="btn-small" style="background:#2c2c2c; color:#fff; border: 2px solid #4CAF50;" onclick="openBlackboard('${booking.id}')">🖍️ Blackboard</button><br>`;
+        } else {
+          videoButton = `<button class="btn-small btn-create-room" onclick="createVideoRoom('${booking.id}')">🎬 Create Video Room</button><br>`;
         }
+      }
 
       const messageButton = isUpcoming 
         ? `<button class="btn-small btn-view" onclick="openComposeToStudentModal('${booking.user_id}')">💬 Message</button>` 
