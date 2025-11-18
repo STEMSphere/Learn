@@ -976,12 +976,12 @@ footer {
 </head>
 
 <body>
-<!-- 🍪 COOKIE CONSENT BANNER - 50% SMALLER -->
+<!-- 🍪 COOKIE CONSENT BANNER - DESKTOP: Normal | MOBILE: Thin Bar -->
 <div id="cookieConsentBanner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, rgba(102,126,234,0.98), rgba(118,75,162,0.98)); backdrop-filter: blur(10px); color: #fff; padding: 0.75rem; z-index: 99999; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); border-top: 2px solid #00ff88;">
   <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
     
     <!-- Cookie Icon & Text -->
-    <div style="flex: 1; min-width: 250px;">
+    <div style="flex: 1; min-width: 250px;" id="cookieFullText">
       <div style="display: flex; align-items: center; gap: 0.5rem;">
         <div style="font-size: 1.5rem;">🍪</div>
         <div>
@@ -996,20 +996,29 @@ footer {
       </div>
     </div>
 
+    <!-- MOBILE ONLY: Thin bar text (hidden on desktop) -->
+    <div style="flex: 1; display: none;" id="cookieMobileText">
+      <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85em;">
+        <span>🍪</span>
+        <span style="font-weight: 600;">We use cookies</span>
+      </div>
+    </div>
+
     <!-- Buttons -->
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="cookieButtons">
       <button onclick="acceptAllCookies()" style="background: linear-gradient(135deg, #00ff88, #00c853); color: #000; padding: 0.5rem 1.25rem; border: none; border-radius: 6px; font-weight: 700; font-size: 0.8em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,255,136,0.4); transition: all 0.3s; white-space: nowrap;">
-        ✓ Accept All
+        ✓ Accept
       </button>
       <button onclick="rejectCookies()" style="background: rgba(255,255,255,0.2); color: #fff; padding: 0.5rem 1.25rem; border: 1px solid rgba(255,255,255,0.5); border-radius: 6px; font-weight: 700; font-size: 0.8em; cursor: pointer; transition: all 0.3s; white-space: nowrap;">
         ✗ Reject
       </button>
       <button onclick="openCookieSettings()" style="background: none; color: #fff; padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.5); border-radius: 6px; font-weight: 600; font-size: 0.8em; cursor: pointer; transition: all 0.3s; white-space: nowrap;">
-        ⚙️ Customize
+        ⚙️ More
       </button>
     </div>
   </div>
 </div>
+
 <!-- 🍪 COOKIE SETTINGS MODAL -->
 <div id="cookieSettingsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto;">
   <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 3px solid #667eea; border-radius: 16px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
@@ -1779,6 +1788,43 @@ setInterval(checkAdvisorAvailability, 5000);
 
 // ==================== COOKIE CONSENT MANAGEMENT ====================
 
+// 📱 MOBILE-SPECIFIC COOKIE BANNER HANDLING
+function adjustCookieBannerForMobile() {
+  const isMobile = window.innerWidth <= 768;
+  const banner = document.getElementById('cookieConsentBanner');
+  const fullText = document.getElementById('cookieFullText');
+  const mobileText = document.getElementById('cookieMobileText');
+  const buttons = document.getElementById('cookieButtons');
+  
+  if (isMobile) {
+    // MOBILE: Thin bar
+    banner.style.padding = '0.5rem 0.75rem';
+    fullText.style.display = 'none';
+    mobileText.style.display = 'block';
+    
+    // Simplify buttons on mobile
+    buttons.querySelectorAll('button').forEach(btn => {
+      btn.style.padding = '0.4rem 0.8rem';
+      btn.style.fontSize = '0.75em';
+    });
+  } else {
+    // DESKTOP: Normal banner
+    banner.style.padding = '0.75rem';
+    fullText.style.display = 'block';
+    mobileText.style.display = 'none';
+    
+    // Normal buttons on desktop
+    buttons.querySelectorAll('button').forEach((btn, idx) => {
+      if (idx === 0 || idx === 1) {
+        btn.style.padding = '0.5rem 1.25rem';
+      } else {
+        btn.style.padding = '0.5rem 1rem';
+      }
+      btn.style.fontSize = '0.8em';
+    });
+  }
+}
+
 // Toggle switches functionality
 document.getElementById('analyticsCookies').addEventListener('change', function() {
   const toggle = document.getElementById('analyticsToggle');
@@ -1816,10 +1862,14 @@ window.addEventListener('DOMContentLoaded', () => {
 function checkCookieConsent() {
   const consent = localStorage.getItem('cookieConsent');
   if (!consent) {
-    // Show banner after 1 second delay for better UX
+    // Show banner after delay
+    const isMobile = window.innerWidth <= 768;
+    const delay = isMobile ? 10000 : 1000; // 10s on mobile, 1s on desktop
+    
     setTimeout(() => {
+      adjustCookieBannerForMobile();
       document.getElementById('cookieConsentBanner').style.display = 'block';
-    }, 1000);
+    }, delay);
   } else {
     // User has already consented, load tracking scripts
     const consentData = JSON.parse(consent);
@@ -1831,6 +1881,14 @@ function checkCookieConsent() {
     }
   }
 }
+
+// Adjust on window resize
+window.addEventListener('resize', () => {
+  const banner = document.getElementById('cookieConsentBanner');
+  if (banner.style.display === 'block') {
+    adjustCookieBannerForMobile();
+  }
+});
 
 // Accept all cookies
 function acceptAllCookies() {
@@ -1876,6 +1934,7 @@ function closeCookieSettings() {
   
   // Show banner again if no consent saved
   if (!localStorage.getItem('cookieConsent')) {
+    adjustCookieBannerForMobile();
     document.getElementById('cookieConsentBanner').style.display = 'block';
   }
 }
@@ -1918,15 +1977,11 @@ function acceptAllFromSettings() {
 
 // Enable Google Analytics (already in your site)
 function enableAnalytics() {
-  // Your Google Analytics is already loaded in the <head>
-  // This just confirms it's allowed to track
   console.log('📊 Analytics tracking enabled');
 }
 
 // Enable Marketing pixels (Facebook Pixel already in your site)
 function enableMarketing() {
-  // Your Facebook Pixel is already loaded in the <head>
-  // This just confirms it's allowed to track
   console.log('🎯 Marketing tracking enabled');
 }
 
