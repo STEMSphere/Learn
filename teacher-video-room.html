@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Class | STEMSphere Academy</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
+  <script src="https://unpkg.com/@daily-co/daily-js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1d23;
+      color: #fff;
+      overflow: hidden;
+    }
+    
+    .controls-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      z-index: 1000;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.1em;
+    }
+    
+    .brand img {
+      width: 32px;
+      height: 32px;
+    }
+    
+    .filter-controls {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .filter-toggle:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    
+    .filter-toggle.active {
+      background: #28a745;
+      box-shadow: 0 0 20px rgba(40,167,69,0.5);
+    }
+    
+    .switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 26px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #28a745;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    
+    .slider-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .slider-control label {
+      font-size: 0.9em;
+      min-width: 100px;
+    }
+    
+    .slider-control input[type="range"] {
+      width: 120px;
+      height: 6px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 5px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    
+    .slider-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    
+    .slider-control input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      border: none;
+    }
+    
+    .value-display {
+      font-weight: 600;
+      min-width: 35px;
+      text-align: right;
+    }
+    
+    #video-container {
+      position: fixed;
+      top: 80px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+    }
+    
+    #daily-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 999;
+    }
+    
+    .loading h2 {
+      font-size: 2em;
+      margin-bottom: 1rem;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255,255,255,0.3);
+      border-top-color: #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .error {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #dc3545;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 500px;
+      z-index: 999;
+    }
+    
+    .error h2 {
+      margin-bottom: 1rem;
+    }
+    
+    .error button {
+      background: #fff;
+      color: #dc3545;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .controls-bar {
+        padding: 0.75rem 1rem;
+      }
+      
+      .filter-controls {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .slider-control label {
+        min-width: 80px;
+        font-size: 0.85em;
+      }
+      
+      .slider-control input[type="range"] {
+        width: 100px;
+      }
+      
+      #video-container {
+        top: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="controls-bar">
+    <div class="brand">
+      <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere">
+      <span>✨ Beauty Filter Active</span>
+    </div>
+    
+    <div class="filter-controls">
+      <div class="filter-toggle" id="filterToggle" onclick="toggleFilter()">
+        <label class="switch">
+          <input type="checkbox" id="filterSwitch" checked>
+          <span class="slider"></span>
+        </label>
+        <span id="filterStatus">Filter ON</span>
+      </div>
+      
+      <div class="slider-control">
+        <label>Brightness:</label>
+        <input type="range" id="brightness" min="100" max="140" value="115" oninput="updateFilters()">
+        <span class="value-display" id="brightnessValue">115%</span>
+      </div>
+      
+      <div class="slider-control">
+        <label>Smoothing:</label>
+        <input type="range" id="smoothing" min="0" max="10" value="3" oninput="updateFilters()">
+        <span class="value-display" id="smoothingValue">3</span>
+      </div>
+      
+      <div class="slider-control">
+        <label>Warmth:</label>
+        <input type="range" id="warmth" min="100" max="120" value="105" oninput="updateFilters()">
+        <span class="value-display" id="warmthValue">105%</span>
+      </div>
+    </div>
+  </div>
+  
+  <div id="video-container">
+    <div class="loading" id="loading">
+      <h2>🎥 Loading Video Room...</h2>
+      <div class="spinner"></div>
+      <p style="margin-top: 1rem; opacity: 0.8;">Applying beauty filter...</p>
+    </div>
+  </div>
+  
+  <script>
+    let callFrame = null;
+    let beautyFilterEnabled = true;
+    let filterSettings = {
+      brightness: 115,
+      smoothing: 3,
+      warmth: 105
+    };
+
+    // Get room URL from query parameter
+    function getRoomUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const roomUrl = urlParams.get('room');
+      
+      if (!roomUrl) {
+        showError('No room URL provided. Please use the "Join Class" button from your dashboard.');
+        return null;
+      }
+      
+      return roomUrl;
+    }
+
+    // Initialize Daily.co call with beauty filter
+    async function initializeCall() {
+      const roomUrl = getRoomUrl();
+      if (!roomUrl) return;
+
+      try {
+        // Create Daily call frame
+        callFrame = window.DailyIframe.createFrame('video-container', {
+          showLeaveButton: true,
+          iframeStyle: {
+            position: 'fixed',
+            width: '100%',
+            height: '100%',
+            border: '0',
+            top: '0',
+            left: '0'
+          }
+        });
+
+        // Set up beauty filter on local video
+        callFrame.on('started-camera', async () => {
+          console.log('Camera started, applying beauty filter...');
+          await applyBeautyFilter();
+        });
+
+        // Handle call events
+        callFrame.on('joined-meeting', () => {
+          console.log('Joined meeting successfully');
+          document.getElementById('loading').style.display = 'none';
+        });
+
+        callFrame.on('left-meeting', () => {
+          console.log('Left meeting');
+          window.close();
+        });
+
+        callFrame.on('error', (error) => {
+          console.error('Daily.co error:', error);
+          showError('Video call error: ' + error.errorMsg);
+        });
+
+        // Join the call
+        await callFrame.join({ 
+          url: roomUrl,
+          userName: 'Teacher'
+        });
+
+      } catch (error) {
+        console.error('Error initializing call:', error);
+        showError('Failed to join video call: ' + error.message);
+      }
+    }
+
+    // Apply beauty filter using Daily's video processor API
+    async function applyBeautyFilter() {
+      if (!callFrame || !beautyFilterEnabled) return;
+
+      try {
+        // Daily.co's setInputDevicesAsync with video processing
+        await callFrame.setInputDevicesAsync({
+          videoSource: {
+            deviceId: 'default',
+            processor: {
+              type: 'background-blur', // Built-in Daily feature
+              config: {
+                strength: 0.5
+              }
+            }
+          }
+        });
+
+        // Apply CSS filters to video element for beauty effect
+        const videoElement = document.querySelector('video');
+        if (videoElement) {
+          applyVideoFilters(videoElement);
+        }
+
+        // Monitor for new video elements (Daily adds them dynamically)
+        observeVideoElements();
+
+      } catch (error) {
+        console.error('Error applying beauty filter:', error);
+      }
+    }
+
+    // Apply CSS filters to video elements
+    function applyVideoFilters(videoElement) {
+      if (!beautyFilterEnabled) {
+        videoElement.style.filter = 'none';
+        return;
+      }
+
+      const brightness = filterSettings.brightness / 100;
+      const saturate = filterSettings.warmth / 100;
+      const blur = filterSettings.smoothing * 0.3; // Convert to pixels
+
+      videoElement.style.filter = `
+        brightness(${brightness})
+        contrast(1.05)
+        saturate(${saturate})
+        blur(${blur}px)
+      `;
+      
+      // Smooth transitions
+      videoElement.style.transition = 'filter 0.3s ease';
+    }
+
+    // Observe for video elements and apply filters
+    function observeVideoElements() {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.tagName === 'VIDEO') {
+              applyVideoFilters(node);
+            } else if (node.querySelectorAll) {
+              node.querySelectorAll('video').forEach(applyVideoFilters);
+            }
+          });
+        });
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+
+      // Apply to existing videos
+      document.querySelectorAll('video').forEach(applyVideoFilters);
+    }
+
+    // Toggle filter on/off
+    function toggleFilter() {
+      beautyFilterEnabled = !beautyFilterEnabled;
+      const toggle = document.getElementById('filterToggle');
+      const status = document.getElementById('filterStatus');
+      const switchInput = document.getElementById('filterSwitch');
+      
+      switchInput.checked = beautyFilterEnabled;
+      
+      if (beautyFilterEnabled) {
+        toggle.classList.add('active');
+        status.textContent = 'Filter ON';
+        document.querySelectorAll('video').forEach(applyVideoFilters);
+      } else {
+        toggle.classList.remove('active');
+        status.textContent = 'Filter OFF';
+        document.querySelectorAll('video').forEach(video => {
+          video.style.filter = 'none';
+        });
+      }
+    }
+
+    // Update filter settings
+    function updateFilters() {
+      filterSettings.brightness = parseInt(document.getElementById('brightness').value);
+      filterSettings.smoothing = parseInt(document.getElementById('smoothing').value);
+      filterSettings.warmth = parseInt(document.getElementById('warmth').value);
+      
+      document.getElementById('brightnessValue').textContent = filterSettings.brightness + '%';
+      document.getElementById('smoothingValue').textContent = filterSettings.smoothing;
+      document.getElementById('warmthValue').textContent = filterSettings.warmth + '%';
+      
+      if (beautyFilterEnabled) {
+        document.querySelectorAll('video').forEach(applyVideoFilters);
+      }
+    }
+
+    // Show error message
+    function showError(message) {
+      document.getElementById('loading').style.display = 'none';
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error';
+      errorDiv.innerHTML = `
+        <h2>❌ Error</h2>
+        <p>${message}</p>
+        <button onclick="window.close()">Close Window</button>
+      `;
+      document.body.appendChild(errorDiv);
+    }
+
+    // Initialize when page loads
+    window.addEventListener('load', () => {
+      initializeCall();
+    });
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (callFrame) {
+        callFrame.destroy();
+      }
+    });
+  </script>
+</body>
+</html>
