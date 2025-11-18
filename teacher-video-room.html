@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Video Class | STEMSphere Academy</title>
   <link rel="icon" type="image/png" sizes="32x32" href="https://learn.stemsphere.academy/assets/favconsp1.2.png">
-  <script src="https://unpkg.com/@daily-co/daily-js"></script>
+  <script crossorigin src="https://unpkg.com/@daily-co/daily-js"></script>
   <style>
     * {
       margin: 0;
@@ -176,12 +176,6 @@
       background: #000;
     }
     
-    #daily-iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    
     .loading {
       position: fixed;
       top: 50%;
@@ -271,7 +265,7 @@
     </div>
     
     <div class="filter-controls">
-      <div class="filter-toggle" id="filterToggle" onclick="toggleFilter()">
+      <div class="filter-toggle active" id="filterToggle" onclick="toggleFilter()">
         <label class="switch">
           <input type="checkbox" id="filterSwitch" checked>
           <span class="slider"></span>
@@ -315,6 +309,7 @@
       smoothing: 3,
       warmth: 105
     };
+    let videoObserver = null;
 
     // Get room URL from query parameter
     function getRoomUrl() {
@@ -326,7 +321,7 @@
         return null;
       }
       
-      return roomUrl;
+      return decodeURIComponent(roomUrl);
     }
 
     // Initialize Daily.co call with beauty filter
@@ -335,39 +330,53 @@
       if (!roomUrl) return;
 
       try {
-        // Create Daily call frame
-        callFrame = window.DailyIframe.createFrame('video-container', {
+        console.log('Initializing Daily.co with room:', roomUrl);
+
+        // Create Daily call frame - FIXED VERSION
+        const container = document.getElementById('video-container');
+        
+        callFrame = window.DailyIframe.createFrame(container, {
           showLeaveButton: true,
+          showFullscreenButton: true,
           iframeStyle: {
-            position: 'fixed',
+            position: 'absolute',
+            top: '0',
+            left: '0',
             width: '100%',
             height: '100%',
-            border: '0',
-            top: '0',
-            left: '0'
+            border: '0'
           }
         });
 
-        // Set up beauty filter on local video
-        callFrame.on('started-camera', async () => {
-          console.log('Camera started, applying beauty filter...');
-          await applyBeautyFilter();
+        // Handle call events
+        callFrame.on('loaded', () => {
+          console.log('Daily frame loaded');
         });
 
-        // Handle call events
         callFrame.on('joined-meeting', () => {
           console.log('Joined meeting successfully');
           document.getElementById('loading').style.display = 'none';
+          
+          // Start observing video elements for beauty filter
+          setTimeout(() => {
+            startVideoObserver();
+          }, 1000);
+        });
+
+        callFrame.on('participant-joined', () => {
+          console.log('Participant joined');
+          setTimeout(() => {
+            applyFiltersToAllVideos();
+          }, 500);
         });
 
         callFrame.on('left-meeting', () => {
           console.log('Left meeting');
-          window.close();
         });
 
         callFrame.on('error', (error) => {
           console.error('Daily.co error:', error);
-          showError('Video call error: ' + error.errorMsg);
+          showError('Video call error: ' + (error.errorMsg || error.message || 'Unknown error'));
         });
 
         // Join the call
@@ -382,40 +391,62 @@
       }
     }
 
-    // Apply beauty filter using Daily's video processor API
-    async function applyBeautyFilter() {
-      if (!callFrame || !beautyFilterEnabled) return;
+    // Start observing for video elements
+    function startVideoObserver() {
+      // Apply filters to existing videos
+      applyFiltersToAllVideos();
 
-      try {
-        // Daily.co's setInputDevicesAsync with video processing
-        await callFrame.setInputDevicesAsync({
-          videoSource: {
-            deviceId: 'default',
-            processor: {
-              type: 'background-blur', // Built-in Daily feature
-              config: {
-                strength: 0.5
+      // Create observer for new video elements
+      if (videoObserver) {
+        videoObserver.disconnect();
+      }
+
+      videoObserver = new MutationObserver((mutations) => {
+        let hasNewVideo = false;
+        
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.tagName === 'VIDEO') {
+              hasNewVideo = true;
+            } else if (node.querySelectorAll) {
+              const videos = node.querySelectorAll('video');
+              if (videos.length > 0) {
+                hasNewVideo = true;
               }
             }
-          }
+          });
         });
 
-        // Apply CSS filters to video element for beauty effect
-        const videoElement = document.querySelector('video');
-        if (videoElement) {
-          applyVideoFilters(videoElement);
+        if (hasNewVideo) {
+          setTimeout(() => {
+            applyFiltersToAllVideos();
+          }, 100);
         }
+      });
 
-        // Monitor for new video elements (Daily adds them dynamically)
-        observeVideoElements();
+      // Observe the entire document for video elements
+      videoObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
 
-      } catch (error) {
-        console.error('Error applying beauty filter:', error);
-      }
+      console.log('Video observer started');
+    }
+
+    // Apply filters to all video elements
+    function applyFiltersToAllVideos() {
+      const videos = document.querySelectorAll('video');
+      console.log('Applying filters to', videos.length, 'videos');
+      
+      videos.forEach(video => {
+        applyVideoFilters(video);
+      });
     }
 
     // Apply CSS filters to video elements
     function applyVideoFilters(videoElement) {
+      if (!videoElement) return;
+
       if (!beautyFilterEnabled) {
         videoElement.style.filter = 'none';
         return;
@@ -423,7 +454,7 @@
 
       const brightness = filterSettings.brightness / 100;
       const saturate = filterSettings.warmth / 100;
-      const blur = filterSettings.smoothing * 0.3; // Convert to pixels
+      const blur = filterSettings.smoothing * 0.2; // Reduced blur for better quality
 
       videoElement.style.filter = `
         brightness(${brightness})
@@ -432,31 +463,7 @@
         blur(${blur}px)
       `;
       
-      // Smooth transitions
       videoElement.style.transition = 'filter 0.3s ease';
-    }
-
-    // Observe for video elements and apply filters
-    function observeVideoElements() {
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node.tagName === 'VIDEO') {
-              applyVideoFilters(node);
-            } else if (node.querySelectorAll) {
-              node.querySelectorAll('video').forEach(applyVideoFilters);
-            }
-          });
-        });
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-
-      // Apply to existing videos
-      document.querySelectorAll('video').forEach(applyVideoFilters);
     }
 
     // Toggle filter on/off
@@ -471,14 +478,12 @@
       if (beautyFilterEnabled) {
         toggle.classList.add('active');
         status.textContent = 'Filter ON';
-        document.querySelectorAll('video').forEach(applyVideoFilters);
       } else {
         toggle.classList.remove('active');
         status.textContent = 'Filter OFF';
-        document.querySelectorAll('video').forEach(video => {
-          video.style.filter = 'none';
-        });
       }
+      
+      applyFiltersToAllVideos();
     }
 
     // Update filter settings
@@ -492,13 +497,17 @@
       document.getElementById('warmthValue').textContent = filterSettings.warmth + '%';
       
       if (beautyFilterEnabled) {
-        document.querySelectorAll('video').forEach(applyVideoFilters);
+        applyFiltersToAllVideos();
       }
     }
 
     // Show error message
     function showError(message) {
-      document.getElementById('loading').style.display = 'none';
+      const loading = document.getElementById('loading');
+      if (loading) {
+        loading.style.display = 'none';
+      }
+      
       const errorDiv = document.createElement('div');
       errorDiv.className = 'error';
       errorDiv.innerHTML = `
@@ -510,16 +519,28 @@
     }
 
     // Initialize when page loads
-    window.addEventListener('load', () => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeCall);
+    } else {
       initializeCall();
-    });
+    }
 
     // Cleanup on page unload
     window.addEventListener('beforeunload', () => {
+      if (videoObserver) {
+        videoObserver.disconnect();
+      }
       if (callFrame) {
         callFrame.destroy();
       }
     });
+
+    // Apply filters periodically (backup in case observer misses some videos)
+    setInterval(() => {
+      if (beautyFilterEnabled && callFrame) {
+        applyFiltersToAllVideos();
+      }
+    }, 3000);
   </script>
 </body>
 </html>
