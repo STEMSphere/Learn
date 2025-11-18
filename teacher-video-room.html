@@ -65,6 +65,7 @@
       border-radius: 25px;
       cursor: pointer;
       transition: all 0.3s;
+      user-select: none;
     }
     
     .filter-toggle:hover {
@@ -176,6 +177,11 @@
       background: #000;
     }
     
+    /* Hidden canvas for beauty filter processing */
+    #beautyCanvas {
+      display: none;
+    }
+    
     .loading {
       position: fixed;
       top: 50%;
@@ -252,7 +258,7 @@
       }
       
       #video-container {
-        top: 120px;
+        top: 140px;
       }
     }
   </style>
@@ -265,7 +271,7 @@
     </div>
     
     <div class="filter-controls">
-      <div class="filter-toggle active" id="filterToggle" onclick="toggleFilter()">
+      <div class="filter-toggle active" id="filterToggle">
         <label class="switch">
           <input type="checkbox" id="filterSwitch" checked>
           <span class="slider"></span>
@@ -275,41 +281,52 @@
       
       <div class="slider-control">
         <label>Brightness:</label>
-        <input type="range" id="brightness" min="100" max="140" value="115" oninput="updateFilters()">
+        <input type="range" id="brightness" min="100" max="140" value="115">
         <span class="value-display" id="brightnessValue">115%</span>
       </div>
       
       <div class="slider-control">
         <label>Smoothing:</label>
-        <input type="range" id="smoothing" min="0" max="10" value="3" oninput="updateFilters()">
-        <span class="value-display" id="smoothingValue">3</span>
+        <input type="range" id="smoothing" min="0" max="10" value="4">
+        <span class="value-display" id="smoothingValue">4</span>
       </div>
       
       <div class="slider-control">
         <label>Warmth:</label>
-        <input type="range" id="warmth" min="100" max="120" value="105" oninput="updateFilters()">
-        <span class="value-display" id="warmthValue">105%</span>
+        <input type="range" id="warmth" min="100" max="120" value="108">
+        <span class="value-display" id="warmthValue">108%</span>
       </div>
     </div>
   </div>
   
+  <canvas id="beautyCanvas"></canvas>
+  
   <div id="video-container">
     <div class="loading" id="loading">
-      <h2>🎥 Loading Video Room...</h2>
+      <h2>🎥 Initializing Beauty Filter...</h2>
       <div class="spinner"></div>
-      <p style="margin-top: 1rem; opacity: 0.8;">Applying beauty filter...</p>
+      <p style="margin-top: 1rem; opacity: 0.8;">Setting up your camera with beauty enhancements...</p>
     </div>
   </div>
   
   <script>
     let callFrame = null;
+    let originalStream = null;
+    let filteredStream = null;
     let beautyFilterEnabled = true;
+    let animationFrameId = null;
+    
     let filterSettings = {
       brightness: 115,
-      smoothing: 3,
-      warmth: 105
+      smoothing: 4,
+      warmth: 108
     };
-    let videoObserver = null;
+    
+    const canvas = document.getElementById('beautyCanvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const videoElement = document.createElement('video');
+    videoElement.autoplay = true;
+    videoElement.playsInline = true;
 
     // Get room URL from query parameter
     function getRoomUrl() {
@@ -324,15 +341,132 @@
       return decodeURIComponent(roomUrl);
     }
 
-    // Initialize Daily.co call with beauty filter
+    // Initialize camera with beauty filter
+    async function initializeCamera() {
+      try {
+        console.log('Requesting camera access...');
+        
+        // Get user's camera
+        originalStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: 'user'
+          },
+          audio: true
+        });
+        
+        console.log('Camera access granted');
+        
+        // Set up video element with original stream
+        videoElement.srcObject = originalStream;
+        await videoElement.play();
+        
+        // Set canvas dimensions to match video
+        canvas.width = videoElement.videoWidth || 1280;
+        canvas.height = videoElement.videoHeight || 720;
+        
+        console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
+        
+        // Start beauty filter processing
+        startBeautyFilter();
+        
+        // Get filtered stream from canvas
+        filteredStream = canvas.captureStream(30); // 30 FPS
+        
+        // Add audio track from original stream
+        const audioTracks = originalStream.getAudioTracks();
+        if (audioTracks.length > 0) {
+          filteredStream.addTrack(audioTracks[0]);
+        }
+        
+        console.log('Beauty filter initialized successfully');
+        return filteredStream;
+        
+      } catch (error) {
+        console.error('Camera initialization error:', error);
+        showError('Camera access denied. Please allow camera permissions and refresh the page.');
+        throw error;
+      }
+    }
+
+    // Start beauty filter processing loop
+    function startBeautyFilter() {
+      function processFrame() {
+        if (beautyFilterEnabled) {
+          // Draw video to canvas with beauty filters
+          ctx.filter = getFilterString();
+          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+          
+          // Apply additional smoothing if needed
+          if (filterSettings.smoothing > 5) {
+            applyAdvancedSmoothing();
+          }
+        } else {
+          // No filter - just draw original video
+          ctx.filter = 'none';
+          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        }
+        
+        animationFrameId = requestAnimationFrame(processFrame);
+      }
+      
+      processFrame();
+    }
+
+    // Get CSS filter string based on settings
+    function getFilterString() {
+      const brightness = filterSettings.brightness / 100;
+      const saturate = filterSettings.warmth / 100;
+      const blur = Math.min(filterSettings.smoothing * 0.3, 3); // Max 3px blur
+      
+      return `brightness(${brightness}) contrast(1.05) saturate(${saturate}) blur(${blur}px)`;
+    }
+
+    // Apply advanced smoothing for higher values
+    function applyAdvancedSmoothing() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const smoothingFactor = (filterSettings.smoothing - 5) * 0.1;
+      
+      // Simple box blur for skin smoothing
+      for (let y = 1; y < canvas.height - 1; y++) {
+        for (let x = 1; x < canvas.width - 1; x++) {
+          const idx = (y * canvas.width + x) * 4;
+          
+          // Skip very dark or very bright pixels (likely not skin)
+          const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+          if (brightness < 50 || brightness > 230) continue;
+          
+          // Average with surrounding pixels
+          for (let c = 0; c < 3; c++) {
+            const current = data[idx + c];
+            const top = data[((y - 1) * canvas.width + x) * 4 + c];
+            const bottom = data[((y + 1) * canvas.width + x) * 4 + c];
+            const left = data[(y * canvas.width + (x - 1)) * 4 + c];
+            const right = data[(y * canvas.width + (x + 1)) * 4 + c];
+            
+            const avg = (current + top + bottom + left + right) / 5;
+            data[idx + c] = current * (1 - smoothingFactor) + avg * smoothingFactor;
+          }
+        }
+      }
+      
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    // Initialize Daily.co call with filtered stream
     async function initializeCall() {
       const roomUrl = getRoomUrl();
       if (!roomUrl) return;
 
       try {
         console.log('Initializing Daily.co with room:', roomUrl);
-
-        // Create Daily call frame - FIXED VERSION
+        
+        // Initialize camera with beauty filter first
+        const stream = await initializeCamera();
+        
+        // Create Daily call frame
         const container = document.getElementById('video-container');
         
         callFrame = window.DailyIframe.createFrame(container, {
@@ -353,25 +487,25 @@
           console.log('Daily frame loaded');
         });
 
-        callFrame.on('joined-meeting', () => {
+        callFrame.on('joined-meeting', async () => {
           console.log('Joined meeting successfully');
           document.getElementById('loading').style.display = 'none';
           
-          // Start observing video elements for beauty filter
-          setTimeout(() => {
-            startVideoObserver();
-          }, 1000);
-        });
-
-        callFrame.on('participant-joined', () => {
-          console.log('Participant joined');
-          setTimeout(() => {
-            applyFiltersToAllVideos();
-          }, 500);
+          // Set filtered video stream
+          try {
+            await callFrame.setInputDevicesAsync({
+              videoSource: stream.getVideoTracks()[0],
+              audioSource: stream.getAudioTracks()[0]
+            });
+            console.log('Beauty-filtered camera set successfully');
+          } catch (error) {
+            console.error('Error setting filtered camera:', error);
+          }
         });
 
         callFrame.on('left-meeting', () => {
           console.log('Left meeting');
+          cleanup();
         });
 
         callFrame.on('error', (error) => {
@@ -391,81 +525,6 @@
       }
     }
 
-    // Start observing for video elements
-    function startVideoObserver() {
-      // Apply filters to existing videos
-      applyFiltersToAllVideos();
-
-      // Create observer for new video elements
-      if (videoObserver) {
-        videoObserver.disconnect();
-      }
-
-      videoObserver = new MutationObserver((mutations) => {
-        let hasNewVideo = false;
-        
-        mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node.tagName === 'VIDEO') {
-              hasNewVideo = true;
-            } else if (node.querySelectorAll) {
-              const videos = node.querySelectorAll('video');
-              if (videos.length > 0) {
-                hasNewVideo = true;
-              }
-            }
-          });
-        });
-
-        if (hasNewVideo) {
-          setTimeout(() => {
-            applyFiltersToAllVideos();
-          }, 100);
-        }
-      });
-
-      // Observe the entire document for video elements
-      videoObserver.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-
-      console.log('Video observer started');
-    }
-
-    // Apply filters to all video elements
-    function applyFiltersToAllVideos() {
-      const videos = document.querySelectorAll('video');
-      console.log('Applying filters to', videos.length, 'videos');
-      
-      videos.forEach(video => {
-        applyVideoFilters(video);
-      });
-    }
-
-    // Apply CSS filters to video elements
-    function applyVideoFilters(videoElement) {
-      if (!videoElement) return;
-
-      if (!beautyFilterEnabled) {
-        videoElement.style.filter = 'none';
-        return;
-      }
-
-      const brightness = filterSettings.brightness / 100;
-      const saturate = filterSettings.warmth / 100;
-      const blur = filterSettings.smoothing * 0.2; // Reduced blur for better quality
-
-      videoElement.style.filter = `
-        brightness(${brightness})
-        contrast(1.05)
-        saturate(${saturate})
-        blur(${blur}px)
-      `;
-      
-      videoElement.style.transition = 'filter 0.3s ease';
-    }
-
     // Toggle filter on/off
     function toggleFilter() {
       beautyFilterEnabled = !beautyFilterEnabled;
@@ -483,7 +542,7 @@
         status.textContent = 'Filter OFF';
       }
       
-      applyFiltersToAllVideos();
+      console.log('Beauty filter toggled:', beautyFilterEnabled ? 'ON' : 'OFF');
     }
 
     // Update filter settings
@@ -496,9 +555,7 @@
       document.getElementById('smoothingValue').textContent = filterSettings.smoothing;
       document.getElementById('warmthValue').textContent = filterSettings.warmth + '%';
       
-      if (beautyFilterEnabled) {
-        applyFiltersToAllVideos();
-      }
+      console.log('Filter settings updated:', filterSettings);
     }
 
     // Show error message
@@ -518,6 +575,28 @@
       document.body.appendChild(errorDiv);
     }
 
+    // Cleanup resources
+    function cleanup() {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      if (originalStream) {
+        originalStream.getTracks().forEach(track => track.stop());
+      }
+      if (filteredStream) {
+        filteredStream.getTracks().forEach(track => track.stop());
+      }
+      if (callFrame) {
+        callFrame.destroy();
+      }
+    }
+
+    // Set up event listeners
+    document.getElementById('filterToggle').addEventListener('click', toggleFilter);
+    document.getElementById('brightness').addEventListener('input', updateFilters);
+    document.getElementById('smoothing').addEventListener('input', updateFilters);
+    document.getElementById('warmth').addEventListener('input', updateFilters);
+
     // Initialize when page loads
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initializeCall);
@@ -526,21 +605,7 @@
     }
 
     // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-      if (videoObserver) {
-        videoObserver.disconnect();
-      }
-      if (callFrame) {
-        callFrame.destroy();
-      }
-    });
-
-    // Apply filters periodically (backup in case observer misses some videos)
-    setInterval(() => {
-      if (beautyFilterEnabled && callFrame) {
-        applyFiltersToAllVideos();
-      }
-    }, 3000);
+    window.addEventListener('beforeunload', cleanup);
   </script>
 </body>
 </html>
