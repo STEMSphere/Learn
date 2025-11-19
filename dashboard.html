@@ -1326,17 +1326,110 @@
 </head>
 <body>
   <header>
-    <div class="brand">
-      <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
-      <span class="brand-text">STEMSphere Academy</span>
-    </div>
-    <div class="header-right">
-      <button class="theme-settings-btn" onclick="openThemeSettings()">
-        🎨 Theme Settings
-      </button>
-      <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
-  </header>
+  <div class="brand">
+    <img src="https://learn.stemsphere.academy/assets/favconsp1.2.png" alt="STEMSphere Academy">
+    <span class="brand-text">STEMSphere Academy</span>
+  </div>
+  <div class="header-right">
+    <!-- START: LANGUAGE TRANSLATOR -->
+<div id="fallback-translator">
+  <select onchange="translatePage(this.value)">
+    <option value="en" selected>🌐 English</option>
+    <optgroup label="Popular Languages">
+      <option value="es">Español (Spanish)</option>
+      <option value="fr">Français (French)</option>
+      <option value="de">Deutsch (German)</option>
+      <option value="zh-CN">简体中文 (Chinese Simplified)</option>
+      <option value="zh-TW">繁體中文 (Chinese Traditional)</option>
+      <option value="ja">日本語 (Japanese)</option>
+      <option value="ko">한국어 (Korean)</option>
+      <option value="ar">العربية (Arabic)</option>
+      <option value="hi">हिन्दी (Hindi)</option>
+      <option value="pt">Português (Portuguese)</option>
+      <option value="ru">Русский (Russian)</option>
+      <option value="it">Italiano (Italian)</option>
+      <option value="nl">Nederlands (Dutch)</option>
+      <option value="pl">Polski (Polish)</option>
+      <option value="tr">Türkçe (Turkish)</option>
+      <option value="vi">Tiếng Việt (Vietnamese)</option>
+      <option value="th">ไทย (Thai)</option>
+      <option value="id">Bahasa Indonesia (Indonesian)</option>
+      <option value="ms">Bahasa Melayu (Malay)</option>
+    </optgroup>
+    <optgroup label="European Languages">
+      <option value="af">Afrikaans</option>
+      <option value="sq">Albanian</option>
+      <option value="eu">Basque</option>
+      <option value="be">Belarusian</option>
+      <option value="bg">Bulgarian</option>
+      <option value="ca">Catalan</option>
+      <option value="hr">Croatian</option>
+      <option value="cs">Czech</option>
+      <option value="da">Danish</option>
+      <option value="et">Estonian</option>
+      <option value="fi">Finnish</option>
+      <option value="gl">Galician</option>
+      <option value="el">Greek</option>
+      <option value="hu">Hungarian</option>
+      <option value="is">Icelandic</option>
+      <option value="ga">Irish</option>
+      <option value="lv">Latvian</option>
+      <option value="lt">Lithuanian</option>
+      <option value="mk">Macedonian</option>
+      <option value="mt">Maltese</option>
+      <option value="no">Norwegian</option>
+      <option value="ro">Romanian</option>
+      <option value="sr">Serbian</option>
+      <option value="sk">Slovak</option>
+      <option value="sl">Slovenian</option>
+      <option value="sv">Swedish</option>
+      <option value="uk">Ukrainian</option>
+      <option value="cy">Welsh</option>
+    </optgroup>
+    <optgroup label="Asian Languages">
+      <option value="bn">Bengali</option>
+      <option value="my">Burmese</option>
+      <option value="km">Khmer (Cambodian)</option>
+      <option value="lo">Lao</option>
+      <option value="ml">Malayalam</option>
+      <option value="mr">Marathi</option>
+      <option value="ne">Nepali</option>
+      <option value="pa">Punjabi</option>
+      <option value="si">Sinhala</option>
+      <option value="ta">Tamil</option>
+      <option value="te">Telugu</option>
+      <option value="ur">Urdu</option>
+    </optgroup>
+    <optgroup label="Middle Eastern & African">
+      <option value="am">Amharic</option>
+      <option value="az">Azerbaijani</option>
+      <option value="fa">Farsi (Persian)</option>
+      <option value="he">Hebrew</option>
+      <option value="kk">Kazakh</option>
+      <option value="ku">Kurdish</option>
+      <option value="ky">Kyrgyz</option>
+      <option value="ps">Pashto</option>
+      <option value="so">Somali</option>
+      <option value="sw">Swahili</option>
+      <option value="tg">Tajik</option>
+      <option value="uz">Uzbek</option>
+      <option value="yi">Yiddish</option>
+      <option value="zu">Zulu</option>
+    </optgroup>
+    <optgroup label="Americas">
+      <option value="ht">Haitian Creole</option>
+      <option value="qu">Quechua</option>
+    </optgroup>
+  </select>
+</div>
+<!-- END: LANGUAGE TRANSLATOR -->
+    
+    <button class="theme-settings-btn" onclick="openThemeSettings()">
+      🎨 Theme Settings
+    </button>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
 
   <div class="dashboard-container">
     <div class="welcome-card">
