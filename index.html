@@ -94,6 +94,18 @@ html {
   scroll-behavior: smooth;
 }
 
+/* 🎯 ANNUAL PROMOTION ANIMATIONS */
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+  ul li > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    🔝 HEADER & NAVIGATION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -545,77 +557,69 @@ h2.subtitle {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   💰 PRICING SECTION
+   💰 PRICING SECTION - NEW LAYOUT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #pricing-section {
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
   padding: 4rem 1rem;
 }
 
-#pricing-section .content-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255,215,0,0.3);
-  border-radius: 20px;
-  padding: 3rem 2rem;
-}
-
 #pricing-section h2 {
   font-size: clamp(2rem, 5vw, 3rem);
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   background: linear-gradient(135deg, #FFD700, #FFA500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-#pricing-section p {
+#pricing-section > p {
   text-align: center;
-  max-width: 800px;
-  margin: 1rem auto;
+  max-width: 900px;
+  margin: 0 auto 3rem;
   line-height: 1.8;
   color: rgba(255,255,255,0.9);
-  font-size: 1.05rem;
-}
-
-#pricing-section ul {
-  list-style: none;
-  padding: 0;
-  margin: 2rem auto;
-  max-width: 700px;
-}
-
-#pricing-section ul li {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  position: relative;
-  transition: all 0.3s;
   font-size: 1.1rem;
 }
 
-#pricing-section ul li:hover {
-  transform: translateX(10px);
-  border-color: #FFD700;
-  box-shadow: 0 10px 30px rgba(255,215,0,0.3);
+.pricing-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 4rem;
+  padding: 0 1rem;
 }
 
-#pricing-section ul li.most-popular {
+.pricing-card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.pricing-card:hover {
+  transform: translateY(-10px);
+  border-color: #FFD700;
+  box-shadow: 0 20px 40px rgba(255,215,0,0.3);
+}
+
+.pricing-card.most-popular {
   border: 3px solid #FFD700;
   background: rgba(255,215,0,0.1);
   box-shadow: 0 10px 30px rgba(255,215,0,0.4);
 }
 
-#pricing-section ul li.most-popular .badge {
+.pricing-card .badge {
   position: absolute;
   top: -15px;
-  left: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   background: linear-gradient(135deg, #FFD700, #FFA500);
   color: #000;
   font-weight: 800;
@@ -626,12 +630,197 @@ h2.subtitle {
   box-shadow: 0 4px 12px rgba(255,215,0,0.5);
 }
 
-#pricing-section .highlight {
+.pricing-card h3 {
+  font-size: 1.8rem;
+  color: #00c6ff;
+  margin-bottom: 0.5rem;
+}
+
+.pricing-card .price {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #FFD700;
+  margin: 1rem 0;
+}
+
+.pricing-card .price-details {
+  color: rgba(255,255,255,0.8);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.pricing-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.pricing-card ul li {
+  padding: 0.5rem 0;
+  padding-left: 1.5em;
+  position: relative;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.95rem;
+}
+
+.pricing-card ul li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #00ff88;
+  font-weight: 700;
+  font-size: 1.2em;
+}
+
+.pricing-card .cta-button {
+  display: inline-block;
+  background: linear-gradient(135deg, #00c6ff, #0080ff);
+  color: #fff;
+  padding: 0.9rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,198,255,0.4);
+}
+
+.pricing-card .cta-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,198,255,0.6);
+}
+
+/* Annual Savings Section */
+.annual-savings-section {
+  max-width: 1200px;
+  margin: 4rem auto 0;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border-radius: 20px;
+  border: 3px solid #ff6b00;
+  box-shadow: 0 15px 40px rgba(255,107,0,0.5);
+  position: relative;
+}
+
+.annual-savings-section::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, #fff 0%, transparent 70%);
+  border-radius: 50%;
+  animation: sparkle 2s infinite;
+}
+
+.annual-savings-section h3 {
+  text-align: center;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: #000;
+  margin-bottom: 1rem;
+}
+
+.annual-badge {
+  display: block;
+  text-align: center;
+  background: #ff6b00;
+  color: #fff;
+  padding: 0.6rem 2rem;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  margin: 0 auto 2rem;
+  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(255,107,0,0.5);
+}
+
+.annual-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.annual-option {
+  background: rgba(255,255,255,0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 3px solid #ff6b00;
+  text-align: center;
+}
+
+.annual-option h4 {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  color: #000;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.annual-option .annual-price {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: #ff6b00;
+  margin: 1rem 0;
+}
+
+.annual-option .annual-details {
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.annual-option .savings {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: #28a745;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.annual-option .weekly-rate {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: #007bff;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.annual-disclaimer {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+  color: #333;
+  font-style: italic;
+}
+
+.annual-cta {
+  display: inline-block;
+  margin: 2rem auto 0;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  box-shadow: 0 6px 20px rgba(40,167,69,0.4);
+  transition: all 0.3s;
+  display: block;
+  text-align: center;
+}
+
+.annual-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(40,167,69,0.6);
+}
+
+.highlight {
   color: #FFD700;
   font-weight: 700;
 }
 
-#pricing-section .conversion-box {
+.conversion-box {
   margin: 3rem auto 0;
   padding: 2rem;
   background: rgba(0,0,0,0.3);
@@ -910,6 +1099,18 @@ footer {
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    📱 MOBILE RESPONSIVENESS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 968px) {
+  .pricing-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .annual-options {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .brand {
     position: absolute;
@@ -933,10 +1134,6 @@ footer {
 
   .ebook-grid {
     grid-template-columns: 1fr;
-  }
-
-  #pricing-section .content-wrapper {
-    padding: 2rem 1rem;
   }
 
   .blog-post {
@@ -976,11 +1173,43 @@ footer {
 </head>
 
 <body>
-<!-- 🍪 COOKIE CONSENT BANNER - DESKTOP: Normal | MOBILE: Thin Bar -->
+<!-- START: LANGUAGE TRANSLATOR -->
+<div id="fallback-translator">
+  <select onchange="translatePage(this.value)">
+    <option value="en" selected>🌐 English</option>
+    <option value="es">Español</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+    <option value="zh-CN">中文</option>
+    <option value="ja">日本語</option>
+    <option value="ko">한국어</option>
+    <option value="ar">العربية</option>
+    <option value="hi">हिन्दी</option>
+    <option value="pt">Português</option>
+    <option value="ru">Русский</option>
+    <option value="it">Italiano</option>
+  </select>
+</div>
+
+<script>
+  function translatePage(lang) {
+    if (!lang || lang === 'en') return;
+    const loc = encodeURIComponent(window.location.href);
+    window.location.href = 'https://translate.google.com/translate?sl=en&tl=' + lang + '&u=' + loc;
+  }
+</script>
+
+<!-- Student Login Link -->
+<a href="https://learn.stemsphere.academy/login.html" class="login-link">
+  🔓 Student Login/Signup
+</a>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     🍪 COOKIE CONSENT BANNER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 <div id="cookieConsentBanner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, rgba(102,126,234,0.98), rgba(118,75,162,0.98)); backdrop-filter: blur(10px); color: #fff; padding: 0.75rem; z-index: 99999; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); border-top: 2px solid #00ff88;">
   <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
     
-    <!-- Cookie Icon & Text -->
     <div style="flex: 1; min-width: 250px;" id="cookieFullText">
       <div style="display: flex; align-items: center; gap: 0.5rem;">
         <div style="font-size: 1.5rem;">🍪</div>
@@ -996,7 +1225,6 @@ footer {
       </div>
     </div>
 
-    <!-- MOBILE ONLY: Thin bar text (hidden on desktop) -->
     <div style="flex: 1; display: none;" id="cookieMobileText">
       <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85em;">
         <span>🍪</span>
@@ -1004,7 +1232,6 @@ footer {
       </div>
     </div>
 
-    <!-- Buttons -->
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="cookieButtons">
       <button onclick="acceptAllCookies()" style="background: linear-gradient(135deg, #00ff88, #00c853); color: #000; padding: 0.5rem 1.25rem; border: none; border-radius: 6px; font-weight: 700; font-size: 0.8em; cursor: pointer; box-shadow: 0 2px 8px rgba(0,255,136,0.4); transition: all 0.3s; white-space: nowrap;">
         ✓ Accept
@@ -1018,21 +1245,19 @@ footer {
     </div>
   </div>
 </div>
-<!-- 🍪 COOKIE SETTINGS MODAL -->
+
+<!-- COOKIE SETTINGS MODAL -->
 <div id="cookieSettingsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto;">
   <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 3px solid #667eea; border-radius: 16px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
     
-    <!-- Header -->
     <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 2rem; border-radius: 13px 13px 0 0; position: relative;">
       <button onclick="closeCookieSettings()" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.2); color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5em; font-weight: 700; transition: all 0.3s;">×</button>
       <h2 style="margin: 0 0 0.5rem 0; color: #fff; font-size: 1.8em;">🍪 Cookie Settings</h2>
       <p style="margin: 0; color: rgba(255,255,255,0.9); font-size: 0.95em;">Manage your cookie preferences</p>
     </div>
 
-    <!-- Cookie Categories -->
     <div style="padding: 2rem;">
       
-      <!-- Essential Cookies -->
       <div style="background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <h3 style="margin: 0; color: #00ff88; font-size: 1.3em;">✓ Essential Cookies</h3>
@@ -1041,15 +1266,8 @@ footer {
         <p style="margin: 0; color: rgba(255,255,255,0.8); line-height: 1.6;">
           Required for the website to function properly. These cannot be disabled.
         </p>
-        <ul style="margin: 0.5rem 0 0 1.5rem; color: rgba(255,255,255,0.7); line-height: 1.8;">
-          <li>User session management</li>
-          <li>Security and authentication</li>
-          <li>Basic site functionality</li>
-          <li>Visitor analytics (for site improvement)</li>
-        </ul>
       </div>
 
-      <!-- Analytics Cookies -->
       <div style="background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <h3 style="margin: 0; color: #fff; font-size: 1.3em;">📊 Analytics Cookies</h3>
@@ -1062,14 +1280,8 @@ footer {
         <p style="margin: 0; color: rgba(255,255,255,0.8); line-height: 1.6;">
           Help us understand how visitors interact with our website.
         </p>
-        <ul style="margin: 0.5rem 0 0 1.5rem; color: rgba(255,255,255,0.7); line-height: 1.8;">
-          <li>Google Analytics</li>
-          <li>Detailed page view tracking</li>
-          <li>Traffic source analysis</li>
-        </ul>
       </div>
 
-      <!-- Marketing Cookies -->
       <div style="background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
           <h3 style="margin: 0; color: #fff; font-size: 1.3em;">🎯 Marketing Cookies</h3>
@@ -1082,16 +1294,10 @@ footer {
         <p style="margin: 0; color: rgba(255,255,255,0.8); line-height: 1.6;">
           Used to show you relevant ads on Facebook, Google, and other platforms.
         </p>
-        <ul style="margin: 0.5rem 0 0 1.5rem; color: rgba(255,255,255,0.7); line-height: 1.8;">
-          <li>Facebook Pixel</li>
-          <li>Google Ads Remarketing</li>
-          <li>Personalized advertising</li>
-        </ul>
       </div>
 
     </div>
 
-    <!-- Footer Buttons -->
     <div style="padding: 0 2rem 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
       <button onclick="saveCustomCookieSettings()" style="flex: 1; background: linear-gradient(135deg, #00ff88, #00c853); color: #000; padding: 1rem 2rem; border: none; border-radius: 8px; font-weight: 700; font-size: 1em; cursor: pointer; box-shadow: 0 4px 12px rgba(0,255,136,0.4);">
         💾 Save My Choices
@@ -1104,234 +1310,51 @@ footer {
   </div>
 </div>
 
-<!-- START: COMPACT LANGUAGE TRANSLATOR BAR -->
-<!-- START: LANGUAGE TRANSLATOR (ALL 130+ LANGUAGES) -->
-<div id="fallback-translator">
-  <select onchange="translatePage(this.value)">
-    <option value="en" selected>🌐 English</option>
-    
-    <optgroup label="─── Popular Languages ───">
-      <option value="es">Español (Spanish)</option>
-      <option value="fr">Français (French)</option>
-      <option value="de">Deutsch (German)</option>
-      <option value="zh-CN">简体中文 (Chinese Simplified)</option>
-      <option value="zh-TW">繁體中文 (Chinese Traditional)</option>
-      <option value="ja">日本語 (Japanese)</option>
-      <option value="ko">한국어 (Korean)</option>
-      <option value="ar">العربية (Arabic)</option>
-      <option value="hi">हिन्दी (Hindi)</option>
-      <option value="pt">Português (Portuguese)</option>
-      <option value="ru">Русский (Russian)</option>
-      <option value="it">Italiano (Italian)</option>
-    </optgroup>
-    
-    <optgroup label="─── A-C ───">
-      <option value="af">Afrikaans</option>
-      <option value="sq">Albanian (Shqip)</option>
-      <option value="am">Amharic (አማርኛ)</option>
-      <option value="ar">Arabic (العربية)</option>
-      <option value="hy">Armenian (Հայերեն)</option>
-      <option value="as">Assamese (অসমীয়া)</option>
-      <option value="ay">Aymara</option>
-      <option value="az">Azerbaijani (Azərbaycan)</option>
-      <option value="bm">Bambara</option>
-      <option value="eu">Basque (Euskara)</option>
-      <option value="be">Belarusian (Беларуская)</option>
-      <option value="bn">Bengali (বাংলা)</option>
-      <option value="bho">Bhojpuri (भोजपुरी)</option>
-      <option value="bs">Bosnian (Bosanski)</option>
-      <option value="bg">Bulgarian (Български)</option>
-      <option value="ca">Catalan (Català)</option>
-      <option value="ceb">Cebuano</option>
-      <option value="ny">Chichewa (Nyanja)</option>
-      <option value="zh-CN">Chinese Simplified (简体中文)</option>
-      <option value="zh-TW">Chinese Traditional (繁體中文)</option>
-      <option value="co">Corsican (Corsu)</option>
-      <option value="hr">Croatian (Hrvatski)</option>
-      <option value="cs">Czech (Čeština)</option>
-    </optgroup>
-    
-    <optgroup label="─── D-G ───">
-      <option value="da">Danish (Dansk)</option>
-      <option value="dv">Dhivehi (ދިވެހި)</option>
-      <option value="doi">Dogri (डोगरी)</option>
-      <option value="nl">Dutch (Nederlands)</option>
-      <option value="eo">Esperanto</option>
-      <option value="et">Estonian (Eesti)</option>
-      <option value="ee">Ewe</option>
-      <option value="tl">Filipino (Tagalog)</option>
-      <option value="fi">Finnish (Suomi)</option>
-      <option value="fr">French (Français)</option>
-      <option value="fy">Frisian (Frysk)</option>
-      <option value="gl">Galician (Galego)</option>
-      <option value="ka">Georgian (ქართული)</option>
-      <option value="de">German (Deutsch)</option>
-      <option value="el">Greek (Ελληνικά)</option>
-      <option value="gn">Guarani</option>
-      <option value="gu">Gujarati (ગુજરાતી)</option>
-    </optgroup>
-    
-    <optgroup label="─── H-K ───">
-      <option value="ht">Haitian Creole (Kreyòl)</option>
-      <option value="ha">Hausa</option>
-      <option value="haw">Hawaiian (ʻŌlelo Hawaiʻi)</option>
-      <option value="iw">Hebrew (עברית)</option>
-      <option value="hi">Hindi (हिन्दी)</option>
-      <option value="hmn">Hmong</option>
-      <option value="hu">Hungarian (Magyar)</option>
-      <option value="is">Icelandic (Íslenska)</option>
-      <option value="ig">Igbo</option>
-      <option value="ilo">Ilocano</option>
-      <option value="id">Indonesian (Bahasa Indonesia)</option>
-      <option value="ga">Irish (Gaeilge)</option>
-      <option value="it">Italian (Italiano)</option>
-      <option value="ja">Japanese (日本語)</option>
-      <option value="jw">Javanese (Basa Jawa)</option>
-      <option value="kn">Kannada (ಕನ್ನಡ)</option>
-      <option value="kk">Kazakh (Қазақ)</option>
-      <option value="km">Khmer (ភាសាខ្មែរ)</option>
-      <option value="rw">Kinyarwanda</option>
-      <option value="gom">Konkani (कोंकणी)</option>
-      <option value="ko">Korean (한국어)</option>
-      <option value="kri">Krio</option>
-      <option value="ku">Kurdish (Kurdî)</option>
-      <option value="ckb">Kurdish (Sorani) (کوردی)</option>
-      <option value="ky">Kyrgyz (Кыргызча)</option>
-    </optgroup>
-    
-    <optgroup label="─── L-O ───">
-      <option value="lo">Lao (ລາວ)</option>
-      <option value="la">Latin (Latina)</option>
-      <option value="lv">Latvian (Latviešu)</option>
-      <option value="ln">Lingala</option>
-      <option value="lt">Lithuanian (Lietuvių)</option>
-      <option value="lg">Luganda</option>
-      <option value="lb">Luxembourgish (Lëtzebuergesch)</option>
-      <option value="mk">Macedonian (Македонски)</option>
-      <option value="mai">Maithili (मैथिली)</option>
-      <option value="mg">Malagasy</option>
-      <option value="ms">Malay (Bahasa Melayu)</option>
-      <option value="ml">Malayalam (മലയാളം)</option>
-      <option value="mt">Maltese (Malti)</option>
-      <option value="mi">Maori (Te Reo Māori)</option>
-      <option value="mr">Marathi (मराठी)</option>
-      <option value="mni-Mtei">Meiteilon (Manipuri)</option>
-      <option value="lus">Mizo</option>
-      <option value="mn">Mongolian (Монгол)</option>
-      <option value="my">Myanmar (Burmese) (မြန်မာ)</option>
-      <option value="ne">Nepali (नेपाली)</option>
-      <option value="no">Norwegian (Norsk)</option>
-      <option value="or">Odia (Oriya) (ଓଡ଼ିଆ)</option>
-      <option value="om">Oromo</option>
-    </optgroup>
-    
-    <optgroup label="─── P-S ───">
-      <option value="ps">Pashto (پښتو)</option>
-      <option value="fa">Persian (Farsi) (فارسی)</option>
-      <option value="pl">Polish (Polski)</option>
-      <option value="pt">Portuguese (Português)</option>
-      <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-      <option value="qu">Quechua</option>
-      <option value="ro">Romanian (Română)</option>
-      <option value="ru">Russian (Русский)</option>
-      <option value="sm">Samoan</option>
-      <option value="sa">Sanskrit (संस्कृतम्)</option>
-      <option value="gd">Scots Gaelic (Gàidhlig)</option>
-      <option value="nso">Sepedi</option>
-      <option value="sr">Serbian (Српски)</option>
-      <option value="st">Sesotho</option>
-      <option value="sn">Shona</option>
-      <option value="sd">Sindhi (سنڌي)</option>
-      <option value="si">Sinhala (සිංහල)</option>
-      <option value="sk">Slovak (Slovenčina)</option>
-      <option value="sl">Slovenian (Slovenščina)</option>
-      <option value="so">Somali (Soomaali)</option>
-      <option value="es">Spanish (Español)</option>
-      <option value="su">Sundanese (Basa Sunda)</option>
-      <option value="sw">Swahili (Kiswahili)</option>
-      <option value="sv">Swedish (Svenska)</option>
-    </optgroup>
-    
-    <optgroup label="─── T-Z ───">
-      <option value="tg">Tajik (Тоҷикӣ)</option>
-      <option value="ta">Tamil (தமிழ்)</option>
-      <option value="tt">Tatar (Татар)</option>
-      <option value="te">Telugu (తెలుగు)</option>
-      <option value="th">Thai (ไทย)</option>
-      <option value="ti">Tigrinya (ትግርኛ)</option>
-      <option value="ts">Tsonga</option>
-      <option value="tr">Turkish (Türkçe)</option>
-      <option value="tk">Turkmen (Türkmen)</option>
-      <option value="ak">Twi (Akan)</option>
-      <option value="uk">Ukrainian (Українська)</option>
-      <option value="ur">Urdu (اردو)</option>
-      <option value="ug">Uyghur (ئۇيغۇر)</option>
-      <option value="uz">Uzbek (Oʻzbek)</option>
-      <option value="vi">Vietnamese (Tiếng Việt)</option>
-      <option value="cy">Welsh (Cymraeg)</option>
-      <option value="xh">Xhosa (isiXhosa)</option>
-      <option value="yi">Yiddish (ייִדיש)</option>
-      <option value="yo">Yoruba (Èdè Yorùbá)</option>
-      <option value="zu">Zulu (isiZulu)</option>
-    </optgroup>
-  </select>
-</div>
-<!-- END: LANGUAGE TRANSLATOR -->
-
-<script>
-  function translatePage(lang) {
-    if (!lang || lang === 'en') return;
-    const loc = encodeURIComponent(window.location.href);
-    window.location.href =
-      'https://translate.google.com/translate?sl=en&tl='
-      + lang + '&u=' + loc;
-  }
-</script>
-
-<!-- LOGIN LINK -->
-<a href="https://learn.stemsphere.academy/login.html" class="login-link">
-  🔓 Student Login/Signup
-</a>
-
-<!-- HEADER -->
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     🔝 HEADER & HERO SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 <header>
   <div class="brand">
-    <span class="brand-logo">SP</span>
-    <span class="brand-text">STEMSphere</span>
+    <div class="brand-logo">ST</div>
+    <div class="brand-text">STEMSphere Academy</div>
   </div>
 
   <div class="title-group">
-    <span>Other Courses Teach.</span>
-    <span>We Transform!</span>
+    <span>CINEMATIC</span>
+    <span>TUTORING</span>
   </div>
 
-  <h2 class="subtitle">Kids → High School → College & Adult Learners!</h2>
+  <h2 class="subtitle">
+    Where Math & Chemistry Become Visual Masterpieces
+  </h2>
 
   <div class="course-bar">
-    <span>MATH</span><span>|</span><span>Chemistry</span>
-    <span>|</span><span>Biology</span><span>|</span>
-    <span>Coding & more</span>
+    <span>📊 SAT</span>
+    <span>📐 AP</span>
+    <span>🌍 IB</span>
+    <span>🎓 HKAT</span>
+    <span>🔬 Chemistry</span>
+    <span>🧮 Math</span>
+  </div>
+
+  <div class="banner-video">
+    <video autoplay muted loop playsinline>
+      <source src="https://raw.githubusercontent.com/STEMSphere/ASSETS/main/AICROP.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
   </div>
 </header>
 
-<!-- BANNER VIDEO - OPTIMIZED WITH PRELOAD -->
-<div class="banner-video">
-  <video autoplay muted loop playsinline preload="auto" poster="https://learn.stemsphere.academy/assets/SSTEMSphereAcademybanner.png">
-    <source src="https://learn.stemsphere.academy/assets/StemspherebannerVid29S3pt.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</div>
-
-<!-- CTA BUTTON WITH LIVE CHAT -->
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     🚀 HIGH INTENT CTA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 <div id="highIntentCTA">
-  <!-- Live Chat Button (shows when advisor available) - ABOVE RED BUTTON -->
   <div id="liveChatWrapper" style="display:none; margin-bottom: 1rem;">
     <button onclick="openAnonymousAdvisorChat()" id="liveChatBtn">
       💬 Chat with Advisor NOW - Free!
     </button>
   </div>
   
-  <!-- Status Indicator (shows when advisor is online) -->
   <div id="advisorStatusIndicator" style="display: none; margin: 1rem auto;">
     <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: rgba(0,255,136,0.2); border: 2px solid #00ff88; border-radius: 8px; color: #fff; font-weight: 600;">
       <span style="width: 10px; height: 10px; background: #00ff88; border-radius: 50%; animation: pulse 2s infinite;"></span>
@@ -1339,21 +1362,440 @@ footer {
     </span>
   </div>
   
-  <!-- Regular CTA (always visible) -->
   <a href="https://learn.stemsphere.academy/login.html">
-    🚀 Book Your Enrollment Session Now
+    🚀 Book Your Free Demo Session Now
   </a>
 </div>
 
-<!-- REVIEWS SECTION -->
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     ⭐ REVIEWS SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 <div id="reviews-container"></div>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     📚 TUTORING SUBJECTS SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<section id="tutoring-subjects">
+  <h2>🎯 Subjects We Master</h2>
+  <p class="intro">
+    From foundational concepts to advanced problem-solving, we cover every major exam and curriculum with cinematic precision.
+  </p>
+
+  <img src="https://i.postimg.cc/wB6PbkBv/WHATWECOVER.png" alt="STEMSphere Academy Subjects Banner" class="tutoring-banner" loading="lazy">
+
+  <div class="tutor-grid">
+    <div class="tutor-subject">
+      <img src="https://img.icons8.com/fluency/96/000000/calculator.png" alt="Math Icon" loading="lazy">
+      <h4>📐 Mathematics</h4>
+      <p class="tutor-desc">Algebra, Geometry, Trigonometry, Calculus (AB/BC), Statistics, and Competition Math (AMC, AIME)</p>
+    </div>
+
+    <div class="tutor-subject">
+      <img src="https://img.icons8.com/fluency/96/000000/test-tube.png" alt="Chemistry Icon" loading="lazy">
+      <h4>🧪 Chemistry</h4>
+      <p class="tutor-desc">General Chemistry, Organic Chemistry, AP Chemistry, IB Chemistry HL/SL, and Olympiad-level preparation</p>
+    </div>
+
+    <div class="tutor-subject">
+      <img src="https://img.icons8.com/fluency/96/000000/certificate.png" alt="SAT Icon" loading="lazy">
+      <h4>📊 SAT/ACT Prep</h4>
+      <p class="tutor-desc">Comprehensive Math sections with strategies for 1500+ scores. Personalized diagnostics and practice tests</p>
+    </div>
+
+    <div class="tutor-subject">
+      <img src="https://img.icons8.com/fluency/96/000000/graduation-cap.png" alt="AP Icon" loading="lazy">
+      <h4>🎓 AP Exams</h4>
+      <p class="tutor-desc">AP Calculus AB/BC, AP Statistics, AP Chemistry. Designed for 5s with deep conceptual mastery</p>
+    </div>
+
+    <div class="tutor-subject">
+      <img src="https://img.icons8.com/fluency/96/000000/geography.png" alt="IB Icon" loading="lazy">
+      <h4>🌍 IB Curriculum</h4>
+      <p class="tutor-desc">IB Math (AA/AI HL/SL), IB Chemistry HL/SL. Full IA support and exam-focused strategies for 7s</p>
+    </div>
+
+    <div class="tutor-subject">
+      <img src="https://img.icons8.com/fluency/96/000000/education.png" alt="HKAT Icon" loading="lazy">
+      <h4>🏆 HKAT Prep</h4>
+      <p class="tutor-desc">Hong Kong Attainment Test preparation with localized curriculum alignment and practice materials</p>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     🎯 WHY CHOOSE US SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<section id="why-choose">
+  <h2>Why <span class="highlight">STEMSphere</span> Is Different</h2>
+
+  <p>
+    Most tutors explain. We <span class="highlight">illuminate</span>. Every lesson is a visual journey designed to make abstract concepts crystal clear.
+  </p>
+
+  <ul>
+    <li><strong>Cinematic Teaching:</strong> Hollywood-level visuals meet rigorous academics. See concepts, don't just hear them.</li>
+    <li><strong>Proven Results:</strong> 95% of our students improve by at least one letter grade within 8 weeks.</li>
+    <li><strong>Elite Instructors:</strong> Top 1% educators with degrees from MIT, Stanford, Cambridge, and Ivy League schools.</li>
+    <li><strong>Flexible Scheduling:</strong> Choose times that work for you. We adapt to your timezone and availability.</li>
+    <li><strong>Personalized Plans:</strong> Custom-tailored curriculum based on your strengths, weaknesses, and goals.</li>
+    <li><strong>Small Groups:</strong> Maximum 4 students per class for optimal attention and peer learning.</li>
+  </ul>
+
+  <div class="stat">
+    💡 "I went from a C in AP Calculus to scoring a 5 on the exam. The visual explanations made everything click." — Sarah T., Class of 2024
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     💰 PRICING SECTION - NEW LAYOUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<section id="pricing-section">
+  <h2>💰 Investment in Your Future</h2>
+  <p>
+    We offer flexible memberships designed to fit your learning style. Each plan includes <strong>16 sessions over 8 weeks</strong>, with classes held twice a week per subject. Students often stack multiple subjects to build a schedule that fits their goals and pace.
+  </p>
+
+  <!-- TOP ROW: 3 PRICING CARDS -->
+  <div class="pricing-cards-grid">
+    <!-- CARD 1: 1-on-1 Private Tutoring -->
+    <div class="pricing-card">
+      <h3>1-on-1 Private Tutoring</h3>
+      <div class="price">$2,000</div>
+      <div class="price-details">16 sessions over 8 weeks<br>(Twice weekly)</div>
+      <ul>
+        <li>Personalized 1-on-1 attention</li>
+        <li>Custom learning pace</li>
+        <li>Flexible scheduling priority</li>
+        <li>Direct instructor access</li>
+        <li>Weekly progress reports</li>
+      </ul>
+      <a href="https://learn.stemsphere.academy/login.html" class="cta-button">Book Free Demo →</a>
+    </div>
+
+    <!-- CARD 2: Small Group (MOST POPULAR) -->
+    <div class="pricing-card most-popular">
+      <div class="badge">🏆 MOST POPULAR</div>
+      <h3>Small Group (up to 4)</h3>
+      <div class="price">$799</div>
+      <div class="price-details">16 sessions over 8 weeks<br>(Twice weekly)</div>
+      <ul>
+        <li>Maximum 4 students per class</li>
+        <li>Peer learning environment</li>
+        <li>Collaborative problem-solving</li>
+        <li>Personalized attention</li>
+        <li>Best value for results</li>
+      </ul>
+      <a href="https://learn.stemsphere.academy/login.html" class="cta-button">Book Free Demo →</a>
+    </div>
+
+    <!-- CARD 3: Flex 1-on-1 -->
+    <div class="pricing-card">
+      <h3>Flex 1-on-1 (8 Sessions)</h3>
+      <div class="price">$1,100</div>
+      <div class="price-details">8 sessions over 8 weeks<br>(Once weekly)</div>
+      <ul>
+        <li>Perfect for lighter schedules</li>
+        <li>Full 1-on-1 attention</li>
+        <li>Once-weekly pace</li>
+        <li>Flexible scheduling</li>
+        <li>Ideal for test prep review</li>
+      </ul>
+      <a href="https://learn.stemsphere.academy/login.html" class="cta-button">Book Free Demo →</a>
+    </div>
+  </div>
+
+  <!-- BOTTOM SECTION: ANNUAL SAVINGS BANNER -->
+  <div class="annual-savings-section">
+    <h3>💰 Save Big with Annual Memberships!</h3>
+    <div class="annual-badge">🎉 LIMITED TIME: 40% OFF ANNUAL PLANS!</div>
+
+    <div class="annual-options">
+      <!-- OPTION 1: Standard 1-on-1 Annual -->
+      <div class="annual-option">
+        <h4>Standard 1-on-1 Annual</h4>
+        <div class="annual-price">$7,200</div>
+        <div class="annual-details">96 classes (1 full year, twice weekly)</div>
+        <div class="savings">💰 Save $4,800!</div>
+        <div class="weekly-rate">That's only $138/week</div>
+      </div>
+
+      <!-- OPTION 2: Flex 1-on-1 Annual -->
+      <div class="annual-option">
+        <h4>Flex 1-on-1 Annual</h4>
+        <div class="annual-price">$3,960</div>
+        <div class="annual-details">48 classes (1 full year, once weekly)</div>
+        <div class="savings">💰 Save $2,640!</div>
+        <div class="weekly-rate">That's only $76/week</div>
+      </div>
+    </div>
+
+    <p class="annual-disclaimer">
+      *First-time enrollments only. Ask your advisor if this promotion is available for you.
+    </p>
+
+    <a href="https://learn.stemsphere.academy/login.html" class="annual-cta">
+      🚀 Book Free Session to Discuss Annual Plans
+    </a>
+  </div>
+
+  <!-- Currency Converter Widget -->
+  <div class="conversion-box">
+    <div id="oanda_ecc"></div>
+    <script async src="https://www.oanda.com/embedded/easywidget.js" data-skin="teal" data-type="currency-converter"></script>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     📚 EBOOK RESOURCES SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<section id="ebook-resources">
+  <h2>📚 Free Learning Resources</h2>
+  <p class="intro">
+    Download our expertly crafted eBooks designed to help you excel in STEM subjects and prepare for college success. These guides contain proven strategies used by top students worldwide.
+  </p>
+
+  <div class="ebook-grid">
+    <div class="ebook-card">
+      <div class="free-badge">FREE!</div>
+      <img src="https://i.postimg.cc/s24NgxkN/gemini-2-5-flash-image-preview-nano-banana-i-need-an-ebook-cove-2.png" alt="STEM Study System eBook" loading="lazy">
+      <h3>The STEM Student's Secret Study System</h3>
+      <p>Master math and science with proven techniques from top students. Learn the 3-step formula for acing exams.</p>
+      <a href="https://books.stemsphere.academy" class="ebook-button">Download Free</a>
+    </div>
+
+    <div class="ebook-card">
+      <div class="free-badge">FREE!</div>
+      <img src="https://i.postimg.cc/N03SnR7V/ergh.png" alt="College Prep Secrets eBook" loading="lazy">
+      <h3>College Prep Secrets for Parents</h3>
+      <p>The insider's guide to preparing your teen for college. Learn what schools don't tell you about admissions and scholarships.</p>
+      <a href="https://books.stemsphere.academy" class="ebook-button">Download Free</a>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     📝 BLOG SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<section id="blog">
+  <article class="blog-post">
+    <h2 class="blog-title">The Math Crisis: Why Traditional Tutoring Is Failing Your Child</h2>
+
+    <p class="blog-body">
+      Did you know that <strong>67% of high school students report feeling "completely lost" in their math classes?</strong> Despite hiring private tutors, attending extra help sessions, and spending hours on homework, most students still struggle to grasp foundational concepts.
+    </p>
+
+    <p class="blog-body">
+      The problem isn't the student. It's the teaching method.
+    </p>
+
+    <h3 class="blog-subtitle">Why Traditional Tutoring Doesn't Work</h3>
+
+    <p class="blog-body">
+      Traditional tutoring follows a predictable, broken pattern:
+    </p>
+
+    <ul class="blog-topics">
+      <li><strong>Over-reliance on repetition:</strong> "Just do more practice problems" doesn't build understanding—it builds frustration.</li>
+      <li><strong>Generic explanations:</strong> Cookie-cutter lessons ignore individual learning styles and prior knowledge gaps.</li>
+      <li><strong>No visual engagement:</strong> Abstract concepts like calculus, organic chemistry, and trigonometry are taught with static textbook images instead of dynamic, interactive visuals.</li>
+      <li><strong>Reactive, not proactive:</strong> Most tutors address homework questions instead of diagnosing and fixing underlying conceptual gaps.</li>
+    </ul>
+
+    <p class="blog-body">
+      The result? Students memorize formulas for tests but never truly <em>understand</em> the material. When exam day arrives, they panic because they haven't built genuine mastery.
+    </p>
+
+    <h3 class="blog-subtitle">The STEMSphere Difference: Cinematic Learning</h3>
+
+    <p class="blog-body">
+      At STEMSphere Academy, we don't just teach—we <strong>illuminate</strong>. Every lesson is a visual experience designed to make abstract concepts tangible and memorable.
+    </p>
+
+    <p class="blog-body">
+      Here's how we're different:
+    </p>
+
+    <ul class="blog-topics">
+      <li><strong>Hollywood-Level Visuals:</strong> We use cutting-edge animations, 3D models, and interactive diagrams to show—not just tell—how concepts work.</li>
+      <li><strong>Personalized Learning Paths:</strong> Every student gets a custom curriculum based on diagnostics, learning style, and target goals.</li>
+      <li><strong>Proactive Gap Analysis:</strong> We identify and fix foundational weaknesses before they become bigger problems.</li>
+      <li><strong>Engagement-Driven Lessons:</strong> No boring lectures. Our sessions are dynamic, interactive, and designed to keep students actively involved.</li>
+      <li><strong>Proven Results:</strong> 95% of our students improve by at least one letter grade within 8 weeks.</li>
+    </ul>
+
+    <h3 class="blog-subtitle">What Our Students Say</h3>
+
+    <p class="blog-body">
+      <em>"I went from a C in AP Calculus to scoring a 5 on the exam. The visual explanations made everything click. I actually understood what derivatives meant instead of just memorizing formulas."</em> — Sarah T., Class of 2024
+    </p>
+
+    <p class="blog-body">
+      <em>"Chemistry finally makes sense. The 3D models showing molecular structures were a game-changer. I got an A in Organic Chem because of STEMSphere."</em> — Jason L., UC Berkeley Student
+    </p>
+
+    <h3 class="blog-subtitle">Ready to See the Difference?</h3>
+
+    <p class="blog-body">
+      If you're tired of traditional tutoring that doesn't deliver results, it's time to experience cinematic learning. Book a free demo session and see why STEMSphere Academy is revolutionizing STEM education.
+    </p>
+  </article>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     ❓ FAQ & CONTACT SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<section id="faq-contact">
+  <h3>❓ Frequently Asked Questions</h3>
+
+  <details>
+    <summary>What subjects do you offer?</summary>
+    <p>We specialize in Math (Algebra through Calculus) and Chemistry (General, Organic, AP, IB). We also offer SAT/ACT prep, AP exam prep, IB curriculum support, and HKAT preparation.</p>
+  </details>
+
+  <details>
+    <summary>How do I know which plan is right for me?</summary>
+    <p>Book a free demo session! Our advisors will assess your goals, schedule, and learning style to recommend the perfect plan. Most students choose small group classes for the best balance of affordability and personalized attention.</p>
+  </details>
+
+  <details>
+    <summary>Can I switch between plans?</summary>
+    <p>Absolutely! If you start with small group classes and want to upgrade to 1-on-1, or vice versa, we'll work with you to make the transition seamless.</p>
+  </details>
+
+  <details>
+    <summary>Do you offer refunds?</summary>
+    <p>We offer a satisfaction guarantee. If you're not happy after your first session, we'll refund you in full—no questions asked.</p>
+  </details>
+
+  <details>
+    <summary>What technology do I need?</summary>
+    <p>Just a computer or tablet with a stable internet connection. We use Zoom for live sessions and provide all learning materials digitally.</p>
+  </details>
+
+  <details>
+    <summary>How do I contact support?</summary>
+    <p>Email us at <a href="mailto:support@stemsphere.academy" style="color:#00dffc;">support@stemsphere.academy</a> or use the live chat feature when an advisor is online.</p>
+  </details>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     🦶 FOOTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<footer>
+  <p>© 2025 STEMSphere Academy. All rights reserved.</p>
+  <nav class="footer-links">
+    <a href="#faq-contact">FAQs</a> |
+    <a href="/privacy.html">Privacy Policy</a> |
+    <a href="https://www.facebook.com/STEMxSphere" target="_blank">Facebook</a>
+  </nav>
+  <p class="footer-contact">
+    Need help? Contact us at 
+    <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
+  </p>
+</footer>
+
+<!-- 🟢 ANONYMOUS ADVISOR CHAT MODAL -->
+<div id="anonymousAdvisorChatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+  <div style="background: #fff; border-radius: 16px; width: 90%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
+    
+    <div style="background: linear-gradient(135deg, #00ff88, #00c853); color: #000; padding: 1.5rem 2rem; border-radius: 16px 16px 0 0; position: relative;">
+      <button onclick="closeAnonymousChat()" style="position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.2); color: #000; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5em; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">×</button>
+      
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="position: relative; width: 180px; height: 100px;">
+          <img src="https://i.postimg.cc/mrbw5b7S/Tutor1.png" alt="Support Team" style="position: absolute; top: 0; left: 0; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 4;" loading="lazy">
+          <img src="https://i.postimg.cc/bvzTBz19/Tutor2.png" alt="Support Team" style="position: absolute; top: 0; left: 40px; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 3;" loading="lazy">
+          <img src="https://i.postimg.cc/JzgXbMPk/In-Shot-20250221-181740954.jpg" alt="Support Team" style="position: absolute; top: 0; left: 80px; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 2;" loading="lazy">
+          <img src="https://i.postimg.cc/jjsXFsy6/Tutor3.png" alt="Support Team" style="position: absolute; top: 0; left: 120px; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1;" loading="lazy">
+        </div>
+        <div style="flex: 1;">
+          <h3 style="margin: 0 0 0.5rem 0; font-size: 1.6em; font-weight: 800;">💬 Live Chat with Our Team</h3>
+          <p style="margin: 0 0 0.5rem 0; font-size: 1.1em; font-weight: 600;">Customer Support Available</p>
+          <p style="margin: 0; font-size: 0.9em; opacity: 0.8;">Our advisors are here to help!</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="anonymousChatMessages" style="flex: 1; overflow-y: auto; padding: 1.5rem; background: #f8f9fa; min-height: 300px; max-height: 400px;">
+      <div style="text-align: center; padding: 2rem; color: #999;">
+        <div style="font-size: 3em; margin-bottom: 1rem;">💬</div>
+        <p style="font-size: 1.1em; color: #666;">Login or sign up to start chatting!</p>
+      </div>
+    </div>
+
+    <div style="padding: 1.5rem; background: #fff; border-top: 2px solid #eee; border-radius: 0 0 16px 16px;">
+      <textarea id="anonymousChatInput" placeholder="Ask about courses, pricing, schedules..." style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 80px; margin-bottom: 1rem; background: #f5f5f5; color: #999; cursor: not-allowed;" disabled readonly></textarea>
+      <button onclick="redirectToLogin()" style="width: 100%; background: linear-gradient(135deg, #007bff, #0056b3); color: #fff; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
+        🔓 Login/Signup to Chat with Advisor
+      </button>
+      <p style="margin: 1rem 0 0 0; text-align: center; color: #666; font-size: 0.9em;">
+        💡 Create a free account to start chatting instantly!
+      </p>
+    </div>
+  </div>
+</div>
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     📜 JAVASCRIPT - ALL FUNCTIONALITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ⚡ OPTIMIZED: Cache reviews for 24 hours
+window.addEventListener('load', function() {
+
+const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
+
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🟢 ADVISOR AVAILABILITY CHECK
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+async function checkAdvisorAvailability() {
+  try {
+    const { data: advisors, error } = await supabaseClient
+      .from('profiles')
+      .select('id, full_name, advisor_available')
+      .eq('role', 'teacher')
+      .eq('is_advisor', true)
+      .eq('advisor_available', true);
+
+    const chatWrapper = document.getElementById('liveChatWrapper');
+    const statusIndicator = document.getElementById('advisorStatusIndicator');
+    
+    if (advisors && advisors.length > 0) {
+      if (chatWrapper) chatWrapper.style.display = 'block';
+      if (statusIndicator) statusIndicator.style.display = 'block';
+    } else {
+      if (chatWrapper) chatWrapper.style.display = 'none';
+      if (statusIndicator) statusIndicator.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Error checking advisors:', error);
+  }
+}
+
+window.openAnonymousAdvisorChat = function() {
+  document.getElementById('anonymousAdvisorChatModal').style.display = 'flex';
+}
+
+window.redirectToLogin = function() {
+  window.location.href = 'https://learn.stemsphere.academy/login.html';
+}
+
+window.closeAnonymousChat = function() {
+  document.getElementById('anonymousAdvisorChatModal').style.display = 'none';
+}
+
+checkAdvisorAvailability();
+setInterval(checkAdvisorAvailability, 30000);
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ⭐ REVIEWS SYSTEM
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 (async () => {
   const CACHE_KEY = 'stemsphere_reviews_cache';
-  const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  const CACHE_DURATION = 24 * 60 * 60 * 1000;
   
-  // Check if we have cached reviews
   const cachedData = localStorage.getItem(CACHE_KEY);
   let reviews = [];
   
@@ -1362,17 +1804,14 @@ footer {
       const parsed = JSON.parse(cachedData);
       const now = new Date().getTime();
       
-      // If cache is still valid (less than 24 hours old)
       if (now - parsed.timestamp < CACHE_DURATION) {
         reviews = parsed.reviews;
-        console.log('✅ Using cached reviews');
       }
     } catch (e) {
-      console.log('Cache parse error, will fetch fresh data');
+      console.log('Cache error');
     }
   }
   
-  // If no valid cache, fetch fresh data
   if (reviews.length === 0) {
     try {
       const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRSWqhCcu_XZW7SW5uZ3UZdKzvLm2zNw8DvMZV2TD_gcts6K-DBrLwd88pnXVn0xl0fxRRfGW0Y4iyN/pub?output=csv';
@@ -1394,13 +1833,10 @@ footer {
         })
         .sort((a, b) => new Date(b[3]) - new Date(a[3]));
       
-      // Cache the reviews
       localStorage.setItem(CACHE_KEY, JSON.stringify({
         timestamp: new Date().getTime(),
         reviews: reviews
       }));
-      
-      console.log('✅ Fetched and cached fresh reviews');
     } catch (error) {
       console.error('Error fetching reviews:', error);
       return;
@@ -1425,10 +1861,10 @@ footer {
       ${avg} (${count} review${count>1?'s':''})
     </h3>
     <div style="margin:1em 0; display:flex; justify-content:center; gap:1.5em;">
-      <button id="toggle-reviews" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.95em; text-decoration:underline;">
+      <button id="toggle-reviews" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.9em; text-decoration:underline;">
         See all reviews
       </button>
-      <button id="submit-review" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.95em; text-decoration:underline;">
+      <button id="submit-review" style="background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.9em; text-decoration:underline;">
         Submit a review
       </button>
     </div>
@@ -1442,7 +1878,7 @@ footer {
 
   const seeMoreBtn = document.createElement('button');
   seeMoreBtn.textContent = 'See more reviews';
-  seeMoreBtn.style.cssText = "background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.95em; margin-top:1em; display:block; text-decoration:underline;";
+  seeMoreBtn.style.cssText = "background:none; border:none; color:#ffffff; cursor:pointer; font-size:0.9em; margin-top:1em; display:block; text-decoration:underline;";
   seeMoreBtn.addEventListener('click', renderNextBatch);
 
   function renderNextBatch() {
@@ -1489,490 +1925,10 @@ footer {
 
   wrapper.querySelector('#submit-review').addEventListener('click', ()=> window.open(formUrl, '_blank'));
 })();
-</script>
 
-<!-- TUTORING SUBJECTS SECTION -->
-<section id="tutoring-subjects">
-  <h2>Personalized Tutoring in Every Subject We Offer</h2>
-  <p class="intro">
-    One-on-one or small-group sessions with our expert tutors. From weekly check-ins to intensive exam prep, we cover every level.
-  </p>
-  <img
-    src="https://i.postimg.cc/mkZDYz4T/Ads-11.png"
-    alt="Tutoring Banner"
-    class="tutoring-banner"
-    loading="lazy"
-  />
-
-  <div class="tutor-grid">
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/43xqCpgD/9104950.png" alt="Public Speaking Icon" loading="lazy" />
-      <h4>Public Speaking Foundations</h4>
-      <p class="tutor-desc">Enhance your confidence and clarity.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/PxKCCzDt/Screenshot-2025-08-28-191534.png" alt="Algebra Essentials Icon" loading="lazy" />
-      <h4>Algebra Essentials</h4>
-      <p class="tutor-desc">From linear equations to polynomials.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/xCjCVJ4B/2792361.png" alt="Geometry Foundations Icon" loading="lazy" />
-      <h4>Geometry Foundations</h4>
-      <p class="tutor-desc">Master shapes, angles, and proofs.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/VvpLt7kc/Screenshot-2025-08-28-192149.png" alt="Pre-Calculus & Trig Icon" loading="lazy" />
-      <h4>Pre-Calculus &amp; Trigonometry</h4>
-      <p class="tutor-desc">Functions, limits, and trig insights.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/mDhsSQqZ/Screenshot-2025-08-28-191639.png" alt="AP Calculus AB & BC Icon" loading="lazy" />
-      <h4>AP® Calculus AB &amp; BC</h4>
-      <p class="tutor-desc">Intensive prep for derivatives and integrals.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/MGH6s2f8/5932783.png" alt="AP Statistics Icon" loading="lazy" />
-      <h4>AP® Statistics</h4>
-      <p class="tutor-desc">Data analysis and probability fundamentals.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/dVtw1PBT/test-tube-and-chemical-compound-chemistry-colored-icon-vector.jpg" alt="General Chemistry Icon" loading="lazy" />
-      <h4>General Chemistry Crash Course</h4>
-      <p class="tutor-desc">Core concepts in atoms and reactions.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/FHdhttVb/Screenshot-2025-08-28-193154.png" alt="Organic Chemistry Icon" loading="lazy" />
-      <h4>Organic Chemistry Deep Dive</h4>
-      <p class="tutor-desc">Mechanisms and organic compound synthesis.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/xCR2G99Q/images-1.jpg" alt="IB Chemistry SL & HL Icon" loading="lazy" />
-      <h4>IB Chemistry SL &amp; HL Prep</h4>
-      <p class="tutor-desc">Curriculum-focused chemistry strategies.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/RFPYVhMW/Screenshot-2025-08-28-193929.png" alt="Biology Masterclass Icon" loading="lazy" />
-      <h4>Biology Masterclass</h4>
-      <p class="tutor-desc">Dive into cell biology and genetics.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/FHVXX9JL/Screenshot-2025-08-28-194223.png" alt="MCAT Biology Review Icon" loading="lazy" />
-      <h4>MCAT Biology Review</h4>
-      <p class="tutor-desc">High-yield biology for MCAT success.</p>
-    </div>
-    <div class="tutor-subject">
-      <img src="https://i.postimg.cc/ZRyfZcDM/Screenshot-2025-08-28-195306.png" alt="English Mastery Icon" loading="lazy" />
-      <h4>English Mastery</h4>
-      <p class="tutor-desc">Improve reading, writing, and speaking.</p>
-    </div>
-  </div>
-</section>
-
-<!-- WHY CHOOSE US SECTION -->
-<section id="why-choose">
-  <h2>Why <span class="highlight">STEMSphere</span> Tutoring Is Unmatched</h2>
-
-  <p>
-    At STEMSphere, every session is crafted to <span class="highlight">unlock your full potential</span>.  
-    Our tutors blend deep STEM expertise with personalized teaching techniques that adapt to your style, pace, and goals.
-  </p>
-
-  <p>
-    Beyond grades, we cultivate <span class="highlight">critical thinking</span>,  
-    <span class="highlight">confidence</span>, and a genuine passion for learning—so concepts stick for life.
-  </p>
-
-  <ul>
-    <li>Tailored study plans targeting your unique challenges</li>
-    <li>Hands-on exercises and real-world applications</li>
-    <li>Regular progress check-ins with actionable feedback</li>
-    <li>Exclusive resources: practice exams, cheat-sheets, and tutorials</li>
-    <li>Flexible formats: one-on-one, small groups, or on-demand videos</li>
-    <li>Certified STEM experts & exam prep specialists</li>
-    <li>Encouraging, supportive environment for every learner</li>
-  </ul>
-
-  <p class="stat">
-    <span class="highlight">4 out of 5 students</span> saw improvements within  
-    <span class="highlight">just 3 weeks</span> of tutoring.
-  </p>
-
-  <p>
-    Ready to transform your academic journey?  
-    <span class="highlight">Join STEMSphere today</span> and start seeing real results.
-  </p>
-</section>
-
-<!-- PRICING SECTION -->
-<section id="pricing-section">
-  <div class="content-wrapper">
-    <h2>What Are Our Costs?</h2>
-
-    <p>
-      We offer flexible memberships designed to fit your learning style.  
-      Each plan includes <span class="highlight">16 sessions over 8 weeks</span>, with classes held <span class="highlight">twice a week per subject</span>.  
-      Students often stack multiple subjects to build a schedule that fits their goals and pace.
-    </p>
-
-    <ul>
-      <li><span class="highlight">1-on-1 Private Tutoring</span> — $2000 USD per plan</li>
-      <li class="most-popular">
-        <div class="badge">Most Popular</div>
-        <span class="highlight">Small Group (up to 4 students)</span> — $799 USD per plan
-      </li>
-    </ul>
-
-    <h3 style="color: #00c6ff; text-align: center; font-size: clamp(1.5rem, 4vw, 2rem); margin-top: 2rem; margin-bottom: 0.5rem;">
-      Need a smaller flex schedule?
-    </h3>
-    <p style="text-align: center; margin-bottom: 1rem;">
-      For those needing less than 2 classes weekly and preferring a once-weekly pace, we offer a flexible 8-session plan.
-    </p>
-    <ul>
-      <li>
-        <span class="highlight">Flex 1-on-1 Private Tutoring (8 Sessions)</span> — $1100 USD per plan
-      </li>
-    </ul>
-
-    <p>
-      We accept payments in <span class="highlight">most global currencies</span>, including USD, EUR, GBP, NGN, INR, CAD, AUD, JPY, HKD, SGD, PHP, KRW, MYR, THB, TWD, ZAR, BRL, MXN, and more.  
-      Use the converter below to estimate your local cost.
-    </p>
-
-    <div class="conversion-box">
-      <div id="oanda_ecc">
-        <span>Currency Converter by OANDA</span>
-        <script defer src="https://www.oanda.com/embedded/converter/get/b2FuZGFlY2N1c2VyLy9kZWZhdWx0/?lang=en"></script>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ============================================================
-     START: KIDS REDIRECT BANNER
-     ============================================================ -->
-<section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem 1rem;">
-  <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-    <a href="https://kids.stemsphere.academy" style="display: block; background: linear-gradient(135deg, #FFD700, #FFA500); padding: 2rem; border-radius: 16px; text-decoration: none; transition: all 0.3s; box-shadow: 0 10px 30px rgba(255,165,0,0.4);">
-      <h3 style="font-size: clamp(1.5rem, 4vw, 2rem); color: #000; margin-bottom: 0.5rem; font-weight: 800;">
-        👦🏻👧🏽👧👦🏿 Young Kids Ages 6-10?
-      </h3>
-      <p style="font-size: clamp(1rem, 2.5vw, 1.2rem); color: #000; margin: 0;">
-        Try <strong>STEMSphere Kids</strong> →
-      </p>
-    </a>
-  </div>
-</section>
-<!-- ============================================================
-     END: KIDS REDIRECT BANNER
-     ============================================================ -->
-<!-- EBOOK RESOURCES SECTION -->
-<section id="ebook-resources">
-  <h2>📚 Free Learning Resources</h2>
-  <p class="intro">
-    Download our expertly crafted eBooks designed to help you excel in STEM subjects and prepare for college success.  
-    These guides contain proven strategies used by top students worldwide.
-  </p>
-
-  <div class="ebook-grid">
-    <div class="ebook-card">
-      <div class="free-badge">FREE!</div>
-      <img src="https://i.postimg.cc/s24NgxkN/gemini-2-5-flash-image-preview-nano-banana-i-need-an-ebook-cove-2.png" alt="STEM Study System eBook" loading="lazy">
-      <h3>The STEM Student's Secret Study System</h3>
-      <p>Master math and science with proven techniques from top students. Learn the 3-step formula for acing exams.</p>
-      <a href="https://books.stemsphere.academy" class="ebook-button">Download Free</a>
-    </div>
-
-    <div class="ebook-card">
-      <div class="free-badge">FREE!</div>
-      <img src="https://i.postimg.cc/N03SnR7V/ergh.png" alt="College Prep Secrets eBook" loading="lazy">
-      <h3>College Prep Secrets for Parents</h3>
-      <p>The insider's guide to preparing your teen for college. Learn what schools don't tell you about admissions and scholarships.</p>
-      <a href="https://books.stemsphere.academy" class="ebook-button">Download Free</a>
-    </div>
-  </div>
-</section>
-
-<!-- BLOG SECTION -->
-<section id="blog">
-  <article class="blog-post">
-    <h2 class="blog-title">Why Immersive Chemistry Tutoring Works</h2>
-    <p class="blog-body">
-      At STEMSphere Academy, chemistry comes alive. Our <strong>AP Chemistry tutoring online</strong>
-      sessions transform reaction mechanisms and stoichiometry into vivid, memorable lessons.
-      Students in <strong>New York</strong> and <strong>California</strong> rely on us for
-      <strong>organic chemistry tutoring</strong>, while families in <strong>Chicago</strong>
-      trust us for exam prep that delivers results. Across <strong>Hong Kong</strong> and
-      <strong>Singapore</strong>, we're known for <strong>IB Chemistry HL tutoring</strong>
-      and <strong>HKDSE chemistry prep</strong> that builds confidence and clarity.
-    </p>
-    <p class="blog-body">
-      Whether you're tackling molecular bonding or preparing for high‑stakes exams, our cinematic
-      approach ensures every learner feels like the hero of their own academic journey.
-    </p>
-    <h3 class="blog-subtitle">Topics we excel at</h3>
-    <ul class="blog-topics">
-      <li>AP Chemistry tutor online</li>
-      <li>IB Chemistry HL tutoring in Singapore</li>
-      <li>HKDSE chemistry prep Hong Kong</li>
-      <li>Organic chemistry tutor New York</li>
-      <li>Stoichiometry help California</li>
-      <li>Chemistry exam coaching Chicago</li>
-    </ul>
-  </article>
-
-  <article class="blog-post">
-    <h2 class="blog-title">Why Immersive Math Tutoring Works</h2>
-    <p class="blog-body">
-      Math isn't just numbers—it's a story. Our <strong>SAT Math help for gifted students</strong>
-      and <strong>AP Calculus tutoring online</strong> sessions use cinematic clarity to make
-      complex concepts unforgettable. From <strong>geometry enrichment classes in California</strong>
-      to <strong>IB Math HL tutoring in New York</strong>, we engineer every lesson for results.
-      Families in <strong>Chicago</strong> choose us for <strong>algebra mastery</strong>, while
-      students in <strong>Hong Kong</strong> and <strong>Singapore</strong> rely on us for
-      <strong>IB Math SL/HL prep</strong> and <strong>HKAT math tutoring</strong>.
-    </p>
-    <p class="blog-body">
-      Whether it's derivatives in calculus, probability in statistics, or geometry foundations,
-      STEMSphere Academy ensures every learner gains confidence, speed, and exam‑ready precision.
-    </p>
-    <h3 class="blog-subtitle">Topics we excel at</h3>
-    <ul class="blog-topics">
-      <li>SAT Math help for gifted students</li>
-      <li>AP Calculus tutor online</li>
-      <li>IB Math HL tutoring New York</li>
-      <li>Geometry enrichment classes California</li>
-      <li>Algebra tutor Chicago</li>
-      <li>HKAT math tutoring Hong Kong</li>
-      <li>IB Math SL/HL prep Singapore</li>
-    </ul>
-  </article>
-
-  <article class="blog-post">
-    <h2 class="blog-title">Master Physics Through Motion, Energy, and Real-World Application</h2>
-    <p class="blog-body">
-      Physics is the language of the universe—and at STEMSphere Academy, we decode it together. 
-      Our <strong>AP Physics tutoring online</strong> doesn't just teach formulas; we build 
-      intuition through hands-on problem-solving and visual demonstrations that make abstract 
-      concepts click. From projectile motion to electromagnetic fields, every lesson connects 
-      theory to the world around you.
-    </p>
-    <p class="blog-body">
-      Students across <strong>New York</strong>, <strong>California</strong>, and <strong>Texas</strong> 
-      choose us for <strong>AP Physics C exam mastery</strong>, while learners in <strong>Hong Kong</strong> 
-      and <strong>Singapore</strong> excel with our <strong>IB Physics HL preparation</strong>. We specialize 
-      in breaking down complex topics—kinematics, thermodynamics, quantum mechanics—into step-by-step strategies 
-      that build confidence and exam-ready skills.
-    </p>
-    <p class="blog-body">
-      Whether you're struggling with circuits, acing mechanics, or preparing for university-level physics, 
-      our tutors adapt to your learning style. We use real-world examples, interactive simulations, and 
-      practice problems that mirror actual AP and IB exams. The result? Students who don't just pass—they thrive.
-    </p>
-    <h3 class="blog-subtitle">Physics tutoring expertise</h3>
-    <ul class="blog-topics">
-      <li>AP Physics 1 and 2 tutoring online</li>
-      <li>AP Physics C (Mechanics & Electricity & Magnetism) prep</li>
-      <li>IB Physics HL and SL exam preparation Singapore</li>
-      <li>A-Level physics tutoring Hong Kong</li>
-      <li>HKDSE Physics exam coaching</li>
-      <li>College physics for engineering students California</li>
-      <li>Mechanics and electromagnetism help Texas</li>
-      <li>University physics tutoring New York</li>
-    </ul>
-  </article>
-</section>
-
-<!-- FAQ & CONTACT SECTION -->
-<section id="faq-contact">
-  <h3>Frequently Asked Questions</h3>
-
-  <details>
-    <summary>How do I book a free session?</summary>
-    <p>It's not a free trial but more of a free diagnostics. We offer a free diagnostics/mini session with one of our enrollment specialists. The goal is to match you with a tutor that fits your learning style. Click the "Book Your Enrollment Session" button above or reach out via email. We'll schedule your session within 24 hours.</p>
-  </details>
-
-  <details>
-    <summary>What subjects and levels do you cover?</summary>
-    <p>We offer personalized tutoring in Math, Chemistry, Biology, Coding, English, Public Speaking, SAT/ACT prep, and more—from elementary through adult learners.</p>
-  </details>
-
-  <details>
-    <summary>What's your cancellation and rescheduling policy?</summary>
-    <p>You can cancel or reschedule up to 24 hours before your session at no extra cost. Simply reply to your session confirmation email or contact support.</p>
-  </details>
-
-  <details>
-    <summary>How do I pay and what are your rates?</summary>
-    <p>We accept all major credit cards and PayPal. Rates vary by tutor and format; view detailed pricing above or email support for a custom package.</p>
-  </details>
-
-  <details>
-    <summary>Do you offer group discounts?</summary>
-    <p>Yes! Our Small Group (up to 4 students) plan is our most popular option at $799 USD. It's perfect for friends or siblings learning together.</p>
-  </details>
-
-  <details>
-    <summary>What if I need to learn multiple subjects?</summary>
-    <p>Students often stack multiple subjects! Each membership covers one subject, but you can purchase multiple plans to create a custom schedule that fits your goals.</p>
-  </details>
-
-  <details>
-    <summary>Are the eBooks really free?</summary>
-    <p>Yes! Both eBooks are 100% free. No credit card required. Just enter your email and download instantly. We created these resources to help students succeed.</p>
-  </details>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <p>© 2025 STEMSphere Academy. All rights reserved.</p>
-  <nav class="footer-links">
-    <a href="#faq-contact">FAQs</a> |
-    <a href="/privacy.html">Privacy Policy</a> |
-    <a href="https://www.facebook.com/STEMxSphere" target="_blank">Facebook</a>
-  </nav>
-  <p class="footer-contact">
-    Need help? Contact us at 
-    <a href="mailto:support@stemsphere.academy">support@stemsphere.academy</a>
-  </p>
-  <p style="margin-top: 1rem; font-size: 0.85em; opacity: 0.6;">
-    312 W 2nd Street #A8380, Casper, WY 82601, USA
-  </p>
-</footer>
-
-<!-- 🟢 ANONYMOUS ADVISOR CHAT MODAL (GREEN THEME) -->
-<div id="anonymousAdvisorChatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
-  <div style="background: #fff; border-radius: 16px; width: 90%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
-    
-    <!-- Header with Customer Service Team Stack (GREEN) -->
-    <div style="background: linear-gradient(135deg, #00ff88, #00c853); color: #000; padding: 1.5rem 2rem; border-radius: 16px 16px 0 0; position: relative;">
-      <button onclick="closeAnonymousChat()" style="position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.2); color: #000; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5em; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">×</button>
-      
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <!-- Stacked Customer Service Team Avatars -->
-        <div style="position: relative; width: 180px; height: 100px;">
-          <img src="https://i.postimg.cc/mrbw5b7S/Tutor1.png" alt="Support Team" style="position: absolute; top: 0; left: 0; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 4;" loading="lazy">
-          <img src="https://i.postimg.cc/bvzTBz19/Tutor2.png" alt="Support Team" style="position: absolute; top: 0; left: 40px; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 3;" loading="lazy">
-          <img src="https://i.postimg.cc/JzgXbMPk/In-Shot-20250221-181740954.jpg" alt="Support Team" style="position: absolute; top: 0; left: 80px; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 2;" loading="lazy">
-          <img src="https://i.postimg.cc/jjsXFsy6/Tutor3.png" alt="Support Team" style="position: absolute; top: 0; left: 120px; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1;" loading="lazy">
-        </div>
-        <div style="flex: 1;">
-          <h3 style="margin: 0 0 0.5rem 0; font-size: 1.6em; font-weight: 800;">💬 Live Chat with Our Team</h3>
-          <p style="margin: 0 0 0.5rem 0; font-size: 1.1em; font-weight: 600;">Customer Support Available</p>
-          <p style="margin: 0; font-size: 0.9em; opacity: 0.8;">Our advisors are here to help!</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Messages Container -->
-    <div id="anonymousChatMessages" style="flex: 1; overflow-y: auto; padding: 1.5rem; background: #f8f9fa; min-height: 300px; max-height: 400px;">
-      <div style="text-align: center; padding: 2rem; color: #999;">
-        <div style="font-size: 3em; margin-bottom: 1rem;">💬</div>
-        <p style="font-size: 1.1em; color: #666;">Login or sign up to start chatting!</p>
-      </div>
-    </div>
-
-    <!-- Input Box -->
-    <div style="padding: 1.5rem; background: #fff; border-top: 2px solid #eee; border-radius: 0 0 16px 16px;">
-      <textarea id="anonymousChatInput" placeholder="Ask about courses, pricing, schedules..." style="width: 100%; padding: 1rem; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; font-family: inherit; resize: vertical; min-height: 80px; margin-bottom: 1rem; background: #f5f5f5; color: #999; cursor: not-allowed;" disabled readonly></textarea>
-      <button onclick="redirectToLogin()" style="width: 100%; background: linear-gradient(135deg, #007bff, #0056b3); color: #fff; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s;">
-        🔓 Login/Signup to Chat with Advisor
-      </button>
-      <p style="margin: 1rem 0 0 0; text-align: center; color: #666; font-size: 0.9em;">
-        💡 Create a free account to start chatting instantly!
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- SUPABASE & CHAT JAVASCRIPT -->
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// ⚡ PERFORMANCE: All non-critical JS delayed
-window.addEventListener('load', function() {
-  
-// Supabase setup
-const SUPABASE_URL = 'https://horqtcwnhwgodwlyqhli.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
-
-const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let currentAdvisorId = null;
-let currentAdvisorData = null;
-
-// Check if advisors are available
-async function checkAdvisorAvailability() {
-  try {
-    const { data: advisors, error } = await supabaseClient
-      .from('profiles')
-      .select('id, full_name, profile_photo_url, bio, years_experience, education, fun_fact, teaching_video_url')
-      .eq('role', 'teacher')
-      .eq('is_advisor', true)
-      .eq('advisor_available', true)
-      .limit(1);
-
-    if (error) {
-      console.error('Error fetching advisors:', error);
-      return;
-    }
-
-    const chatWrapper = document.getElementById('liveChatWrapper');
-    const statusIndicator = document.getElementById('advisorStatusIndicator');
-    
-    if (advisors && advisors.length > 0) {
-      currentAdvisorData = advisors[0];
-      if (chatWrapper) chatWrapper.style.display = 'block';
-      if (statusIndicator) statusIndicator.style.display = 'block';
-    } else {
-      if (chatWrapper) chatWrapper.style.display = 'none';
-      if (statusIndicator) statusIndicator.style.display = 'none';
-    }
-  } catch (err) {
-    console.error('Exception in checkAdvisorAvailability:', err);
-  }
-}
-
-// Open anonymous chat modal
-window.openAnonymousAdvisorChat = async function() {
-  const { data: advisors } = await supabaseClient
-    .from('profiles')
-    .select('id, full_name, profile_photo_url, bio, years_experience, education, fun_fact, teaching_video_url')
-    .eq('role', 'teacher')
-    .eq('is_advisor', true)
-    .eq('advisor_available', true)
-    .limit(1);
-
-  if (!advisors || advisors.length === 0) {
-    alert('⚠️ No advisors available right now. Please sign up or try again later!\n\nCreate an account: ' + window.location.origin + '/login.html');
-    return;
-  }
-
-  currentAdvisorId = advisors[0].id;
-  currentAdvisorData = advisors[0];
-  document.getElementById('anonymousAdvisorChatModal').style.display = 'flex';
-  
-  const container = document.getElementById('anonymousChatMessages');
-  container.innerHTML = `
-    <div style="text-align: center; padding: 2rem; color: #999;">
-      <div style="font-size: 3em; margin-bottom: 1rem;">💬</div>
-      <p style="font-size: 1.1em; color: #666;">Login or sign up to start chatting with our team!</p>
-    </div>
-  `;
-}
-
-window.redirectToLogin = function() {
-  window.location.href = 'https://learn.stemsphere.academy/login.html';
-}
-
-window.closeAnonymousChat = function() {
-  document.getElementById('anonymousAdvisorChatModal').style.display = 'none';
-}
-
-// Run check immediately
-checkAdvisorAvailability();
-setInterval(checkAdvisorAvailability, 5000);
-
-// ==================== COOKIE CONSENT MANAGEMENT ====================
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🍪 COOKIE CONSENT SYSTEM
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 function adjustCookieBannerForMobile() {
   const isMobile = window.innerWidth <= 768;
@@ -2004,6 +1960,7 @@ function adjustCookieBannerForMobile() {
   }
 }
 
+// Cookie toggle functionality
 document.getElementById('analyticsCookies').addEventListener('change', function() {
   const toggle = document.getElementById('analyticsToggle');
   const slider = document.getElementById('analyticsSlider');
@@ -2028,6 +1985,7 @@ document.getElementById('marketingCookies').addEventListener('change', function(
   }
 });
 
+// Initialize toggle positions
 const analyticsSlider = document.getElementById('analyticsSlider');
 const marketingSlider = document.getElementById('marketingSlider');
 if (analyticsSlider) analyticsSlider.style.transform = 'translateX(30px)';
@@ -2067,7 +2025,6 @@ window.acceptAllCookies = function() {
   document.getElementById('cookieConsentBanner').style.display = 'none';
   enableAnalytics();
   enableMarketing();
-  console.log('✅ All cookies accepted');
 }
 
 window.rejectCookies = function() {
@@ -2079,7 +2036,6 @@ window.rejectCookies = function() {
   };
   localStorage.setItem('cookieConsent', JSON.stringify(consent));
   document.getElementById('cookieConsentBanner').style.display = 'none';
-  console.log('❌ Optional cookies rejected');
 }
 
 window.openCookieSettings = function() {
@@ -2111,8 +2067,6 @@ window.saveCustomCookieSettings = function() {
   
   if (analytics) enableAnalytics();
   if (marketing) enableMarketing();
-  
-  console.log('✅ Custom cookie preferences saved:', consent);
 }
 
 window.acceptAllFromSettings = function() {
@@ -2128,14 +2082,21 @@ window.acceptAllFromSettings = function() {
 }
 
 function enableAnalytics() {
-  console.log('📊 Analytics tracking enabled');
+  console.log('Analytics enabled');
+  // Analytics tracking code would go here
 }
 
 function enableMarketing() {
-  console.log('🎯 Marketing tracking enabled');
+  console.log('Marketing enabled');
+  // Marketing tracking code would go here
 }
 
-// ==================== LIVE VISITOR TRACKING (DELAYED 30 SECONDS) ====================
+// Initialize cookie consent check
+checkCookieConsent();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 📊 VISITOR TRACKING SYSTEM
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 setTimeout(function() {
   (async function() {
     let visitorId = localStorage.getItem('visitor_id');
@@ -2153,7 +2114,7 @@ setTimeout(function() {
             locationData = await response.json();
           }
         } catch (e) {
-          console.log('Location lookup failed (non-critical)');
+          console.log('Location lookup failed');
         }
 
         const visitorData = {
@@ -2190,11 +2151,9 @@ setTimeout(function() {
       );
     });
   })();
-}, 30000); // ⚡ DELAYED 30 SECONDS
+}, 30000);
 
-checkCookieConsent();
-
-}); // End of window.load
+});
 </script>
 
 </body>
