@@ -4933,6 +4933,13 @@
     console.log('%c✅ Student Dashboard Fully Loaded & Ready!', 'font-size: 14px; font-weight: bold; color: #28a745;');
     console.log(`%cTotal Lines: ~4,300+ | Features: Advisor Chat, Messaging, Invoices, Booking`, 'font-size: 11px; color: #666;');
 
+    // ✅ Google Translate Function
+    function translatePage(lang) {
+      if (!lang || lang === 'en') return;
+      const loc = encodeURIComponent(window.location.href);
+      window.location.href = 'https://translate.google.com/translate?sl=en&tl=' + lang + '&u=' + loc;
+    }
+
   </script>
 </body>
 </html>
