@@ -72,6 +72,19 @@
       cursor: pointer;
     }
 
+    /* ✅ HIDE GOOGLE TRANSLATE TOP BANNER */
+    body.translated-ltr {
+      top: 0 !important;
+    }
+    
+    .goog-te-banner-frame.skiptranslate {
+      display: none !important;
+    }
+    
+    body {
+      top: 0 !important;
+    }
+
     .auth-container {
       background: #fff;
       border: 2px solid #ff0000;
@@ -543,7 +556,7 @@
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Google Translate Function
+    // ✅ SIMPLE TRANSLATE - No redirects, allows full translation
     function translatePage(lang) {
       if (!lang || lang === 'en') return;
       const loc = encodeURIComponent(window.location.href);
@@ -604,7 +617,7 @@
       document.getElementById('warningMsg').style.display = 'none';
     }
 
-    // LOGIN
+    // ✅ LOGIN - Goes to dashboard
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
@@ -623,11 +636,12 @@
         document.getElementById('loginBtn').disabled = false;
       } else {
         showSuccess('Login successful! Redirecting...');
-        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+        // ✅ REDIRECT TO DASHBOARD
+        setTimeout(() => window.location.href = 'https://learn.stemsphere.academy/dashboard.html', 1000);
       }
     });
 
-    // SIGNUP (✅ WITH ANONYMOUS CHAT MERGE)
+    // ✅ SIGNUP - Goes to dashboard
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
@@ -640,16 +654,9 @@
       const ageGroup = document.getElementById('signupAge').value;
       const phone = document.getElementById('signupPhone').value;
 
-      // ✅ Capture visitor session if they came from anonymous chat
       const urlParams = new URLSearchParams(window.location.search);
       const visitorSessionId = urlParams.get('session') || localStorage.getItem('visitor_session_id');
 
-      console.log('🚀 Starting signup for:', email);
-      if (visitorSessionId) {
-        console.log('🔗 Visitor session detected:', visitorSessionId);
-      }
-
-      // Create auth user with metadata (trigger will create profile automatically)
       const { data: authData, error: authError } = await supabaseClient.auth.signUp({
         email,
         password,
@@ -658,30 +665,24 @@
             full_name: fullName,
             age_group: ageGroup,
             phone: phone || null,
-            visitor_session_id: visitorSessionId  // ✅ ADD SESSION ID
+            visitor_session_id: visitorSessionId
           }
         }
       });
 
       if (authError) {
-        console.error('❌ Auth error:', authError);
         showError('Signup failed: ' + authError.message);
         document.getElementById('signupBtn').disabled = false;
         document.getElementById('signupBtn').textContent = 'Create Account & Continue';
         return;
       }
 
-      console.log('✅ Auth user created:', authData.user.id);
-      console.log('✅ Profile will be created automatically by database trigger');
-
-      // Now sign in the user immediately (email confirmation not required)
       const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
         email,
         password,
       });
 
       if (signInError) {
-        console.error('❌ Auto sign-in error:', signInError);
         showSuccess('✅ Account created! Please login to continue.');
         document.getElementById('signupBtn').disabled = false;
         document.getElementById('signupBtn').textContent = 'Create Account & Continue';
@@ -690,14 +691,8 @@
         return;
       }
 
-      console.log('✅ User signed in automatically');
-      
-      // ✅ Merge anonymous messages if visitor session exists
       if (authData.user && visitorSessionId) {
-        console.log('🔗 Merging anonymous chat with user:', authData.user.id);
-        
         try {
-          // Update anonymous messages to link to new user
           await supabaseClient
             .from('messages')
             .update({ 
@@ -707,26 +702,22 @@
             .eq('visitor_session_id', visitorSessionId)
             .is('sender_id', null);
           
-          // Update profile with session ID
           await supabaseClient
             .from('profiles')
             .update({ visitor_session_id: visitorSessionId })
             .eq('id', authData.user.id);
           
-          // Clear localStorage
           localStorage.removeItem('visitor_session_id');
-          
-          console.log('✅ Anonymous chat merged with new account');
         } catch (mergeError) {
-          console.error('⚠️ Error merging chat (non-critical):', mergeError);
+          console.error('⚠️ Error merging chat:', mergeError);
         }
       }
       
       showSuccess('✅ Account created successfully! Redirecting to dashboard...');
       
-      // Redirect to dashboard
+      // ✅ REDIRECT TO DASHBOARD
       setTimeout(() => {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'https://learn.stemsphere.academy/dashboard.html';
       }, 1500);
     });
 
@@ -739,7 +730,7 @@
       const email = document.getElementById('resetEmail').value;
 
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/reset-password.html',
+        redirectTo: 'https://learn.stemsphere.academy/reset-password.html',
       });
 
       if (error) {
@@ -754,7 +745,7 @@
     // Check if already logged in
     supabaseClient.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'https://learn.stemsphere.academy/dashboard.html';
       }
     });
   </script>
