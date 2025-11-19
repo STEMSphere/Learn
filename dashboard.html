@@ -3683,15 +3683,15 @@
           </div>
         `;
       } else if(wizardStep===2){
-        updateProgress(40);
-        c.innerHTML = `
-          <h3 style="padding:0 20px; color:var(--theme-text);">📘 Choose your subject:</h3>
-          <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
-            ${["Math","Chemistry","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing"].map(s=>`
-              <button onclick="wizardData.subject='${s}'; wizardStep=3; renderWizardStep()" 
-                style="background:var(--theme-button-gradient); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${s}</button>`).join("")}
-          </div>
-        `;
+  updateProgress(40);
+  c.innerHTML = `
+    <h3 style="padding:0 20px; color:var(--theme-text);">📘 Choose your subject:</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px;">
+      ${["Math","Chemistry","Physics","English (Public Speaking)","Python Programming","Biology","English Speaking and Writing","Other"].map(s=>`
+        <button onclick="wizardData.subject='${s}'; wizardStep=3; renderWizardStep()" 
+          style="background:var(--theme-button-gradient); color:#fff; padding:8px 16px; border:none; border-radius:6px; cursor:pointer;">${s}</button>`).join("")}
+    </div>
+  `;
       } else if(wizardStep===3){
         updateProgress(55);
         c.innerHTML = `
