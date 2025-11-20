@@ -3705,47 +3705,37 @@
             style="margin:0 20px 20px; background:var(--theme-button-gradient); color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Continue</button>
         `;
       } else if(wizardStep===5){
-    updateProgress(85);
-    const today = new Date();
-    const minDate = new Date(today.getTime() + (12 * 60 * 60 * 1000));
-    const maxDate = new Date(today.getTime() + (3 * 24 * 60 * 60 * 1000));
-    
-    c.innerHTML = `
-      <h3 style="padding:0 20px; color:var(--theme-text);">📅 Select Date & Time</h3>
-      
-      <div style="margin:0 20px 1.5rem 20px; background:#fff3cd; border:3px solid #ff9800; border-radius:8px; padding:1.5rem; box-shadow:0 2px 8px rgba(255,152,0,0.2);">
-        <h4 style="margin:0 0 0.75rem 0; color:#856404; font-size:1.2em;">🎉 Your first class is completely free!</h4>
-        <p style="margin:0 0 0.5rem 0; color:#856404; line-height:1.6; font-size:1em;">
-          We have limited spaces and want to ensure committed families get priority access.
-        </p>
-        <p style="margin:0; color:#d63384; font-weight:700; font-size:1.05em;">
-          ⚠️ Reschedules accrue a $50 rescheduling fee to reserve your new spot.
-        </p>
-      </div>
-      
-      <div style="margin:0 20px 1.5rem 20px; background:#e3f2fd; border-radius:8px; padding:1rem;">
-        <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
-        <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:500px; padding:0.75rem; border:2px solid #007bff; border-radius:6px; font-size:1em; font-weight:600;">
-          <option value="${wizardData.timezone}">📍 ${wizardData.timezone} (Auto-detected)</option>
-          <optgroup label="🇺🇸 United States">
-            <option value="America/New_York">Eastern Time (ET)</option>
-            <option value="America/Chicago">Central Time (CT)</option>
-            <option value="America/Denver">Mountain Time (MT)</option>
-            <option value="America/Los_Angeles">Pacific Time (PT)</option>
-          </optgroup>
-          <optgroup label="🇬🇧🇪🇺 Europe">
-            <option value="Europe/London">London (GMT)</option>
-            <option value="Europe/Paris">Paris (CET)</option>
-            <option value="Europe/Berlin">Berlin (CET)</option>
-          </optgroup>
-          <optgroup label="🌏 Asia Pacific">
-            <option value="Asia/Dubai">Dubai (GST)</option>
-            <option value="Asia/Kolkata">India (IST)</option>
-            <option value="Asia/Singapore">Singapore (SGT)</option>
-            <option value="Asia/Hong_Kong">Hong Kong (HKT)</option>
-            <option value="Asia/Tokyo">Tokyo (JST)</option>
-            <option value="Australia/Sydney">Sydney (AEDT)</option>
-          </optgroup>
+        updateProgress(85);
+        const today = new Date();
+        const minDate = new Date(today.getTime() + (12 * 60 * 60 * 1000));
+        const maxDate = new Date(today.getTime() + (3 * 24 * 60 * 60 * 1000));
+        
+        c.innerHTML = `
+          <h3 style="padding:0 20px; color:var(--theme-text);">📅 Select Date & Time</h3>
+          
+          <div style="margin:0 20px 1.5rem 20px; background:#e3f2fd; border-radius:8px; padding:1rem;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#007bff;">🌍 Your Timezone:</label>
+            <select id="timezoneSelect" onchange="updateTimezone()" style="width:100%; max-width:500px; padding:0.75rem; border:2px solid #007bff; border-radius:6px; font-size:1em; font-weight:600;">
+              <option value="${wizardData.timezone}">📍 ${wizardData.timezone} (Auto-detected)</option>
+              <optgroup label="🇺🇸 United States">
+                <option value="America/New_York">Eastern Time (ET)</option>
+                <option value="America/Chicago">Central Time (CT)</option>
+                <option value="America/Denver">Mountain Time (MT)</option>
+                <option value="America/Los_Angeles">Pacific Time (PT)</option>
+              </optgroup>
+              <optgroup label="🇬🇧🇪🇺 Europe">
+                <option value="Europe/London">London (GMT)</option>
+                <option value="Europe/Paris">Paris (CET)</option>
+                <option value="Europe/Berlin">Berlin (CET)</option>
+              </optgroup>
+              <optgroup label="🌏 Asia Pacific">
+                <option value="Asia/Dubai">Dubai (GST)</option>
+                <option value="Asia/Kolkata">India (IST)</option>
+                <option value="Asia/Singapore">Singapore (SGT)</option>
+                <option value="Asia/Hong_Kong">Hong Kong (HKT)</option>
+                <option value="Asia/Tokyo">Tokyo (JST)</option>
+                <option value="Australia/Sydney">Sydney (AEDT)</option>
+              </optgroup>
             </select>
             <p style="font-size:0.85em; color:#0056b3; margin-top:0.5rem; font-weight:500;">⏰ All times shown in YOUR timezone</p>
           </div>
