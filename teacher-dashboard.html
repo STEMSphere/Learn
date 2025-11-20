@@ -2916,8 +2916,8 @@
       if (!selectedDate) return;
 
       const now = new Date();
-      const selectedDateObj = new Date(selectedDate + 'T00:00:00');
-      const isToday = selectedDateObj.toDateString() === now.toDateString();
+      const selectedDateObj = new Date(selectedDate); selectedDateObj.setHours(0, 0, 0, 0); const todayObj = new Date(); todayObj.setHours(0, 0, 0, 0);
+      const isToday = selectedDateObj.getTime() === todayObj.getTime();
       
       const currentHour = now.getHours();
       const currentMinute = now.getMinutes();
