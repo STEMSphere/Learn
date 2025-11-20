@@ -2931,11 +2931,15 @@
           const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
           
           let isPast = false;
-          if (isToday) {
-            if (hour < currentHour || (hour === currentHour && min < currentMinute)) {
-              isPast = true;
-            }
-          }
+if (isToday) {
+  // Calculate the current 30-minute block
+  const currentBlock = Math.floor(currentMinute / 30) * 30;
+  
+  // Mark as past if it's before the current 30-minute block
+  if (hour < currentHour || (hour === currentHour && min < currentBlock)) {
+    isPast = true;
+  }
+}
           
           slots.push({ time24: timeStr24, time12: timeStr12, isPast: isPast });
         }
