@@ -2916,8 +2916,8 @@
       if (!selectedDate) return;
 
       const now = new Date();
-      const selectedDateObj = new Date(selectedDate); selectedDateObj.setHours(0, 0, 0, 0); const todayObj = new Date(); todayObj.setHours(0, 0, 0, 0);
-      const isToday = selectedDateObj.getTime() === todayObj.getTime();
+      const selectedDateObj = new Date(selectedDate + 'T00:00:00');
+      const isToday = selectedDateObj.toDateString() === now.toDateString();
       
       const currentHour = now.getHours();
       const currentMinute = now.getMinutes();
@@ -2931,15 +2931,11 @@
           const timeStr12 = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
           
           let isPast = false;
-if (isToday) {
-  // Calculate the current 30-minute block
-  const currentBlock = Math.floor(currentMinute / 30) * 30;
-  
-  // Mark as past if it's before the current 30-minute block
-  if (hour < currentHour || (hour === currentHour && min < currentBlock)) {
-    isPast = true;
-  }
-}
+          if (isToday) {
+            if (hour < currentHour || (hour === currentHour && min < currentMinute)) {
+              isPast = true;
+            }
+          }
           
           slots.push({ time24: timeStr24, time12: timeStr12, isPast: isPast });
         }
