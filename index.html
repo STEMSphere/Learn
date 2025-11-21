@@ -2323,12 +2323,8 @@ if (marketingSlider) marketingSlider.style.transform = 'translateX(30px)';
 function checkCookieConsent() {
   const consent = localStorage.getItem('cookieConsent');
   if (!consent) {
-    const isMobile = window.innerWidth <= 768;
-    const delay = isMobile ? 10000 : 1000;
-    setTimeout(() => {
-      adjustCookieBannerForMobile();
-      document.getElementById('cookieConsentBanner').style.display = 'block';
-    }, delay);
+    adjustCookieBannerForMobile();
+    document.getElementById('cookieConsentBanner').style.display = 'block';
   } else {
     const consentData = JSON.parse(consent);
     if (consentData.analytics) enableAnalytics();
@@ -2479,12 +2475,11 @@ setTimeout(function() {
   })();
 }, 30000); // ⚡ DELAYED 30 SECONDS
 
-}); // End of window.load
-
-// Call cookie consent check AFTER window.load finishes
+// Show cookie banner immediately (before window.load finishes)
 checkCookieConsent();
 
-</script>
+}); // End of window.load
 
+</script>
 </body>
 </html>
