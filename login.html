@@ -130,6 +130,55 @@
       border-color: #ff0000;
       background: #fff;
     }
+    .consent-section {
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1rem;
+      margin: 1.5rem 0;
+    }
+    .consent-section h3 {
+      font-size: 0.95rem;
+      color: #000;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .checkbox-group:last-child {
+      margin-bottom: 0;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin-right: 0.5rem;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      margin-bottom: 0;
+      font-weight: 400;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: #333;
+      cursor: pointer;
+    }
+    .checkbox-group label a {
+      color: #ff0000;
+      text-decoration: none;
+    }
+    .checkbox-group label a:hover {
+      text-decoration: underline;
+    }
+    .required-notice {
+      font-size: 0.75rem;
+      color: #cc0000;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
     .btn-primary {
       width: 100%;
       padding: 1rem;
@@ -293,6 +342,14 @@
         <label>Phone (optional)</label>
         <input type="tel" id="signupPhone">
       </div>
+
+      <!-- CONSENT NOTICE -->
+      <div class="consent-section">
+        <p style="margin: 0; font-size: 0.85rem; line-height: 1.5; color: #333;">
+          By creating an account, you agree to receive emails and phone calls from STEMSphere Academy and accept our <a href="https://learn.stemsphere.academy/terms" target="_blank">Terms of Service</a> and <a href="https://learn.stemsphere.academy/privacy" target="_blank">Privacy Policy</a>.
+        </p>
+      </div>
+
       <button type="submit" class="btn-primary" id="signupBtn">Create Account & Continue</button>
     </form>
 
@@ -410,10 +467,11 @@
       }
     });
 
-    // SIGNUP (✅ WITH ANONYMOUS CHAT MERGE)
+    // SIGNUP (WITH CONSENT TRACKING)
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
+
       document.getElementById('signupBtn').disabled = true;
       document.getElementById('signupBtn').textContent = 'Creating Account...';
 
@@ -423,7 +481,7 @@
       const ageGroup = document.getElementById('signupAge').value;
       const phone = document.getElementById('signupPhone').value;
 
-      // ✅ Capture visitor session if they came from anonymous chat
+      // Capture visitor session if they came from anonymous chat
       const urlParams = new URLSearchParams(window.location.search);
       const visitorSessionId = urlParams.get('session') || localStorage.getItem('visitor_session_id');
 
@@ -432,7 +490,7 @@
         console.log('🔗 Visitor session detected:', visitorSessionId);
       }
 
-      // Create auth user with metadata (trigger will create profile automatically)
+      // Create auth user with metadata including consent
       const { data: authData, error: authError } = await supabaseClient.auth.signUp({
         email,
         password,
@@ -441,7 +499,11 @@
             full_name: fullName,
             age_group: ageGroup,
             phone: phone || null,
-            visitor_session_id: visitorSessionId  // ✅ ADD SESSION ID
+            visitor_session_id: visitorSessionId,
+            email_consent: true,
+            phone_consent: true,
+            terms_consent: true,
+            consent_date: new Date().toISOString()
           }
         }
       });
@@ -457,7 +519,7 @@
       console.log('✅ Auth user created:', authData.user.id);
       console.log('✅ Profile will be created automatically by database trigger');
 
-      // Now sign in the user immediately (email confirmation not required)
+      // Now sign in the user immediately
       const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({
         email,
         password,
@@ -475,7 +537,7 @@
 
       console.log('✅ User signed in automatically');
       
-      // ✅ Merge anonymous messages if visitor session exists
+      // Merge anonymous messages if visitor session exists
       if (authData.user && visitorSessionId) {
         console.log('🔗 Merging anonymous chat with user:', authData.user.id);
         
