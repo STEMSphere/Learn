@@ -2479,9 +2479,11 @@ setTimeout(function() {
   })();
 }, 30000); // ⚡ DELAYED 30 SECONDS
 
+}); // End of window.load
+
+// Call cookie consent check AFTER window.load finishes
 checkCookieConsent();
 
-}); // End of window.load
 </script>
 
 </body>
