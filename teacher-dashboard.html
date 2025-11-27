@@ -1025,9 +1025,7 @@
         <table>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
+              <th>Student ID</th>
               <th>Age Group</th>
               <th>Total Sessions</th>
               <th>Actions</th>
@@ -2078,12 +2076,11 @@
 
       tbody.innerHTML = students.map(student => {
         const sessionCount = bookings?.filter(b => b.user_id === student.id).length || 0;
+        const studentIdShort = student.id ? `...${student.id.slice(-8)}` : 'N/A';
         
         return `
           <tr>
-            <td><strong>${student.full_name}</strong></td>
-            <td>${student.email || 'N/A'}</td>
-            <td>${student.phone || 'N/A'}</td>
+            <td><strong>Student ${studentIdShort}</strong></td>
             <td>${student.age_group || 'N/A'}</td>
             <td>${sessionCount}</td>
             <td>
