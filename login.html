@@ -388,7 +388,14 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcnF0Y3duaHdnb2R3bHlxaGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NjAyNzEsImV4cCI6MjA3NTMzNjI3MX0.4rYzW6MFEkVVqLor55RuFGLwE6WBJrYLxvYbgeXXRGU';
     
     const { createClient } = supabase;
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    // Use implicit flow to allow password reset links to work on ANY device
+    // PKCE (default) requires the same browser that initiated the request
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        flowType: 'implicit'
+      }
+    });
 
     function showTab(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -575,25 +582,27 @@
       }, 1500);
     });
 
-    // PASSWORD RESET
+    // PASSWORD RESET - Using implicit flow for cross-device support
     document.getElementById('resetForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMessages();
       document.getElementById('resetBtn').disabled = true;
+      document.getElementById('resetBtn').textContent = 'Sending...';
 
       const email = document.getElementById('resetEmail').value;
 
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/reset-password.html',
+        redirectTo: 'https://learn.stemsphere.academy/reset-password.html',
       });
 
       if (error) {
         showError(error.message);
       } else {
-        showSuccess('Password reset link sent! Check your email.');
+        showSuccess('Password reset link sent! Check your email (including spam folder).');
         document.getElementById('resetEmail').value = '';
       }
       document.getElementById('resetBtn').disabled = false;
+      document.getElementById('resetBtn').textContent = 'Send Reset Link';
     });
 
     // Check if already logged in
